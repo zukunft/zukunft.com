@@ -77,7 +77,7 @@ class formula_calc
     // one number, one char of the arithmetic or of a condition or a math function between the operands
     const string TOKEN_PATTERN = '/\G\s*(\d+(?:\.\d+)?|[-+*\/()^=&|' . chars::FUNC_ARG_SEPARATOR . ']|'
         . chars::FUNC_MIN . '|' . chars::FUNC_MAX . '|' . chars::FUNC_IF . '|' . chars::FUNC_ABS . '|' . chars::FUNC_COS . '|'
-        . chars::FUNC_EXP . '|' . chars::FUNC_LN . '|' . chars::FUNC_LOG . '|' . chars::FUNC_ROUND . '|' . chars::FUNC_SEC . '|'
+        . chars::FUNC_EXP . '|' . chars::FUNC_FLOOR . '|' . chars::FUNC_LN . '|' . chars::FUNC_LOG . '|' . chars::FUNC_ROUND . '|' . chars::FUNC_SEC . '|'
         . chars::FUNC_SIN . '|' . chars::FUNC_SQRT . '|' . chars::FUNC_SUM . '|' . chars::FUNC_COUNT . '|' . chars::FUNC_MEAN . ')/';
 
     // per value object the value itself and its phrase names, because each operand of each

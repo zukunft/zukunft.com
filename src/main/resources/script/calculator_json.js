@@ -779,7 +779,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     // the terms of an expression e.g. "PV capacity" or "battery charge", "January" (formula_calc::operand_pattern)
     const OPERAND_PATTERN = /"[^"]+"(?:\s*,\s*"[^"]+")*/g;
     // one number, one char of the arithmetic or of a condition or a math function between the operands (formula_calc::TOKEN_PATTERN)
-    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/()^=&|;]|min|max|if|abs|cos|exp|ln|log|round|sec|sin|sqrt|sum|count|mean)/y;
+    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/()^=&|;]|min|max|if|abs|cos|exp|floor|ln|log|round|sec|sin|sqrt|sum|count|mean)/y;
     // the math functions, the separator of their arguments and the power (the chars::FUNC_* and chars::POW)
     const FUNC_MIN = 'min';
     const FUNC_MAX = 'max';
@@ -795,7 +795,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     const LIST_FUNCTION = /\b(?:sum|count|mean)\s*\(/;
     const LIST_EXCLUDED = ['variance low (system)', 'variance high (system)', 'confidence'];
     // the functions of one number like arithmetic::one_number, so also round away from zero and an angle in radian
-    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
+    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, floor: Math.floor, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
     // the char between the result and the calculation of a formula (chars::CHAR_CALC)
     const CHAR_CALC = '=';
     // the decimals of a compare, the same as formula_calc::DECIMALS

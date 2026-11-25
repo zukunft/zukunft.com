@@ -1,6 +1,6 @@
 # references and triples on the add word view (2026-11-21)
 
-Planned on branch `feature/247-frontend-workflow` as a follow-up of `docs/llm/log/add_word_suggest_2026-11-20.md`.
+Planned on branch `feature/247-frontend-workflow` as a follow-up of `docs/llm/log/2026-11-20_add_word_suggest.md`.
 This log is started before the first edit, so the tables below are the plan; "Unexpected changes" stays empty until
 the developer has run the tests.
 

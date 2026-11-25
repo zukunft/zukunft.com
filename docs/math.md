@@ -29,6 +29,7 @@ that the saved result does not confirm.
 | `abs` | the number without its sign | `abs( -2.5 )` | 2.5 |  |
 | `cos` | cosine of an angle in radian | `cos( 0 )` | 1 |  |
 | `exp` | e to the power of the number | `exp( 0 )` | 1 |  |
+| `floor` | the largest whole number not above the number e.g. the round lots of a part | `floor( 2.7 )` | 2 |  |
 | `ln` | natural logarithm | `ln( 1 )` | 0 |  |
 | `log` | logarithm to the base 10 | `log( 100 )` | 2 |  |
 | `log( ; )` | logarithm to the base of the second argument | `log( 8 ; 2 )` | 3 |  |
@@ -153,6 +154,9 @@ Each text is calculated by each calculation; a difference is marked with **diff*
 | `2 ^ -1` | 0.5 | 0.5 | 0.5 | 0.5 | 0.5 |  |
 | `round( -2.5 )` | -3 | -3 | -3 | -3 | -3 |  |
 | `round( 2.5 )` | 3 | 3 | 3 | 3 | 3 |  |
+| `floor( -2.5 )` | -3 | -3 | -3 | -3 | -3 |  |
+| `floor( 2.5 )` | 2 | 2 | 2 | 2 | 2 |  |
+| `floor( 1 ; 2 )` | no number | no number | no number | no number | no number |  |
 | `if( 0 ; 5 / 0 + 1 ; 2 )` | 2 | 2 | 2 | 2 | 2 |  |
 | `if( 1 ; 2 ; 5 / 0 + 1 )` | 2 | 2 | 2 | 2 | 2 |  |
 | `if( 1 ; 5 / 0 ; 2 )` | no number | no number | no number | no number | no number |  |

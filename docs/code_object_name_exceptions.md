@@ -255,6 +255,7 @@ test_sources: $t_src
 test_sql: $t_sql
 test_sys_log: $t_slg, $t_sys
 test_terms: $t_trm
+test_timing: $tim
 test_triples: $t_trp
 test_types: $t_typ
 test_users: $t_usr

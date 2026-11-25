@@ -24,6 +24,8 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.4
 
+    TODO try to improve the reaction time by moving the page creation and api request fulfillment to paralell processes so that at least cached pages can be returned even if other processes are running
+    TODO if for e.g. http://localhost/http/view.php?m=1&dla=table_chart a version without user specific data exists in cache but not yet a user specific version, return the standard and start a parallel process to create the user page or user overlay
     TODO add equity calculator example
     TODO add CBAM calculator example
     TODO add calculator for SNSF decitions (what should snf.ch focus on)

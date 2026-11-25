@@ -281,7 +281,7 @@
         const FUNC_IF = 'if';
         const FUNC_ARG_SEPARATOR = ';';
         /* the functions of one number like chars::FUNC_ONE_NUMBER of the backend, so also round away from zero and an angle in radian */
-        const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
+        const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, floor: Math.floor, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
         /* the functions and symbols that are offered after a press on more, because the basic ones are enough for most formulas */
         /* the logarithm like arithmetic::log_number, to the base 10 if no base is given */
         const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);
@@ -474,7 +474,7 @@
            the functions, the separator of their arguments and the chars of a condition are structure tokens like the brackets */
         function tokenize(text) {
             const result = {ok: true, error: '', tokens: []};
-            const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|([-+*\/^])|([();=&|]|(?:min|max|if|abs|cos|exp|ln|log|round|sec|sin|sqrt|sum|count|mean)(?=\s*\())|(,)|(\S))/y;
+            const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|([-+*\/^])|([();=&|]|(?:min|max|if|abs|cos|exp|floor|ln|log|round|sec|sin|sqrt|sum|count|mean)(?=\s*\())|(,)|(\S))/y;
             let joinNext = false;
             let m = re.exec(text);
             while (result.ok && m !== null) {

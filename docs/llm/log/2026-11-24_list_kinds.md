@@ -1,7 +1,7 @@
 # list kinds (2026-11-24)
 
 Part of #247, the second of the three changes of part 5 of step 9 of the portfolio split page in `docs/llm/pending.md`
-(the first is `docs/llm/log/sum_over_results_2026-11-24.md`).
+(the first is `docs/llm/log/2026-11-24_sum_over_results.md`).
 
 ## Request
 
@@ -27,15 +27,15 @@ holding). The third change adds the formulas to `portfolio_split_calculator.json
 
 | file | old lines | new lines | why a change is expected |
 |---|---|---|---|
-| the lists of the use cases | — | — | a list now also takes a number of a kind of a phrase of its context; the only checked list formula is in `CBAM_setup.json`, which is refused anyway (see `sum_over_results_2026-11-24.md`) |
+| the lists of the use cases | — | — | a list now also takes a number of a kind of a phrase of its context; the only checked list formula is in `CBAM_setup.json`, which is refused anyway (see `2026-11-24_sum_over_results.md`) |
 | the backend calculation time of a list | — | — | one read of the `is a` children per phrase of a list, because the children decide which numbers are loaded |
 
 ## Unexpected changes
 
 | file | old | new | reason |
 |---|---|---|---|
-| `src/test/php/unit_write/a_selected_test.php` | the html ui tests run with the request cache that the api has loaded from the database (`$ui_sys = $ui->dto` of "api based ui tests") | `ui_test_cache` and `init_unit_tests` before the ui tests, like `all_ui_tests::run` | the run of `test/test_part.php` of 2026-11-24 reported 13 errors of `component_ui_tests`, e.g. "the calculation formula of a component is shown with a link ... actual: formula: , expected: scale minute to sec": the tests expect the formulas, phrases, components and sample phrases of the unit test cache, which the database cache does not hold by these ids; `component_ui_tests` is switched on in the selection since e4988d819 (2026-11-09), but `test_part.php` has stopped before the ui tests since then (see the lesson of `parent_target_share_2026-11-23.md`), so this is the first run that reached them; not caused by the list change |
-| `src/test/resources/web/html/object_pages/triple.html` | the committed snapshot without a title at the verb links | the next run of `test_part.php` reported the title version and wrote the committed version again, so no diff is left | the run before the fix of `a_selected_test` rendered the triple page with the database verbs, whose descriptions are the titles of "is part of" and "can be", and wrote them into the snapshot; the note of `sum_over_results_2026-11-24.md` about these titles names the cause wrongly: they came from this cache, not from an unrelated change |
+| `src/test/php/unit_write/a_selected_test.php` | the html ui tests run with the request cache that the api has loaded from the database (`$ui_sys = $ui->dto` of "api based ui tests") | `ui_test_cache` and `init_unit_tests` before the ui tests, like `all_ui_tests::run` | the run of `test/test_part.php` of 2026-11-24 reported 13 errors of `component_ui_tests`, e.g. "the calculation formula of a component is shown with a link ... actual: formula: , expected: scale minute to sec": the tests expect the formulas, phrases, components and sample phrases of the unit test cache, which the database cache does not hold by these ids; `component_ui_tests` is switched on in the selection since e4988d819 (2026-11-09), but `test_part.php` has stopped before the ui tests since then (see the lesson of `2026-11-23_parent_target_share.md`), so this is the first run that reached them; not caused by the list change |
+| `src/test/resources/web/html/object_pages/triple.html` | the committed snapshot without a title at the verb links | the next run of `test_part.php` reported the title version and wrote the committed version again, so no diff is left | the run before the fix of `a_selected_test` rendered the triple page with the database verbs, whose descriptions are the titles of "is part of" and "can be", and wrote them into the snapshot; the note of `2026-11-24_sum_over_results.md` about these titles names the cause wrongly: they came from this cache, not from an unrelated change |
 
 ## Lessons learned by llm (2026-11-24)
 

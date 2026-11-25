@@ -46,6 +46,12 @@ list has, because a stored value wins over a result of the same phrases, the sam
 | file | old | new | reason |
 |---|---|---|---|
 
-The run of 2026-11-24 changed the case reports only by the exchange rate lines (`parent_target_share_2026-11-23.md`);
+The run of 2026-11-24 changed the case reports only by the exchange rate lines (`2026-11-23_parent_target_share.md`);
 the other rewritten snapshots (`object_pages/triple.html`, `views_by_object/ref/ref_default_ref_29.html` and the wf17
 workflow) show verb descriptions and a ref row, which no list function produces.
+
+## Lessons learned by llm
+
+## Lessons learned by human
+
+in general fine, but testing takes too long

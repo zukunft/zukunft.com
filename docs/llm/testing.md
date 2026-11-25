@@ -170,12 +170,28 @@ the environment accidentally reaches a deployment it should not touch.
 
 ## Each change is tested upfront with `test/test_part.php`
 
-A full test run with `test/test.php` takes more than 30 minutes, so the developer
-tests each change first with `test/test_part.php`, which runs only the tests that
-`a_selected_test::run` (`src/test/php/unit_write/a_selected_test.php`) calls.
+A full test run with `test/test.php` takes almost an hour on a normal pc at the moment, so the
+developer tests each change first with `test/test_part.php`, which runs only the tests that
+`a_selected_test::run` (`src/test/php/unit_write/a_selected_test.php`) calls. The order of the
+runs is:
 
-- With every change the LLM activates or adds the tests that cover the change in
-  `a_selected_test::run`, so that the developer can run them right away.
+1. If the change may shift a database id (a new or removed seed object e.g. a word, triple, verb
+   or formula of an imported json), the re-pin first: `test/reset_db.php` and then
+   `test/test_re_pin.php` (see *The steps to a stable test result after a new seed object*).
+2. `test/test_part.php` with the tests that are likely to break by the change, repeated until it
+   runs without error.
+3. Before a commit always a full `test/test.php` run, which must be error free as the final run.
+
+To find the test sections that take the most time, the developer saves the log of a run
+(`php test/test.php > test_run.log`) and runs `php bin/test_timing.php test_run.log`, which writes the
+seconds per first word and per first two words of the section headers and the 25 slowest sections as
+markdown to the standard output (`src/test/php/utils/test_timing.php`); it reads only the log, so it
+also works on the log of a `test_part.php` run, and the report is not committed.
+
+- With every change the LLM activates or adds the tests that are likely to break by the change
+  in `a_selected_test::run`, so that the developer can run them right away; the report of the
+  change always suggests `test/test_part.php` as the next run, never `test/test.php`, and if
+  the change may shift an id first `test/reset_db.php` and `test/test_re_pin.php`.
 - `a_selected_test::run` always covers every potential fail of all uncommitted changes, not only
   the expected ones: for each changed function the unit, read and write tests that call it, the
   coding rule tests for a changed include, message or generated doc, the test that writes a
@@ -188,8 +204,9 @@ tests each change first with `test/test_part.php`, which runs only the tests tha
   tests; the write tests create their test entries again.
 - In the same edit it deactivates the tests there whose changes are already
   committed, so that the selected run stays short.
-- The full `test/test.php` run is still needed before a commit; `test_part.php`
-  only gives the fast feedback for one change.
+- The full `test/test.php` run is still needed before a commit, and the final run before a
+  commit is always an error free `test/test.php`; `test_part.php` only gives the fast feedback for
+  one change.
 - `a_selected_test::run` calls the tests of `test/test.php` in the same order and
   switches off the tests that are not needed as a comment; `php bin/test_differences.php`
   writes every test that is missing, added or in another order to `docs/test_differences.md`.
@@ -969,11 +986,14 @@ Both flags are in `src/test/php/const/files.php`.
    `test/test_re_pin.php` again, which checks the re-pinned consts and writes the re-pin report
    again. If the report does not show "all ids are fine" for every class, repeat from step 2;
    a const that the report names as "re-pin by hand" is fixed in the code before the next run.
-5. Run the full `test/test.php` and fix any errors, if needed step by step in a debug run
-   with a break on the error.
-6. Once all errors are fixed, set `AUTO_UPDATE_TEST_FILES` to `false` and do a final run to
-   double-check that no test case is volatile. If it is fine, do a final code review, which an
-   LLM may support, and commit with a matching commit message.
+5. Run `test/test_part.php` with the tests that are likely to break by the change (see *Each
+   change is tested upfront with `test/test_part.php`*) and fix any errors, if needed step by
+   step in a debug run with a break on the error; a full `test/test.php` takes almost an hour, so
+   it is not the run to find the errors of one change.
+6. Once all errors are fixed, set `AUTO_UPDATE_TEST_FILES` to `false` and do the final run with
+   the full `test/test.php`, which must be error free and also shows that no test case is
+   volatile. If it is fine, do a final code review, which an LLM may support, and commit with a
+   matching commit message.
 
 Two traps that make the drift look smaller than it is:
 

@@ -66,6 +66,7 @@ class arithmetic
             chars::FUNC_ABS => abs($num),
             chars::FUNC_COS => cos($num),
             chars::FUNC_EXP => exp($num),
+            chars::FUNC_FLOOR => floor($num),
             chars::FUNC_LN => log($num),
             chars::FUNC_LOG => log10($num),
             chars::FUNC_ROUND => round($num),

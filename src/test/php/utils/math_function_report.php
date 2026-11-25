@@ -102,6 +102,7 @@ class math_function_report
         'abs' => ['the number without its sign', 'abs( -2.5 )', '2.5'],
         'cos' => ['cosine of an angle in radian', 'cos( 0 )', '1'],
         'exp' => ['e to the power of the number', 'exp( 0 )', '1'],
+        'floor' => ['the largest whole number not above the number e.g. the round lots of a part', 'floor( 2.7 )', '2'],
         'ln' => ['natural logarithm', 'ln( 1 )', '0'],
         'log' => ['logarithm to the base 10', 'log( 100 )', '2'],
         'log( ; )' => ['logarithm to the base of the second argument', 'log( 8 ; 2 )', '3'],
@@ -139,6 +140,7 @@ class math_function_report
         // the functions of one number and the power with a number that they cannot give
         'sqrt( -1 )', 'log( 0 )', 'log( 8 ; 1 )', 'log( 8 ; 0 )', 'log( 8 ; 2 ; 3 )', 'ln( -1 )', 'exp( 1000 )', 'sqrt( 4 ; 9 )', 'sqrt( abc )',
         '0 ^ -1', '( -8 ) ^ 0.5', '2 ^ 3 ^ 2', '-2 ^ 2', '( -3 ) ^ 2', '2 ^ -1', 'round( -2.5 )', 'round( 2.5 )',
+        'floor( -2.5 )', 'floor( 2.5 )', 'floor( 1 ; 2 )',
         'if( 0 ; 5 / 0 + 1 ; 2 )', 'if( 1 ; 2 ; 5 / 0 + 1 )', 'if( 1 ; 5 / 0 ; 2 )', 'if( 1 = 1 & 2 = 3 ; 5 ; 6 )', 'if( 1 = 1 | 2 = 3 ; 5 ; 6 )',
     ];
 

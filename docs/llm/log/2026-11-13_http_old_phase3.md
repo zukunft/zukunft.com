@@ -192,7 +192,7 @@ its `BASE_IMPORT` job to done after its own import (`cfg/db/sql_db.php:1254`) or
 
 | file | old lines | new lines | why a change is expected |
 |---|---|---|---|
-| `resources/db_code_links/change_fields.csv` | — | — | only if the progress fields are logged; they are helper fields of a job and change no result, so probably not, like `users.verb_id` (`docs/llm/log/http_old_phase2_2026-11-12.md`, "Unexpected changes") |
+| `resources/db_code_links/change_fields.csv` | — | — | only if the progress fields are logged; they are helper fields of a job and change no result, so probably not, like `users.verb_id` (`docs/llm/log/2026-11-12_http_old_phase2.md`, "Unexpected changes") |
 | `src/main/resources/openapi/zukunft_com_api.yaml`, served copy `/var/www/html` | `/job` | + POST | the api tests call the served checkout |
 | `test/resources/db/job/` sql fixtures, the job type baselines | — | — | the new fields and the new type change the job statements and the type list: `/test/reset_db.php` and the full run |
 | `views_by_id/` job control snapshot | — | — | regenerated for an admin and for a user |

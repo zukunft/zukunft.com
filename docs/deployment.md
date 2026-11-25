@@ -18,10 +18,12 @@ The recommended steps to test any code changes are
 3. if all unit tests are fine and something on the database has changed run /test/reset_db.php to update the database and prepare for the db read tests
 4. if this also fails, try to fix the issue and worst case try /test/reset_db_forced.php to rebuild the database without any parameters from the database
 5. if the database update is fine use rsync to move the updates to http://localhost/ for the api tests
-6. run /test/test.php to perform all tests required for deployment 
-7. in case of errors fix them and repeat step 6 or worst case even step 1
-8. if /test/test.php is fine the commit can be done
-9. to fill the local server with all data run /test/test_full_load.php
+6. if a database id may have shifted e.g. by a new word or triple in an imported json, run /test/reset_db.php and then /test/test_re_pin.php for the re-pin (see "The steps to a stable test result after a new seed object" in docs/llm/testing.md)
+7. activate the tests that are likely to break by the change in src/test/php/unit_write/a_selected_test.php and run /test/test_part.php, because the full /test/test.php takes almost an hour on a normal pc at the moment
+8. in case of errors fix them and repeat step 7 or worst case even step 1
+9. before the commit run the full /test/test.php to perform all tests required for deployment; this final run must be error free
+10. if /test/test.php is fine the commit can be done
+11. to fill the local server with all data run /test/test_full_load.php
 
 ### additional line in src/main/resources/db_code_links
 
@@ -149,7 +151,9 @@ the first step is to update the database, so
 
 1. run /test/reset_db.php and confirm the file changes if they are fine to update the database and the fixed csv data snaps like src/test/resources/unit/component/list.csv
 2. update the local www files using a rsync command like 'rsync -av --delete /home/timon/PhpstormProjects/zukunft.com/ /var/www/html' to fix the local api tests
-3. run /test/test.php and update the test files if needed to finish the test
+3. if a database id may have shifted, run /test/test_re_pin.php for the re-pin
+4. run /test/test_part.php with the tests that are likely to break by the change and update the test files if needed
+5. finish with an error free run of the full /test/test.php before the commit
 
 ## backend job scheduler
 

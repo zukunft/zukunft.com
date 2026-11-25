@@ -230,7 +230,7 @@ The formula engine calculates with `+ - * /`, brackets, `min( a ; b ; … )`, th
 its arguments, and `max( a ; b ; … )`, the largest; the arguments are separated by `;`, because
 a `,` joins the phrase names of one operand (`"delivered electricity","lifetime"`). It also
 calculates `if( condition ; then ; else )` with `=`, `&` and `|` in the condition and only
-the chosen part, the power `^` and the functions of one number `abs`, `cos`, `exp`, `ln`, `log`
+the chosen part, the power `^` and the functions of one number `abs`, `cos`, `exp`, `floor` (round down), `ln`, `log`
 (base 10, or `log( x ; base )`), `round`, `sec`, `sin` and `sqrt`, with an angle in radian. `sum`, `count` and `mean`
 take a list: a phrase as their argument stands for every stored value that names the phrase and
 all phrases of the calculation, without calculated results and without a value that also names a

@@ -91,6 +91,8 @@ class chars
     const string FUNC_ABS = 'abs';
     const string FUNC_COS = 'cos';
     const string FUNC_EXP = 'exp';
+    // the largest whole number not above the number e.g. the round lots of an equal part as floor( "original" / 2 / "lot size" ) * "lot size"
+    const string FUNC_FLOOR = 'floor';
     const string FUNC_LN = 'ln';
     const string FUNC_LOG = 'log';
     const string FUNC_ROUND = 'round';
@@ -101,6 +103,7 @@ class chars
         self::FUNC_ABS,
         self::FUNC_COS,
         self::FUNC_EXP,
+        self::FUNC_FLOOR,
         self::FUNC_LN,
         self::FUNC_LOG,
         self::FUNC_ROUND,

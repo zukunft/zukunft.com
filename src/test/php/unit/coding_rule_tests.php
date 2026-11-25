@@ -77,6 +77,7 @@ include_once test_paths::UTILS . 'math_function_report.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_differences.php';
 include_once test_paths::UTILS . 'test_object_overview.php';
+include_once test_paths::UTILS . 'test_timing.php';
 include_once test_paths::UNIT_WORKFLOW . 'url_test_base.php';
 include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::CONST . 'files.php';
@@ -121,6 +122,7 @@ use Zukunft\ZukunftCom\test\php\utils\math_function_report;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_differences;
 use Zukunft\ZukunftCom\test\php\utils\test_object_overview;
+use Zukunft\ZukunftCom\test\php\utils\test_timing;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\unit_workflow\url_test_base;
@@ -318,6 +320,49 @@ class coding_rule_tests
         // negative: a function without a test call is not listed as incomplete
         $test_name = 'a function without a test call is not listed as incomplete';
         $t->assert_text_not_contains($test_name, $incomplete_md, 'save');
+
+        // the test timing report takes the time from one section header of a test log to the next
+        $tim = new test_timing();
+        $test_name = 'a log line is split into its runtime seconds and its text';
+        $t->assert($test_name, $tim->line_parts('1463.5311 workflow start '), [1463.5311, 'workflow start']);
+        // negative: a line without the timestamp of the log writer is no log line
+        $test_name = '... but a line without a timestamp is no log line';
+        $t->assert_null($test_name, $tim->line_parts('workflow start'));
+        $test_name = 'a section header is a line with only the header text';
+        $t->assert_true($test_name, $tim->is_header('db write triple delete only if not used'));
+        // negative: the lines of a failed test, an update and a php warning are no header
+        $test_name = '... but not the line of a failed test, an update, a timeout or a php warning';
+        $no_headers = ['ERROR add triple view: ', 'updated /var/www/html/test.html', 'timeout: the table page shows',
+            'PHP Warning:  unexpected NAN', '#0 /home/test.php(466): run()', 'ok word add', '{main}', '<div>table</div>'];
+        $t->assert($test_name, array_values(array_filter($no_headers, fn($txt) => $tim->is_header($txt))), []);
+        $log = "000.0000 Start of all zukunft.com tests \n"
+            . "002.0000 unit word \n"
+            . "005.0000 unit word sql read\n"
+            . "006.0000 ERROR add word view: \n"
+            . "006.0000 diff: 12835//+ value=\"62\">is alternative follower of\n"
+            . "006.0000 actual: <!DOCTYPE html>\n"
+            . "006.0000 expected: <!DOCTYPE html>\n"
+            . "006.0000 , took 0.1178 seconds\n"
+            . "010.0000 db write word \n"
+            . "030.0000 db read word \n"
+            . "031.0000 unit verb \n"
+            . "040.0000 updated /var/www/html/test.html\n";
+        $test_name = 'the time of a section ends at the next header, and an error block belongs to its section';
+        $sec_lst = $tim->sections($log);
+        $t->assert($test_name, array_map(fn($sec) => [$sec[0], $sec[1]], $sec_lst), [
+            ['Start of all zukunft.com tests', 2.0], ['unit word', 3.0], ['unit word sql read', 5.0],
+            ['db write word', 20.0], ['db read word', 1.0], ['unit verb', 9.0]]);
+        $test_name = 'the time of the sections is summed by the first word of the header';
+        $t->assert($test_name, $tim->sums($sec_lst, 1), ['db' => 21.0, 'unit' => 17.0, 'Start' => 2.0]);
+        $test_name = '... and by the first two words, the slowest first';
+        $t->assert($test_name, $tim->sums($sec_lst, 2),
+            ['db write' => 20.0, 'unit verb' => 9.0, 'unit word' => 8.0, 'Start of' => 2.0, 'db read' => 1.0]);
+        $test_name = 'the report names the total and the slowest section';
+        $tim_md = $tim->md($log, 2);
+        $t->assert_text_contains($test_name, $tim_md, '| db write word | 20.0 |');
+        // negative: only the given number of slowest sections is listed
+        $test_name = '... but only the given number of the slowest sections';
+        $t->assert_text_not_contains($test_name, $tim_md, '| db read word | 1.0 |');
 
         // the test differences report lists each test call and a test call in a comment as switched off
         $test_name = 'a test call and a commented test call are listed in their order';

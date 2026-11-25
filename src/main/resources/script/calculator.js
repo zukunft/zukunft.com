@@ -75,7 +75,7 @@
     // the functions of a list like arithmetic::list_number; formula_calc::tokens has written all values of a list as the arguments
     const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
     // the functions of one number like arithmetic::one_number, so also round away from zero and an angle in radian
-    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
+    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, floor: Math.floor, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
 
     const element = document.getElementById(DATA_ID);
     if (element === null) {

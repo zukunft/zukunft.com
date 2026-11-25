@@ -300,7 +300,7 @@ A selector that mixes options with and without a number keeps the last results w
 
 ## alternative order only on the javascript page
 
-Only `calculator_json.js` walks the `is alternative follower of` triples of an option with `calculator alternative order` (`docs/llm/log/alternative_order_2026-11-24.md`). The page without javascript (`calculator.php` `sorted` and `previous_in_list`, `ui_list::prior_names` and `ranked_rows`, which reach the six callers of `ui_list::page_calc` without the calculator reader), the backend (`element_group::prior_names`), the import check (`data_object::prior_names`) and `formula_editor.js` walk only the `is follower of` chain. So a page that `uses` the alternative option, or a saved case that has chosen it, shows the main order there, and the backend job of a save calculates the walk of the main order, which the double calculation check reports as a difference. Give these readers the chosen order of the page, each with a positive and a negative test; the stored results need the phrase of the order in their group, so that both walks can be stored.
+Only `calculator_json.js` walks the `is alternative follower of` triples of an option with `calculator alternative order` (`docs/llm/log/2026-11-24_alternative_order.md`). The page without javascript (`calculator.php` `sorted` and `previous_in_list`, `ui_list::prior_names` and `ranked_rows`, which reach the six callers of `ui_list::page_calc` without the calculator reader), the backend (`element_group::prior_names`), the import check (`data_object::prior_names`) and `formula_editor.js` walk only the `is follower of` chain. So a page that `uses` the alternative option, or a saved case that has chosen it, shows the main order there, and the backend job of a save calculates the walk of the main order, which the double calculation check reports as a difference. Give these readers the chosen order of the page, each with a positive and a negative test; the stored results need the phrase of the order in their group, so that both walks can be stored.
 
 ## calculator scripts without a browser test of a checkbox
 
@@ -1560,7 +1560,7 @@ remove the last part of the dead formula edit render path: web/formula/formula.p
 
 ### import view (missing parts of the retired http_old/import.php)
 
-the upload of the import view (views::IMPORT_ID) imports the json file for a user with user::can_import (import::put_upload, called by frontend::action_import_upload) and the import result view (views::IMPORT_RESULT_ID) names the number of the imported objects per type (docs/llm/log/http_old_phase2_2026-11-12.md). Open:
+the upload of the import view (views::IMPORT_ID) imports the json file for a user with user::can_import (import::put_upload, called by frontend::action_import_upload) and the import result view (views::IMPORT_RESULT_ID) names the number of the imported objects per type (docs/llm/log/2026-11-12_http_old_phase2.md). Open:
 
 the import preview view (views::IMPORT_PREVIEW_ID) of an upload: show the counters and the clashes of the file before anything is written, with the confirm of the import
 
@@ -1576,7 +1576,7 @@ the put of api/json (the import of the calculator editor) does not check user::c
 
 ### json export (missing parts of the retired http_old/get_json.php)
 
-api/json answers a get with the export of the phrases given by name (url_var::WORDS) or by id (url_var::PHRASE_LIST) with all related phrases that the user may read, as json or xml, or the csv of the results of the formulas given by name (url_var::EXPORT_FORMAT), and the export views offer it as a download (export::file_text, frontend::export_file, docs/llm/log/http_old_phase2_2026-11-12.md). Open:
+api/json answers a get with the export of the phrases given by name (url_var::WORDS) or by id (url_var::PHRASE_LIST) with all related phrases that the user may read, as json or xml, or the csv of the results of the formulas given by name (url_var::EXPORT_FORMAT), and the export views offer it as a download (export::file_text, frontend::export_file, docs/llm/log/2026-11-12_http_old_phase2.md). Open:
 
 the ods export: the view views::EXPORT_ODS_ID has no format (views::EXPORT_FORMATS), so its export button says that the format is not available; an ods writer is needed, e.g. from the rows of the csv
 
@@ -2798,7 +2798,7 @@ security review.
 ## review of the uncommitted http_old phase 2 change
 
 Review of 2026-11-13 of the working tree on top of `60ea05136` (last used default, export api, import upload and the
-deletion of 10 `http_old` scripts and the 2 `dev` experiments, see `docs/llm/log/http_old_phase2_2026-11-12.md`).
+deletion of 10 `http_old` scripts and the 2 `dev` experiments, see `docs/llm/log/2026-11-12_http_old_phase2.md`).
 No code was changed by the review.
 
 1. **Line balance:** the change adds 2011 lines and deletes 1747, of which about 1510 are the deleted scripts; so
@@ -3340,7 +3340,7 @@ their own phrase group.
 ## open points of the add word suggestions
 
 The add word button of a search fills the add view with the suggestions of wikipedia and conceptnet
-(`docs/llm/log/add_word_suggest_2026-11-20.md`). Open:
+(`docs/llm/log/2026-11-20_add_word_suggest.md`). Open:
 
 - **adjust the rows:** the add view carries the suggested reference and triple rows as hidden fields, so the user can
   change the name and the description, but can remove a suggested reference or triple only by not confirming at all;

@@ -1,7 +1,7 @@
 # realised formulas (2026-11-24)
 
 Part of #247, the third of the three changes of part 5 of step 9 of the portfolio split page in `docs/llm/pending.md`
-(the first two are `docs/llm/log/sum_over_results_2026-11-24.md` and `docs/llm/log/list_kinds_2026-11-24.md`).
+(the first two are `docs/llm/log/2026-11-24_sum_over_results.md` and `docs/llm/log/2026-11-24_list_kinds.md`).
 
 ## Request
 

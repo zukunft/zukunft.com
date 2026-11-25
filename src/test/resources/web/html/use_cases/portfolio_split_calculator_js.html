@@ -7935,20 +7935,20 @@
                         {
                             "id": 260,
                             "name": "walk count of the first child",
-                            "description": "the target of the first child rounded to the lot size, at most the whole holding",
+                            "description": "the target of the first child rounded to the lot size, at most the whole holding; if the rounded counts of both children (the second one mirrored while mirroring is asked and the target shares are equal) exceed the holding by more than a millionth of a lot, which is the float noise of the sum, at most an equal part in round lots",
                             "type_code_id": "default",
-                            "expression": "\"split count\" = min( max( round( \"target quantity\" / \"lot size\" ) * \"lot size\" ; 0 ) ; \"original\" )",
-                            "latex": "\\text{split count} = min( max( round( \\text{target quantity} / \\text{lot size} ) \\cdot \\text{lot size} ; 0 ) ; \\text{original} )",
+                            "expression": "\"split count\" = if( max( min( max( round( \"target quantity\",\"first child portfolio\" / \"lot size\" ) * \"lot size\" ; 0 ) ; \"original\" ) + if( \"mirror\" = 1 \u0026 \"target share difference\" = 0 ; min( max( round( \"target quantity\",\"first child portfolio\" / \"lot size\" ) * \"lot size\" ; 0 ) ; \"original\" ) ; min( max( round( \"target quantity\",\"second child portfolio\" / \"lot size\" ) * \"lot size\" ; 0 ) ; \"original\" ) ) - \"original\" - \"lot size\" / 1000000 ; 0 ) = 0 ; min( max( round( \"target quantity\",\"first child portfolio\" / \"lot size\" ) * \"lot size\" ; 0 ) ; \"original\" ) ; min( min( max( round( \"target quantity\",\"first child portfolio\" / \"lot size\" ) * \"lot size\" ; 0 ) ; \"original\" ) ; floor( \"original\" / 2 / \"lot size\" ) * \"lot size\" ) )",
+                            "latex": "\\text{split count} = if( max( min( max( round( \\text{target quantity},\\text{first child portfolio} / \\text{lot size} ) \\cdot \\text{lot size} ; 0 ) ; \\text{original} ) + if( \\text{mirror} = 1 \u0026 \\text{target share difference} = 0 ; min( max( round( \\text{target quantity},\\text{first child portfolio} / \\text{lot size} ) \\cdot \\text{lot size} ; 0 ) ; \\text{original} ) ; min( max( round( \\text{target quantity},\\text{second child portfolio} / \\text{lot size} ) \\cdot \\text{lot size} ; 0 ) ; \\text{original} ) ) - \\text{original} - \\text{lot size} / 1000000 ; 0 ) = 0 ; min( max( round( \\text{target quantity},\\text{first child portfolio} / \\text{lot size} ) \\cdot \\text{lot size} ; 0 ) ; \\text{original} ) ; min( min( max( round( \\text{target quantity},\\text{first child portfolio} / \\text{lot size} ) \\cdot \\text{lot size} ; 0 ) ; \\text{original} ) ; floor( \\text{original} / 2 / \\text{lot size} ) \\cdot \\text{lot size} ) )",
                             "assigned_word": "target quantity",
                             "impact": null
                         },
                         {
                             "id": 261,
                             "name": "walk count of the second child",
-                            "description": "the count of the first child while mirroring is asked and the target shares are equal, else the target of the second child rounded to the lot size, at most the whole holding",
+                            "description": "the count of the first child while mirroring is asked and the target shares are equal, else the target of the second child rounded to the lot size, at most the whole holding; if the rounded counts of both children exceed the holding by more than a millionth of a lot, which is the float noise of the sum, at most an equal part in round lots",
                             "type_code_id": "default",
-                            "expression": "\"split count\" = if( \"mirror\" = 1 \u0026 \"target share difference\" = 0 ;\"split count\",\"first child portfolio\" ; min( max( round( \"target quantity\",\"second child portfolio\" / \"lot size\" ) * \"lot size\" ; 0 ) ; \"original\" ) )",
-                            "latex": "\\text{split count} = if( \\text{mirror} = 1 \u0026 \\text{target share difference} = 0 ;\\text{split count},\\text{first child portfolio} ; min( max( round( \\text{target quantity},\\text{second child portfolio} / \\text{lot size} ) \\cdot \\text{lot size} ; 0 ) ; \\text{original} ) )",
+                            "expression": "\"split count\" = if( \"mirror\" = 1 \u0026 \"target share difference\" = 0 ;\"split count\",\"first child portfolio\" ; if( max( min( max( round( \"target quantity\",\"first child portfolio\" / \"lot size\" ) * \"lot size\" ; 0 ) ; \"original\" ) + min( max( round( \"target quantity\",\"second child portfolio\" / \"lot size\" ) * \"lot size\" ; 0 ) ; \"original\" ) - \"original\" - \"lot size\" / 1000000 ; 0 ) = 0 ; min( max( round( \"target quantity\",\"second child portfolio\" / \"lot size\" ) * \"lot size\" ; 0 ) ; \"original\" ) ; min( min( max( round( \"target quantity\",\"second child portfolio\" / \"lot size\" ) * \"lot size\" ; 0 ) ; \"original\" ) ; floor( \"original\" / 2 / \"lot size\" ) * \"lot size\" ) ) )",
+                            "latex": "\\text{split count} = if( \\text{mirror} = 1 \u0026 \\text{target share difference} = 0 ;\\text{split count},\\text{first child portfolio} ; if( max( min( max( round( \\text{target quantity},\\text{first child portfolio} / \\text{lot size} ) \\cdot \\text{lot size} ; 0 ) ; \\text{original} ) + min( max( round( \\text{target quantity},\\text{second child portfolio} / \\text{lot size} ) \\cdot \\text{lot size} ; 0 ) ; \\text{original} ) - \\text{original} - \\text{lot size} / 1000000 ; 0 ) = 0 ; min( max( round( \\text{target quantity},\\text{second child portfolio} / \\text{lot size} ) \\cdot \\text{lot size} ; 0 ) ; \\text{original} ) ; min( min( max( round( \\text{target quantity},\\text{second child portfolio} / \\text{lot size} ) \\cdot \\text{lot size} ; 0 ) ; \\text{original} ) ; floor( \\text{original} / 2 / \\text{lot size} ) \\cdot \\text{lot size} ) ) )",
                             "assigned_word": "target quantity",
                             "impact": null
                         },
@@ -11591,12 +11591,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "LISP",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 4
                         },
@@ -11745,12 +11751,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "LISN",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 9
                         },
@@ -11899,12 +11911,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "GIVN",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 35
                         },
@@ -12053,12 +12071,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
                                 "PGHN",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 89
                         },
@@ -12207,12 +12231,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "GEBN",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 175
                         },
@@ -12361,12 +12391,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "LONN",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 209
                         },
@@ -12515,11 +12551,17 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
                                 "target quantity",
+                                "target share difference",
                                 "ZURN"
                             ],
                             "number": 210
@@ -12669,12 +12711,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
                                 "SCMN",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 210
                         },
@@ -12823,11 +12871,17 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
                                 "target quantity",
+                                "target share difference",
                                 "VACN"
                             ],
                             "number": 281
@@ -12977,12 +13031,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
                                 "ROG",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 699
                         },
@@ -13131,12 +13191,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
                                 "SOON",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 420
                         },
@@ -13285,12 +13351,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
                                 "SCHP",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 420
                         },
@@ -13439,12 +13511,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
                                 "SIKA",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 456
                         },
@@ -13593,12 +13671,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "KNIN",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 455
                         },
@@ -13747,11 +13831,17 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
                                 "target quantity",
+                                "target share difference",
                                 "UHR"
                             ],
                             "number": 524
@@ -13901,12 +13991,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
                                 "CFR",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 701
                         },
@@ -14055,12 +14151,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
                                 "SREN",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 700
                         },
@@ -14209,12 +14311,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
                                 "STMN",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 874
                         },
@@ -14363,12 +14471,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "LOGN",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 1051
                         },
@@ -14517,12 +14631,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "NOVN",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 1050
                         },
@@ -14671,12 +14791,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "SGSN",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 1050
                         },
@@ -14825,12 +14951,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "HOLN",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 1225
                         },
@@ -14979,12 +15111,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "NESN",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 1225
                         },
@@ -15134,11 +15272,17 @@
                             "formula": "walk count of the first child",
                             "context": [
                                 "ALC",
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 1225
                         },
@@ -15287,12 +15431,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
                                 "BAER",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 1574
                         },
@@ -15441,12 +15591,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
                                 "BANB",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 1575
                         },
@@ -15596,11 +15752,17 @@
                             "formula": "walk count of the first child",
                             "context": [
                                 "ABBN",
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 1925
                         },
@@ -15749,12 +15911,18 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
                                 "SDZ",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 2451
                         },
@@ -15904,11 +16072,17 @@
                             "formula": "walk count of the first child",
                             "context": [
                                 "ADEN",
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 3150
                         },
@@ -16057,11 +16231,17 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "shares",
                                 "target quantity",
+                                "target share difference",
                                 "UBSG"
                             ],
                             "number": 3500
@@ -16212,13 +16392,19 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
                                 "CHF",
                                 "ConfedBond30",
+                                "example portfolio split",
                                 "face value",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
-                                "target quantity"
+                                "percent",
+                                "second child portfolio",
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 520000
                         },
@@ -16369,13 +16555,19 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
                                 "CHF",
+                                "example portfolio split",
                                 "face value",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "NestleBond27",
                                 "original",
-                                "target quantity"
+                                "percent",
+                                "second child portfolio",
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 525000
                         },
@@ -16526,13 +16718,19 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
                                 "CHF",
+                                "example portfolio split",
                                 "face value",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
                                 "RocheBond28",
-                                "target quantity"
+                                "second child portfolio",
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 350000
                         },
@@ -16687,13 +16885,19 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
                                 "BundDE30",
                                 "EUR",
+                                "example portfolio split",
                                 "face value",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
-                                "target quantity"
+                                "percent",
+                                "second child portfolio",
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 350000
                         },
@@ -16848,11 +17052,17 @@
                             ],
                             "formula": "walk count of the first child",
                             "context": [
+                                "assumed",
+                                "example portfolio split",
                                 "face value",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "target quantity",
+                                "target share difference",
                                 "TreasuryUS27",
                                 "USD"
                             ],
@@ -17064,10 +17274,15 @@
                                 "assumed",
                                 "CHF",
                                 "CHF cash",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
-                                "target quantity"
+                                "percent",
+                                "second child portfolio",
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 349999.99
                         },
@@ -17150,10 +17365,15 @@
                                 "assumed",
                                 "EUR",
                                 "EUR cash",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
-                                "target quantity"
+                                "percent",
+                                "second child portfolio",
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 630000.01
                         },
@@ -17234,10 +17454,15 @@
                             "formula": "walk count of the first child",
                             "context": [
                                 "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "target quantity",
+                                "target share difference",
                                 "USD",
                                 "USD cash"
                             ],
@@ -17320,12 +17545,17 @@
                             "formula": "walk count of the first child",
                             "context": [
                                 "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "GBP",
                                 "GBP cash",
                                 "lot size",
+                                "mirror",
                                 "original",
-                                "target quantity"
+                                "percent",
+                                "second child portfolio",
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 69988.5
                         },
@@ -17406,12 +17636,17 @@
                             "formula": "walk count of the first child",
                             "context": [
                                 "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "JPY",
                                 "JPY cash",
                                 "lot size",
+                                "mirror",
                                 "original",
-                                "target quantity"
+                                "percent",
+                                "second child portfolio",
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 10500000.05
                         },
@@ -17494,10 +17729,15 @@
                                 "assumed",
                                 "DKK",
                                 "DKK cash",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
-                                "target quantity"
+                                "percent",
+                                "second child portfolio",
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 350000.03
                         },
@@ -17578,12 +17818,17 @@
                             "formula": "walk count of the first child",
                             "context": [
                                 "assumed",
+                                "example portfolio split",
                                 "first child portfolio",
                                 "lot size",
+                                "mirror",
                                 "original",
+                                "percent",
+                                "second child portfolio",
                                 "SEK",
                                 "SEK cash",
-                                "target quantity"
+                                "target quantity",
+                                "target share difference"
                             ],
                             "number": 350000
                         },

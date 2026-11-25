@@ -88,6 +88,10 @@ class math_tests
             ['sqrt( 3 ^ 2 + 4 ^ 2 )', 5.0],
             ['abs( -2.5 )', 2.5],
             ['round( -2.5 )', -3.0],
+            // floor rounds down, so a negative number away from zero and a whole number stays
+            ['floor( 2.7 )', 2.0],
+            ['floor( -2.5 )', -3.0],
+            ['floor( 3 ) * 2', 6.0],
             ['log( 100 ) + ln( 1 ) + exp( 0 )', 3.0],
             ['log( 8 ; 2 ) * 2', 6.0],
             ['sin( 0 ) + cos( 0 ) + sec( 0 )', 2.0],
@@ -104,6 +108,7 @@ class math_tests
         // negative: a text that is no calculation gives no number instead of a wrong one
         $invalid = ['', '2 +', '2 x 3', '( 2 + 3', '1 / 0', '2 3',
             'min( 1 ; 2', 'min 1', 'min( ; 1 )', 'max( 1 ; 2', 'max 1', 'max( ; 1 )', 'round( 1 ; 2 )', '1 ; 2',
+            'floor( 1 ; 2 )', 'floor 2', 'floor( 2',
             'tan( 1 )', 'sqrt( -1 )', 'log( 0 )', 'log( 8 ; 1 )', 'log( 8 ; 2 ; 3 )','exp( 1000 )', '0 ^ -1', '( -8 ) ^ 0.5', 'sqrt( 4', 'sqrt 4',
             'if( 1 ; 2 )', 'if( 1 ; 2 ; 3 ; 4 )', 'if( 1 ; 5 / 0 ; 2 )', 'if( 1 / 0 ; 2 ; 3 )', '1 = 1', '1 & 1'];
         foreach ($invalid as $txt) {
@@ -346,6 +351,9 @@ class math_tests
             ['sqrt(9) * 2', 6.0],
             ['10 - sqrt(4)', 8.0],
             ['round(2.6) * 3', 9.0],
+            ['floor(2.7) * 3', 6.0],
+            ['floor(-2.5)', -3.0],
+            ['floor(10 / 2 / 3) * 3', 3.0],
             ['log(100)', 2.0],
             ['log(8;2)', 3.0],
             ['1 + log(100;10) * 2', 5.0],
@@ -396,6 +404,7 @@ class math_tests
             ['ln(-1) + 1', 'ln'],
             ['exp(1000)', 'exp'],
             ['sqrt(4;9)', 'sqrt'],
+            ['floor(4;9)', 'floor'],
             ['0 ^ -1', chars::POW],
             ['(-8) ^ 0.5', chars::POW],
         ];
