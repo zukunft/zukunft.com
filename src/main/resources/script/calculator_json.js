@@ -794,8 +794,12 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     const LIST_ARGUMENTS_PLAIN = /\b(?:sum|count|mean)\s*\(\s*(?:x|-?\d+(?:\.\d+)?)\s*(?:;\s*(?:x|-?\d+(?:\.\d+)?)\s*)*\)/g;
     const LIST_FUNCTION = /\b(?:sum|count|mean)\s*\(/;
     const LIST_EXCLUDED = ['variance low (system)', 'variance high (system)', 'confidence'];
+    // round and floor take their argument without the float noise below these decimals like arithmetic::ROUND_NOISE_DECIMALS,
+    // the same decimals as an operand of a calculation; toFixed rounds the exact binary value like the php round
+    const ROUND_NOISE_DECIMALS = 12;
+    const WITHOUT_NOISE = (x) => Number(x.toFixed(ROUND_NOISE_DECIMALS));
     // the functions of one number like arithmetic::one_number, so also round away from zero and an angle in radian
-    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, floor: Math.floor, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
+    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, floor: (x) => Math.floor(WITHOUT_NOISE(x)), ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(WITHOUT_NOISE(x))), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
     // the char between the result and the calculation of a formula (chars::CHAR_CALC)
     const CHAR_CALC = '=';
     // the decimals of a compare, the same as formula_calc::DECIMALS

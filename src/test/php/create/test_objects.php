@@ -146,10 +146,12 @@ class test_objects
                 if ($phr_lst->count() == count($obj_name)) {
                     $grp = new group($obj->get_user());
                     $grp->set_phrase_list($phr_lst);
-                    // remove the value's change log before the value is deleted, but only if at least
-                    // one phrase of the value is a test row (see cleanup_change_log_value)
-                    $this->env->cleanup_change_log_value($grp, $phr_lst);
                     $this->env->write_value_cleanup($obj, $grp);
+                    // remove the value's change log after the value is deleted, so also the entry of this delete,
+                    // because the group id comes from the phrases and the next run would show the delete in the
+                    // history of its value; only if at least one phrase of the value is a test row (see
+                    // cleanup_change_log_value)
+                    $this->env->cleanup_change_log_value($grp, $phr_lst);
                 }
             } elseif ($obj::class == ref::class) {
                 // remove the ref's change log before the ref is deleted, but only if the ref's phrase

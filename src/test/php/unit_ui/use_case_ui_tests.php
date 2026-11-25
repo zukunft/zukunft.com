@@ -538,6 +538,40 @@ class use_case_ui_tests
         $test_name = '... but without them not';
         $user_pct_txt = $list->calculator_cell_text($pct_val, new number_format(), false, $msg);
         $t->assert_text_not_contains($test_name, $user_pct_txt, '100.000');
+        // a cell of a page independent table reads the one result of its phrases if no one value qualifies
+        // e.g. a row of the portfolio split walk, which is a result of a formula (step 9 part 4)
+        $res_year = $t_res->result_zh_year_ui(2);
+        $res_canton = $t_res->result_zh_canton_ui(3);
+        $gen_val = new test_lib()->ui_value($t_val->value_for_phrases(
+            [$t_wrd->word_zh()->phrase(), $t_wrd->word_inhabitant()->phrase()], 1));
+        // the phrases of the cells as the frontend phrases of the results
+        $zh_phr = $res_year->phr_lst()->get_by_name($t_wrd->word_zh()->name(), $msg);
+        $inh_phr = $res_year->phr_lst()->get_by_name($t_wrd->word_inhabitant()->name(), $msg);
+        $y19_phr = $res_year->phr_lst()->get_by_name($t_wrd->word_2019()->name(), $msg);
+        $cnt_phr = $res_canton->phr_lst()->get_by_name($t_wrd->word_canton()->name(), $msg);
+        $gen_lst = new value_list_ui();
+        $gen_lst->add($gen_val, $msg);
+        $gen_lst->add($res_year, $msg);
+        $test_name = 'a cell of a page independent table reads the one result of its phrases';
+        $gen_num = $list->calculator_general_value([$zh_phr, $inh_phr, $y19_phr], $gen_lst, $msg, [], true);
+        $t->assert($test_name, $gen_num?->number(), 2.0);
+        // negative: a table of a page reads only a stored value, because a result belongs to its page
+        $test_name = '... but a cell of a page table reads no result';
+        $t->assert_null($test_name, $list->calculator_general_value([$zh_phr, $inh_phr, $y19_phr], $gen_lst, $msg));
+        // negative: a value is read before a result, also in a page independent table
+        $test_name = '... and the one value is read before a result with the same phrases';
+        $gen_num = $list->calculator_general_value([$zh_phr, $inh_phr], $gen_lst, $msg, [], true);
+        $t->assert($test_name, $gen_num?->number(), 1.0);
+        // negative: two results are no one result, so the order of the list never picks one
+        $gen_res_lst = new value_list_ui();
+        $gen_res_lst->add($res_year, $msg);
+        $gen_res_lst->add($res_canton, $msg);
+        $test_name = '... and no result if two results qualify';
+        $t->assert_null($test_name, $list->calculator_general_value([$zh_phr, $inh_phr], $gen_res_lst, $msg, [], true));
+        // a result with the phrase of another column is skipped, so the other one is the one result again
+        $test_name = '... but the one result again if the other has the phrase of another column';
+        $gen_num = $list->calculator_general_value([$zh_phr, $inh_phr], $gen_res_lst, $msg, [$cnt_phr], true);
+        $t->assert($test_name, $gen_num?->number(), 2.0);
         // a unit is shown by its symbol e.g. "kWh/a" for kilowatthours per year like behind a
         // number, so also the symbol "€" of Euro for the unit EUR that stands for Euro
         $test_name = 'a field shows the symbol of its unit';

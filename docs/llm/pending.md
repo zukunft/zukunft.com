@@ -12,25 +12,23 @@ src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html and the
 1. the rounding of a tie (part 3 of step 9): the sample rounds LISP 3.5 up but SCHP 420.5, STMN 874.5, ABBN 1925.5
    and the cent of `CHF cash` down, only because its carried deviation has floating point noise. Decision: keep the
    stored numbers, which are just below the tie (e.g. 420.499999), and avoid the rounding noise in the calculation,
-   so that a tie is a tie in all five evaluators (task "the rounding noise" of part 3)
+   so that a tie is a tie in all five evaluators; the noise limit is 12 decimals and not 8, because the sample
+   reaches SCHP, STMN and ABBN about 7e-13 below the tie and rounds them down (done, the run of 2026-11-25 keeps
+   all case reports at 0, `docs/llm/log/2026-11-25_noise_cell_timing.md`)
 2. the position of the "Import" button: keep it below Save, as the generated page has it; the sample is not followed
 3. the font of the diagram scale: a monospace font, as in the sample
 4. a deviation that rounds to zero: shown as `0.00`, never as `-0.00`, so without the sign and without the style of
    a negative number; the sample is not followed in this point
 
-Status of 2026-11-25: the case reports list 0 differences for the plain case, differ, low, high and standard and 54
-for over; the 54 are the walk rows and the realised rows of the case over, which the equal part of part 3 of step 9
-fixes (done, waiting for the run, `docs/llm/log/2026-11-25_equal_part.md`).
+Status of 2026-11-25: all case reports list 0 differences (plain, differ, low, high, standard and over), since the
+equal part of part 3 of step 9 (`docs/llm/log/2026-11-25_equal_part.md`).
 
 The remaining tasks in the suggested order:
-1. stop for a run: `/test/test_part.php` with the tests that the equal part may break (the math unit tests, the
-   coding rule test of `docs/math.md`, the import of `portfolio_split_calculator.json`, the use case pages and the
-   formula editor), which should bring the over case to 0 differences and write `docs/math.md` with the new
-   function `floor`
-2. phase 1, in parallel:
-   - part 1 of step 9: the open check of the context of a walk formula with a calculation job
-   - part 3 of step 9: the rounding noise (decision 1)
-   - part 4 of step 9: the unit test of a cell with a result
+1. phase 1, in parallel:
+   - part 1 of step 9: the open check of the context of a walk formula with a calculation job (needs a run of the
+     developer)
+   - part 4 of step 9: the unit test of a cell with a result (done, waiting for a `/test/test_part.php` run with
+     `use_case_ui_tests`, `docs/llm/log/2026-11-25_noise_cell_timing.md`)
    - "import" (at the end of this section): the csv of the sample, the csv of the existing test data and the json
      created from each
    - step 2: the add two children and remove one child test case
@@ -38,29 +36,20 @@ The remaining tasks in the suggested order:
      hint), the font of the diagram scale ("check", decision 3) and the icons of step 7
    - stop for a run: `/test/test_part.php` with the tests that are likely to break by these changes, and before
      the commit an error free full `/test/test.php`
-3. phase 2, in parallel: part 5 of step 9 with the number fields of the holdings (step 5 (6)) and step 3 (add child
-   and remove, the formulas and the warnings by the instances, which also closes the instances of part 3)
-4. after step 9: the functions of the buttons of step 7, each a task of its own
+2. phase 2, in parallel: part 5 of step 9 with the number fields of the holdings (step 5 (6)) and step 3 (add child
+   and remove, the formulas and the warnings by the instances, which also closes the instances of part 3, together
+   with "rounded count of a child in the portfolio split walk" of `docs/llm/pending_prio_2.md`)
+3. after step 9: the functions of the buttons of step 7, each a task of its own
 
 #### step 9: calculate the split again in the browser (18)
 
 The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation, and on the javascript page the `is alternative follower of` chain while an option with `calculator alternative order` is chosen (`docs/llm/log/2026-11-24_alternative_order.md`). Each part with a positive and a negative test and a run before the next part; the open points:
 
 - part 1, the previous row in the backend (`docs/llm/log/2026-11-24_operand_groups.md`): a figure selects its number by the exact phrase group of the context and the operand, so check with a calculation job that the context of a walk formula is the phrases of the row, e.g. `LISN` and `first child portfolio`, and not the context of the calc-validation, which has more phrases
-- part 3, the formulas in `portfolio_split_calculator.json`: the equal part of a position when the rounded counts exceed it is done, waiting for the run (`docs/llm/log/2026-11-25_equal_part.md`). Still open: a formula by the instances, because `first child` and `second child` are named in the formulas and a new child has none (with step 3), and the rounding noise (decision 1): `round` and `floor` take their argument as calculated, so
-  a tie with float noise, e.g. 420.49999999999994 instead of 420.5, rounds down in one evaluator and, after the
-  operand is written with 12 decimals (`calculator_json.js` `toFixed(12)`), up in another one. Round the argument of
-  `round` and `floor` to the noise decimals (`number_format::NOISE_DECIMALS`, 8, the same const in the three scripts)
-  in `arithmetic.php` and the three scripts (`calc_internal.php` takes `arithmetic::one_number`), so that a tie
-  rounds half away from zero everywhere; a stored number like 420.499999 has six decimals and is no noise, so it
-  keeps the count of the sample. Tests in `math_tests.php` and `math_function_report::EDGE_CASES`:
-  positive `round( 1.005 * 1000 / 10 )` is 101 (calculated 100.49999999999999) and `floor( 0.29 * 100 )` is 29
-  (calculated 28.999999999999996), negative `round( 420.499999 )` is 420; the case reports should stay at 0 differences. Risk: a case that the page
-  calculates again from the inputs instead of the stored numbers reaches the tie of SCHP with a deviation that is
-  exact in the page but has noise in the sample, so the page rounds up where the sample rounds down; if a case
-  report then differs from that row on, the sample follows its own noise and the difference is reported to the
-  developer instead of being matched
-- part 4, the results of the rows in the phrase data: a unit test of a cell with a result
+- part 3, the formulas in `portfolio_split_calculator.json` (the equal part is done, `docs/llm/log/2026-11-25_equal_part.md`). Still open: a formula by the instances, because `first child` and `second child` are named in the formulas and a new child has none (with step 3). The rounding noise is done: `round` and `floor` take their argument rounded to
+  12 decimals (`arithmetic::ROUND_NOISE_DECIMALS` and the same const in the three scripts), so all five evaluators
+  give the same tie (`docs/llm/log/2026-11-25_noise_cell_timing.md`)
+- part 4, the results of the rows in the phrase data: the unit test of a cell with a result is done, waiting for the run (`docs/llm/log/2026-11-25_noise_cell_timing.md`)
 - part 5, the number fields of the holdings and the add child task (the realised rows of this part are done, `docs/llm/log/2026-11-24_sum_over_results.md`)
 
 #### step 2: add a "Add child" and remove

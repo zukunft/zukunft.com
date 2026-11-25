@@ -280,8 +280,12 @@
         const FUNC_MAX = 'max';
         const FUNC_IF = 'if';
         const FUNC_ARG_SEPARATOR = ';';
+        /* round and floor take their argument without the float noise below these decimals like arithmetic::ROUND_NOISE_DECIMALS;
+           toFixed rounds the exact binary value like the php round, also for a large number */
+        const ROUND_NOISE_DECIMALS = 12;
+        const WITHOUT_NOISE = (x) => Number(x.toFixed(ROUND_NOISE_DECIMALS));
         /* the functions of one number like chars::FUNC_ONE_NUMBER of the backend, so also round away from zero and an angle in radian */
-        const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, floor: Math.floor, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
+        const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, floor: (x) => Math.floor(WITHOUT_NOISE(x)), ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(WITHOUT_NOISE(x))), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
         /* the functions and symbols that are offered after a press on more, because the basic ones are enough for most formulas */
         /* the logarithm like arithmetic::log_number, to the base 10 if no base is given */
         const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);

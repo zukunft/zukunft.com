@@ -141,6 +141,8 @@ class math_function_report
         'sqrt( -1 )', 'log( 0 )', 'log( 8 ; 1 )', 'log( 8 ; 0 )', 'log( 8 ; 2 ; 3 )', 'ln( -1 )', 'exp( 1000 )', 'sqrt( 4 ; 9 )', 'sqrt( abc )',
         '0 ^ -1', '( -8 ) ^ 0.5', '2 ^ 3 ^ 2', '-2 ^ 2', '( -3 ) ^ 2', '2 ^ -1', 'round( -2.5 )', 'round( 2.5 )',
         'floor( -2.5 )', 'floor( 2.5 )', 'floor( 1 ; 2 )',
+        // a tie with float noise below 12 decimals is a tie, more than the noise below a tie is not
+        'round( 1.005 * 1000 / 10 )', 'floor( 0.29 * 100 )', 'round( 420.49999999999926 )',
         'if( 0 ; 5 / 0 + 1 ; 2 )', 'if( 1 ; 2 ; 5 / 0 + 1 )', 'if( 1 ; 5 / 0 ; 2 )', 'if( 1 = 1 & 2 = 3 ; 5 ; 6 )', 'if( 1 = 1 | 2 = 3 ; 5 ; 6 )',
     ];
 

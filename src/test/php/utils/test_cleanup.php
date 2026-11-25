@@ -534,7 +534,6 @@ class test_cleanup extends test_api
         $this->cleanup_unnamed_test_triples($msg);
 
         // request to delete the added test word
-        // TODO Prio 2 if a user has changed the word during the test, delete also the user words
         $test_name = 'request to delete the added test word "' . word_names::TEST_ADD . '"';
         $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below
         $wrd = $t_db->load_word($stp_msg, word_names::TEST_ADD);
@@ -544,6 +543,14 @@ class test_cleanup extends test_api
             $this->assert_msg($test_name, $stp_msg, self::TIMEOUT_LIMIT_DB);
         }
         $msg->merge($stp_msg);
+        // a workflow lets other users change the word, e.g. the description overwrite of the normal user of the
+        // change_word_all_sandbox_fields workflow, and then the delete above is only an exclusion or a hand over,
+        // so the word would survive into the next test_part.php run, which has no database recreate and shows it
+        // in the read snapshots; remove the overlay rows of all test users and delete it by its owner
+        $this->write_named_cleanup(new word($this->usr1), word_names::TEST_ADD);
+        $test_name = 'the added test word "' . word_names::TEST_ADD . '" is removed for all users';
+        $wrd_sys = new word($this->usr_system);
+        $this->assert_true($test_name, $wrd_sys->load_by_name(word_names::TEST_ADD, new user_message($this->usr_system)) == 0);
 
         $test_name = 'request to delete the renamed test word  of "' . word_names::TEST_RENAMED . '"';
         $stp_msg = $msg->clone_reset(); // a buffer of this cleanup step, merged below

@@ -7670,6 +7670,8 @@
             data_object.php
     \-- end_html_step - section for function end_html_step not yet defined that it should be set and get in /helper/data
             _object.php
+    \-- html_step - section for function html_step not yet defined that it should be set and get in /helper/data_object.
+            php
     \-- add_id_to_views - section for function add_id_to_views not yet defined that it should be fill in /helper/data_ob
             ject.php
     \-- add_components_to_views - section for function add_components_to_views not yet defined that it should be fill in
@@ -9847,6 +9849,9 @@
         \-- data_object - start the timing of the html creation of a component (see end_html_step)
     \-- end_html_step
         \-- data_object - add the html creation time of a component to its component type, without the api wait and
+    \-- html_step
+        \-- data_object - time one step of the html creation of a component e.g. the check of the results of a table,
+                 which is
     \-- set_time
         \-- log - set the vars of this log html object bases on the api json array
     \-- time

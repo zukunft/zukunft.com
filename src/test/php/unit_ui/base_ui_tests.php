@@ -57,6 +57,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'sys_log.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
+include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::RESULT . 'result_list.php';
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\markdown;
@@ -1867,6 +1869,22 @@ class base_ui_tests
         $test_name = 'an end of a component without its start adds no time';
         $dto_ui->end_html_step(component_types::TEXT, 30.0);
         $t->assert($test_name, $dto_ui->take_html_steps(), []);
+        // a step of a component e.g. the check of the results of a table is timed on its own
+        $test_name = 'a timed step returns the result of its function';
+        $dto_ui->start_html_step(microtime(true));
+        $step_result = $dto_ui->html_step(ui_list::STEP_TABLE_CHECK, fn() => 7);
+        $dto_ui->end_html_step(component_types::CALC_SHEET, microtime(true) + 1.0);
+        $t->assert($test_name, $step_result, 7);
+        $step_times = $dto_ui->take_html_steps();
+        $test_name = '... and is booked under its name and out of the component around it';
+        $t->assert($test_name, array_keys($step_times), [ui_list::STEP_TABLE_CHECK, component_types::CALC_SHEET]);
+        $test_name = '... so the component keeps only its own time';
+        $t->assert_true($test_name, $step_times[component_types::CALC_SHEET] >= 1.0
+            and $step_times[component_types::CALC_SHEET] < 1.0 + $step_times[ui_list::STEP_TABLE_CHECK] + 0.5);
+        // negative: a step outside a component is still booked, e.g. of a table created for an api call
+        $test_name = 'a timed step without a component around it is booked too';
+        $dto_ui->html_step(ui_list::STEP_TABLE_HTML, fn() => null);
+        $t->assert($test_name, array_keys($dto_ui->take_html_steps()), [ui_list::STEP_TABLE_HTML]);
         // negative: the database key of an old link and an integer id are still accepted
         $test_name = 'the database key of an old link is still accepted';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID

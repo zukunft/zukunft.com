@@ -147,6 +147,13 @@ its own flow does not explain, a delete earlier in the same run has failed.
   the delete ran, so the row stayed and only an exclusion was written.
 - `write_named_cleanup(..., true)` at the start of `assert_write_named` reports such a row as
   `Unexpected cleanup of ...`; a passing add log check means the object did not exist before.
+- A test object that a workflow lets other users change, e.g. the `System Test Word` with the
+  description overwrite of the normal user, is removed in `test_cleanup::cleanup` with
+  `write_named_cleanup` after its plain delete, and the cleanup asserts that the system user no
+  longer finds it; otherwise it survives into the next `test_part.php` run, which has no database
+  recreate, and appears in the read snapshots, while `test.php` hides it by its recreate. The
+  `csv_leftover_check` of `test_part.php` cannot see such a row, because it is already in the rows
+  read before the write tests.
 - An expected html page is committed only from a run that started on a recreated database
   (`test.php`, or `reset_db.php` before `test_part.php`), because `test_part.php` alone keeps the
   rows of a stopped run, and a page written while they are in the database shows them, e.g.

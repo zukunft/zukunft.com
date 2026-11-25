@@ -255,8 +255,8 @@ class a_selected_test extends all_unit_tests
     const array SELECTED_IMPORT_FILES = [
         // the use case is user data, so it is imported as the normal test user usr1 like the db setup does
         //cfg_files::PV_LIFETIME_BALANCE_FILE,
-        cfg_files::NPP_CH_VOTE_FILE,
-        //cfg_files::PORTFOLIO_SPLIT_CALCULATOR_FILE,
+        //cfg_files::NPP_CH_VOTE_FILE,
+        cfg_files::PORTFOLIO_SPLIT_CALCULATOR_FILE,
         //test_files::IMPORT_PRO_CONTRA_NPP_CH,
         //test_files::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
         //test_files::IMPORT_COSTS_ELECTRICITY_WIKI_EN,

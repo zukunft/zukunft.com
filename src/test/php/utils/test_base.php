@@ -5394,6 +5394,8 @@ class test_base
             $this->write_type_cleanup_one($sbx, $name, $check);
             $this->write_type_cleanup_one($sbx, $name . self::EXT_RENAME, $check);
         } else {
+            // the test rows before the deletes below, whose change log is removed once they are deleted
+            $removed = $this->named_test_rows($sbx, [$name, $name . self::EXT_RENAME]);
             $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
             $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
             // the protection tests write with the normal user, so rows owned by the normal user
@@ -5407,7 +5409,35 @@ class test_base
             // remove rows that resist the single user cleanups above
             $this->write_named_cleanup_force($sbx, $name);
             $this->write_named_cleanup_force($sbx, $name . self::EXT_RENAME);
+            // the deletes above write change log entries themselves e.g. "set owner to ..." of the hand over to
+            // another user, which have no test name in their value (see cleanup_change_log_deleted), and the
+            // cleanup resets the sequence, so the next run adds the row with the same id and shows them
+            $this->cleanup_change_log_of_deleted($removed);
         }
+    }
+
+    /**
+     * @param sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx the named test object e.g. a word
+     * @param array $names the reserved test names of the rows
+     * @return array the test rows with these names as the system user loads them, which only a sandbox object has
+     */
+    private function named_test_rows(
+        sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx,
+        array                                                              $names
+    ): array
+    {
+        $result = [];
+        if ($sbx instanceof sandbox) {
+            foreach ($names as $name) {
+                $row = clone $sbx;
+                $row->reset();
+                $row->set_user($this->usr_system);
+                if ($row->load_by_name($name, new user_message($this->usr_system)) != 0) {
+                    $result[] = $row;
+                }
+            }
+        }
+        return $result;
     }
 
     /**

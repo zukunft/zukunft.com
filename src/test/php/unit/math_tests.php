@@ -92,6 +92,13 @@ class math_tests
             ['floor( 2.7 )', 2.0],
             ['floor( -2.5 )', -3.0],
             ['floor( 3 ) * 2', 6.0],
+            // round and floor take their argument without the float noise below 12 decimals, so a tie is a tie
+            // in all evaluators: 1.005 * 1000 / 10 is calculated as 100.49999999999999 and 0.29 * 100 as 28.999999999999996
+            ['round( 1.005 * 1000 / 10 )', 101.0],
+            ['floor( 0.29 * 100 )', 29.0],
+            // negative: a number that is more than the noise below the tie is rounded down e.g. the tie of the sample
+            ['round( 420.49999999999926 )', 420.0],
+            ['round( 420.499999 )', 420.0],
             ['log( 100 ) + ln( 1 ) + exp( 0 )', 3.0],
             ['log( 8 ; 2 ) * 2', 6.0],
             ['sin( 0 ) + cos( 0 ) + sec( 0 )', 2.0],
@@ -354,6 +361,9 @@ class math_tests
             ['floor(2.7) * 3', 6.0],
             ['floor(-2.5)', -3.0],
             ['floor(10 / 2 / 3) * 3', 3.0],
+            ['round(1.005 * 1000 / 10)', 101.0],
+            ['floor(0.29 * 100)', 29.0],
+            ['round(420.49999999999926)', 420.0],
             ['log(100)', 2.0],
             ['log(8;2)', 3.0],
             ['1 + log(100;10) * 2', 5.0],

@@ -157,6 +157,9 @@ Each text is calculated by each calculation; a difference is marked with **diff*
 | `floor( -2.5 )` | -3 | -3 | -3 | -3 | -3 |  |
 | `floor( 2.5 )` | 2 | 2 | 2 | 2 | 2 |  |
 | `floor( 1 ; 2 )` | no number | no number | no number | no number | no number |  |
+| `round( 1.005 * 1000 / 10 )` | 101 | 101 | 101 | 101 | 101 |  |
+| `floor( 0.29 * 100 )` | 29 | 29 | 29 | 29 | 29 |  |
+| `round( 420.49999999999926 )` | 420 | 420 | 420 | 420 | 420 |  |
 | `if( 0 ; 5 / 0 + 1 ; 2 )` | 2 | 2 | 2 | 2 | 2 |  |
 | `if( 1 ; 2 ; 5 / 0 + 1 )` | 2 | 2 | 2 | 2 | 2 |  |
 | `if( 1 ; 5 / 0 ; 2 )` | no number | no number | no number | no number | no number |  |

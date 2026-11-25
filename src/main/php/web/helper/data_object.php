@@ -964,6 +964,22 @@ class data_object
         }
     }
 
+    /**
+     * time one step of the html creation of a component e.g. the check of the results of a table, which is
+     * then booked under its own name and not under the component type around it (see end_html_step)
+     *
+     * @param string $name the name of the step in the time report e.g. "table result check"
+     * @param callable $step the function of the step
+     * @return mixed the result of the step
+     */
+    function html_step(string $name, callable $step): mixed
+    {
+        $this->start_html_step(microtime(true));
+        $result = $step();
+        $this->end_html_step($name, microtime(true));
+        return $result;
+    }
+
 
 
     /*

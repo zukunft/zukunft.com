@@ -45,6 +45,11 @@ use Zukunft\ZukunftCom\main\php\shared\const\chars;
 class arithmetic
 {
 
+    // round and floor take their argument rounded to these decimals, the same as an operand of calculator_json.js
+    // (toFixed(12)), so that a tie with float noise e.g. 100.49999999999999 is a tie in all evaluators, but a number
+    // that is more than the noise below a tie e.g. 420.49999999999926 is not (docs/llm/log/2026-11-25_noise_cell_timing.md)
+    const int ROUND_NOISE_DECIMALS = 12;
+
     // the text to calculate and the position of the next char to read
     private string $txt = '';
     private int $pos = 0;
@@ -66,10 +71,10 @@ class arithmetic
             chars::FUNC_ABS => abs($num),
             chars::FUNC_COS => cos($num),
             chars::FUNC_EXP => exp($num),
-            chars::FUNC_FLOOR => floor($num),
+            chars::FUNC_FLOOR => floor(round($num, self::ROUND_NOISE_DECIMALS)),
             chars::FUNC_LN => log($num),
             chars::FUNC_LOG => log10($num),
-            chars::FUNC_ROUND => round($num),
+            chars::FUNC_ROUND => round(round($num, self::ROUND_NOISE_DECIMALS)),
             chars::FUNC_SEC => 1 / cos($num),
             chars::FUNC_SIN => sin($num),
             chars::FUNC_SQRT => sqrt($num),

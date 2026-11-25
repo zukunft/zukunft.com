@@ -147,6 +147,18 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 class ui_list extends ui_base
 {
 
+    // the steps of a table with related columns, each booked with its own time next to the component type in the
+    // url to html time of the time report (see data_object::html_step), so that a slow table shows its slow part
+    const string STEP_START_PAGE_DATA = 'start page data';
+    const string STEP_TABLE_NUMBERS = 'table numbers';
+    const string STEP_TABLE_COLUMNS = 'table own columns';
+    const string STEP_TABLE_RESULTS = 'table results';
+    const string STEP_TABLE_CHECK = 'table result check';
+    const string STEP_TABLE_SOURCES = 'table sources';
+    const string STEP_TABLE_DEFINITIONS = 'table definitions';
+    const string STEP_TABLE_HTML = 'table html';
+    const string STEP_TABLE_CHARTS = 'table charts';
+
     // put between the html id of a number and the count of a cell that shows the number again,
     // e.g. the year of a detail table, so that every cell id is unique on a page
     const string CALC_CELL_REPEAT = '-';
@@ -1589,6 +1601,25 @@ class ui_list extends ui_base
     }
 
     /**
+     * time one step of the creation of a table under its own name in the url to html time of the time report
+     * (data_object::html_step), or just do it if there is no frontend cache e.g. in a unit test without one
+     *
+     * @param string $name the name of the step e.g. self::STEP_TABLE_CHECK
+     * @param callable $step the function of the step
+     * @return mixed the result of the step
+     */
+    private function html_step(string $name, callable $step): mixed
+    {
+        global $ui_sys;
+        if ($ui_sys instanceof data_object) {
+            $result = $ui_sys->html_step($name, $step);
+        } else {
+            $result = $step();
+        }
+        return $result;
+    }
+
+    /**
      * show the values related to the given phrase as a table with one column per phrase used most
      * often within the values (e.g. inhabitants and area for a city) and one row per remaining
      * phrase combination (e.g. per year), so that the values of one row can be compared
@@ -1641,12 +1672,14 @@ class ui_list extends ui_base
                 ]);
                 return $result;
             }
-            $val_lst = $this->table_numbers($dbo, $msg, $dto);
+            $val_lst = $this->html_step(self::STEP_TABLE_NUMBERS, fn() => $this->table_numbers($dbo, $msg, $dto));
             log_debug('values of the table loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
             // the own columns of the table of the table editor; the grid of the start page has fixed columns
             if ($col_names == [] and !$col_values_only and $dto != null) {
-                $this->add_table_definition($dbo->phrase(), $dto, $msg);
-                $col_names = new calculator($dbo->phrase(), $dto->phr_lst)->table_columns();
+                $col_names = $this->html_step(self::STEP_TABLE_COLUMNS, function () use ($dbo, $dto, $msg) {
+                    $this->add_table_definition($dbo->phrase(), $dto, $msg);
+                    return new calculator($dbo->phrase(), $dto->phr_lst)->table_columns();
+                });
                 log_debug('own columns of the table loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
             }
             // a phrase without any value shows no table at all instead of an empty header row
@@ -1654,18 +1687,21 @@ class ui_list extends ui_base
                 // a calculated number of a row is a result and not a value, e.g. the reward ratio
                 // of a problem, and it is shown in the same table as the measured numbers; the
                 // results are added to a copy, so that the value cache of the page stays unchanged
-                if ($dto != null) {
-                    $this->add_phrase_results($dto, $dbo->phrase(), $msg);
-                    log_debug('results of the table phrase loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
-                }
-                $tbl_lst = clone $val_lst;
-                $tbl_lst->add_results(
-                    $this->result_related_list($dbo, $dto, $dto?->phr_lst), $msg);
+                $tbl_lst = $this->html_step(self::STEP_TABLE_RESULTS, function () use ($dbo, $dto, $msg, $val_lst) {
+                    if ($dto != null) {
+                        $this->add_phrase_results($dto, $dbo->phrase(), $msg);
+                        log_debug('results of the table phrase loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+                    }
+                    $lst = clone $val_lst;
+                    $lst->add_results(
+                        $this->result_related_list($dbo, $dto, $dto?->phr_lst), $msg);
+                    return $lst;
+                });
                 log_debug('table of ' . $tbl_lst->count() . ' values and results collected', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
-                $this->check_results($tbl_lst, $dto, $msg, $typ_lst);
+                $this->html_step(self::STEP_TABLE_CHECK, fn() => $this->check_results($tbl_lst, $dto, $msg, $typ_lst));
                 // the source of a value with its url or doi is the tooltip of the number
                 if ($dto != null) {
-                    $this->add_sources($tbl_lst->lst(), $dto, $msg);
+                    $this->html_step(self::STEP_TABLE_SOURCES, fn() => $this->add_sources($tbl_lst->lst(), $dto, $msg));
                     log_debug('sources of the table numbers loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 }
                 $phr_lst = new phrase_list();
@@ -1673,8 +1709,10 @@ class ui_list extends ui_base
                 // the system column tiers decide which phrase heads a column and in which order;
                 // an empty list falls back to the impact ranking of the values themselves
                 if ($dto != null) {
-                    $this->add_column_definitions($dto, $msg);
-                    $this->add_sort_definitions($dto, $msg);
+                    $this->html_step(self::STEP_TABLE_DEFINITIONS, function () use ($dto, $msg) {
+                        $this->add_column_definitions($dto, $msg);
+                        $this->add_sort_definitions($dto, $msg);
+                    });
                 }
                 // the time of this message is mainly the merge of the definitions into the request cache
                 log_debug('column and sort definitions added', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
@@ -1694,10 +1732,10 @@ class ui_list extends ui_base
                     }
                     // the url of the page is handed over, so that the "... more" tail can call the
                     // same page with the next list size
-                    $result = $tbl_lst->table_by_related_columns(
+                    $result = $this->html_step(self::STEP_TABLE_HTML, fn() => $tbl_lst->table_by_related_columns(
                         $msg, $phr_lst, $col_order, $with_header, $with_border, $rel_lst,
                         null, $url_array, $col_values_only, $col_tiers, $with_variance,
-                        $value_rows_only);
+                        $value_rows_only));
                     log_debug('table of ' . $tbl_lst->count() . ' numbers created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 } else {
                     // without the table its header says what the charts are about, centred above
@@ -1715,8 +1753,8 @@ class ui_list extends ui_base
                         $this->add_chart_definitions($dto, $msg);
                     }
                     log_debug('chart definitions added', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
-                    $result .= $this->table_charts($tbl_lst, $msg, $phr_lst, $col_order,
-                        $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only, $col_tiers);
+                    $result .= $this->html_step(self::STEP_TABLE_CHARTS, fn() => $this->table_charts($tbl_lst, $msg, $phr_lst,
+                        $col_order, $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only, $col_tiers));
                 }
                 // the column menu of the navbar is created after the views, so the names of the
                 // columns of each selection are kept for its tooltips
@@ -6595,7 +6633,7 @@ class ui_list extends ui_base
     {
         // the data is loaded already by the page cache step (see view_exe::add_page_cache), so
         // this only fills what a caller without that step has not loaded
-        $phr = $this->add_start_page_data($dto, $msg);
+        $phr = $this->html_step(self::STEP_START_PAGE_DATA, fn() => $this->add_start_page_data($dto, $msg));
         log_debug('data of the start page loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
         $child_lst = $dto->start_lst_children ?? new phrase_list();
         // the page already says what the table is about, so it is shown without the border; the
