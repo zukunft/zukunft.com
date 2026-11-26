@@ -484,6 +484,14 @@
       "name": "term type needed",
       "code_id": "term_needed",
       "description": "the formula needs the linked term type"
+    },
+    {
+      "name": "is alternative follower of",
+      "code_id": "alternative_follow",
+      "description": "the second order of phrases that have an 'is follower of' order e.g. the bank report order of the holdings next to the order of their lot value; a phrase without an alternative follower triple keeps its 'is follower of' triple in the second order",
+      "name_plural_reverse": "are alternatively followed by",
+      "name_plural": "are alternative followers of",
+      "name_reverse": "is alternatively followed by"
     }
   ]
 }

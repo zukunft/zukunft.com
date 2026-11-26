@@ -50,6 +50,7 @@ the object structure is:
 ├── server_guard - enforce the tls, session and file based IP / user whitelist guards
 ├── system_object - $sys - a header object for the system data cache and execution time tracking
 ├── type_lists - helper class to combine all preloaded types in one class for the API
+├── convert_portfolio_csv - convert the csv of a bank statement of the positions to a zukunft.com import
 ├── convert_wikipedia_table - convert a wikipedia table to a
 ├── import - $imp - import data - take a object from a json, yaml or XML message and trigger the object saves
 ├── import_convert_xbrl - convert an XBRL fileset to a zukunft.com import
@@ -93,6 +94,7 @@ the object structure is:
 ├── apiShared - constants used for the backend to frontend api of zukunft.com
 ├── arithmeticShared - calculate a text with numbers, the four basic operations, the power, brackets and the math functions
 ├── expressionShared - common parts of the formula expressing handling used in front- and backend
+├── phrase_kindsShared - the kinds of the phrases of a number for a list function
 ├── prior_operandShared - the operand of a formula that reads the number of the previous row
 ├── charsShared - const symbols used for the formula expressions
 ├── componentsShared - all component code id used in the code and some with name, id and comment used by the system

@@ -3669,7 +3669,7 @@ class sandbox_multi extends db_object_multi_user
             }
         } elseif (!$this->no_diff($std_rec, $msg)) {
             // compared with the database row as the user sees it like the branch before the split, which has
-            // no user row here; if the standard row is the right one is open (docs/llm/log/save_fields_multi_2026-11-09.md)
+            // no user row here; if the standard row is the right one is open (docs/llm/log/2026-11-09_save_fields_multi.md)
             $qp = $this->sql_insert_user($sc, $db_rec, $msg, $log_lst);
             // no statement if only the key fields differ e.g. the placeholder source of the user row
             if ($qp != null) {

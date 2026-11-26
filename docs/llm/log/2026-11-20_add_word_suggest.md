@@ -23,7 +23,7 @@ defines the group or parent of the new word.
   first paragraph without the pronunciation and `wikidata_id` the item e.g. `Q1055` for Hamburg. `refresh_from_url`
   needs a stored wikipedia reference, so it cannot be used for a new word, which has none yet.
 - `web/phrase/phrase.php::confirm_url_of_refresh` builds one confirm page with the description and the wikidata
-  reference as a reference row (`url_var::REF_ROW`, see `docs/llm/log/ref_row_confirm_2026-11-07.md`), and
+  reference as a reference row (`url_var::REF_ROW`, see `docs/llm/log/2026-11-07_ref_row_confirm.md`), and
   `web/frontend.php::url_with_wikipedia_refresh` starts it from the refresh icon of an existing phrase.
 - `shared/types/ref_types.php::CONCEPTNET` is a reference type, but nothing reads conceptnet.io yet.
 - `shared/types/verbs.php::IS_NAME` is the verb "is a" of the suggested triples.
@@ -55,7 +55,7 @@ defines the group or parent of the new word.
 
 ### Follow-up request of 2026-11-21: the references and triples on the add word view
 
-Formerly the separate log `add_view_rows_2026-11-21.md`, merged into this one to keep the number of log files low;
+Formerly the separate log `2026-11-21_add_view_rows.md`, merged into this one to keep the number of log files low;
 it was started after the first test run of this log, so its planned changes are the last rows of "Unexpected
 changes" below.
 
@@ -80,7 +80,7 @@ the triples with a new component "system form triple rows"; the confirm page kee
 
 ### Follow-up request of 2026-11-21: remove and add of the rows
 
-Formerly the separate log `row_buttons_2026-11-21.md`, merged into this one to keep the number of log files low; its
+Formerly a separate log, merged into this one to keep the number of log files low; its
 planned changes are rows of "Unexpected changes" below.
 
 From the developer on 2026-11-21: on the view `http://localhost/http/view.php?m=47&z=1&k=Hamburg&fr=frs&u=11`
@@ -111,7 +111,7 @@ Decisions of the LLM:
 
 ### Follow-up request of 2026-11-21: include flag and section titles
 
-Formerly the separate log `row_include_2026-11-21.md`, merged into this one to keep the number of log files low; it
+Formerly a separate log, merged into this one to keep the number of log files low; it
 came before the first test run of the remove and add above, so the remove box was never tested.
 
 From the developer on 2026-11-21: in `http://localhost/http/view.php?m=47&z=1&k=Hamburg&fr=frs&u=11` increase the

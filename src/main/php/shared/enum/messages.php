@@ -2709,6 +2709,11 @@ enum messages: string
     case TABLE_EDITOR_MEASURED = 'table_editor_measured';
     // in front of the name of an instance on the button that removes it from a repeated input
     case CALCULATOR_REMOVE = 'calculator_remove';
+    // the hint of an instance that the add button of a repeated input has added, until the save can keep it
+    case CALCULATOR_ADDED_NOT_SAVED = 'calculator_added_not_saved';
+    case CALCULATOR_ADDED_NO_NUMBER = 'calculator_added_no_number';
+    // in front of the names of the instances that the remove button has taken from the page but not from the database
+    case CALCULATOR_REMOVED_NOT_SAVED = 'calculator_removed_not_saved';
     // the header and the status texts of the check table of a calculator page
     case CALCULATOR_CHECK_VALUE = 'calculator_check_value';
     case CALCULATOR_CHECK_EXPECTED = 'calculator_check_expected';
@@ -3157,6 +3162,15 @@ enum messages: string
     // of an error reported above, so they are not yet certain, see docs/llm/dependent-errors.md
     // always added with ok = true, because it explains a suppression instead of causing one
     case IMPORT_STEP_SKIPPED = 'import_step_skipped';
+
+    // the problems of the csv of a bank statement of the positions (convert_portfolio_csv), each naming the csv,
+    // the line and the position, because the position is left out of the import json
+    case IMPORT_CSV_NO_HEADER = 'import_csv_no_header';
+    case IMPORT_CSV_LINE_CELLS = 'import_csv_line_cells';
+    case IMPORT_CSV_UNKNOWN_KIND = 'import_csv_unknown_kind';
+    case IMPORT_CSV_CELL_EMPTY = 'import_csv_cell_empty';
+    case IMPORT_CSV_CELL_NOT_NUMBER = 'import_csv_cell_not_number';
+    case IMPORT_CSV_RATE_NOT_POSITIVE = 'import_csv_rate_not_positive';
 
     // if a delete has only excluded the object for the user, because it is still used
     // always added with ok = true, because the exclusion is the normal answer to the delete of a used object

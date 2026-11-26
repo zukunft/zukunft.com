@@ -75,6 +75,7 @@ include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::SHARED_CALC . 'phrase_kinds.php';
 include_once html_paths::SHARED_CALC . 'prior_operand.php';
 include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
@@ -126,6 +127,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\shared\calc\phrase_kinds;
 use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -144,6 +146,18 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
 class ui_list extends ui_base
 {
+
+    // the steps of a table with related columns, each booked with its own time next to the component type in the
+    // url to html time of the time report (see data_object::html_step), so that a slow table shows its slow part
+    const string STEP_START_PAGE_DATA = 'start page data';
+    const string STEP_TABLE_NUMBERS = 'table numbers';
+    const string STEP_TABLE_COLUMNS = 'table own columns';
+    const string STEP_TABLE_RESULTS = 'table results';
+    const string STEP_TABLE_CHECK = 'table result check';
+    const string STEP_TABLE_SOURCES = 'table sources';
+    const string STEP_TABLE_DEFINITIONS = 'table definitions';
+    const string STEP_TABLE_HTML = 'table html';
+    const string STEP_TABLE_CHARTS = 'table charts';
 
     // put between the html id of a number and the count of a cell that shows the number again,
     // e.g. the year of a detail table, so that every cell id is unique on a page
@@ -1587,6 +1601,25 @@ class ui_list extends ui_base
     }
 
     /**
+     * time one step of the creation of a table under its own name in the url to html time of the time report
+     * (data_object::html_step), or just do it if there is no frontend cache e.g. in a unit test without one
+     *
+     * @param string $name the name of the step e.g. self::STEP_TABLE_CHECK
+     * @param callable $step the function of the step
+     * @return mixed the result of the step
+     */
+    private function html_step(string $name, callable $step): mixed
+    {
+        global $ui_sys;
+        if ($ui_sys instanceof data_object) {
+            $result = $ui_sys->html_step($name, $step);
+        } else {
+            $result = $step();
+        }
+        return $result;
+    }
+
+    /**
      * show the values related to the given phrase as a table with one column per phrase used most
      * often within the values (e.g. inhabitants and area for a city) and one row per remaining
      * phrase combination (e.g. per year), so that the values of one row can be compared
@@ -1639,12 +1672,14 @@ class ui_list extends ui_base
                 ]);
                 return $result;
             }
-            $val_lst = $this->table_numbers($dbo, $msg, $dto);
+            $val_lst = $this->html_step(self::STEP_TABLE_NUMBERS, fn() => $this->table_numbers($dbo, $msg, $dto));
             log_debug('values of the table loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
             // the own columns of the table of the table editor; the grid of the start page has fixed columns
             if ($col_names == [] and !$col_values_only and $dto != null) {
-                $this->add_table_definition($dbo->phrase(), $dto, $msg);
-                $col_names = new calculator($dbo->phrase(), $dto->phr_lst)->table_columns();
+                $col_names = $this->html_step(self::STEP_TABLE_COLUMNS, function () use ($dbo, $dto, $msg) {
+                    $this->add_table_definition($dbo->phrase(), $dto, $msg);
+                    return new calculator($dbo->phrase(), $dto->phr_lst)->table_columns();
+                });
                 log_debug('own columns of the table loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
             }
             // a phrase without any value shows no table at all instead of an empty header row
@@ -1652,18 +1687,21 @@ class ui_list extends ui_base
                 // a calculated number of a row is a result and not a value, e.g. the reward ratio
                 // of a problem, and it is shown in the same table as the measured numbers; the
                 // results are added to a copy, so that the value cache of the page stays unchanged
-                if ($dto != null) {
-                    $this->add_phrase_results($dto, $dbo->phrase(), $msg);
-                    log_debug('results of the table phrase loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
-                }
-                $tbl_lst = clone $val_lst;
-                $tbl_lst->add_results(
-                    $this->result_related_list($dbo, $dto, $dto?->phr_lst), $msg);
+                $tbl_lst = $this->html_step(self::STEP_TABLE_RESULTS, function () use ($dbo, $dto, $msg, $val_lst) {
+                    if ($dto != null) {
+                        $this->add_phrase_results($dto, $dbo->phrase(), $msg);
+                        log_debug('results of the table phrase loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+                    }
+                    $lst = clone $val_lst;
+                    $lst->add_results(
+                        $this->result_related_list($dbo, $dto, $dto?->phr_lst), $msg);
+                    return $lst;
+                });
                 log_debug('table of ' . $tbl_lst->count() . ' values and results collected', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
-                $this->check_results($tbl_lst, $dto, $msg, $typ_lst);
+                $this->html_step(self::STEP_TABLE_CHECK, fn() => $this->check_results($tbl_lst, $dto, $msg, $typ_lst));
                 // the source of a value with its url or doi is the tooltip of the number
                 if ($dto != null) {
-                    $this->add_sources($tbl_lst->lst(), $dto, $msg);
+                    $this->html_step(self::STEP_TABLE_SOURCES, fn() => $this->add_sources($tbl_lst->lst(), $dto, $msg));
                     log_debug('sources of the table numbers loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 }
                 $phr_lst = new phrase_list();
@@ -1671,8 +1709,10 @@ class ui_list extends ui_base
                 // the system column tiers decide which phrase heads a column and in which order;
                 // an empty list falls back to the impact ranking of the values themselves
                 if ($dto != null) {
-                    $this->add_column_definitions($dto, $msg);
-                    $this->add_sort_definitions($dto, $msg);
+                    $this->html_step(self::STEP_TABLE_DEFINITIONS, function () use ($dto, $msg) {
+                        $this->add_column_definitions($dto, $msg);
+                        $this->add_sort_definitions($dto, $msg);
+                    });
                 }
                 // the time of this message is mainly the merge of the definitions into the request cache
                 log_debug('column and sort definitions added', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
@@ -1692,10 +1732,10 @@ class ui_list extends ui_base
                     }
                     // the url of the page is handed over, so that the "... more" tail can call the
                     // same page with the next list size
-                    $result = $tbl_lst->table_by_related_columns(
+                    $result = $this->html_step(self::STEP_TABLE_HTML, fn() => $tbl_lst->table_by_related_columns(
                         $msg, $phr_lst, $col_order, $with_header, $with_border, $rel_lst,
                         null, $url_array, $col_values_only, $col_tiers, $with_variance,
-                        $value_rows_only);
+                        $value_rows_only));
                     log_debug('table of ' . $tbl_lst->count() . ' numbers created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 } else {
                     // without the table its header says what the charts are about, centred above
@@ -1713,8 +1753,8 @@ class ui_list extends ui_base
                         $this->add_chart_definitions($dto, $msg);
                     }
                     log_debug('chart definitions added', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
-                    $result .= $this->table_charts($tbl_lst, $msg, $phr_lst, $col_order,
-                        $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only, $col_tiers);
+                    $result .= $this->html_step(self::STEP_TABLE_CHARTS, fn() => $this->table_charts($tbl_lst, $msg, $phr_lst,
+                        $col_order, $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only, $col_tiers));
                 }
                 // the column menu of the navbar is created after the views, so the names of the
                 // columns of each selection are kept for its tooltips
@@ -1989,7 +2029,7 @@ class ui_list extends ui_base
         api_type_list $typ_lst = new api_type_list()
     ): void
     {
-        $calc = new formula_calc($this->prior_names($dto));
+        $calc = $this->page_calc($dto);
         $frm_lst = $dto?->formula_list() ?? new formula_list();
         $page_lst = null;
         if ($dto != null) {
@@ -2169,6 +2209,31 @@ class ui_list extends ui_base
             }
         }
         return $result;
+    }
+
+    /**
+     * @param data_object|null $dto the data cache of the page with the phrases
+     * @return array per phrase name the names of the phrases that it is a kind of e.g. stock for LISP (shared\calc\phrase_kinds)
+     */
+    function kind_names(?data_object $dto): array
+    {
+        $result = [];
+        foreach ($dto?->phr_lst?->lst() ?? [] as $phr) {
+            $is_kind = ($phr->is_triple() and $phr->get_verb()?->id() == verbs::IS_ID);
+            if ($is_kind and $phr->get_from() != null and $phr->get_to() != null) {
+                $result = phrase_kinds::with_link($result, $phr->get_from()->name(), $phr->get_to()->name());
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param data_object|null $dto the data cache of the page with the phrases
+     * @return formula_calc the calculation of the page with its follower chains and its "is a" links
+     */
+    private function page_calc(?data_object $dto): formula_calc
+    {
+        return new formula_calc($this->prior_names($dto), $this->kind_names($dto));
     }
 
     /**
@@ -2537,7 +2602,7 @@ class ui_list extends ui_base
     {
         $result = [];
         $this->add_phrase_results($dto, $dbo->phrase(), $msg);
-        $calc = new formula_calc($this->prior_names($dto));
+        $calc = $this->page_calc($dto);
         // in a fixed order, because the order of the operands is the order of their sources on the page
         foreach ($this->result_related_list($dbo, $dto, $dto->phr_lst)->sorted_by_impact($msg) as $res) {
             $this->add_context_values($res, $dto, $msg, $typ_lst);
@@ -3340,7 +3405,7 @@ class ui_list extends ui_base
      */
     private function recalculate(value_list $lst, data_object $dto, user_message $msg): void
     {
-        $calc = new formula_calc($this->prior_names($dto));
+        $calc = $this->page_calc($dto);
         $frm_lst = $dto->formula_list();
         $changed = true;
         $pass = 0;
@@ -3497,11 +3562,37 @@ class ui_list extends ui_base
     {
         $html = new html_base();
         $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+        // a number that the page calculates e.g. the target weight of the parent as what the children leave
+        if ($val == null) {
+            $val = $this->calculator_read_only_result($phr, $dto, $msg);
+        }
         $number = $val == null ? '' : $this->calculator_rough_text($val, $msg, 1);
         $refs = $this->field_source_refs($phr, $val, $dto, $src_ids, $msg);
         return $html->div($html->label_no_for($html->esc($calc->label($item)))
             . $html->div($html->esc($number), styles::INPUT_READ_ONLY)
             . $this->calculator_hint($calc->hint($item), $refs), styles::INPUT_FIELD);
+    }
+
+    /**
+     * @param phrase $phr the phrase of the read only field e.g. parent portfolio
+     * @param data_object $dto the request cache with the results and the field triples
+     * @param user_message $msg to report a problem of the phrase compare
+     * @return result|null the one result of the page with the phrase and the field value phrases, null if there is
+     *                     none or several, because a field shows one number and never picks one by the list order
+     */
+    private function calculator_read_only_result(phrase $phr, data_object $dto, user_message $msg): ?result
+    {
+        $found = [];
+        foreach ($dto->res_lst->lst() as $res) {
+            if ($res->has_phrase($phr, $msg) and $this->has_field_value_phrases($phr, $res, $dto, $msg)) {
+                $found[] = $res;
+            }
+        }
+        $result = null;
+        if (count($found) == 1) {
+            $result = $found[0];
+        }
+        return $result;
     }
 
     /**
@@ -3613,10 +3704,29 @@ class ui_list extends ui_base
     private function field_source_refs(phrase $phr, ?sandbox_value $val, data_object $dto, array $src_ids, user_message $msg): string
     {
         $refs = [$this->source_ref($val, $src_ids)];
-        foreach ($this->calculator_basis_values($phr, $val, $dto, $msg) as $basis) {
+        foreach ($this->calculator_field_basis($phr, $val, $dto, $msg) as $basis) {
             $refs[] = $this->source_ref($basis, $src_ids);
         }
         return implode('', array_unique($refs));
+    }
+
+    /**
+     * @param phrase $phr the phrase of the field
+     * @param sandbox_value|null $val the value or the result that the field shows
+     * @param data_object $dto the request cache with the values, the results and the formulas
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array the numbers whose sources the field names: the operands of a result, because a result has no
+     *               source of its own, else the measured values that an assumed value is based on
+     */
+    private function calculator_field_basis(phrase $phr, ?sandbox_value $val, data_object $dto, user_message $msg): array
+    {
+        if ($val instanceof result) {
+            $calc = $this->page_calc($dto);
+            $result = $calc->operands($val, $this->values_and_results($dto, $msg), $dto->formula_list());
+        } else {
+            $result = $this->calculator_basis_values($phr, $val, $dto, $msg);
+        }
+        return $result;
     }
 
     /**
@@ -5093,10 +5203,10 @@ class ui_list extends ui_base
                 $fmt->decimals = $decimals;
             }
             $txt = $html->esc($this->calculator_cell_text($val, $fmt, $with_unit, $msg, $decimals));
+            $shown = $this->calculator_cell_shown($val, $fmt, $msg, $decimals);
             if ($signed) {
-                $txt = $html->span($txt, $val->number() < 0 ? styles::CALC_NEGATIVE : styles::CALC_POSITIVE);
+                $txt = $html->span($txt, $shown < 0 ? styles::CALC_NEGATIVE : styles::CALC_POSITIVE);
             } elseif ($plus) {
-                $shown = round(round($val->number() * $fmt->factor, number_format::NOISE_DECIMALS), $fmt->decimals);
                 $txt = $html->span(($shown > 0 ? '+' : '') . $txt,
                     $shown > 0 ? styles::CALC_POSITIVE : ($shown < 0 ? styles::CALC_NEGATIVE : ''));
             }
@@ -5137,6 +5247,30 @@ class ui_list extends ui_base
             if ($unit != '') {
                 $result .= sandbox_value::UNIT_SEPARATOR . $unit;
             }
+        }
+        return $result;
+    }
+
+    /**
+     * the number rounded like calculator_cell_text, so that the sign of a cell is the sign of its text
+     *
+     * @param sandbox_value $val the number of the cell
+     * @param number_format $fmt the unit and the decimals that the column shows the numbers of this unit with
+     * @param user_message $msg to report a problem of the phrase types
+     * @param int|null $pct_decimals the decimals of a percent that the row sets, null for the percent decimals of the user
+     * @return float the number that the cell shows e.g. 0 for -0.004 with two decimals, a percent times 100
+     */
+    function calculator_cell_shown(sandbox_value $val, number_format $fmt, user_message $msg, ?int $pct_decimals = null): float
+    {
+        global $ui_sys;
+        if ($val->is_percent($msg)) {
+            $decimals = $pct_decimals;
+            if ($decimals === null) {
+                $decimals = $ui_sys->cfg->percent_decimals();
+            }
+            $result = round($val->number() * 100, $decimals);
+        } else {
+            $result = round(round($val->number() * $fmt->factor, number_format::NOISE_DECIMALS), $fmt->decimals);
         }
         return $result;
     }
@@ -5408,7 +5542,7 @@ class ui_list extends ui_base
      */
     private function calculator_result_plan(value_list $lst, data_object $dto): array
     {
-        $calc = new formula_calc($this->prior_names($dto));
+        $calc = $this->page_calc($dto);
         $result = [];
         foreach ($lst->lst() as $res) {
             if ($res instanceof result) {
@@ -6523,7 +6657,7 @@ class ui_list extends ui_base
     {
         // the data is loaded already by the page cache step (see view_exe::add_page_cache), so
         // this only fills what a caller without that step has not loaded
-        $phr = $this->add_start_page_data($dto, $msg);
+        $phr = $this->html_step(self::STEP_START_PAGE_DATA, fn() => $this->add_start_page_data($dto, $msg));
         log_debug('data of the start page loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
         $child_lst = $dto->start_lst_children ?? new phrase_list();
         // the page already says what the table is about, so it is shown without the border; the

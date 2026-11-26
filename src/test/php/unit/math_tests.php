@@ -88,6 +88,17 @@ class math_tests
             ['sqrt( 3 ^ 2 + 4 ^ 2 )', 5.0],
             ['abs( -2.5 )', 2.5],
             ['round( -2.5 )', -3.0],
+            // floor rounds down, so a negative number away from zero and a whole number stays
+            ['floor( 2.7 )', 2.0],
+            ['floor( -2.5 )', -3.0],
+            ['floor( 3 ) * 2', 6.0],
+            // round and floor take their argument without the float noise below 12 decimals, so a tie is a tie
+            // in all evaluators: 1.005 * 1000 / 10 is calculated as 100.49999999999999 and 0.29 * 100 as 28.999999999999996
+            ['round( 1.005 * 1000 / 10 )', 101.0],
+            ['floor( 0.29 * 100 )', 29.0],
+            // negative: a number that is more than the noise below the tie is rounded down e.g. the tie of the sample
+            ['round( 420.49999999999926 )', 420.0],
+            ['round( 420.499999 )', 420.0],
             ['log( 100 ) + ln( 1 ) + exp( 0 )', 3.0],
             ['log( 8 ; 2 ) * 2', 6.0],
             ['sin( 0 ) + cos( 0 ) + sec( 0 )', 2.0],
@@ -104,6 +115,7 @@ class math_tests
         // negative: a text that is no calculation gives no number instead of a wrong one
         $invalid = ['', '2 +', '2 x 3', '( 2 + 3', '1 / 0', '2 3',
             'min( 1 ; 2', 'min 1', 'min( ; 1 )', 'max( 1 ; 2', 'max 1', 'max( ; 1 )', 'round( 1 ; 2 )', '1 ; 2',
+            'floor( 1 ; 2 )', 'floor 2', 'floor( 2',
             'tan( 1 )', 'sqrt( -1 )', 'log( 0 )', 'log( 8 ; 1 )', 'log( 8 ; 2 ; 3 )','exp( 1000 )', '0 ^ -1', '( -8 ) ^ 0.5', 'sqrt( 4', 'sqrt 4',
             'if( 1 ; 2 )', 'if( 1 ; 2 ; 3 ; 4 )', 'if( 1 ; 5 / 0 ; 2 )', 'if( 1 / 0 ; 2 ; 3 )', '1 = 1', '1 & 1'];
         foreach ($invalid as $txt) {
@@ -315,6 +327,13 @@ class math_tests
             ['count(4)', 1],
             ['10 - mean(2;4) * 2', 4],
             ['min(sum(1;2);count(1;2)) + 1', 3],
+            // the largest and the smallest number of a list e.g. the spread of the target shares of the children
+            ['largest(1;3;2)', 3],
+            ['smallest(1;3;2)', 1],
+            ['largest(-1;-2.5)', -1],
+            ['smallest(4)', 4],
+            ['largest(0.5;0.25;0.5) - smallest(0.5;0.25;0.5)', 0.25],
+            ['largest(0.35;0.35) - smallest(0.35;0.35)', 0],
         ];
         foreach ($cases as [$math_text, $expected]) {
             $t->assert($ts . 'calc "' . $math_text . '"', (float)$calc->parse($math_text, $msg), (float)$expected);
@@ -325,11 +344,22 @@ class math_tests
         $t->assert($ts . 'no sum of a text "' . $math_text . '"', $num_txt, calc_internal::NO_NUMBER);
         $t->assert_false($ts . 'the user is told about the text in "' . $math_text . '"', $msg->is_ok());
         $msg->reset();
+        $math_text = "smallest(1;abc)";
+        $num_txt = $calc->math_list($math_text, $msg);
+        $t->assert($ts . 'no smallest of a text "' . $math_text . '"', $num_txt, calc_internal::NO_NUMBER);
+        $t->assert_false($ts . 'the user is told about the text in "' . $math_text . '"', $msg->is_ok());
+        $msg->reset();
         // a list function takes plain operands only, because a calculated argument would need pairs of values
         $t->assert_true($ts . 'plain list arguments', arithmetic::list_args_are_plain('sum( x ; 2 ) / count(x) + x * 3'));
         $t->assert_false($ts . 'no calculation in a list argument', arithmetic::list_args_are_plain('sum( x * x )'));
         $t->assert_false($ts . 'no bracket in a list argument', arithmetic::list_args_are_plain('mean( ( x ) )'));
         $t->assert_false($ts . 'no empty list', arithmetic::list_args_are_plain('count( )'));
+        $t->assert_false($ts . 'no calculation in the largest of a list', arithmetic::list_args_are_plain('largest( x * 2 )'));
+        // negative: max and min stay functions of their arguments, so the walk formulas keep a calculated argument
+        $t->assert_true($ts . 'max is no list function', arithmetic::list_args_are_plain('max( x * 2 ; 0 ) + sum( x )'));
+        // an operand inside a list function stands for all its numbers
+        $t->assert_true($ts . 'a list argument', arithmetic::is_list_argument('1 + sum( "a" ; '));
+        $t->assert_false($ts . 'no list argument after the list', arithmetic::is_list_argument('sum( "a" ) + '));
         // the backend finds the symbols of the lists, and refuses a symbol that is also used outside a list
         $frm = new formula($t->usr1);
         $t->assert($ts . 'list symbols', $frm->list_symbols('=sum({w1};{w2})/{w3}'), ['{w1}', '{w2}']);
@@ -343,6 +373,12 @@ class math_tests
             ['sqrt(9) * 2', 6.0],
             ['10 - sqrt(4)', 8.0],
             ['round(2.6) * 3', 9.0],
+            ['floor(2.7) * 3', 6.0],
+            ['floor(-2.5)', -3.0],
+            ['floor(10 / 2 / 3) * 3', 3.0],
+            ['round(1.005 * 1000 / 10)', 101.0],
+            ['floor(0.29 * 100)', 29.0],
+            ['round(420.49999999999926)', 420.0],
             ['log(100)', 2.0],
             ['log(8;2)', 3.0],
             ['1 + log(100;10) * 2', 5.0],
@@ -393,6 +429,7 @@ class math_tests
             ['ln(-1) + 1', 'ln'],
             ['exp(1000)', 'exp'],
             ['sqrt(4;9)', 'sqrt'],
+            ['floor(4;9)', 'floor'],
             ['0 ^ -1', chars::POW],
             ['(-8) ^ 0.5', chars::POW],
         ];

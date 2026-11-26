@@ -298,9 +298,36 @@ These phrases have one description and one ref, but some import files use them i
 
 A selector that mixes options with and without a number keeps the last results while an option without a number is selected, because no number exists for it, and the page does not tell the user. Report this on the page, or refuse such a selector in the import, with a positive and a negative test. The selected option of such a selector is also not saved, because a phrase selector has no save vars.
 
+## alternative order only on the javascript page
+
+Only `calculator_json.js` walks the `is alternative follower of` triples of an option with `calculator alternative order` (`docs/llm/log/2026-11-24_alternative_order.md`). The page without javascript (`calculator.php` `sorted` and `previous_in_list`, `ui_list::prior_names` and `ranked_rows`, which reach the six callers of `ui_list::page_calc` without the calculator reader), the backend (`element_group::prior_names`), the import check (`data_object::prior_names`) and `formula_editor.js` walk only the `is follower of` chain. So a page that `uses` the alternative option, or a saved case that has chosen it, shows the main order there, and the backend job of a save calculates the walk of the main order, which the double calculation check reports as a difference. Give these readers the chosen order of the page, each with a positive and a negative test; the stored results need the phrase of the order in their group, so that both walks can be stored.
+
+## the order of the instances of a repeated input
+
+Added on 2026-11-26: `calculator_json.js` (`kinds` with `sorted`) and the page without javascript order the instances
+of a repeated input by their label, so `first child`, `second child`, `third child` are in order, but a `fourth child`
+would be shown before the `second child`. So `portfolio_split_calculator.json` declares only the third child as the
+next instance of "Add child" (section 6 of `docs/llm/log/2026-11-25_csv_child_shares.md`), and the button is disabled
+after it. To add more children, give the instances an order of their own, e.g. by the order of the triples that the
+repeat triple has, in both renderers, with a positive test (the fourth child after the third) and a negative one (an
+instance without a declared place keeps the order by its label).
+
 ## calculator scripts without a browser test of a checkbox
 
 No use case has a formula that reads a checkbox, so no input case toggles one in `calculator.js` or `calculator_json.js`. Add the toggle to `use_case_cases.js` and a case when the first such formula exists, e.g. mirroring in the portfolio split walk.
+
+## the import keeps the context of a stored result
+
+A re-import of a file without a database recreate (e.g. `SELECTED_IMPORT_FILES` of `test_part.php`) keeps the
+context, i.e. the source group, of a result that a calc-validation of the file stores, also if the calc-validation
+has a new context: on 2026-11-25 the results `target share of the parent` and `target share excess` of
+`portfolio_split_calculator.json` kept `example portfolio split, first child portfolio, ..., original` after the
+change to `example portfolio split, child portfolio, original, target share, percent`
+(`docs/llm/log/2026-11-25_csv_child_shares.md`), so the page found no operand and showed the stored number. The
+reason: `result::db_fields_changed` adds the changed `source_group_id` only `if (!$sc_par_lst->is_standard())`, so the
+standard row of a result never gets a new source group by an update, only by a new insert. Decide whether the import
+updates the source group of a stored result of the same formula and phrases, with a positive and a negative test in
+`import_write_tests`; until then a changed context of a calc-validation needs `test/reset_db.php`.
 
 ## formula editor
 
@@ -1556,7 +1583,7 @@ remove the last part of the dead formula edit render path: web/formula/formula.p
 
 ### import view (missing parts of the retired http_old/import.php)
 
-the upload of the import view (views::IMPORT_ID) imports the json file for a user with user::can_import (import::put_upload, called by frontend::action_import_upload) and the import result view (views::IMPORT_RESULT_ID) names the number of the imported objects per type (docs/llm/log/http_old_phase2_2026-11-12.md). Open:
+the upload of the import view (views::IMPORT_ID) imports the json file for a user with user::can_import (import::put_upload, called by frontend::action_import_upload) and the import result view (views::IMPORT_RESULT_ID) names the number of the imported objects per type (docs/llm/log/2026-11-12_http_old_phase2.md). Open:
 
 the import preview view (views::IMPORT_PREVIEW_ID) of an upload: show the counters and the clashes of the file before anything is written, with the confirm of the import
 
@@ -1572,7 +1599,7 @@ the put of api/json (the import of the calculator editor) does not check user::c
 
 ### json export (missing parts of the retired http_old/get_json.php)
 
-api/json answers a get with the export of the phrases given by name (url_var::WORDS) or by id (url_var::PHRASE_LIST) with all related phrases that the user may read, as json or xml, or the csv of the results of the formulas given by name (url_var::EXPORT_FORMAT), and the export views offer it as a download (export::file_text, frontend::export_file, docs/llm/log/http_old_phase2_2026-11-12.md). Open:
+api/json answers a get with the export of the phrases given by name (url_var::WORDS) or by id (url_var::PHRASE_LIST) with all related phrases that the user may read, as json or xml, or the csv of the results of the formulas given by name (url_var::EXPORT_FORMAT), and the export views offer it as a download (export::file_text, frontend::export_file, docs/llm/log/2026-11-12_http_old_phase2.md). Open:
 
 the ods export: the view views::EXPORT_ODS_ID has no format (views::EXPORT_FORMATS), so its export button says that the format is not available; an ods writer is needed, e.g. from the rows of the csv
 
@@ -2794,7 +2821,7 @@ security review.
 ## review of the uncommitted http_old phase 2 change
 
 Review of 2026-11-13 of the working tree on top of `60ea05136` (last used default, export api, import upload and the
-deletion of 10 `http_old` scripts and the 2 `dev` experiments, see `docs/llm/log/http_old_phase2_2026-11-12.md`).
+deletion of 10 `http_old` scripts and the 2 `dev` experiments, see `docs/llm/log/2026-11-12_http_old_phase2.md`).
 No code was changed by the review.
 
 1. **Line balance:** the change adds 2011 lines and deletes 1747, of which about 1510 are the deleted scripts; so
@@ -3336,7 +3363,7 @@ their own phrase group.
 ## open points of the add word suggestions
 
 The add word button of a search fills the add view with the suggestions of wikipedia and conceptnet
-(`docs/llm/log/add_word_suggest_2026-11-20.md`). Open:
+(`docs/llm/log/2026-11-20_add_word_suggest.md`). Open:
 
 - **adjust the rows:** the add view carries the suggested reference and triple rows as hidden fields, so the user can
   change the name and the description, but can remove a suggested reference or triple only by not confirming at all;
@@ -3421,3 +3448,49 @@ Added on 2026-11-23 with the unit that a formula names on the left side (`"annua
 alone left of the `=`, so a formula that also names its unit is never taken for a row phrase. Let both take the first
 term of the left side as the phrase if the other terms are units, with a unit test of `calculates_phrase` for a left
 side with a unit, and negative: a left side with two phrases that are no units is still not the result of one phrase.
+
+## the views_by_object snapshots named without the pinned id
+
+Added on 2026-11-23: `test_base::assert_view` names the snapshot of a view with an object by `<class>_<id>`, and the
+callers pass pinned seed ids, so every new seed object before them renames the snapshots at each re-pin, e.g. with the
+units of `units.json` `formula/formula_default_formula_21` and `_27` became `_46` and `_52`, and the eight page states
+of `triple/entry_view_triple_139` became `_170`; the first run after the re-pin reports each new name as "does not
+exist". `system_view_ui_tests::view_id_to_file_info` already names the `views_by_id` snapshots of result, group and
+the table view without the id (`SNAPSHOT_WITHOUT_ID_CLASSES`, `SNAPSHOT_WITHOUT_ID_VIEWS`). Let `assert_view` name a
+snapshot by a stable name instead, e.g. the code id of the object or a name that the caller passes, and keep the id
+only for test objects with a fixed id e.g. `word_1`; with a test that two callers of the same view and class still get
+two different snapshot names.
+
+## a page unit test of the operand with the fewest foreign phrases
+
+Added on 2026-11-24: `formula_calc::value_of` and `calculator_json.js::operandEntry` take the number with the fewest
+phrases that neither the operand nor the result names, like `data_object::number_by_names` of the import, which
+`calc_validation_operand_choice.json` tests. On the page only `use_case_ui_tests` covers two numbers in the context
+(`test_values::value_list_operand_choice_ui`) and the PV payback snapshot the case that a number names the operand but
+is about something else (the gross avoided emission over the lifetime); `result_zh_sum_ui` has no context phrase of
+the result outside `zh`, so add a result with such a phrase and a unit test that a number with more phrases of the
+result but a foreign phrase loses against the plain value, and negative: on a tie the first number of the list.
+
+## a unit test of the javascript selection of the calculator page
+
+Added on 2026-11-24: `calculator_json.js` repeats the selection rules of `ui_list` and `formula_calc`, but only the
+html snapshots of the use cases and their case reports test it, because no test runs the script on a seed without a
+browser. Two rules of 2026-11-24 have no test of the script of their own: `fieldEntry` takes the first of the values of
+the same rank in the order of `sandbox_value::sorted` (`sortedEntries`, e.g. CHF per DKK of the six exchange rates) and
+no value for an option whose numbers differ, and `listEntries` takes the results of the operand without a second result
+of the phrases of a value and without a result of the formula that is calculated, and the numbers of a kind of a
+wanted phrase over several levels of `is a` (`hasAllKinds`, `withKinds`). Add a node test that loads the
+script with a small seed, positive and negative for each, like the php tests in `unit_ui/use_case_ui_tests.php`.
+Added on 2026-11-26: also `shownNumber` of `calculator.js` and `calculator_json.js`, the number as its cell rounds it,
+whose sign decides the style of a signed cell (positive: -0.004 with two decimals is no negative number, negative:
+-0.006 is), because only `ui_list::calculator_cell_shown` has a unit test.
+
+## a share that rounds to zero is shown as -0 by sandbox_value::val_formatted
+
+Added on 2026-11-26: `val_formatted` writes a percent as `(string)round($number * 100, $percent_decimals)`, so a
+small negative share e.g. -0.00004 with one percent decimal becomes the text `-0 %`, while `calculator.js` and
+`calculator_json.js` write `0 %`; the same `(string)round($number, 2)` holds for a number below 1000. Decision 4 of
+the portfolio split (`docs/llm/pending.md`) says a number that rounds to zero is never shown with a sign. The style
+of the sign already follows the rounded number (`ui_list::calculator_cell_shown`), but the text of the cell does not.
+`val_formatted` is used on many pages, so the fix needs its own change: a test with such a share in
+`unit_ui/use_case_ui_tests.php`, positive (`0 %`) and negative (-0.0006 is `-0.1 %`), and a check of the snapshots.

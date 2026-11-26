@@ -57,6 +57,7 @@
     \-- list_symbols - section for function list_symbols not yet defined that it should be calc in /formula/formula.php
     \-- fill_list_element_group - section for function fill_list_element_group not yet defined that it should be calc in
              /formula/formula.php
+    \-- list_numbers - section for function list_numbers not yet defined that it should be calc in /formula/formula.php
     \-- fill_element_group - section for function fill_element_group not yet defined that it should be calc in /formula/
             formula.php
     \-- fill_results_with_one_figure - section for function fill_results_with_one_figure not yet defined that it should 
@@ -1102,6 +1103,9 @@
     \-- fill_list_element_group
         \-- formula - replace the symbol of a list function by all numbers of the list e.g. "sum({w12})" by "sum(1;2;3)"
                 :
+    \-- list_numbers
+        \-- formula - the numbers of a list function: the values, then each result whose phrases no value has,
+                 because the value wins
     \-- fill_element_group
         \-- formula - replace one element group's symbol with the matching figure number(s) in the result list
     \-- fill_results_with_one_figure
@@ -1876,6 +1880,7 @@
     \-- id - section for function id not yet defined that it should be display in /element/element_group.php
     \-- build_symbol - section for function build_symbol not yet defined that it should be display in /element/element_g
             roup.php
+    \-- set_join - section for function set_join is expected to be set and get in /element/element_group.php
     \-- figures - section for function figures not yet defined that it should be display in /element/element_group.php
     \-- reads_prior_row - section for function reads_prior_row not yet defined that it should be display in /element/ele
             ment_group.php
@@ -2507,6 +2512,13 @@
     \-- check - section for function check not yet defined that it should be db helper in /helper/type_object.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
             j,order of section set and get has difference at set_description should be before set_from_api
+\-- convert_portfolio_csv
+    \-- positions - section for function positions not yet defined that it should be read in /import/convert_portfolio_c
+            sv.php
+    \-- holding - section for function holding not yet defined that it should be read in /import/convert_portfolio_csv.p
+            hp
+    \-- convert - section for function convert not yet defined that it should be convert in /import/convert_portfolio_cs
+            v.php
 \-- convert_wikipedia_table
     \-- convert - section for function convert missing in /import/convert_wikipedia_table.php
     \-- convert_wiki_json - section for function convert_wiki_json missing in /import/convert_wikipedia_table.php
@@ -6063,6 +6075,8 @@
         \-- element_group - show the element group name to the user in the most simple form (without any ids)
     \-- build_symbol
         \-- element_group - show the element group name to the user in the most simple form (without any ids)
+    \-- set_join
+        \-- element_group - remember the text of the expression between the last element of this group and the next one
     \-- figures
         \-- element_group - get a list of figures related to the formula element group and a context defined by a list o
                 f words
@@ -6229,6 +6243,7 @@
     \-- nodes
         \-- config_tree - the nodes of the given part of config.yaml in the order of the file, without the keys
     \-- convert
+        \-- convert_portfolio_csv - @param string $csv the text of the csv of a bank statement of the positions
         \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
                  json
     \-- entity_id
@@ -6375,6 +6390,12 @@
         \-- type_list - @param array $code_id_list with the code ids that should be converted
     \-- component_id_list
         \-- type_list - @param array $code_id_list with the code ids that should be converted
+\-- read
+    \-- positions
+        \-- convert_portfolio_csv - @param string $csv the text of the csv of a bank statement of the positions
+    \-- holding
+        \-- convert_portfolio_csv - @param array $pos one position of the csv that position_is_valid has accepted (see p
+                ositions)
 \-- use to apply the time of the parent process for continuous timestamp reporting
     \-- set_start_time
         \-- import - stop the note timer, so that a finished import never shows its skipped step note
@@ -7230,6 +7251,7 @@
     \-- table_with_related_columns - section for function table_with_related_columns missing in /component/execute/ui_li
             st.php
     \-- prior_names - section for function prior_names missing in /component/execute/ui_list.php
+    \-- kind_names - section for function kind_names missing in /component/execute/ui_list.php
     \-- value_input_fields - section for function value_input_fields missing in /component/execute/ui_list.php
     \-- input_fields - section for function input_fields missing in /component/execute/ui_list.php
     \-- unit_name - section for function unit_name missing in /component/execute/ui_list.php
@@ -7278,6 +7300,7 @@
     \-- calculator_numbers - section for function calculator_numbers missing in /component/execute/ui_list.php
     \-- calculator_result - section for function calculator_result missing in /component/execute/ui_list.php
     \-- calculator_cell_text - section for function calculator_cell_text missing in /component/execute/ui_list.php
+    \-- calculator_cell_shown - section for function calculator_cell_shown missing in /component/execute/ui_list.php
     \-- calculator_script - section for function calculator_script missing in /component/execute/ui_list.php
     \-- calculator_number_format - section for function calculator_number_format missing in /component/execute/ui_list.p
             hp
@@ -7662,6 +7685,8 @@
             data_object.php
     \-- end_html_step - section for function end_html_step not yet defined that it should be set and get in /helper/data
             _object.php
+    \-- html_step - section for function html_step not yet defined that it should be set and get in /helper/data_object.
+            php
     \-- add_id_to_views - section for function add_id_to_views not yet defined that it should be fill in /helper/data_ob
             ject.php
     \-- add_components_to_views - section for function add_components_to_views not yet defined that it should be fill in
@@ -9839,6 +9864,9 @@
         \-- data_object - start the timing of the html creation of a component (see end_html_step)
     \-- end_html_step
         \-- data_object - add the html creation time of a component to its component type, without the api wait and
+    \-- html_step
+        \-- data_object - time one step of the html creation of a component e.g. the check of the results of a table,
+                 which is
     \-- set_time
         \-- log - set the vars of this log html object bases on the api json array
     \-- time
@@ -10171,6 +10199,8 @@
         \-- ui_list - show the values related to the given phrase as a table with one column per phrase used most
     \-- prior_names
         \-- ui_list - @param data_object|null $dto the request cache with the triples of the page
+    \-- kind_names
+        \-- ui_list - @param data_object|null $dto the data cache of the page with the phrases
     \-- value_input_fields
         \-- ui_list - the values of the page phrase as number input fields, e.g. the inputs of a use case page: the
     \-- input_fields
@@ -10269,6 +10299,8 @@
         \-- ui_list - the number of a calculator cell: the value or result with all the phrases of the cell and
     \-- calculator_cell_text
         \-- ui_list - @param sandbox_value $val the number of the cell
+    \-- calculator_cell_shown
+        \-- ui_list - the number rounded like calculator_cell_text, so that the sign of a cell is the sign of its text
     \-- calculator_script
         \-- ui_list - the calculation of a calculator page as data and the script that repeats it in the browser
     \-- calculator_number_format

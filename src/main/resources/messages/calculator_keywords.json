@@ -161,6 +161,12 @@
     },
     {
       "name": "sensitivity"
+    },
+    {
+      "name": "alternative"
+    },
+    {
+      "name": "order"
     }
   ],
   "triples": [
@@ -553,6 +559,20 @@
       "verb": "has a",
       "to": "sensitivity",
       "code_id": "system_calculator_sensitivity"
+    },
+    {
+      "name": "alternative order",
+      "from": "order",
+      "verb": "kind of",
+      "to": "alternative"
+    },
+    {
+      "name": "calculator alternative order",
+      "description": "flag: a selector option with a triple to this keyword walks the rows of a detail table and the operand prior by the 'is alternative follower of' triples while the user has chosen it, e.g. the bank report order of the holdings; a phrase without such a triple keeps its 'is follower of' triple, and the table is not ranked by its 'is ranked by' phrase, because the ranking orders the main chain",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "alternative order",
+      "code_id": "system_calculator_alternative_order"
     }
   ]
 }

@@ -88,6 +88,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CALC . 'arithmetic.php';
+include_once paths::SHARED_CALC . 'phrase_kinds.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -122,6 +123,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\shared\calc\arithmetic;
+use Zukunft\ZukunftCom\main\php\shared\calc\phrase_kinds;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\views as views_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -1172,8 +1174,7 @@ class formula extends formula_map
 
     /**
      * replace the symbol of a list function by all numbers of the list e.g. "sum({w12})" by "sum(1;2;3)":
-     * the stored values that name the operand and all phrases of the calculation context, without a
-     * second number of the same fact (words::LIST_FUNCTION_EXCLUDED)
+     * the values and the results that name the operand and all phrases of the calculation context (see list_numbers)
      * @param result_list $res_lst the list of results that is updated in place with the numbers
      * @param element_group $elm_grp the element group of the operand
      * @param phrase_list $ctx_lst the calculation context used to select the values e.g. "ABB"
@@ -1199,21 +1200,27 @@ class formula extends formula_map
             }
         }
         $val_lst = new value_list($this->get_user());
+        $opr_res_lst = new result_list($this->get_user());
+        $knd = new phrase_kinds();
         if ($all_phrases) {
-            $val_lst->load_by_phr_lst($phr_lst, $msg, false, sql_db::ROW_MAX);
-            // the exclusion needs the names of the phrases of each value
+            // a phrase with is a children e.g. stock is left out of the load, because the walk rows name LISP
+            $kind_links = $this->list_kind_links($phr_lst, $msg);
+            $knd = new phrase_kinds($kind_links);
+            $load_lst = $this->list_load_phrases($phr_lst, $kind_links);
+            $val_lst->load_by_phr_lst($load_lst, $msg, false, sql_db::ROW_MAX);
+            $opr_res_lst->load_by_phrase_list($load_lst, $msg, false, sql_db::ROW_MAX);
+            // the exclusion needs the names of the phrases of each number
             $val_lst->load_phrases($msg);
+            $opr_res_lst->load_phrases($msg);
         }
         $nums = [];
         $updates = [];
-        foreach ($val_lst->lst() as $val) {
-            $is_excluded = array_intersect($val->phr_lst()->names(), words::LIST_FUNCTION_EXCLUDED) != [];
-            if (!$is_excluded and is_numeric($val->number())) {
-                $nums[] = $val->number();
-                $updates[] = $val->last_update();
-            }
+        $wanted = array_map('strval', $phr_lst->ids());
+        foreach ($this->list_numbers($val_lst, $opr_res_lst, $knd, $wanted) as $num) {
+            $nums[] = $num->number();
+            $updates[] = $num->last_update();
         }
-        $is_cut = count($val_lst->lst()) >= sql_db::ROW_MAX;
+        $is_cut = (count($val_lst->lst()) >= sql_db::ROW_MAX or count($opr_res_lst->lst()) >= sql_db::ROW_MAX);
         if ($is_cut) {
             $msg->add(msg_id::FORMULA_LIST_TOO_LONG, [
                 msg_id::VAR_NAME => $phr_lst->dsp_name(),
@@ -1235,6 +1242,101 @@ class formula extends formula_map
             }
         }
         return $filled;
+    }
+
+    /**
+     * the numbers of a list function: the values, then each result whose phrases no value has, because the value wins
+     * like for one operand (element_group::add_figure), the same rule as the page (formula_calc::list_values) and the
+     * import (data_object::list_numbers); a number has each wanted phrase or a kind of it e.g. the walk row of LISP
+     * for the stocks; never a result of this formula, because its stored number is the result before this
+     * calculation, and never a second number of the same fact (words::LIST_FUNCTION_EXCLUDED) or a number that
+     * includes all phrases of another number of the list (phrase_kinds::with_fewest_phrases)
+     * public only so that the unit tests can check it without a database
+     *
+     * @param value_list $val_lst the values loaded for the operand and the context
+     * @param result_list $res_lst the results loaded for the operand and the context
+     * @param phrase_kinds $knd the is a links by phrase id of the wanted phrases and their kinds
+     * @param array $wanted the ids of the operand and the context phrases as text, of which each number has each or a kind of it
+     * @return array the values and results whose numbers the list function takes
+     */
+    function list_numbers(value_list $val_lst, result_list $res_lst, phrase_kinds $knd, array $wanted): array
+    {
+        $nums = [];
+        $grp_ids = [];
+        $phrase_sets = [];
+        foreach ([...$val_lst->lst(), ...$res_lst->lst()] as $num) {
+            $ids = array_map('strval', $num->ids());
+            if ($knd->has_all($ids, $wanted) and $this->is_list_number($num, $grp_ids)) {
+                $nums[] = $num;
+                $grp_ids[] = $num->grp()->id();
+                $phrase_sets[] = $ids;
+            }
+        }
+        return phrase_kinds::with_fewest_phrases($nums, $phrase_sets);
+    }
+
+    /**
+     * @param value|result $num a value or a result with the operand and the context phrases
+     * @param array $grp_ids the phrase groups of the numbers already in the list
+     * @return bool true if the list function takes the number (see list_numbers)
+     */
+    private function is_list_number(value|result $num, array $grp_ids): bool
+    {
+        $is_excluded = array_intersect($num->phr_lst()->names(), words::LIST_FUNCTION_EXCLUDED) != [];
+        $is_own = ($num instanceof result and $num->formula_id() == $this->id());
+        $is_known = in_array($num->grp()->id(), $grp_ids, true);
+        return (!$is_excluded and !$is_own and !$is_known and is_numeric($num->number()));
+    }
+
+    /**
+     * the is a links to the phrases of a list over all levels e.g. LISP to stock and a kind of LISP to LISP,
+     * read with one query per level and each phrase once, so that a loop of links in the data ends
+     *
+     * @param phrase_list $phr_lst the operand and the context phrases of a list function
+     * @param user_message $msg to report a problem of the triple load
+     * @return array per phrase id as text the ids of the phrases that it is a kind of (phrase_kinds::with_link)
+     */
+    private function list_kind_links(phrase_list $phr_lst, user_message $msg): array
+    {
+        global $sys;
+        $result = [];
+        $seen = $phr_lst->ids();
+        $open = clone $phr_lst;
+        while (!$open->is_empty()) {
+            $trp_lst = new triple_list($this->get_user());
+            $trp_lst->load_by_phr_lst($open, $msg, $sys->verb(verbs::IS), foaf_direction::DOWN);
+            $open = new phrase_list($this->get_user());
+            foreach ($trp_lst->lst() as $trp) {
+                // the from and the to side of a loaded triple are phrases with the phrase id of the database row
+                $from = $trp->get_from();
+                $to_id = $trp->get_to()?->id() ?? 0;
+                if ($from != null and $from->id() != 0 and $to_id != 0) {
+                    $result = phrase_kinds::with_link($result, (string)$from->id(), (string)$to_id);
+                }
+                if ($from != null and $from->id() != 0 and !in_array($from->id(), $seen)) {
+                    $seen[] = $from->id();
+                    $open->add($from);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase_list $phr_lst the operand and the context phrases of a list function
+     * @param array $kind_links the is a links to the phrases of the list (see list_kind_links)
+     * @return phrase_list the phrases that every number of the list has: without a phrase that has a kind e.g. stock
+     */
+    private function list_load_phrases(phrase_list $phr_lst, array $kind_links): phrase_list
+    {
+        $kind_ids = array_merge([], ...array_values($kind_links));
+        $result = new phrase_list($this->get_user());
+        foreach ($phr_lst->lst() as $phr) {
+            if (!in_array((string)$phr->id(), $kind_ids, true)) {
+                $result->add($phr);
+            }
+        }
+        return $result;
     }
 
     /**

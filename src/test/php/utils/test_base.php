@@ -342,6 +342,7 @@ include_once test_paths::UNIT_READ . 'formula_read_tests.php';
 include_once test_paths::UNIT_READ . 'formula_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'expression_read_tests.php';
 include_once test_paths::UNIT_READ . 'element_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'element_group_read_tests.php';
 include_once test_paths::UNIT_READ . 'result_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'view_read_tests.php';
 include_once test_paths::UNIT_READ . 'view_list_read_tests.php';
@@ -4946,11 +4947,15 @@ class test_base
      *
      * @param group $grp the phrase group that identifies the value whose change log should be removed
      * @param phrase_list $phr_lst the phrases of the value, checked to contain at least one test row
+     * @param array $names the phrase names of the value as the test names it, checked like the phrases
      * @return void
      */
-    function cleanup_change_log_value(group $grp, phrase_list $phr_lst): void
+    function cleanup_change_log_value(group $grp, phrase_list $phr_lst, array $names = []): void
     {
-        if ($this->phrase_list_has_test_row($phr_lst)) {
+        // the names of the test value as the test names it, because a phrase of a list loaded by the names may not
+        // carry its name, and then the history of the value would stay for the next run with the same group id
+        $has_test_name = array_filter($names, fn(string $name) => $this->is_test_phrase_name($name)) != [];
+        if ($has_test_name or $this->phrase_list_has_test_row($phr_lst)) {
             if ($grp->id() != 0 and $grp->id() != '') {
                 $this->delete_value_change_log($grp->id());
                 $this->delete_value_link_change_log($grp->id());
@@ -5055,6 +5060,9 @@ class test_base
     private function delete_value_change_log(int|string $grp_id): void
     {
         global $db_con;
+        // the entries that the history of the value shows, removed by their ids like the log of a named object,
+        // because the delete by the group id below has left them (value_write_url_tests::assert_no_value_history)
+        $this->delete_change_log_of_obj(value::class, $grp_id);
         $size = $this->value_change_log_size($grp_id);
         foreach (change_log::LOG_CLASSES as $chg_class) {
             if (is_subclass_of($chg_class, change_value::class)) {
@@ -5067,9 +5075,26 @@ class test_base
                     $msg = new user_message($this->usr_system);
                     $qp = $this->value_change_log_del_qp($sc, $chg_class, $tbl, $grp_id);
                     $db_con->delete($qp, 'cleanup value change log of ' . $chg_class, $msg);
+                    // a failed delete leaves the history of a test value for the next run, so it fails the test
+                    $this->assert_msg('the change log of the test value ' . $grp_id . ' in ' . $tbl
+                        . ' is removed', $msg);
                 }
             }
         }
+    }
+
+    /**
+     * @param int|string $grp_id the group id of a test value
+     * @param user_message $msg to collect a failed read, which the caller asserts, because a failed read counts 0
+     * @return int the number of change log entries of the value e.g. to check that a cleanup has removed them all
+     */
+    function value_change_log_count(int|string $grp_id, user_message $msg): int
+    {
+        $log_lst = new change_log_list();
+        // raise the default page limit so that every entry of the value is counted
+        $log_lst->limit = sql_db::ROW_MAX;
+        $log_lst->load_by_obj_fld(value::class, $msg, $grp_id, $this->usr_system);
+        return count($log_lst->lst());
     }
 
     /**
@@ -5393,6 +5418,8 @@ class test_base
             $this->write_type_cleanup_one($sbx, $name, $check);
             $this->write_type_cleanup_one($sbx, $name . self::EXT_RENAME, $check);
         } else {
+            // the test rows before the deletes below, whose change log is removed once they are deleted
+            $removed = $this->named_test_rows($sbx, [$name, $name . self::EXT_RENAME]);
             $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
             $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
             // the protection tests write with the normal user, so rows owned by the normal user
@@ -5406,7 +5433,35 @@ class test_base
             // remove rows that resist the single user cleanups above
             $this->write_named_cleanup_force($sbx, $name);
             $this->write_named_cleanup_force($sbx, $name . self::EXT_RENAME);
+            // the deletes above write change log entries themselves e.g. "set owner to ..." of the hand over to
+            // another user, which have no test name in their value (see cleanup_change_log_deleted), and the
+            // cleanup resets the sequence, so the next run adds the row with the same id and shows them
+            $this->cleanup_change_log_of_deleted($removed);
         }
+    }
+
+    /**
+     * @param sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx the named test object e.g. a word
+     * @param array $names the reserved test names of the rows
+     * @return array the test rows with these names as the system user loads them, which only a sandbox object has
+     */
+    private function named_test_rows(
+        sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx,
+        array                                                              $names
+    ): array
+    {
+        $result = [];
+        if ($sbx instanceof sandbox) {
+            foreach ($names as $name) {
+                $row = clone $sbx;
+                $row->reset();
+                $row->set_user($this->usr_system);
+                if ($row->load_by_name($name, new user_message($this->usr_system)) != 0) {
+                    $result[] = $row;
+                }
+            }
+        }
+        return $result;
     }
 
     /**

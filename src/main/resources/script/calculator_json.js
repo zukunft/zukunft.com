@@ -107,11 +107,21 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     const VERDICT_STATES = ['yes', 'no', 'open'];
     // the attribute of a part with the name of the triple that defines it, which the calculator editor reads (PART_ATTR there)
     const PART_ATTR = 'data-part';
+    // the attribute of the add button of a repeated input with the name of its item triple
+    const ADD_ATTR = 'data-add';
+    // the attribute of the remove button of an instance of a repeated input with the name of the instance
+    const REMOVE_ATTR = 'data-remove';
+    // the shares of the instances of a repeated input together, which a new instance never exceeds (100 %)
+    const WHOLE_SHARE = 1;
+    // in front of the phrase names of a number that the page adds for a new instance, which has no database id yet
+    const NEW_ID_PREFIX = 'new: ';
     // the translated texts by their message id (system_page::CALC_PAGE_TEXT_IDS)
     const TXT = {
         inputs: 'calculator_inputs', assumptions: 'calculator_assumptions', result: 'calculator_result',
         details: 'calculator_details', sources: 'calculator_sources', more: '... more',
         copy_json: 'calculator_copy_json', copy_csv: 'calculator_copy_csv', remove: 'calculator_remove',
+        added_not_saved: 'calculator_added_not_saved', added_no_number: 'calculator_added_no_number',
+        removed_not_saved: 'calculator_removed_not_saved',
         diagram_final: 'calculator_diagram_final',
         case_name: 'calculator_case_name', case_failed: 'calculator_case_failed',
         check_value: 'calculator_check_value', check_expected: 'calculator_check_expected',
@@ -149,16 +159,12 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     // the acronym of a phrase e.g. Jan of January, the first one like calculator::acronym
     const acronyms = new Map();
     (seed.words || []).forEach(function (w) {
-        phrases.set(w.name, {name: w.name, id: String(w.id), type: w.type || '', description: w.description || ''});
+        phrases.set(w.name, {name: w.name, id: String(w.id), type: w.type || '', description: w.description || '', impact: Number(w.impact) || 0});
     });
     (seed.triples || []).forEach(function (t) {
         const name = t.name || generatedName(t);
-        const trp = {name: name, id: '-' + t.id, type: t.type || '', from: t.from, verb: t.verb, to: t.to, description: t.description || ''};
-        phrases.set(name, trp);
-        if (!children.has(t.from)) {
-            children.set(t.from, []);
-        }
-        children.get(t.from).push(trp);
+        const trp = {name: name, id: '-' + t.id, type: t.type || '', from: t.from, verb: t.verb, to: t.to, description: t.description || '', impact: Number(t.impact) || 0};
+        addTriple(trp);
         if (t.verb === VERB.symbol) {
             symbols.set(t.to, t.from);
             owners.set(t.from, t.to);
@@ -187,10 +193,17 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     const base = page.from === undefined ? null : page.from;
     // the number that each input field sets by the name of the field, which an input changes
     const inputEntries = new Map();
+    // per field of an order selector true if its chosen option walks the alternative order, and the same per option value (see walksAlternative)
+    const chosenOrders = new Map();
+    const orderOptions = new Map();
     // the names of the sources of the page in the order of their number (see sourceNames)
     let pageSources = [];
     // per name of a number field its phrase, which a preset sets
     const inputPhrases = new Map();
+    // the names of the instances that the add button of a repeated input has added, which the save does not keep yet
+    const addedInstances = new Set();
+    // per instance of the database that the remove button has taken from the page the repeated phrase, which the save keeps yet
+    const removedInstances = new Map();
     // the sensitivity table calculates the page once per cell, so only while the user has it open
     let sensitivityOpen = false;
     // the values and results that the results of the page use (see operandValues)
@@ -203,6 +216,15 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     /* ------------------------------------------------------------------ */
     /* helpers                                                              */
     /* ------------------------------------------------------------------ */
+
+    /* a triple of the seed or the is a triple of a new instance by its name and by its from phrase */
+    function addTriple(trp) {
+        phrases.set(trp.name, trp);
+        if (!children.has(trp.from)) {
+            children.set(trp.from, []);
+        }
+        children.get(trp.from).push(trp);
+    }
 
     /* like the backend triple::generate_name, because the other objects name a triple without its own name so */
     function generatedName(t) {
@@ -420,6 +442,33 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
+    /* true if the chosen option of a selector has the flag alternative order e.g. the bank statement of the walk order */
+    function walksAlternative() {
+        const result = Array.from(chosenOrders.values()).indexOf(true) >= 0;
+        return result;
+    }
+
+    /* true if the option of the selector phrase has the flag alternative order */
+    function isAlternativeOption(name, opt) {
+        const item = subItems(name, VERB.has).find(function (t) {
+            return t.to === opt;
+        });
+        const result = item !== undefined && hasFlag(item, KW.alternative_order);
+        return result;
+    }
+
+    /* the follower triples of a phrase: its alternative follower triples instead while the page walks the alternative order and the phrase has one */
+    function followTriples(name) {
+        const ofVerb = function (verb) {
+            return triplesFrom(name).filter(function (t) {
+                return t.verb === verb;
+            });
+        };
+        const alternative = walksAlternative() ? ofVerb(VERB.alternative) : [];
+        const result = alternative.length > 0 ? alternative : ofVerb(VERB.follow);
+        return result;
+    }
+
     /* the longest follower chain first, then the other items by their label (calculator::sorted) */
     /* the nearest phrase of the list before the phrase in its follower chain, also over phrases of other lists, null if there is none (calculator::previous_in_list) */
     function previousInList(name, keys) {
@@ -427,8 +476,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         let cur = name;
         let result = null;
         while (cur !== null && result === null) {
-            const trp = triplesFrom(cur).filter(function (t) {
-                return t.verb === VERB.follow && seen.indexOf(t.to) < 0;
+            const trp = followTriples(cur).filter(function (t) {
+                return seen.indexOf(t.to) < 0;
             }).pop();
             cur = trp === undefined ? null : trp.to;
             if (cur !== null && keys.indexOf(cur) >= 0) {
@@ -446,8 +495,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         const keys = list.map(keyOf);
         const next = new Map();
         list.forEach(function (x) {
-            triplesFrom(keyOf(x)).forEach(function (t) {
-                if (t.verb === VERB.follow && keys.indexOf(t.to) >= 0) {
+            followTriples(keyOf(x)).forEach(function (t) {
+                if (keys.indexOf(t.to) >= 0) {
                     next.set(t.to, keyOf(x));
                 }
             });
@@ -531,8 +580,9 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     }
 
     /* the value of a field: the operand of a result of the page first, so that a changed field changes the results, then with the page phrase
-       before a part of the page triple, then with the fewest other phrases (ui_list::calculator_value) */
-    function fieldEntry(name) {
+       before a part of the page triple, then with the fewest other phrases (ui_list::calculator_value);
+       onlyOneNumber true for no value if the values that rank the same have different numbers, else the first in the preferred order */
+    function fieldEntry(name, onlyOneNumber) {
         const props = FIELD_PROPERTIES;
         const parts = [page.from, page.to].filter(function (p) {
             return p;
@@ -562,7 +612,35 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
                 }
             }
         });
-        return onlyOne(best, name);
+        // e.g. the six exchange rates of the same rank, of which the page without javascript shows CHF per DKK
+        const sorted = sortedEntries(best);
+        const result = onlyOneNumber ? onlyOne(sorted, name) : (sorted[0] || null);
+        return result;
+    }
+
+    /* the numbers in the preferred order: the bigger impact first, then by the unit, the bigger number and the phrase names (sandbox_value::sorted) */
+    function sortedEntries(entries) {
+        const result = entries.slice().sort(function (a, b) {
+            return impactOf(b) - impactOf(a)
+                || textCompare(unitKey(a), unitKey(b))
+                || Number(b.number) - Number(a.number)
+                || textCompare(a.words.slice().sort().join(', '), b.words.slice().sort().join(', '));
+        });
+        return result;
+    }
+
+    /* the biggest impact of the phrases of a number, 0 for a phrase without one (sandbox_value::impact) */
+    function impactOf(entry) {
+        const result = entry.words.reduce(function (max, w) {
+            return Math.max(max, (phrases.get(w) || {impact: 0}).impact);
+        }, 0);
+        return result;
+    }
+
+    /* -1, 0 or 1 like strcmp, because the preferred order must not depend on the language of the browser */
+    function textCompare(a, b) {
+        const result = a < b ? -1 : (a > b ? 1 : 0);
+        return result;
     }
 
     function compareRank(a, b) {
@@ -651,9 +729,11 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* the numbers of the source of a field value, else of the values it is based on e.g. [5][6] (ui_list::field_source_refs) */
+    /* the numbers of the source of a field value, else of the values it is based on e.g. [5][6], and of a result the
+       ones of its operands, because a result has no source of its own (ui_list::field_source_refs) */
     function fieldSourceRefs(name, entry) {
-        const refs = [sourceRef(entry)].concat(basisEntries(name, entry).map(sourceRef));
+        const basis = entry !== null && entry.result ? resultOperands(entry) : basisEntries(name, entry);
+        const refs = [sourceRef(entry)].concat(basis.map(sourceRef));
         const result = refs.filter(function (r, i) {
             return refs.indexOf(r) === i;
         }).join('');
@@ -718,7 +798,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     // the terms of an expression e.g. "PV capacity" or "battery charge", "January" (formula_calc::operand_pattern)
     const OPERAND_PATTERN = /"[^"]+"(?:\s*,\s*"[^"]+")*/g;
     // one number, one char of the arithmetic or of a condition or a math function between the operands (formula_calc::TOKEN_PATTERN)
-    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/()^=&|;]|min|max|if|abs|cos|exp|ln|log|round|sec|sin|sqrt|sum|count|mean)/y;
+    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/()^=&|;]|min|max|if|abs|cos|exp|floor|ln|log|round|sec|sin|sqrt|sum|count|mean|largest|smallest)/y;
     // the math functions, the separator of their arguments and the power (the chars::FUNC_* and chars::POW)
     const FUNC_MIN = 'min';
     const FUNC_MAX = 'max';
@@ -728,13 +808,17 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     // the logarithm like arithmetic::log_number, to the base 10 if no base is given
     const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);
     // the functions of a list like arithmetic::list_number, a plain operand stands for all its values, except a second number of the same fact (words::LIST_FUNCTION_EXCLUDED)
-    const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
-    const LIST_ARGUMENT_START = /\b(?:sum|count|mean)\s*\([^()]*$/;
-    const LIST_ARGUMENTS_PLAIN = /\b(?:sum|count|mean)\s*\(\s*(?:x|-?\d+(?:\.\d+)?)\s*(?:;\s*(?:x|-?\d+(?:\.\d+)?)\s*)*\)/g;
-    const LIST_FUNCTION = /\b(?:sum|count|mean)\s*\(/;
+    const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length, largest: (nums) => nums.length === 0 ? NaN : Math.max(...nums), smallest: (nums) => nums.length === 0 ? NaN : Math.min(...nums)};
+    const LIST_ARGUMENT_START = /\b(?:sum|count|mean|largest|smallest)\s*\([^()]*$/;
+    const LIST_ARGUMENTS_PLAIN = /\b(?:sum|count|mean|largest|smallest)\s*\(\s*(?:x|-?\d+(?:\.\d+)?)\s*(?:;\s*(?:x|-?\d+(?:\.\d+)?)\s*)*\)/g;
+    const LIST_FUNCTION = /\b(?:sum|count|mean|largest|smallest)\s*\(/;
     const LIST_EXCLUDED = ['variance low (system)', 'variance high (system)', 'confidence'];
+    // round and floor take their argument without the float noise below these decimals like arithmetic::ROUND_NOISE_DECIMALS,
+    // the same decimals as an operand of a calculation; toFixed rounds the exact binary value like the php round
+    const ROUND_NOISE_DECIMALS = 12;
+    const WITHOUT_NOISE = (x) => Number(x.toFixed(ROUND_NOISE_DECIMALS));
     // the functions of one number like arithmetic::one_number, so also round away from zero and an angle in radian
-    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
+    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, floor: (x) => Math.floor(WITHOUT_NOISE(x)), ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(WITHOUT_NOISE(x))), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
     // the char between the result and the calculation of a formula (chars::CHAR_CALC)
     const CHAR_CALC = '=';
     // the decimals of a compare, the same as formula_calc::DECIMALS
@@ -755,14 +839,24 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* the value or result with all names of the operand, all of whose phrases are in the context of the result (formula_calc::value_of) */
+    /* the value or result with all names of the operand, all of whose phrases are in the context of the result,
+       with the fewest phrases that neither the operand nor the result names and on a tie the first (formula_calc::value_of) */
     function operandEntry(names, res) {
         const selected = priorSelect(names, res.context);
-        const result = pool.find(function (e) {
-            return e !== res && hasAll(e, selected.names) && e.words.every(function (w) {
+        let result = null;
+        let fewestForeign = Infinity;
+        pool.forEach(function (e) {
+            const matches = e !== res && hasAll(e, selected.names) && e.words.every(function (w) {
                 return selected.context.indexOf(w) >= 0;
             });
-        }) || null;
+            const foreign = e.words.filter(function (w) {
+                return selected.names.indexOf(w) < 0 && res.words.indexOf(w) < 0;
+            }).length;
+            if (matches && foreign < fewestForeign) {
+                result = e;
+                fewestForeign = foreign;
+            }
+        });
         return result;
     }
 
@@ -795,11 +889,19 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return trp === undefined ? null : trp.to;
     }
 
-    /* the triples of the follower chains */
+    /* the triples of the follower chains, for a phrase with an alternative follower triple the one of the order that the page walks */
     function followerLinks() {
-        return Array.from(phrases.values()).filter(function (p) {
-            return p.verb === VERB.follow;
+        const chainVerbs = [VERB.follow, VERB.alternative];
+        const froms = new Set(Array.from(phrases.values()).filter(function (p) {
+            return p.from !== undefined && chainVerbs.indexOf(p.verb) >= 0;
+        }).map(function (p) {
+            return p.from;
+        }));
+        let result = [];
+        froms.forEach(function (name) {
+            result = result.concat(followTriples(name));
         });
+        return result;
     }
 
     /* the names and the context that select the number of an operand (prior_operand::select) */
@@ -826,14 +928,63 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return phr !== null && priorOf(phr) === null;
     }
 
-    /* the stored values with all names of the operand and the context of the result (formula_calc::list_values) */
+    /* the values and results with all names of the operand and the context of the result or a kind of them e.g. the walk rows
+       of LISP for the stocks, without a second number of the same fact, so a result of the phrases of a value only once,
+       which the pool lists first, and never a result of the formula that is calculated, because its stored number is the
+       result before this calculation (formula_calc::list_values) */
     function listEntries(names, res) {
-        const result = pool.filter(function (e) {
+        const selected = priorSelect(names, res.context);
+        const wanted = selected.names.concat(selected.context);
+        const result = [];
+        pool.forEach(function (e) {
             const isExcluded = e.words.some(function (w) {
                 return LIST_EXCLUDED.indexOf(w) >= 0;
             });
-            return !e.result && !isExcluded && hasAll(e, [...names, ...res.context]);
+            const isOwn = e.result === true && e.formula === res.formula;
+            const isKnown = result.some(function (r) {
+                return r.id === e.id;
+            });
+            if (!isExcluded && !isOwn && !isKnown && hasAllKinds(e, wanted)) {
+                result.push(e);
+            }
         });
+        return withFewestPhrases(result);
+    }
+
+    /* the entries without one whose phrases include all phrases of another entry, because it is the same fact with a
+       qualifier e.g. the expected count of the split agreement next to the count of the walk (phrase_kinds::with_fewest_phrases) */
+    function withFewestPhrases(entries) {
+        return entries.filter(function (e) {
+            return !entries.some(function (other) {
+                return other.words.length < e.words.length && other.words.every(function (w) {
+                    return e.words.indexOf(w) >= 0;
+                });
+            });
+        });
+    }
+
+    /* each wanted phrase is a phrase of the number or a phrase that one of them is a kind of (phrase_kinds::has_all) */
+    function hasAllKinds(entry, wanted) {
+        const known = withKinds(entry.words);
+        const result = wanted.every(function (w) {
+            return known.indexOf(w) >= 0;
+        });
+        return result;
+    }
+
+    /* the names and every phrase that they are a kind of over all levels, each once, so that a loop of links ends
+       e.g. LISP, stock and holding (phrase_kinds::with_kinds) */
+    function withKinds(names) {
+        const result = names.slice();
+        const open = names.slice();
+        while (open.length > 0) {
+            (children.get(open.shift()) || []).forEach(function (t) {
+                if (t.verb === VERB.is && result.indexOf(t.to) < 0) {
+                    result.push(t.to);
+                    open.push(t.to);
+                }
+            });
+        }
         return result;
     }
 
@@ -843,24 +994,35 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return !LIST_FUNCTION.test(rest);
     }
 
-    /* the values and results that the results of the page use, each once (formula_calc::operands) */
+    /* the values and results that the results of the page use, each once */
     function operandValues() {
         const result = [];
         pageResults.forEach(function (res) {
-            const exp = calculation(res);
-            let found = OPERAND_PATTERN.exec(exp);
-            while (found !== null) {
-                const names = operandNames(found[0]);
-                const entry = operandEntry(names, res);
-                const entries = LIST_ARGUMENT_START.test(exp.slice(0, found.index)) ? listEntries(names, res) : (entry === null ? [] : [entry]);
-                entries.filter(function (e) {
-                    return result.indexOf(e) < 0;
-                }).forEach(function (e) {
-                    result.push(e);
-                });
-                found = OPERAND_PATTERN.exec(exp);
-            }
+            resultOperands(res).filter(function (e) {
+                return result.indexOf(e) < 0;
+            }).forEach(function (e) {
+                result.push(e);
+            });
         });
+        return result;
+    }
+
+    /* the values and results that the calculation of one result uses, each once (formula_calc::operands) */
+    function resultOperands(res) {
+        const result = [];
+        const exp = calculation(res);
+        let found = OPERAND_PATTERN.exec(exp);
+        while (found !== null) {
+            const names = operandNames(found[0]);
+            const entry = operandEntry(names, res);
+            const entries = LIST_ARGUMENT_START.test(exp.slice(0, found.index)) ? listEntries(names, res) : (entry === null ? [] : [entry]);
+            entries.filter(function (e) {
+                return result.indexOf(e) < 0;
+            }).forEach(function (e) {
+                result.push(e);
+            });
+            found = OPERAND_PATTERN.exec(exp);
+        }
         return result;
     }
 
@@ -875,8 +1037,9 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             let missing = false;
             const text = calculation(res).replace(OPERAND_PATTERN, function (term, start, all) {
                 if (LIST_ARGUMENT_START.test(all.slice(0, start))) {
+                    // a result of the list is calculated again like one operand, so that a sum follows the walk of the inputs
                     const nums = listEntries(operandNames(term), res).map(function (e) {
-                        return Number(e.number).toFixed(12);
+                        return operandNumber(e, done, open).toFixed(12);
                     });
                     missing = missing || nums.length === 0;
                     return nums.length === 0 ? '0' : nums.join(FUNC_ARG_SEPARATOR);
@@ -1197,11 +1360,33 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     function percentText(entry, decimals) {
         const word = entry.words.find(isPercent);
         const percent = Number(entry.number) * 100;
-        // a recalculated share has all its digits, and from 10 % on the whole percent is what a reader compares
-        const scale = Math.abs(percent) >= 10 ? 1 : Math.pow(10, FMT.percent_decimals);
-        const num = decimals === null ? String(Math.round(percent * scale) / scale) : formatNumber(percent, decimals);
+        const num = decimals === null ? String(percentRounded(entry)) : formatNumber(percent, decimals);
         const sym = isRatioUnit(word) ? '' : (symbols.get(word) || '');
         const result = num + (sym === '' ? '' : FMT.unit_sep + sym);
+        return result;
+    }
+
+    /* a share in percent rounded like a cell without the decimals of its row shows it */
+    function percentRounded(entry) {
+        const percent = Number(entry.number) * 100;
+        // a recalculated share has all its digits, and from 10 % on the whole percent is what a reader compares;
+        // a stored value keeps the percent decimals like sandbox_value::val_formatted, e.g. a bond price of 100.5 %
+        const scale = Math.abs(percent) >= 10 && entry.result ? 1 : Math.pow(10, FMT.percent_decimals);
+        return Math.round(percent * scale) / scale;
+    }
+
+    /* the number rounded like numberText, so that the sign of a cell is the sign of its text (ui_list::calculator_cell_shown) */
+    function shownNumber(entry, formats, decimals) {
+        const rowDecimals = decimals === undefined ? null : decimals;
+        let result;
+        if (isPercentEntry(entry) && rowDecimals === null) {
+            result = percentRounded(entry);
+        } else if (isPercentEntry(entry)) {
+            result = roundedNumber(Number(entry.number) * 100, rowDecimals);
+        } else {
+            const fmt = formats.get(unitOf(entry));
+            result = roundedNumber(Number(entry.number) * fmt.factor, rowDecimals === null ? fmt.decimals : rowDecimals);
+        }
         return result;
     }
 
@@ -1223,13 +1408,13 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     /* plus: true to show the sign with the plus sign, the style of the sign only for a number that does not round to zero; sub: the sub text behind the number; colour: the colour style of the column of a detail table (ui_list::calculator_cell) */
     function cellHtml(entry, formats, signed, withUnit, decimals, plus, sub, colour) {
         let text = '';
-        if (entry !== null) {
+        // a result of a new instance that cannot be calculated has no number, which is no zero
+        if (entry !== null && entry.number !== null) {
             text = esc(numberText(entry, formats, withUnit, decimals));
+            const shown = shownNumber(entry, formats, decimals);
             if (signed) {
-                text = block('span', text, Number(entry.number) < 0 ? FMT.negative : FMT.positive);
+                text = block('span', text, shown < 0 ? FMT.negative : FMT.positive);
             } else if (plus) {
-                const fmt = formats.get(unitOf(entry));
-                const shown = roundedNumber(Number(entry.number) * fmt.factor, decimals === null || decimals === undefined ? fmt.decimals : decimals);
                 text = block('span', (shown > 0 ? '+' : '') + text, shown > 0 ? FMT.positive : (shown < 0 ? FMT.negative : ''));
             }
             if (sub) {
@@ -1566,8 +1751,11 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             inputPhrases.set(field, name);
         }
         const unit = entry === null ? '' : fieldUnit(entry);
-        if (entry !== null) {
+        // a new instance has no database row yet, so without its save vars the save leaves it out (step 3, change 6)
+        if (entry !== null && !entry.added) {
             input += saveVars(key, entry, lbl, unit);
+        }
+        if (entry !== null) {
             inputEntries.set(field, entry);
         }
         if (unit !== '') {
@@ -1575,7 +1763,18 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         }
         input += removeButton(name, instance);
         const result = block('div', '<label for="' + field + '">' + text + '</label>' + block('div', input, STYLE.row)
-            + hintHtml(hintText, fieldSourceRefs(name, entry)), STYLE.field, item.name);
+            + hintHtml(hintText, fieldSourceRefs(name, entry)) + addedHint(instance, entry), STYLE.field, item.name);
+        return result;
+    }
+
+    /* the hint of an instance that the add button has added, because the save leaves it out until it has its own triple
+       (step 3, change 6), with the reason first if it has no number */
+    function addedHint(instance, entry) {
+        let result = '';
+        if (addedInstances.has(instance)) {
+            const noNumber = entry === null ? TEXTS[TXT.added_no_number] + ' ' : '';
+            result = block('span', esc(noNumber + TEXTS[TXT.added_not_saved]), STYLE.hint);
+        }
         return result;
     }
 
@@ -1616,8 +1815,10 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return block('div', '<label for="' + field + '">' + text + '</label>' + input, STYLE.field);
     }
 
+    /* several numbers of the option phrase are numbers of other phrases e.g. the lot value per holding, so none is the
+       number of the option (ui_list::calculator_option_value) */
     function optionEntry(name, option) {
-        return cellEntry([name, option]) || fieldEntry(option);
+        return cellEntry([name, option]) || fieldEntry(option, true);
     }
 
     /* true for a number with a unit, which a selector option names with its source (ui_list::calculator_option_text) */
@@ -1635,6 +1836,22 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
+    /* a selector with an option of the flag alternative order is an order selector: its chosen option decides the
+       follower triples of the rows and of prior (walksAlternative), starting with the option that the page uses */
+    function addOrderSelector(field, name, opts, usedOpt) {
+        const alternatives = opts.filter(function (o) {
+            return isAlternativeOption(name, o[0]);
+        }).map(function (o) {
+            return o[0];
+        });
+        if (alternatives.length > 0) {
+            opts.forEach(function (o) {
+                orderOptions.set(OPTION_PHRASE + idOf(o[0]), alternatives.indexOf(o[0]) >= 0);
+            });
+            chosenOrders.set(field, alternatives.indexOf(usedOpt) >= 0);
+        }
+    }
+
     function selectorField(item, name) {
         const field = NUMBER_VAR + idOf(name);
         const domId = field + SELECT_ID_SUFFIX;
@@ -1642,6 +1859,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         const usedOpt = used(opts.map(function (o) {
             return o[0];
         }));
+        addOrderSelector(field, name, opts, usedOpt);
         const html = opts.map(function (o) {
             const entry = optionEntry(name, o[0]);
             const sel = o[0] === usedOpt ? ' selected' : '';
@@ -1669,13 +1887,36 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* a number that a user cannot change e.g. the target weight of the parent (ui_list::calculator_read_only) */
+    /* a number that a user cannot change e.g. the target weight of the parent, which the page calculates from the
+       inputs of the children if it has no value (ui_list::calculator_read_only) */
     function readOnlyField(item, name) {
-        const entry = fieldEntry(name);
+        const entry = fieldEntry(name) || readOnlyResult(name);
         const number = entry === null ? '' : roughText(entry, 1);
         const result = block('div', '<label>' + esc(label(item)) + '</label>' + block('div', esc(number), STYLE.readOnly)
             + hintHtml(hint(item), fieldSourceRefs(name, entry)), STYLE.field, item.name);
         return result;
+    }
+
+    /* the one result with the phrase of a read only field and its field value phrases, null if there is none or several,
+       because a field shows one number and never picks one by the list order (ui_list::calculator_read_only_result) */
+    function readOnlyResult(name) {
+        const found = pool.filter(function (e) {
+            return e.result && e.words.indexOf(name) >= 0 && hasFieldValuePhrases(name, e);
+        });
+        const result = found.length === 1 ? found[0] : null;
+        return result;
+    }
+
+    /* the read only fields again with the numbers of the inputs, because a field can show a result */
+    function redrawReadOnlyFields() {
+        items(KW.input).concat(items(KW.assumption)).filter(function (item) {
+            return hasFlag(item, KW.read_only);
+        }).forEach(function (item) {
+            const field = host.querySelector('[' + PART_ATTR + '="' + CSS.escape(item.name) + '"]');
+            if (field !== null) {
+                field.outerHTML = readOnlyField(item, item.to);
+            }
+        });
     }
 
     /* checked is the number 1 and unchecked 0, which the hidden field sends, because a browser sends no unchecked checkbox (ui_list::calculator_checkbox) */
@@ -1699,20 +1940,221 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         let result = '';
         if (instance !== undefined && kinds(name).length > MIN_INSTANCES) {
             const title = esc(TEXTS[TXT.remove] + ' ' + phraseLabel(instance));
-            result = '<button type="button" class="' + STYLE.removeButton + '" title="' + title + '" aria-label="' + title + '"><i class="' + REMOVE_ICON + '"></i></button>';
+            const attr = ' ' + REMOVE_ATTR + '="' + esc(instance) + '"';
+            result = '<button type="button" class="' + STYLE.removeButton + '"' + attr + ' title="' + title + '" aria-label="' + title + '"><i class="' + REMOVE_ICON + '"></i></button>';
         }
         return result;
     }
 
-    /* a field per instance of a repeated input and the button to add one, which has no function yet, because a new instance needs its own phrase (ui_list::calculator_repeat) */
+    /* a field per instance of a repeated input and the button that adds the next declared instance, disabled if none is left (ui_list::calculator_repeat) */
     function repeatFields(item, name) {
-        const has = subItems(name, VERB.has)[0];
-        const valuePhrase = has === undefined ? name : has.to;
+        const valuePhrase = repeatValuePhrase(name);
         const add = ownText(item.name, KW.repeat);
         const result = kinds(name).map(function (instance) {
             return numberField(item, name, false, instance, optionEntry(valuePhrase, instance));
         }).join('');
-        return result + (add ? '<button type="button" class="' + STYLE.addButton + '">' + esc(add) + '</button>' : '');
+        const disabled = nextInstances(item).length === 0 ? ' disabled' : '';
+        const button = '<button type="button" class="' + STYLE.addButton + '" ' + ADD_ATTR + '="' + esc(item.name) + '"' + disabled + '>' + esc(add) + '</button>';
+        return result + removedHint(item) + (add ? button : '');
+    }
+
+    /* the hint below the fields of a repeated input with the instances that the remove button has taken from the page,
+       but that the database keeps, because the save does not remove them yet (step 3, change 6) */
+    function removedHint(item) {
+        const names = [];
+        removedInstances.forEach(function (name, instance) {
+            if (name === item.to) {
+                names.push(phraseLabel(instance));
+            }
+        });
+        const text = TEXTS[TXT.removed_not_saved] + ' ' + names.join(', ');
+        const result = names.length === 0 ? '' : block('p', esc(text), STYLE.hint, item.name);
+        return result;
+    }
+
+    /* the phrase that each instance of a repeated input has a number of e.g. the target share of a child portfolio */
+    function repeatValuePhrase(name) {
+        const has = subItems(name, VERB.has)[0];
+        return has === undefined ? name : has.to;
+    }
+
+    /* the instances that the add button of a repeated input adds, in their order: what its repeat triple has, but is no instance yet */
+    function nextInstances(item) {
+        const repeat = property(item.name, KW.repeat);
+        const known = kinds(item.to);
+        const declared = repeat === null ? [] : subItems(repeat.name, VERB.has);
+        return declared.map(function (t) {
+            return t.to;
+        }).filter(function (name) {
+            return known.indexOf(name) < 0;
+        });
+    }
+
+    /* the add button of a repeated input makes its next instance a kind of the repeated phrase on the page, with the
+       number of the new instance and the results of the first instance for it, and shows its field and its results */
+    function addInstance(event) {
+        const button = event.target.closest('[' + ADD_ATTR + ']');
+        const item = button === null ? undefined : phrases.get(button.getAttribute(ADD_ATTR));
+        const instance = item === undefined ? undefined : nextInstances(item)[0];
+        if (instance !== undefined) {
+            const template = kinds(item.to)[0];
+            const entry = newInstanceEntry(item.to, template, instance);
+            if (entry === null) {
+                console.warn('the first instance ' + template + ' has no number of ' + repeatValuePhrase(item.to) + ', so ' + instance + ' has none');
+            }
+            // the triple has no database id until the instance is saved (step 3, change 6)
+            const link = {from: instance, verb: VERB.is, to: item.to};
+            addTriple(Object.assign({name: generatedName(link), id: '', type: '', description: '', impact: 0}, link));
+            addedInstances.add(instance);
+            copyResults(template, instance);
+            redrawRepeatFields(item);
+            redrawResults();
+        }
+    }
+
+    /* the remove button of a repeated input takes its instance from the page: the is a triple, so that it is no instance
+       and no column any more, and its numbers and results, so that no sum takes them; an instance of the database stays
+       there until the save can remove it (step 3, change 6), an added one can be added again */
+    function removeInstance(event) {
+        const button = event.target.closest('[' + REMOVE_ATTR + ']');
+        const field = button === null ? null : button.closest('[' + PART_ATTR + ']');
+        const item = field === null ? undefined : phrases.get(field.getAttribute(PART_ATTR));
+        if (item !== undefined && kinds(item.to).length > MIN_INSTANCES) {
+            const instance = button.getAttribute(REMOVE_ATTR);
+            removeKindLink(instance, item.to);
+            removeEntries(instance);
+            if (addedInstances.has(instance)) {
+                addedInstances.delete(instance);
+            } else {
+                removedInstances.set(instance, item.to);
+            }
+            redrawRepeatFields(item);
+            redrawResults();
+        }
+    }
+
+    /* the instance is no kind of the phrase any more on the page, the opposite of addTriple for its is a triple */
+    function removeKindLink(instance, name) {
+        const isLink = function (t) {
+            return t.verb === VERB.is && t.to === name;
+        };
+        const list = triplesFrom(instance);
+        list.filter(isLink).forEach(function (t) {
+            phrases.delete(t.name);
+        });
+        children.set(instance, list.filter(function (t) {
+            return !isLink(t);
+        }));
+    }
+
+    /* the numbers and results that name the phrase in their phrases or their context, taken from the page */
+    function removeEntries(name) {
+        [pool, pageResults].forEach(function (list) {
+            for (let i = list.length - 1; i >= 0; i--) {
+                if (namesPhrase(list[i], name)) {
+                    list.splice(i, 1);
+                }
+            }
+        });
+        inputEntries.forEach(function (entry, field) {
+            if (namesPhrase(entry, name)) {
+                inputEntries.delete(field);
+            }
+        });
+    }
+
+    function namesPhrase(entry, name) {
+        return entry.words.indexOf(name) >= 0 || (entry.context || []).indexOf(name) >= 0;
+    }
+
+    /* the number of a new instance: the number of the first instance with the new instance, a share at most what the
+       other instances leave of 100 %, like the weight of a new child in the sample; null if the first instance has none */
+    function newInstanceEntry(name, template, instance) {
+        const valuePhrase = repeatValuePhrase(name);
+        const first = optionEntry(valuePhrase, template);
+        let result = null;
+        if (first !== null) {
+            let number = Number(first.number);
+            if (isPercentEntry(first)) {
+                const rest = WITHOUT_NOISE(WHOLE_SHARE - instancesSum(name, valuePhrase));
+                number = Math.max(0, Math.min(number, rest));
+            }
+            const words = replacedPhrase(first.words, template, instance);
+            result = {
+                id: newId(words),
+                words: words,
+                number: number,
+                source: first.source,
+                description: first.description,
+                added: true
+            };
+            pool.push(result);
+        }
+        return result;
+    }
+
+    /* the sum of the numbers of the instances of a repeated input e.g. 0.7 for two children of 35 % */
+    function instancesSum(name, valuePhrase) {
+        return kinds(name).reduce(function (sum, instance) {
+            const entry = optionEntry(valuePhrase, instance);
+            return entry === null ? sum : sum + Number(entry.number);
+        }, 0);
+    }
+
+    /* the results of the first instance again for a new instance, without a stored number so that the page calculates
+       them; not a result whose formula names the first instance, because that formula calculates only the first one */
+    function copyResults(template, instance) {
+        pool.filter(function (e) {
+            return e.result && e.words.indexOf(template) >= 0 && !formulaHasOperand(e.formula, template);
+        }).forEach(function (e) {
+            const words = replacedPhrase(e.words, template, instance);
+            const copy = {
+                id: newId(words),
+                words: words,
+                number: null,
+                stored: null,
+                formula: e.formula,
+                context: replacedPhrase(e.context, template, instance),
+                result: true,
+                added: true
+            };
+            pool.push(copy);
+            if (pageResults.indexOf(e) >= 0) {
+                pageResults.push(copy);
+            }
+        });
+    }
+
+    /* true if the expression of the formula has the phrase as an operand name */
+    function formulaHasOperand(formula, name) {
+        const frm = formulas.get(formula);
+        const expression = frm === undefined ? '' : String(frm.expression || '');
+        return expression.indexOf('"' + name + '"') >= 0;
+    }
+
+    function replacedPhrase(names, from, to) {
+        return names.map(function (n) {
+            return n === from ? to : n;
+        });
+    }
+
+    /* the id of a number of a new instance by its phrases, because a list keeps each id once (listEntries) */
+    function newId(words) {
+        return NEW_ID_PREFIX + words.slice().sort().join(', ');
+    }
+
+    /* the fields of a repeated input, its hint and its add button again, so that every instance shows its remove button;
+       found by the part name, because a repeated input without an add text has no add button */
+    function redrawRepeatFields(item) {
+        const part = '[' + PART_ATTR + '="' + CSS.escape(item.name) + '"]';
+        const selector = '.' + STYLE.field + part + ', .' + STYLE.hint + part + ', [' + ADD_ATTR + '="' + CSS.escape(item.name) + '"]';
+        const old = Array.from(host.querySelectorAll(selector));
+        if (old.length > 0) {
+            old[0].insertAdjacentHTML('beforebegin', repeatFields(item, item.to));
+        }
+        old.forEach(function (f) {
+            f.remove();
+        });
     }
 
     function fields(list, assumption) {
@@ -1794,8 +2236,9 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         }).map(function (t) {
             return {name: t.name.replace(page.name, caseTriple), from: caseTriple, verb: t.verb, to: t.to};
         });
+        // without the number of a new instance, whose instance triple the case cannot save yet (step 3, change 6)
         const values = pool.filter(function (e) {
-            return !e.result && e.words.indexOf(page.name) >= 0;
+            return !e.result && !e.added && e.words.indexOf(page.name) >= 0;
         }).map(function (e) {
             const json = {
                 words: e.words.map(function (w) {
@@ -2078,7 +2521,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     function rankedRows(tbl) {
         const result = rowPhrases(tbl.to, []);
         const rank = subItems(tbl.name, VERB.rank)[0];
-        if (rank !== undefined) {
+        // the ranking orders the main follower chain, so the alternative order keeps the order of its own chain
+        if (rank !== undefined && !walksAlternative()) {
             // the one stored value of the row, else its one result; a row without one number is the last row (ui_list::rank_number)
             const numberOf = function (row) {
                 const results = pool.filter(function (e) {
@@ -2412,7 +2856,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* the changed input for the next calculation; true if it has a number */
+    /* the changed input for the next calculation; true if it has a number or chooses an order */
     function applyInput(changed) {
         let input = changed;
         // a slider and its number field show the same number
@@ -2432,7 +2876,12 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         if (hasNumber) {
             entry.number = value;
         }
-        return hasNumber;
+        // an option of an order selector sets no number, but the order of the rows and of prior
+        const isOrder = orderOptions.has(input.value);
+        if (isOrder) {
+            chosenOrders.set(input.name, orderOptions.get(input.value));
+        }
+        return hasNumber || isOrder;
     }
 
     function refreshResults(event) {
@@ -2450,6 +2899,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
                 return d.open;
             });
             panel.outerHTML = resultPanel();
+            redrawReadOnlyFields();
             host.querySelector('div.' + STYLE.warnings).innerHTML = warningTexts();
             host.querySelectorAll('.' + STYLE.grid + ' > section.' + STYLE.panel + ' details').forEach(function (d, i) {
                 d.open = open[i] === true;
@@ -2498,6 +2948,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     host.addEventListener('change', refreshResults);
     host.addEventListener('submit', saveCase);
     host.addEventListener('click', applyPreset);
+    host.addEventListener('click', addInstance);
+    host.addEventListener('click', removeInstance);
     host.addEventListener('toggle', toggleSensitivity, true);
 
 }

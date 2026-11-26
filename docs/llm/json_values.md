@@ -485,12 +485,36 @@ mistyped input is caught at import time. Same shape as a stored `result`, and
 additionally routed through `validate_results` — a mismatch is reported as a
 failed validation and stops the import, never saved as a value.
 
-An operand is looked up in the `values` of the file first and, if the file states
-no value for it, in the entries of `calc-validation` that have **already been
-reproduced**. Entries are checked in file order, so a file can calculate a target
+An operand is looked up in the `values` of the file and in the entries of
+`calc-validation` that have **already been reproduced**. If several numbers in the
+`context` match, the one with the fewest phrases that neither the operand nor the
+checked result names is taken and on a tie the value of the file, the same rule as the
+page (`formula_calc::value_of`), e.g. the target share of the parent and not the one of
+the whole portfolio, and the lifetime of the PV installation and not its gross avoided
+emission over the lifetime. Entries are
+checked in file order, so a file can calculate a target
 value first and its probability range from that target afterwards. A result that
 did not reproduce is never an operand, else a wrong number would confirm the next
 one instead of being reported.
+
+An operand of `sum`, `count`, `mean`, `largest` or `smallest` stands for all numbers that name the operand and
+**all** phrases of the `context`: the values of the file and the reproduced results, a
+result of the phrases of a value only once by the value, and never a result of the
+formula that is checked, the same rule as the backend (`formula::list_numbers`) and the
+page. So the `context` of a list check names only the phrases that the numbers of the
+list share, e.g. `["fruit basket", "weight", "kg"]` for the weight of the apple and of the
+pear. A number also counts for a phrase if it has a phrase that is a kind of it by an
+`is a` triple of the file, over several levels, e.g. `["fruit basket", "fruit", "weight",
+"kg"]` sums the apple and the cherry, because the cherry is a stone fruit and a stone fruit
+is a fruit, like the walk rows of LISP for the stocks of the portfolio split. A number that has all phrases of
+another number of the list and more is the same fact with a qualifier and is left out (`phrase_kinds::with_fewest_phrases`),
+e.g. the expected count `LISP, split count, first child portfolio, expected` of the split agreement next to the count
+of the walk, so a number with only the wanted phrases is the only number of its list. A number that has the operand
+phrase itself is also in the list, so a result over the list is named by another phrase, e.g. the sum of the target
+shares of the portfolio split is `"child","target share" = sum( "child portfolio" )` and not `"child portfolio",
+"target share"`, which `largest( "child portfolio" )` would take as a target share of a child. A calculation inside the list (`sum( "a" * "b" )`) and an operand that is also used
+outside its list are refused, because a list would need pairs of numbers or would replace
+the other use.
 
 The database is never asked for an operand, so a chain that needs the numbers of
 another file belongs into that file: the climate solutions are calculated in

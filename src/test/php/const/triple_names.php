@@ -617,6 +617,9 @@ class triple_names
     const string FIRST_CHILD_PORTFOLIO_INSTANCE = 'first child portfolio instance';
     // a result phrase of the rows of the split walk, which names no page
     const string UNIT_VALUE = 'unit value';
+    // the results of the rows of the split walk that the next row reads with prior and the count of a child per row
+    const string CUMULATIVE_DEVIATION = 'cumulative deviation';
+    const string SPLIT_COUNT = 'split count';
     // an input of the use case cbam_calculator.json that two results of its chain depend on
     const string CBAM_CERTIFICATE_PRICE = 'CBAM certificate price';
     // an input of the use case ahv_vat_vote.json that the extra VAT revenue and its chain depend on
@@ -723,9 +726,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 482;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 3787;
+    const int SHARE_RATIO_ID = 3804;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 3839;
+    const int SHARE_SYMBOL_ID = 3856;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 492;
     const string IN_EUR = "in EUR";

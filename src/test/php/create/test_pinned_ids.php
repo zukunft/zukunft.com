@@ -464,6 +464,7 @@ class test_pinned_ids
         [verbs::HAS, verbs::HAS_ID],
         [verbs::CAN_BE_PART_OF, verbs::CAN_BE_PART_OF_ID],
         [verbs::FOLLOW, verbs::FOLLOW_ID],
+        [verbs::ALTERNATIVE_FOLLOW, verbs::ALTERNATIVE_FOLLOW_ID],
         [verbs::MEASURE, verbs::MEASURE_ID],
         [verbs::ALIAS, verbs::ALIAS_ID],
         [verbs::CAN_CONTAIN, verbs::CAN_CONTAIN_ID],

@@ -4,8 +4,8 @@
             "pageid": 17326872,
             "ns": 120,
             "title": "Property:P1082",
-            "lastrevid": 2553982480,
-            "modified": "2026-10-06T15:04:23Z",
+            "lastrevid": 2574801881,
+            "modified": "2026-11-25T11:19:56Z",
             "type": "property",
             "datatype": "quantity",
             "id": "P1082",
@@ -2743,6 +2743,20 @@
                                         "type": "wikibase-entityid"
                                     },
                                     "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "572a91e8bb5908473ae33aed6131602b2db8b014",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 1352,
+                                            "id": "P1352"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
                                 }
                             ],
                             "P2304": [
@@ -2770,7 +2784,7 @@
                         "rank": "normal",
                         "references": [
                             {
-                                "hash": "1c2d57d98191d133ed74379d6458b4cae0fc1f41",
+                                "hash": "04060930ccca2371f864d023a0dcd7d55b06fc09",
                                 "snaks": {
                                     "P2306": [
                                         {
@@ -2788,22 +2802,59 @@
                                             "datatype": "wikibase-property"
                                         }
                                     ],
-                                    "P5997": [
+                                    "P4656": [
                                         {
                                             "snaktype": "value",
-                                            "property": "P5997",
-                                            "hash": "aaf7047517139ec3d8c0f0ceec18d7614b6bfd90",
+                                            "property": "P4656",
+                                            "hash": "64a465075f3bd7054f7592bb56c300e88b289046",
                                             "datavalue": {
-                                                "value": "https://www.wikidata.org/w/index.php?title=Q132480&diff=prev&oldid=2343589224",
+                                                "value": "https://www.wikidata.org/w/index.php?title=Q132480&diff=prev&oldid=2343589224#P1082",
                                                 "type": "string"
                                             },
-                                            "datatype": "string"
+                                            "datatype": "url"
                                         }
                                     ]
                                 },
                                 "snaks-order": [
                                     "P2306",
-                                    "P5997"
+                                    "P4656"
+                                ]
+                            },
+                            {
+                                "hash": "84c626ce14c037d7a8221977464ef36fd1e552ab",
+                                "snaks": {
+                                    "P2306": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P2306",
+                                            "hash": "572a91e8bb5908473ae33aed6131602b2db8b014",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "property",
+                                                    "numeric-id": 1352,
+                                                    "id": "P1352"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-property"
+                                        }
+                                    ],
+                                    "P4656": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P4656",
+                                            "hash": "bac9b686a9e63b9e80a5ee1f18faa1336959a0f4",
+                                            "datavalue": {
+                                                "value": "https://www.wikidata.org/w/index.php?title=Q128186&diff=prev&oldid=2574797624#Q128186$9985B630-DBE0-4B5D-BD63-AC72302E8962",
+                                                "type": "string"
+                                            },
+                                            "datatype": "url"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P2306",
+                                    "P4656"
                                 ]
                             }
                         ]

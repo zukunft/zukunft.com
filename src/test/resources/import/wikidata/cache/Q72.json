@@ -4,8 +4,8 @@
             "pageid": 200,
             "ns": 0,
             "title": "Q72",
-            "lastrevid": 2573561757,
-            "modified": "2026-11-22T07:34:45Z",
+            "lastrevid": 2574505920,
+            "modified": "2026-11-24T16:35:08Z",
             "type": "item",
             "id": "Q72",
             "labels": {
@@ -727,7 +727,7 @@
                 },
                 "lld": {
                     "language": "lld",
-                    "value": "Turitg"
+                    "value": "Turic"
                 },
                 "kab": {
                     "language": "kab",
@@ -1194,6 +1194,10 @@
                 "hi": {
                     "language": "hi",
                     "value": "स्विट्ज़रलैंड का सबसे बड़ा शहर"
+                },
+                "lld": {
+                    "language": "lld",
+                    "value": "zità te la Svizra"
                 }
             },
             "aliases": {
@@ -1452,6 +1456,16 @@
                 "gv": [
                     {
                         "language": "gv",
+                        "value": "Zurich"
+                    }
+                ],
+                "lld": [
+                    {
+                        "language": "lld",
+                        "value": "Turitg"
+                    },
+                    {
+                        "language": "lld",
                         "value": "Zurich"
                     }
                 ]
@@ -45111,12 +45125,6 @@
                     "badges": [],
                     "url": "https://ca.wikipedia.org/wiki/Z%C3%BAric"
                 },
-                "lldwiki": {
-                    "site": "lldwiki",
-                    "title": "Zurich",
-                    "badges": [],
-                    "url": "https://lld.wikipedia.org/wiki/Zurich"
-                },
                 "kabwiki": {
                     "site": "kabwiki",
                     "title": "Zurix",
@@ -45254,6 +45262,12 @@
                     "title": "Q72",
                     "badges": [],
                     "url": "https://abstract.wikipedia.org/wiki/Q72"
+                },
+                "lldwiki": {
+                    "site": "lldwiki",
+                    "title": "Turic",
+                    "badges": [],
+                    "url": "https://lld.wikipedia.org/wiki/Turic"
                 }
             }
         }

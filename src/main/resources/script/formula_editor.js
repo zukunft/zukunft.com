@@ -280,13 +280,17 @@
         const FUNC_MAX = 'max';
         const FUNC_IF = 'if';
         const FUNC_ARG_SEPARATOR = ';';
+        /* round and floor take their argument without the float noise below these decimals like arithmetic::ROUND_NOISE_DECIMALS;
+           toFixed rounds the exact binary value like the php round, also for a large number */
+        const ROUND_NOISE_DECIMALS = 12;
+        const WITHOUT_NOISE = (x) => Number(x.toFixed(ROUND_NOISE_DECIMALS));
         /* the functions of one number like chars::FUNC_ONE_NUMBER of the backend, so also round away from zero and an angle in radian */
-        const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
+        const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, floor: (x) => Math.floor(WITHOUT_NOISE(x)), ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(WITHOUT_NOISE(x))), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
         /* the functions and symbols that are offered after a press on more, because the basic ones are enough for most formulas */
         /* the logarithm like arithmetic::log_number, to the base 10 if no base is given */
         const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);
         /* the functions of a list like arithmetic::list_number, a plain operand stands for all its values, except a second number of the same fact (words::LIST_FUNCTION_EXCLUDED) */
-        const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
+        const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length, largest: (nums) => nums.length === 0 ? NaN : Math.max(...nums), smallest: (nums) => nums.length === 0 ? NaN : Math.min(...nums)};
         const LIST_EXCLUDED = ['variance low (system)', 'variance high (system)', 'confidence'];
         const MORE_FUNCTIONS = [FUNC_MIN, FUNC_MAX, FUNC_IF, ...Object.keys(ONE_NUMBER), ...Object.keys(LIST_NUMBER)];
         const MORE_STRUCTURE = [FUNC_ARG_SEPARATOR, '=', '&', '|'];
@@ -474,7 +478,7 @@
            the functions, the separator of their arguments and the chars of a condition are structure tokens like the brackets */
         function tokenize(text) {
             const result = {ok: true, error: '', tokens: []};
-            const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|([-+*\/^])|([();=&|]|(?:min|max|if|abs|cos|exp|ln|log|round|sec|sin|sqrt|sum|count|mean)(?=\s*\())|(,)|(\S))/y;
+            const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|([-+*\/^])|([();=&|]|(?:min|max|if|abs|cos|exp|floor|ln|log|round|sec|sin|sqrt|sum|count|mean|largest|smallest)(?=\s*\())|(,)|(\S))/y;
             let joinNext = false;
             let m = re.exec(text);
             while (result.ok && m !== null) {
@@ -842,7 +846,17 @@
                 });
                 return e.kind === 'value' && !isExcluded && isSubset(names, e.wset) && isSubset(Array.from(res.ctx), e.wset);
             });
-            return result;
+            return withFewestPhrases(result);
+        }
+
+        /* the entries without one whose phrases include all phrases of another entry, because it is the same fact with
+           a qualifier e.g. the expected count of the split agreement next to the count of the walk (phrase_kinds::with_fewest_phrases) */
+        function withFewestPhrases(entries) {
+            return entries.filter(function (e) {
+                return !entries.some(function (other) {
+                    return other.wset.size < e.wset.size && isSubset(Array.from(other.wset), e.wset);
+                });
+            });
         }
 
         /* the one phrase of the context in a follower chain for an operand with the name prior, else null (prior_operand::chain_phrase) */

@@ -12,6 +12,26 @@
 const CASE_RESULT_ID = "caseResult";
 const CASE_MISSING = "missing";
 const CASE_PAGE = "page";
+/* the key of a case with the buttons that the case presses before it types the numbers, e.g. "Add child", because a
+   pressed button can add a field that the numbers fill */
+const CASE_PRESS = "press";
+
+/* the button of the page with the text, the title or the aria label e.g. "Remove the second child" */
+function buttonOf(label) {
+    const btn = Array.from(document.querySelectorAll("main button")).find(function (b) {
+        return b.textContent.trim() === label || b.title === label || b.getAttribute("aria-label") === label;
+    });
+    return btn === undefined ? null : btn;
+}
+
+/* press the button like a user; false if the page has no such button */
+function press(label) {
+    const btn = buttonOf(label);
+    if (btn !== null) {
+        btn.click();
+    }
+    return btn !== null;
+}
 
 /* the field of the page whose label starts with the text, because the tag of an assumption follows the text */
 function fieldOf(label) {
@@ -32,7 +52,9 @@ function selectOption(field, value) {
             o.removeAttribute("selected");
         });
         opt.setAttribute("selected", "");
-        field.value = value;
+        // the value of the option, because an option found by its text has another value e.g. "lot",
+        // and a value that no option has empties the select
+        field.value = opt.value;
     }
     return opt !== undefined;
 }
@@ -55,10 +77,15 @@ function typeNumber(field, value) {
 
 window.addEventListener("load", function () {
     const values = CASES[location.hash.slice(1)];
-    const missing = Object.keys(values).filter(function (label) {
+    const pressMissing = (values[CASE_PRESS] || []).filter(function (label) {
+        return !press(label);
+    });
+    const missing = pressMissing.concat(Object.keys(values).filter(function (label) {
+        return label !== CASE_PRESS;
+    }).filter(function (label) {
         const field = fieldOf(label);
         return field === null || !typeNumber(field, values[label]);
-    });
+    }));
     const caseResult = {};
     caseResult[CASE_MISSING] = missing;
     caseResult[CASE_PAGE] = document.documentElement.outerHTML;

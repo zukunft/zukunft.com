@@ -73,9 +73,13 @@
     // the logarithm like arithmetic::log_number, to the base 10 if no base is given
     const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);
     // the functions of a list like arithmetic::list_number; formula_calc::tokens has written all values of a list as the arguments
-    const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
+    const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length, largest: (nums) => nums.length === 0 ? NaN : Math.max(...nums), smallest: (nums) => nums.length === 0 ? NaN : Math.min(...nums)};
+    // round and floor take their argument without the float noise below these decimals like arithmetic::ROUND_NOISE_DECIMALS;
+    // toFixed rounds the exact binary value like the php round, also for a large number
+    const ROUND_NOISE_DECIMALS = 12;
+    const WITHOUT_NOISE = (x) => Number(x.toFixed(ROUND_NOISE_DECIMALS));
     // the functions of one number like arithmetic::one_number, so also round away from zero and an angle in radian
-    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
+    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, floor: (x) => Math.floor(WITHOUT_NOISE(x)), ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(WITHOUT_NOISE(x))), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
 
     const element = document.getElementById(DATA_ID);
     if (element === null) {
@@ -360,6 +364,21 @@
     }
 
     /**
+     * @param num the number of a cell
+     * @param cell the format of the cell like for text
+     * @returns the number rounded like its text, so that the sign of a cell is the sign of its text (ui_list::calculator_cell_shown)
+     */
+    function shownNumber(num, cell) {
+        let result;
+        if (cell.percent !== null) {
+            result = round(num * 100, cell.percent_decimals === null ? data.format.percent_decimals : cell.percent_decimals);
+        } else {
+            result = round(round(num * cell.factor, NOISE_DECIMALS), cell.decimals);
+        }
+        return result;
+    }
+
+    /**
      * write the numbers into the cells of the page, a signed cell in the positive or negative style
      *
      * @param numbers the numbers of the page by their html id
@@ -370,7 +389,7 @@
             if (td !== null && cell.number in numbers) {
                 const num = numbers[cell.number];
                 const txt = text(num, cell);
-                const shown = cell.plus ? round(round(num * cell.factor, NOISE_DECIMALS), cell.decimals) : num;
+                const shown = shownNumber(num, cell);
                 if (cell.signed || cell.plus) {
                     const span = document.createElement('span');
                     span.className = shown < 0 ? data.format.negative : (shown > 0 || !cell.plus ? data.format.positive : '');

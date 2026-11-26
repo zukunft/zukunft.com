@@ -1,0 +1,130 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-11-24 20:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message where a list function sums the numbers of the phrases that are a kind of a phrase of its context"
+  ],
+  "words": [
+    {
+      "name": "fruit basket"
+    },
+    {
+      "name": "fruit"
+    },
+    {
+      "name": "stone fruit"
+    },
+    {
+      "name": "apple"
+    },
+    {
+      "name": "pear"
+    },
+    {
+      "name": "cherry"
+    },
+    {
+      "name": "lid"
+    },
+    {
+      "name": "weight"
+    },
+    {
+      "name": "total"
+    },
+    {
+      "name": "kg",
+      "type": "measure_unit"
+    }
+  ],
+  "triples": [
+    {
+      "from": "apple",
+      "verb": "is a",
+      "to": "fruit"
+    },
+    {
+      "from": "pear",
+      "verb": "is a",
+      "to": "fruit"
+    },
+    {
+      "from": "stone fruit",
+      "verb": "is a",
+      "to": "fruit"
+    },
+    {
+      "from": "cherry",
+      "verb": "is a",
+      "to": "stone fruit"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "weight of the fruits",
+      "description": "the weight of the fruits of the basket is the sum of the weights of each fruit",
+      "expression": "\"total\",\"weight\" = sum( \"weight\" )",
+      "assigned_word": "weight"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "fruit basket",
+        "apple",
+        "weight",
+        "kg"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "fruit basket",
+        "pear",
+        "weight",
+        "kg"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "fruit basket",
+        "cherry",
+        "weight",
+        "kg"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "fruit basket",
+        "lid",
+        "weight",
+        "kg"
+      ],
+      "number": "1"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "fruit basket",
+        "fruit",
+        "weight",
+        "kg"
+      ],
+      "formula": "weight of the fruits",
+      "words": [
+        "fruit basket",
+        "total",
+        "fruit",
+        "weight",
+        "kg"
+      ],
+      "number": "5.5",
+      "note": "the apple and the pear are a fruit and the cherry is a stone fruit, which is a fruit; the lid is no fruit"
+    }
+  ]
+}

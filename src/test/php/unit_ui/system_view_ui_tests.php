@@ -1341,7 +1341,7 @@ class system_view_ui_tests
             }
             if ($dbo_id != 0) {
                 if ($class == phrase::class or $class == term::class) {
-                    $dbo_name .= '_' . views::TEST_VIEW_IDS[$id] ?? 'not_found';
+                    $dbo_name .= '_' . (views::TEST_VIEW_IDS[$id] ?? 'not_found');
                 }
                 if (!in_array($class, self::SNAPSHOT_WITHOUT_ID_CLASSES)
                     and !in_array($id, self::SNAPSHOT_WITHOUT_ID_VIEWS)) {

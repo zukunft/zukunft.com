@@ -1029,11 +1029,12 @@ class expression extends shared_expression
 
                             // find the next term reference
                             $txt_between_elm = $lib->str_left_of($work, chars::TERM_START);
-                            $txt_between_elm = trim($txt_between_elm);
 
-                            // check if the references does not have any math symbol in between
-                            // and therefore are used to retrieve one value
-                            if (strlen($txt_between_elm) > 0) {
+                            // the references without a math symbol in between are used to retrieve one value
+                            // e.g. "cumulative deviation","prior", so the group keeps the text for its symbol
+                            if ($this->joins_operand($txt_between_elm)) {
+                                $elm_grp->set_join($txt_between_elm);
+                            } else {
                                 $lst[] = $elm_grp;
                                 log_debug('group finished with ' . $elm->name());
                                 $elm_grp = new element_group;
@@ -1058,6 +1059,17 @@ class expression extends shared_expression
 
         log_debug($lib->dsp_count($result->lst()) . ' elements');
         return $result;
+    }
+
+    /**
+     * @param string $txt_between the text between two symbols of the expression e.g. "," of "{t1},{f45}"
+     * @return bool true if the two symbols select one value together,
+     *              because nothing or only the separator of an operand is between them
+     */
+    private function joins_operand(string $txt_between): bool
+    {
+        $txt = trim($txt_between);
+        return ($txt == '' or $txt == chars::SEPARATOR);
     }
 
 

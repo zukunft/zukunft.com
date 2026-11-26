@@ -39,6 +39,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::SHARED_CONST . 'sources.php';
@@ -57,6 +59,8 @@ include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UNIT_WORKFLOW . 'value_url_tests.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -80,6 +84,13 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 class value_write_url_tests extends value_url_tests
 {
 
+    // the phrases of the values that the add value workflows and the calculator save write on the test words
+    const array TEST_VALUE_GROUPS = [
+        [word_names::TEST_ADD, word_names::TEST_ADD_TO],
+        [word_names::CITY, word_names::TEST_ADD, word_names::TEST_ADD_TO],
+        [word_names::CITY, word_names::TEST_ADD_TO, word_names::CANTON],
+    ];
+
     function run(test_cleanup $t): void
     {
 
@@ -90,6 +101,10 @@ class value_write_url_tests extends value_url_tests
         // must be in the database; the word and triple write workflows add and delete them again,
         // so this run creates them itself instead of depending on the order of the other workflows
         $this->create_test_phrases($t);
+        // the values and their change log of an interrupted run are removed before the workflows, because the test
+        // words get the same ids again, so the history of a new value would show the changes of the earlier run
+        $this->cleanup_test_value_rows($t);
+        $this->assert_no_value_history($t);
 
         // run the same workflows as value_url_tests but with do_it true so each add is persisted
         $this->add_value_workflow(workflows::WF_ADD_VALUE_NBR, true);
@@ -155,15 +170,51 @@ class value_write_url_tests extends value_url_tests
      */
     private function cleanup_test_values(test_cleanup $t): void
     {
-        new test_values($t)->cleanup_objects($this->ts, [
-            [word_names::TEST_ADD, word_names::TEST_ADD_TO],
-            [word_names::CITY, word_names::TEST_ADD, word_names::TEST_ADD_TO],
-            [word_names::CITY, word_names::TEST_ADD_TO, word_names::CANTON],
-        ], new value($t->usr1));
+        $this->cleanup_test_value_rows($t);
         $wrd = new word($t->usr1);
         $t->cleanup_change_log($wrd, [word_names::TEST_ADD, word_names::TEST_ADD_TO]);
         foreach ([word_names::TEST_ADD, word_names::TEST_ADD_TO] as $wrd_name) {
             $t->write_named_cleanup($wrd, $wrd_name);
+        }
+    }
+
+    /**
+     * remove the values that the add value workflows and the calculator save write on the test words, with their
+     * change log, but not the test words: after the workflows, and before them for the leftovers of an interrupted run
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function cleanup_test_value_rows(test_cleanup $t): void
+    {
+        new test_values($t)->cleanup_objects($this->ts, self::TEST_VALUE_GROUPS, new value($t->usr1));
+    }
+
+    /**
+     * check that the cleanup has left no change log of an earlier run on the values of the test words, because the
+     * next value of the same phrases gets the same group id and would show that history in the workflow snapshots
+     *
+     * @param test_cleanup $t the test environment
+     */
+    private function assert_no_value_history(test_cleanup $t): void
+    {
+        $msg = new user_message($t->usr1);
+        foreach (self::TEST_VALUE_GROUPS as $names) {
+            $val_names = implode(', ', $names);
+            $test_name = 'the change log of the value of ' . $val_names . ' is read';
+            $phr_lst = new phrase_list($t->usr1);
+            $phr_lst->load_by_names($names, $msg);
+            // without all its phrases the value cannot exist, so it has no change log
+            $log_cnt = 0;
+            if ($phr_lst->count() == count($names)) {
+                $grp = new group($t->usr1);
+                $grp->set_phrase_list($phr_lst);
+                $log_cnt = $t->value_change_log_count($grp->id(), $msg);
+            }
+            $t->assert_msg($test_name, $msg, $t::TIMEOUT_LIMIT_DB_MULTI);
+            $msg->reset();
+            // checked without a repair, so that an entry that cleanup_objects has left fails the test
+            $test_name = 'the value of ' . $val_names . ' has no change log of an earlier run';
+            $t->assert($test_name, (string)$log_cnt, '0');
         }
     }
 

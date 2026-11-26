@@ -147,6 +147,13 @@ its own flow does not explain, a delete earlier in the same run has failed.
   the delete ran, so the row stayed and only an exclusion was written.
 - `write_named_cleanup(..., true)` at the start of `assert_write_named` reports such a row as
   `Unexpected cleanup of ...`; a passing add log check means the object did not exist before.
+- A test object that a workflow lets other users change, e.g. the `System Test Word` with the
+  description overwrite of the normal user, is removed in `test_cleanup::cleanup` with
+  `write_named_cleanup` after its plain delete, and the cleanup asserts that the system user no
+  longer finds it; otherwise it survives into the next `test_part.php` run, which has no database
+  recreate, and appears in the read snapshots, while `test.php` hides it by its recreate. The
+  `csv_leftover_check` of `test_part.php` cannot see such a row, because it is already in the rows
+  read before the write tests.
 - An expected html page is committed only from a run that started on a recreated database
   (`test.php`, or `reset_db.php` before `test_part.php`), because `test_part.php` alone keeps the
   rows of a stopped run, and a page written while they are in the database shows them, e.g.
@@ -170,12 +177,28 @@ the environment accidentally reaches a deployment it should not touch.
 
 ## Each change is tested upfront with `test/test_part.php`
 
-A full test run with `test/test.php` takes more than 30 minutes, so the developer
-tests each change first with `test/test_part.php`, which runs only the tests that
-`a_selected_test::run` (`src/test/php/unit_write/a_selected_test.php`) calls.
+A full test run with `test/test.php` takes almost an hour on a normal pc at the moment, so the
+developer tests each change first with `test/test_part.php`, which runs only the tests that
+`a_selected_test::run` (`src/test/php/unit_write/a_selected_test.php`) calls. The order of the
+runs is:
 
-- With every change the LLM activates or adds the tests that cover the change in
-  `a_selected_test::run`, so that the developer can run them right away.
+1. If the change may shift a database id (a new or removed seed object e.g. a word, triple, verb
+   or formula of an imported json), the re-pin first: `test/reset_db.php` and then
+   `test/test_re_pin.php` (see *The steps to a stable test result after a new seed object*).
+2. `test/test_part.php` with the tests that are likely to break by the change, repeated until it
+   runs without error.
+3. Before a commit always a full `test/test.php` run, which must be error free as the final run.
+
+To find the test sections that take the most time, the developer saves the log of a run
+(`php test/test.php > test_run.log`) and runs `php bin/test_timing.php test_run.log`, which writes the
+seconds per first word and per first two words of the section headers and the 25 slowest sections as
+markdown to the standard output (`src/test/php/utils/test_timing.php`); it reads only the log, so it
+also works on the log of a `test_part.php` run, and the report is not committed.
+
+- With every change the LLM activates or adds the tests that are likely to break by the change
+  in `a_selected_test::run`, so that the developer can run them right away; the report of the
+  change always suggests `test/test_part.php` as the next run, never `test/test.php`, and if
+  the change may shift an id first `test/reset_db.php` and `test/test_re_pin.php`.
 - `a_selected_test::run` always covers every potential fail of all uncommitted changes, not only
   the expected ones: for each changed function the unit, read and write tests that call it, the
   coding rule tests for a changed include, message or generated doc, the test that writes a
@@ -188,8 +211,9 @@ tests each change first with `test/test_part.php`, which runs only the tests tha
   tests; the write tests create their test entries again.
 - In the same edit it deactivates the tests there whose changes are already
   committed, so that the selected run stays short.
-- The full `test/test.php` run is still needed before a commit; `test_part.php`
-  only gives the fast feedback for one change.
+- The full `test/test.php` run is still needed before a commit, and the final run before a
+  commit is always an error free `test/test.php`; `test_part.php` only gives the fast feedback for
+  one change.
 - `a_selected_test::run` calls the tests of `test/test.php` in the same order and
   switches off the tests that are not needed as a comment; `php bin/test_differences.php`
   writes every test that is missing, added or in another order to `docs/test_differences.md`.
@@ -891,6 +915,12 @@ unreadable page never updates the expected import json of the last run
 (`test_files::IMPORT_WIKIPEDIA_REFRESH_*`). The hand made `summary_Geneva.json` and
 `summary_Zurich.json` of the unit tests are no such copy and are never written by a run.
 
+So these live copies change every time a test run updates the data from the internet, e.g. a
+new `tid` of the page: `import/wikipedia/cache/live_Geneva.json`, `import/wikipedia/cache/live_Health.json`
+and the wikidata property `import/wikidata/cache/P1082.json`. That is expected and fine: they are
+committed as the last run has written them, never reported as a polluted snapshot and never
+restored together with the html snapshots of a run on a database with leftovers.
+
 ## Phrase id consts are re-baselined from the regenerated list.csv, never guessed
 
 `src/test/php/const/{word,triple,verb}_names.php` pin the **seed database ids**
@@ -969,11 +999,14 @@ Both flags are in `src/test/php/const/files.php`.
    `test/test_re_pin.php` again, which checks the re-pinned consts and writes the re-pin report
    again. If the report does not show "all ids are fine" for every class, repeat from step 2;
    a const that the report names as "re-pin by hand" is fixed in the code before the next run.
-5. Run the full `test/test.php` and fix any errors, if needed step by step in a debug run
-   with a break on the error.
-6. Once all errors are fixed, set `AUTO_UPDATE_TEST_FILES` to `false` and do a final run to
-   double-check that no test case is volatile. If it is fine, do a final code review, which an
-   LLM may support, and commit with a matching commit message.
+5. Run `test/test_part.php` with the tests that are likely to break by the change (see *Each
+   change is tested upfront with `test/test_part.php`*) and fix any errors, if needed step by
+   step in a debug run with a break on the error; a full `test/test.php` takes almost an hour, so
+   it is not the run to find the errors of one change.
+6. Once all errors are fixed, set `AUTO_UPDATE_TEST_FILES` to `false` and do the final run with
+   the full `test/test.php`, which must be error free and also shows that no test case is
+   volatile. If it is fine, do a final code review, which an LLM may support, and commit with a
+   matching commit message.
 
 Two traps that make the drift look smaller than it is:
 
@@ -1152,7 +1185,10 @@ differences of the two as a markdown report next to the page (`html_page_diff`,
 `pv_lifetime_balance_diff.md` for the server page without javascript) and after the input cases
 standard, high and low for the page of the browser (`pv_lifetime_balance_diff_standard.md`,
 `_high.md` and `_low.md`). The table in `docs/deployment.md` "use case pages and their samples" lists which sample has
-this setup and how to add it. The folder is not
+this setup and how to add it. A case of `src/test/js/<name>_cases.js` types its numbers by the label of the field
+(`src/test/js/use_case_cases.js`); its key `press` lists the buttons that the case presses before, by their text,
+title or aria label, e.g. `"press": ["Add child", "Remove the second child"]` of the portfolio split cases
+`add_child` and `remove_child`, and a button or a field that the page lacks is listed as missing. The folder is not
 below `views_by_object`, because the view test deletes every snapshot there that it has
 not written, which would remove the sample.
 

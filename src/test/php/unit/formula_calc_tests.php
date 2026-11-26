@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::SHARED_CALC . 'phrase_kinds.php';
 include_once paths::SHARED_CALC . 'prior_operand.php';
 include_once html_paths::ELEMENT . 'element_group.php';
 include_once html_paths::FORMULA . 'formula_calc.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\main\php\shared\calc\phrase_kinds;
 use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -156,6 +158,40 @@ class formula_calc_tests
         $test_name = '... and such a phrase is no first row';
         $is_unclear_first = $pri_two->is_first($names, $unclear_ctx);
         $t->assert($test_name, $is_unclear_first, false);
+
+        $t->subheader($ts . 'phrase kinds');
+        // Pi is a constant and a constant is a part of math, like LISP is a stock is a holding in the rows of a walk
+        $kind_links = phrase_kinds::with_link([], word_names::PI, word_names::CONST_NAME);
+        $kind_links = phrase_kinds::with_link($kind_links, word_names::CONST_NAME, word_names::MATH);
+        $knd = new phrase_kinds($kind_links);
+        $test_name = 'a number of a kind has the phrase of the kind e.g. a row of LISP is a row of the stocks';
+        $t->assert($test_name, $knd->has_all([word_names::PI, word_names::INHABITANTS], [word_names::CONST_NAME]), true);
+        $test_name = '... also over several levels of is a';
+        $t->assert($test_name, $knd->has_all([word_names::PI], [word_names::MATH, word_names::PI]), true);
+        // negative: a phrase is never a kind of its own kinds
+        $test_name = '... but a number of the kind is no number of the phrases of that kind';
+        $t->assert($test_name, $knd->has_all([word_names::CONST_NAME], [word_names::PI]), false);
+        $test_name = 'a second same is a link is kept once';
+        $t->assert($test_name, phrase_kinds::with_link($kind_links, word_names::PI, word_names::CONST_NAME), $kind_links);
+        // negative: a loop of is a links in the data ends and adds no other phrase
+        $test_name = 'a loop of is a links ends';
+        $loop_links = phrase_kinds::with_link($kind_links, word_names::MATH, word_names::PI);
+        $knd_loop = new phrase_kinds($loop_links);
+        $t->assert($test_name, $knd_loop->has_all([word_names::PI], [word_names::CITY]), false);
+        // a number with all phrases of another and more is the same fact with a qualifier e.g. the expected count
+        $test_name = 'a list leaves out a number that includes all phrases of another number';
+        $pi_sets = [
+            [word_names::PI, word_names::MATH],
+            [word_names::PI, word_names::MATH, word_names::CONST_NAME],
+            [word_names::PI, word_names::CITY]
+        ];
+        $fewest = phrase_kinds::with_fewest_phrases([1, 2, 3], $pi_sets);
+        $t->assert($test_name, $fewest, [1, 3]);
+        // negative: numbers that differ by a phrase each are both in the list
+        $test_name = '... but keeps numbers that differ by a phrase each';
+        $other_sets = [[word_names::PI, word_names::MATH], [word_names::PI, word_names::CITY]];
+        $both = phrase_kinds::with_fewest_phrases([1, 3], $other_sets);
+        $t->assert($test_name, $both, [1, 3]);
 
         $t->subheader($ts . 'expression');
 

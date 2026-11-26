@@ -1131,14 +1131,16 @@ a:hover {
     white-space: nowrap;
     min-width: 3.5em;
 }
-/* the tag behind a label: m for a measured value with a source, a for an assumed value */
+/* the tag below a label, as wide as its text: m for a measured value with a source, a for an assumed value */
 .use-case .tag {
+    display: block;
+    width: fit-content;
+    margin-top: 2px;
     font-size: .68rem;
     padding: 1px 6px;
     border-radius: 4px;
     border: 1px solid var(--page-border);
     color: var(--page-grey);
-    margin-left: 6px;
     font-weight: 400;
 }
 .use-case .tag.m {
@@ -1336,6 +1338,11 @@ a:hover {
     border: 0;
     padding: 0;
     background: none;
+    flex: 1 1 100%;
+}
+/* the slider in its own line and the number with its unit in the line below */
+.use-case .field .row:has(> input[type=range]) {
+    flex-wrap: wrap;
 }
 .use-case .field .row > input[type=range] + input[type=number] {
     flex: 0 0 6.5rem;

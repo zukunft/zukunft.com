@@ -55,6 +55,7 @@ include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CALC . 'prior_operand.php';
@@ -74,6 +75,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
@@ -91,6 +93,13 @@ class element_group extends list_db_write
     public ?user $usr = null;            // the results can differ for each user; this is the user who wants to see the result
 
     public ?string $symbol = null; // the formula reference text for this element group; used to fill in the numbers into the formula
+
+    // the text between the symbols of two elements of a group that has been created without the expression
+    const string JOIN_DEFAULT = ' ';
+
+    // per position of an element the text of the expression between its symbol and the symbol of the next element
+    // e.g. "," for "{t1},{f45}", so that the symbol of the group is the text that the number replaces
+    private array $joins = [];
 
 
     /**
@@ -141,22 +150,42 @@ class element_group extends list_db_write
     function build_symbol(): string
     {
         $this->symbol = '';
+        $prev_pos = null;
 
-        foreach ($this->lst() as $elm) {
+        foreach ($this->lst() as $pos => $elm) {
             // build the symbol for the number replacement
-            if ($this->symbol == '') {
-                if ($elm->symbol != null) {
-                    $this->symbol = $elm->symbol;
-                }
-            } else {
-                if ($elm->symbol != null) {
-                    $this->symbol .= ' ' . $elm->symbol;
-                }
+            if ($elm->symbol != null) {
+                $this->symbol .= $this->join_after($prev_pos) . $elm->symbol;
+                $prev_pos = $pos;
             }
             log_debug('symbol "' . $elm->symbol . '" added to "' . $this->symbol . '"');
         }
 
         return $this->symbol;
+    }
+
+    /**
+     * remember the text of the expression between the last element of this group and the next one
+     *
+     * @param string $join the text between the two symbols e.g. "," for "{t1},{f45}"
+     * @return void
+     */
+    function set_join(string $join): void
+    {
+        $this->joins[array_key_last($this->lst())] = $join;
+    }
+
+    /**
+     * @param int|null $prev_pos the position of the element whose symbol is the last one in the symbol of the group
+     * @return string the text that follows the symbol of this element in the symbol of the group, '' for the first one
+     */
+    private function join_after(?int $prev_pos): string
+    {
+        $result = '';
+        if (!is_null($prev_pos)) {
+            $result = $this->joins[$prev_pos] ?? self::JOIN_DEFAULT;
+        }
+        return $result;
     }
 
     /**
@@ -240,32 +269,31 @@ class element_group extends list_db_write
         // init the resulting figure list
         $fig_lst = new figure_list($this->usr);
 
-        // add the words of the formula element group to the value selection
+        // build the symbol for the number replacement before adding the formula elements
+        // e.g. 1: {f18}
+        if ($this->symbol == '') {
+            $this->build_symbol();
+        }
+
+        // init the word list for the figure selection because
+        // the word list for the figure selection ($val_phr_lst) may differ from the requesting word list ($this->phr_lst) because
+        // e.g. 1: $val_phr_lst is Swiss inhabitants
+        // e.g. if "percent" is requested and a measure word is part of the request, the measure words are ignored
+        $val_phr_lst = clone $this->phr_lst;
+        $val_time_phr = null;
+
+        // add the phrases of all elements of the group to the selection of its one number
         // e.g. 1: for the formula "this" and the phrases "Switzerland" and "inhabitants" the Swiss inhabitants are requested
         // e.g. for the formula "= sales - cost" and the phrases "ABB" the ABB sales is requested
+        // e.g. for "unit value","CHF" and the row "LISP" the unit value of LISP in CHF is requested
         foreach ($this->lst() as $frm_elm) {
-
-            // init the word list for the figure selection because
-            // the word list for the figure selection ($val_phr_lst) may differ from the requesting word list ($this->phr_lst) because
-            // e.g. 1: $val_phr_lst is Swiss inhabitants
-            // e.g. if "percent" is requested and a measure word is part of the request, the measure words are ignored
-            $val_phr_lst = clone $this->phr_lst;
-            $val_time_phr = null;
-
-            // build the symbol for the number replacement before adding the formula elements
-            // e.g. 1: {f18}
-            if ($this->symbol == '') {
-                $this->build_symbol();
-            }
 
             log_debug('use element ' . $frm_elm->dsp_id() . ' also for value selection');
 
-            // get the element word to be able to add it later to the value selection (differs for the element type)
-            if ($frm_elm->type() == word::class) {
-                if ($frm_elm->id() > 0) {
-                    $val_phr_lst->add($frm_elm->obj->phrase());
-                    log_debug('include ' . $frm_elm->dsp_id() . ' in value selection');
-                }
+            // get the element word or triple to be able to add it later to the value selection
+            if ($this->is_phrase_element($frm_elm)) {
+                $val_phr_lst->add($frm_elm->obj->phrase());
+                log_debug('include ' . $frm_elm->dsp_id() . ' in value selection');
             }
 
             // get the formula related word to be able to add it later to the value selection (differs for the element type)
@@ -284,26 +312,37 @@ class element_group extends list_db_write
                     log_debug('include formula word "' . $frm_elm->wrd_obj->name . '" (' . $frm_elm->wrd_id . ')');
                 }
             }
-
-            // add the time to the list
-            $val_time_phr = $val_phr_lst->assume_time($msg, $trm_lst);
-            if ($val_time_phr != null) {
-                log_debug('for time ' . $val_time_phr->dsp_id());
-            }
-            if (!$val_phr_lst->has_time($msg) and $val_time_phr != null) {
-                $val_phr_lst->add($val_time_phr);
-            }
-
-            // get the word group
-            $val_phr_lst_sort = $val_phr_lst->lst();
-            usort($val_phr_lst_sort, array(phrase::class, "cmp"));
-            $val_phr_lst->set_lst($val_phr_lst_sort);
-
-            $this->add_figure($fig_lst, $val_phr_lst, $frm_elm->symbol, $msg);
         }
+
+        // add the time to the list
+        $val_time_phr = $val_phr_lst->assume_time($msg, $trm_lst);
+        if ($val_time_phr != null) {
+            log_debug('for time ' . $val_time_phr->dsp_id());
+        }
+        if (!$val_phr_lst->has_time($msg) and $val_time_phr != null) {
+            $val_phr_lst->add($val_time_phr);
+        }
+
+        // get the word group
+        $val_phr_lst_sort = $val_phr_lst->lst();
+        usort($val_phr_lst_sort, array(phrase::class, "cmp"));
+        $val_phr_lst->set_lst($val_phr_lst_sort);
+
+        $this->add_figure($fig_lst, $val_phr_lst, $this->symbol, $msg);
 
         log_debug($lib->dsp_count($fig_lst->lst()) . ' found');
         return $fig_lst;
+    }
+
+    /**
+     * @param element $elm an element of this group
+     * @return bool true if the element is a word or triple that selects the number of the group,
+     *              by the id of its object, because an element of an expression has no id of its own
+     */
+    private function is_phrase_element(element $elm): bool
+    {
+        $is_phrase = in_array($elm->type(), [word::class, triple::class]);
+        return ($is_phrase and $elm->obj->id() > 0);
     }
 
     /**

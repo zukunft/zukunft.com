@@ -254,6 +254,8 @@ class files
     const string CALCULATOR_KEYWORDS_FILE = self::MESSAGE_PATH . 'calculator_keywords' . self::JSON;
     // the calculator view with its title, input and result component and the editor relation
     const string CALCULATOR_VIEWS_FILE = self::MESSAGE_PATH . 'calculator_views' . self::JSON;
+    // the keywords of a csv format, so that the import json of a csv is defined by phrases (docs/json_structure.md)
+    const string CSV_KEYWORDS_FILE = self::MESSAGE_PATH . 'csv_keywords' . self::JSON;
 
     // the Fermi estimates and thesis chains of the start page, loaded by the full load
     const string FERMI_INTERNET_PRO_CONTRA_FILE = self::DATA_START_PAGE_PATH . 'fermi_internet_pro_contra' . self::JSON;
@@ -422,6 +424,7 @@ class files
         self::PROCESS_CATCH_VIEWS_FILE,
         self::CALCULATOR_KEYWORDS_FILE,
         self::CALCULATOR_VIEWS_FILE,
+        self::CSV_KEYWORDS_FILE,
     ];
 
     // the use case files that build on the appended system data e.g. the page of a phrase defined

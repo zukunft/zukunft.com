@@ -378,6 +378,37 @@ class test_results
     }
 
     /**
+     * a result of the list function test (formula_calc::list_values): the inhabitants and the mayor within the context
+     * of result_zh_sum_ui, so that a list of the inhabitants takes it next to test_values::value_list_list_function_ui
+     *
+     * @param bool $in_context false for the result without the context phrases of result_zh_sum_ui, which no list takes
+     * @param bool $own_formula true for a result of the formula of result_zh_sum_ui, which its own list never takes
+     * @return result_list_ui the frontend result for unit testing
+     */
+    function result_list_list_function_ui(bool $in_context, bool $own_formula): result_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $phrases = [$t_wrd->word_inhabitant()->phrase(), $t_wrd->word_mayor()->phrase()];
+        if ($in_context) {
+            $phrases[] = $t_wrd->word_zh()->phrase();
+            $phrases[] = $t_trp->zh_city_low_impact()->phrase();
+            $phrases[] = $t_trp->company_zurich_high_impact()->phrase();
+        }
+        $res = $this->result_for_phrases($phrases, 60);
+        $frm = new formula($this->env->usr1);
+        if ($own_formula) {
+            $frm->set(formula_names::CITY_POPULATION_ID, formula_names::CITY_POPULATION);
+        } else {
+            $frm->set(formula_names::SCALE_TO_SEC_ID, formula_names::SCALE_TO_SEC);
+        }
+        $res->set_formula($frm);
+        $lst = new result_list($this->env->usr1);
+        $lst->add($res);
+        return new test_lib()->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * a stored result that names the row phrase inhabitants and the canton filter of its row, so
      * it is the number of the cells of the row and not the number of the row phrase
      *

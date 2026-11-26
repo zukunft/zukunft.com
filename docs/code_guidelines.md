@@ -4,8 +4,9 @@ for coding new features the target process is before committing:
     1. create a unit test for the new feature
     2. code the feature and fix the unit tests and code smells
     3. create and fix the database read, write and integration test for the new feature if needed
-    4. run the unit tests using /test/test_unit.php and if successful run the complete test using /test/test.php
-    5. if all tests are fine commit and push
+    4. run the unit tests using /test/test_unit.php and if successful the tests that are likely to break by the change using /test/test_part.php (after /test/reset_db.php and /test/test_re_pin.php if a database id may have shifted), because the complete test /test/test.php takes almost an hour on a normal pc at the moment
+    5. as the final run before the commit run the complete test using /test/test.php, which must be error free
+    6. if all tests are fine commit and push
 
 if the database is corrupted by a mistake /test/reset_db.php can be used to recreate the database
 

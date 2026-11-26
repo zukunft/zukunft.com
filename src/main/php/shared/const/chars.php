@@ -91,6 +91,8 @@ class chars
     const string FUNC_ABS = 'abs';
     const string FUNC_COS = 'cos';
     const string FUNC_EXP = 'exp';
+    // the largest whole number not above the number e.g. the round lots of an equal part as floor( "original" / 2 / "lot size" ) * "lot size"
+    const string FUNC_FLOOR = 'floor';
     const string FUNC_LN = 'ln';
     const string FUNC_LOG = 'log';
     const string FUNC_ROUND = 'round';
@@ -101,6 +103,7 @@ class chars
         self::FUNC_ABS,
         self::FUNC_COS,
         self::FUNC_EXP,
+        self::FUNC_FLOOR,
         self::FUNC_LN,
         self::FUNC_LOG,
         self::FUNC_ROUND,
@@ -111,7 +114,11 @@ class chars
     // the functions of a list: a plain operand stands for all its values (formula::fill_list_element_group)
     const string FUNC_COUNT = 'count';
     const string FUNC_MEAN = 'mean';
-    const array FUNC_LIST = [self::FUNC_SUM, self::FUNC_COUNT, self::FUNC_MEAN];
+    // the largest and the smallest number of a list e.g. the spread of the target shares of all children as
+    // largest( "child portfolio" ) - smallest( "child portfolio" ); max and min take their arguments instead
+    const string FUNC_LARGEST = 'largest';
+    const string FUNC_SMALLEST = 'smallest';
+    const array FUNC_LIST = [self::FUNC_SUM, self::FUNC_COUNT, self::FUNC_MEAN, self::FUNC_LARGEST, self::FUNC_SMALLEST];
     // the functions that service/math/calc_internal.php can calculate; any other name before a bracket is reported as missing
     const array FUNC_CALCULATED = [self::FUNC_IF, self::FUNC_MIN, self::FUNC_MAX, ...chars::FUNC_ONE_NUMBER, ...chars::FUNC_LIST];
     // between the arguments of a function, because the SEPARATOR joins the phrase names of one operand

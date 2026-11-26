@@ -2,166 +2,105 @@
 
 ## Calculator editor
 
-### Swiss NPP
-
-**Prompt:** portfolio split page compared with its sample (size L, three phases; re-pin, because the formulas of
-`portfolio_split_calculator.json` change). The lead asks the developer the decision of step 8 first.
-- phase 1, five agents in parallel:
-  - agent import: "import": the csv of the sample, the csv of the existing test data and the json created from each
-  - agent cases: "step 2", the add two children and remove one child test case
-  - agent look: "check", step 4, step 5 (the colours and the hint) and the icons of step 7
-  - agent prior: part 1 of step 9, the write test of the previous row
-  - agent cell: the unit test of a cell with a result of part 4 of step 9
-  - stop for a run: `/test/test.php`
-- phase 2, one agent: parts 2 and 3 of step 9 (the walk order and the formulas, because they decide together);
-  stop for a run with re-pin
-- phase 3, two agents in parallel: agent fields with part 5 of step 9 (the number fields of the holdings) and agent
-  child with step 3 (add child and remove, the warnings by the instances)
-
 ### portfolio split page compared with its sample
 
-The remaining steps fix src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html 
-and the related reports.
+**Prompt:** portfolio split page compared with its sample (size L; re-pin, if a formula or a seed object of
+`portfolio_split_calculator.json` is added). The remaining steps fix
+src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html and the related reports.
 
-#### import
+**Decisions of the developer (2026-11-25)**, no open question:
+1. the rounding of a tie (part 3 of step 9): the sample rounds LISP 3.5 up but SCHP 420.5, STMN 874.5, ABBN 1925.5
+   and the cent of `CHF cash` down, only because its carried deviation has floating point noise. Decision: keep the
+   stored numbers, which are just below the tie (e.g. 420.499999), and avoid the rounding noise in the calculation,
+   so that a tie is a tie in all five evaluators; the noise limit is 12 decimals and not 8, because the sample
+   reaches SCHP, STMN and ABBN about 7e-13 below the tie and rounds them down (done, the run of 2026-11-25 keeps
+   all case reports at 0, `docs/llm/log/2026-11-25_noise_cell_timing.md`)
+2. the position of the "Import" button: keep it below Save, as the generated page has it; the sample is not followed
+3. the font of the diagram scale: a monospace font, as in the sample
+4. a deviation that rounds to zero: shown as `0.00`, never as `-0.00`, so without the sign and without the style of
+   a negative number; the sample is not followed in this point
 
-based on a csv and a list of context phrases e.g. 'example portfolio split' a zukunft import json should be created.
+Status of 2026-11-26: all case reports list 0 differences (plain, differ, low, high, standard and over), also with
+the walk counts by the instances (change 3 of step 3, section 4 of `docs/llm/log/2026-11-25_csv_child_shares.md`);
+`_add_child.md` too after the run of 14:49 with the button "Add child" (change 4 of step 3); only `_remove_child.md`
+differs, until the run of change 5.
 
-additional to the json creation create test case files for this sample csv.
-The portfolio number 040270501213 and all other data of this csv are generated and have no connection to any real life case:
+The remaining tasks in the suggested order:
+1. phase 1, in parallel:
+   - part 1 of step 9: the open check of the context of a walk formula with a calculation job (needs a run of the
+     developer)
+   - "import", the TODO of the developer in `convert_portfolio_csv.php`: "should be based on phrases without specific
+     code", so the columns of the bank, the asset classes with their kind, the assumed lot sizes and the phrases of
+     the values come from the data instead of the consts of the class (the task "csv import defined by phrases",
+     change 1 of 3 done, waiting for the run)
+   - the look: step 5 (the colours of the walk cells and the hint), the font of the diagram scale ("check",
+     decision 3) and the icons of step 7
+   - stop for a run: `/test/test_part.php` with the tests that are likely to break by these changes, and before
+     the commit an error free full `/test/test.php`
+2. phase 2, in parallel: part 5 of step 9 with the number fields of the holdings (step 5 (6)) and step 3 (add child
+   and remove, the results of a new instance, which also closes the instances of part 3)
+3. after step 9: the functions of the buttons of step 7, each a task of its own
 
-Portfolio,040270501213,Date,06.02.26,,,,,,,,,,,,,,,,,,,
-List of Positions,,,,,,,,,,,,,,,,,,,,,,
-,,,,,,,,,,,,,,,,,,,,,,
-Asset Class,Instrument Name,Instrument,Quantity,Region,Currency,Price,Price Curr,Quote Date,Maturity Date,Exchange Rate,Market Value,Ref. Curr,MV%,Cost Price,Ref. Curr,Exchange Rate,Net Cost Value,Ref. Curr,Capital P%L,Currency P&L,P&L(%),Indicative LTV (%)
-Cash and short-term investments , CH00 0000 0000 0000 0000 1,2120.001.01,484296.24,Other Region,CHF,1,CHF,,,1,484296.24,CHF,2.769954656,,CHF,1,424896.24,CHF,0,0,0,
-Cash and short-term investments , CH00 0000 0000 0000 0000 2,2120.814.01,209848.13,Other Region,EUR,1,EUR,,,0.9323,195641.41,CHF,1.275412178,,CHF,,,CHF,,,,
-Cash and short-term investments , TREUHAND CALLGELD - Deutsch Bank BONDS S.A.,N987272-,320000,Eurozone,EUR,1,EUR,,,0.9323,270571.28,CHF,1.763889878,1,CHF,0.93,297600.00,CHF,-9.33,0.25,-9.08,
-Cash and short-term investments , CH00 0000 0000 0000 0000 3,2120.333.01,205534.45,Other Region,USD,1,USD,,,0.8036,165167.48,CHF,1.076748623,,CHF,,,CHF,,,,
-Bonds and similar positions , Oak Lu Fd Gl RhC,LU0854923223,934.784,Eurozone,CHF,150.269,CHF,05.02.26,,1,140469.06,CHF,0.915736338,120.58,CHF,1,112713.36,CHF,24.63,0,24.63,70
-Bonds and similar positions , Oak Lu Fd Gl RhC,LU0854923140,200000,Eurozone,EUR,149.03,EUR,05.02.26,,0.9323,277881.34,CHF,1.811545111,,CHF,,,CHF,,,,90
-Bonds and similar positions , 4.1 PG 26 Bds,US742718FY05,150000,North America,USD,99.04,USD,05.02.26,,0.8036,119382.82,CHF,0.778272331,,CHF,,,CHF,,,,90
-Bonds and similar positions , 4.375 EBRD 28 Bds,US29874QEX88,200000,United Kingdom,USD,101.51,USD,05.02.26,09.03.28,0.8036,165659.9,CHF,1.079958748,100.28,CHF,0.8948,179467.46,CHF,1.1,-10.2,-9.1,90
-Bonds and similar positions , 4 Inter-Am 28 Bds,US4581X0EH74,250000,North America,USD,100.19,USD,05.02.26,,0.8036,201281.71,CHF,1.312182028,,CHF,,,CHF,,,,90
-Equities and similar positions , ABB Rg,CH0012221716,6000,Switzerland,CHF,61.74,CHF,05.02.26,,1,370440,CHF,2.414947242,17.34,CHF,1,104036.52,CHF,256.07,0,256.07,70
-Equities and similar positions , Accelleron Ind Rg,CH1169360919,3000,Switzerland,CHF,57.84,CHF,05.02.26,,1,173520.00,CHF,1.131199777,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Alcon Rg,CH0432492467,2500,Switzerland,CHF,77.13,CHF,05.02.26,,1,192825.00,CHF,1.257051620,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Amrize Rg,CH1430134226,5000,Switzerland,CHF,48.46,CHF,05.02.26,,1,242300.00,CHF,1.579585673,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , BB Biotech N,CH0038389992,3500,Switzerland,CHF,41.61,CHF,05.02.26,,1,145635.00,CHF,0.949413783,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , CieFinRichemont N,CH0210483332,1000,Switzerland,CHF,157.69,CHF,05.02.26,,1,157690.00,CHF,1.028001918,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Geberit N,CH0030170408,175,Switzerland,CHF,558.00,CHF,05.02.26,,1,97650.00,CHF,0.636593236,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Givaudan N,CH0010645932,35,Switzerland,CHF,3955.70,CHF,05.02.26,,1,138449.50,CHF,0.902570560,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Helvetia Bal Hl Rg,CH0466642201,700,Switzerland,CHF,160.39,CHF,05.02.26,,1,112273.00,CHF,0.731922502,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Holcim N,CH0012214059,1750,Switzerland,CHF,58.98,CHF,05.02.26,,1,103215.00,CHF,0.672872205,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Idorsia Rg,CH0363463438,40000,Switzerland,CHF,1.995,CHF,05.02.26,,1,79800.00,CHF,0.520226730,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Lindt & Spruengli N,CH0010570759,20,Switzerland,CHF,10448.32,CHF,05.02.26,,1,208966.40,CHF,1.362279536,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Nestle N,CH0038863350,2500,Switzerland,CHF,78.28,CHF,05.02.26,,1,195700.00,CHF,1.275794124,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Novartis N,CH0012005267,700,Switzerland,CHF,91.15,CHF,05.02.26,,1,63805.00,CHF,0.415953214,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Roche Hldg DR,CH0012032048,700,Switzerland,CHF,258.40,CHF,05.02.26,,1,180880.00,CHF,1.179180588,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Sandoz Group Rg,CH1243598427,5000,Switzerland,CHF,42.25,CHF,05.02.26,,1,211250.00,CHF,1.377166626,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , SGS Rg,CH1256740924,2000,Switzerland,CHF,96.48,CHF,05.02.26,,1,192960.00,CHF,1.257931702,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Sonova Hldg N,CH0012549785,300,Switzerland,CHF,257.67,CHF,05.02.26,,1,77301.00,CHF,0.503935419,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Straumann Hldg Rg,CH1175448666,1750,Switzerland,CHF,111.35,CHF,05.02.26,,1,194862.50,CHF,1.270334351,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Swisscom Rg,CH0008742519,400,Switzerland,CHF,569.00,CHF,05.02.26,,1,227600.00,CHF,1.483754433,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , UBS Group N,CH0244767585,6000,Switzerland,CHF,31.89,CHF,05.02.26,,1,191340.00,CHF,1.247370709,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , Zurich Insur Gr N,CH0011075394,400,Switzerland,CHF,557.05,CHF,05.02.26,,1,222820.00,CHF,1.452592983,,CHF,1,,CHF,,0.00,,70
-Equities and similar positions , AB InBev,BE0974293251,700,Eurozone,EUR,59.26,EUR,05.02.26,,0.9323,38673.67,CHF,0.252118758,42.84,CHF,1.0945,32823.9,CHF,32.65,-14.82,17.82,70
-Equities and similar positions , adidas N,DE000A1EWWW0,1000,Eurozone,EUR,162.35,EUR,05.02.26,,0.9323,151358.91,CHF,0.986728707,63.08,CHF,1.0945,69044.98,CHF,134.04,-14.82,119.22,70
-Equities and similar positions , Allianz Rg,DE0008404005,250,Eurozone,EUR,280.45,EUR,05.02.26,,0.9323,65365.88,CHF,0.426128822,,CHF,,,CHF,,,,70
-Equities and similar positions , AXA,FR0000120628,1750,Eurozone,EUR,36.84,EUR,05.02.26,,0.9323,60105.38,CHF,0.391834910,,CHF,,,CHF,,,,70
-Equities and similar positions , BASF N,DE000BASF111,4000,Eurozone,EUR,47.11,EUR,05.02.26,,0.9323,175682.61,CHF,1.145298130,,CHF,,,CHF,,,,70
-Equities and similar positions , Bayer N,DE000BAY0017,7000,Eurozone,EUR,25.33,EUR,05.02.26,,0.9323,165306.11,CHF,1.077652364,,CHF,,,CHF,,,,70
-Equities and similar positions , Daimler Tr Hldg Rg,DE000DTR0CK8,6000,Eurozone,EUR,42.07,EUR,05.02.26,,0.9323,235331.17,CHF,1.534154925,,CHF,,,CHF,,,,70
-Equities and similar positions , Danone,FR0000120644,1000,Eurozone,EUR,60.32,EUR,05.02.26,,0.9323,56236.34,CHF,0.366612095,,CHF,,,CHF,,,,70
-Equities and similar positions , E.ON N,DE000ENAG999,15000,Eurozone,EUR,13.81,EUR,05.02.26,,0.9323,193125.95,CHF,1.259013520,,CHF,,,CHF,,,,70
-Equities and similar positions , Fid Germany AD,LU0048580004,6000,Eurozone,EUR,30.72,EUR,05.02.26,,0.9323,171841.54,CHF,1.120257649,,CHF,,,CHF,,,,70
-Equities and similar positions , MEDICAL BioH IC,LU0294851513,6000,Eurozone,EUR,13.84,EUR,05.02.26,,0.9323,77418.19,CHF,0.504699409,,CHF,,,CHF,,,,70
-Equities and similar positions , Mercedes-BenzGr N,DE0007100000,3500,Eurozone,EUR,56.75,EUR,05.02.26,,0.9323,185178.09,CHF,1.207200388,,CHF,,,CHF,,,,70
-Equities and similar positions , RWE I,DE0007037129,7000,Eurozone,EUR,35.01,EUR,05.02.26,,0.9323,228478.76,CHF,1.489483192,,CHF,,,CHF,,,,70
-Equities and similar positions , Shell Rg,GB00BP6MXD84,7000,United Kingdom,EUR,32.25,EUR,05.02.26,,0.9323,210466.73,CHF,1.372060353,,CHF,,,CHF,,,,70
-Equities and similar positions , Siemens Energy Rg,DE000ENER6Y0,1500,Eurozone,EUR,90.96,EUR,05.02.26,,0.9323,127203.01,CHF,0.829253221,,CHF,,,CHF,,,,70
-Equities and similar positions , Siemens N,DE0007236101,800,Eurozone,EUR,206.61,EUR,05.02.26,,0.9323,154098.00,CHF,1.004585212,,CHF,,,CHF,,,,70
-Equities and similar positions , HSBC Hldg Rg,GB0005405286,15000,United Kingdom,GBP,10.38,GBP,05.02.26,,1.0895,169635.15,CHF,1.105873927,,CHF,,,CHF,,,,70
-Equities and similar positions , Vodafone Group Rg,GB00BH4HKS39,230000,United Kingdom,GBP,0.776,GBP,05.02.26,,1.0895,194453.96,CHF,1.267671025,,CHF,,,CHF,,,,70
-Equities and similar positions , Altria Group Rg,US02209S1033,3000,North America,USD,55.77,USD,05.02.26,,0.8036,134450.32,CHF,0.876499352,,CHF,,,CHF,,,,70
-Equities and similar positions , Amgen Rg,US0311621009,600,North America,USD,312.44,USD,05.02.26,,0.8036,150646.07,CHF,0.982081612,,CHF,,,CHF,,,,70
-Equities and similar positions , Boeing Co Rg,US0970231058,800,North America,USD,198.70,USD,05.02.26,,0.8036,127740.26,CHF,0.832755585,,CHF,,,CHF,,,,70
-Equities and similar positions , Carrier Global Rg,US14448C1045,1750,North America,USD,70.96,USD,05.02.26,,0.8036,99791.05,CHF,0.650551010,,CHF,,,CHF,,,,70
-Equities and similar positions , Citigroup Rg,US1729674242,1750,North America,USD,93.16,USD,05.02.26,,0.8036,131010.91,CHF,0.854077397,,CHF,,,CHF,,,,70
-Equities and similar positions , GE Aerospace Rg,US3696043013,400,North America,USD,243.89,USD,05.02.26,,0.8036,78396.00,CHF,0.511073879,,CHF,,,CHF,,,,70
-Equities and similar positions , Gen Digital Rg,US6687711084,7000,North America,USD,26.56,USD,05.02.26,,0.8036,149405.31,CHF,0.973992944,,CHF,,,CHF,,,,70
-Equities and similar positions , GE Vernova Rg,US36828A1016,500,North America,USD,484.58,USD,05.02.26,,0.8036,194704.24,CHF,1.269302659,,CHF,,,CHF,,,,70
-Equities and similar positions , iShs MSCI Au USD-Ac,IE00B5377D42,3000,Asia Pacific exJP,USD,40.94,USD,05.02.26,,0.8036,98698.15,CHF,0.643426277,,CHF,,,CHF,,,,70
-Equities and similar positions , iShs NASDAQ USD-Ac,IE00B53SZB19,125,North America,USD,1033.48,USD,05.02.26,,0.8036,103813.07,CHF,0.676771076,,CHF,,,CHF,,,,70
-Equities and similar positions , Johnson&Johnson Rg,US4781601046,1750,North America,USD,169.07,USD,05.02.26,,0.8036,237763.14,CHF,1.550009291,,CHF,,,CHF,,,,70
-Equities and similar positions , Otis Worldwide Rg,US68902V1070,2500,North America,USD,99.53,USD,05.02.26,,0.8036,199955.77,CHF,1.303538050,,CHF,,,CHF,,,,70
-Equities and similar positions , Pepsico Rg,US7134481081,1750,North America,USD,142.62,USD,05.02.26,,0.8036,200566.51,CHF,1.307519519,,CHF,,,CHF,,,,70
-Equities and similar positions , Pfizer Rg,US7170811035,6000,North America,USD,26.11,USD,05.02.26,,0.8036,125891.98,CHF,0.820706404,,CHF,,,CHF,,,,70
-Equities and similar positions , Philip Mrrs Int Rg,US7181721090,1250,North America,USD,158.53,USD,05.02.26,,0.8036,159243.39,CHF,1.038128640,,CHF,,,CHF,,,,70
-Equities and similar positions , Procter&Gamble Rg,US7427181091,1750,North America,USD,152.13,USD,05.02.26,,0.8036,213940.42,CHF,1.394705822,,CHF,,,CHF,,,,70
-Equities and similar positions , RTX Rg,US75513E1010,1250,North America,USD,155.86,USD,05.02.26,,0.8036,156561.37,CHF,1.020644230,,CHF,,,CHF,,,,70
-Equities and similar positions , Verizon Comm Rg,US92343V1044,2500,North America,USD,43.94,USD,05.02.26,,0.8036,88275.46,CHF,0.575479372,,CHF,,,CHF,,,,70
-Equities and similar positions , Xtr MSCI Jap 1CC,LU0274209740,1450,Japan,USD,106.7701,USD,05.02.26,,0.8036,124405.71,CHF,0.81101724,68.09,CHF,0.9137,90210.64,CHF,49.96,-12.05,37.91,70
-Alternative investments , SwCHGETF -EA (USD)-,CH0047533549,56,Switzerland,USD,4295.92,USD,05.02.26,,0.8036,193315.58,CHF,1.260249775,1805.68,CHF,0.9001,91011.61,CHF,123.13,-10.72,112.41,70
+#### step 9: calculate the split again in the browser (18)
 
-so create the csv file and as a unit test result create or update a zukunft.com json that can be imported
+The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation, and on the javascript page the `is alternative follower of` chain while an option with `calculator alternative order` is chosen (`docs/llm/log/2026-11-24_alternative_order.md`). Each part with a positive and a negative test and a run before the next part; the open points:
 
-create a similar csv for the existing portfolio split test data that creates a new json with a different name that can be compare with the existing json
+- part 1, the previous row in the backend (`docs/llm/log/2026-11-24_operand_groups.md`): a figure selects its number by the exact phrase group of the context and the operand, so check with a calculation job that the context of a walk formula is the phrases of the row, e.g. `LISN` and `first child portfolio`, and not the context of the calc-validation, which has more phrases
+- part 3, the formulas in `portfolio_split_calculator.json`: every formula is by the instances now (change 1 to 3 of
+  step 3), and the page calculates the results of a new instance (change 4 of step 3); still open: the save of a new
+  instance (change 6 of step 3)
+- part 5, the number fields of the holdings and the add child task (the realised rows of this part are done, `docs/llm/log/2026-11-24_sum_over_results.md`)
 
 #### check
 
-Differences remaining
-
-- Button colours: the generated page uses the site's grey filled buttons, while the sample shows blue outlines. Those button rules are shared across the whole site and the sample doesn't load the site's stylesheet, so changing them here would affect every page.
-- Font: it differs for the same reason.
-- Button icons: these belong to step 7.
-- Import position: Import is below Save here and at the top in the sample. I didn't change this because it's page structure, not styling.
-- Walk table: it still scrolls sideways, so the last column is cut off until you scroll. The sample does the same.
-- Diagram scale font: the sample uses a monospace font for it, and I kept the normal one.
-
-#### step 2: add a "Add child" and remove
-
-Add an add two children and remove one child test case similar to the high and low test cases 
-so that all main test cases are covered
-
-#### step 3: the input fields (1), (2), (3), (4)
-
-- the formulas of the warnings name the first and the second child: 
-  a new child needs a sum over the instances, so update them with the add child task
-
-The buttons "Add child" and remove are a separate task after step 9, 
-because a new child has no allocation before the walk is calculated: 
-a new instance needs its own phrase, its "is a" triple and its target share through the logged save, 
-and the page needs the remove button per field. The button stays without a function until then.
-
-#### step 4: the result table (9), (17)
-
-- the sample shows a positive deviation with a plus sign and a small negative one as -0.00, the generated page 0.00 and the sign only in the positive style; `calculator signed` is also used by other use cases, so check their samples first
+- Diagram scale font (decision 3): the sample uses a monospace font for it, the generated page the normal one, so use a monospace font for the scale; the Import position stays (decision 2)
 
 #### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
 
 - the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
 - the colours of the walk cells and the hint below the holdings
 
+#### step 3: the input fields (1), (2), (3), (4)
+
+Decision of the developer (2026-11-25): the full step 3, so that the reports `_add_child.md` and `_remove_child.md`
+reach 0 differences ("Missing in the generated page": the field of the third child, the warning "Weights differ", the
+result table and the walk with a third child column and a remove button per child). The changes, each with its own
+log and a run before the next one (change 1 to 3, every formula and warning by the instances of `child portfolio`,
+and change 4, the button "Add child" in the browser, are done, `docs/llm/log/2026-11-25_csv_child_shares.md`):
+5. "Remove the ..." in the browser (done, waiting for a `/test/test_part.php` run with `system_views_read_tests`,
+   section 7 of `docs/llm/log/2026-11-25_csv_child_shares.md`): the button takes the instance with its numbers and
+   results from the page. Decision of the developer (2026-11-26): a child keeps the name of its phrase, so after the
+   case `remove_child` the page shows the first and the third child, while the sample numbers them by position and
+   shows "second child"; these label differences and the check rows of the removed second child stay in
+   `_remove_child.md` on purpose, the numbers should equal the sample
+6. the logged save of the changed instances: a child that "Add child" has added with its `is a child portfolio`
+   triple and its target share, and a removed child of the database with the logged delete of its `is a` triple;
+   until then the save and a new case leave out an added child and keep a removed one, and the hints
+   `calculator_added_not_saved` (`addedHint`) and `calculator_removed_not_saved` (`removedHint` in
+   `calculator_json.js`) say so, which go with the save; a removed child of the database can be added again only by
+   a reload of the page, because the add button adds only the declared instances
+
 #### step 7: the buttons (13)
 
-- the buttons "Download", "Import", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
+- the buttons "Download", "Import", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
 - the icons of the sample
 
-#### step 8: decide what the generated page keeps
+### Swiss NPP
 
-- the section "Inputs from" exists only in the sample and holds the buttons "Import portfolio" and "Import FX rates", 
-- which the generated page shows at the assumptions and the holdings
+**Prompt:** id check, use cases of the calculator editor, the sample compare and pure HTML views (size L; re-pin,
+because the ahv vat use case gets new data). One phase, four agents in parallel:
+- agent id check: "ID check", the api fixtures like `phrase_data_pv_install.json` in the re-pin check
+- agent ahv vat: "ahv vat", the other targets, their weights and the combined index rating in the use case json
+- agent samples: "config yaml", "more sample" and "compare" of the calculator section below: the pinned views, one
+  check script that every `*_sample.html` has a generated page and is part of the compare and the generation build
+- agent pure html: "pure HTML and JavaScript views", the url parameter with its `*_HUMAN` twin and the JavaScript
+  version of the formula editor
 
-#### step 9: calculate the split again in the browser (18)
+### add scenario test files
 
-The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. The summary rows stay modelled and the rounding of a tie differs, see part 3 and 5, so the numbers of the case reports can still differ from the sample. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation. The round to a multiple needs nothing new, because it is `round( "x" / "lot size" ) * "lot size"`. The plan, each part with a positive and a negative test and a run before the next part:
+add in src/test/resources/web/html/use_cases compare test case filed that report the difference between the results of the generated npp_ch_vote calculator and src/test/resources/web/html/use_cases/npp_ch_vote_sample.html for the four scenarios 'Optimistic ..', 'BAK base case', 'Recent projects ... ', 'Academies pessimistic'.
 
-1. the previous row in the backend: `element_group::figures` reads it, but no test covers it with a database yet; add a write test with a follower chain, a first row and a row in the middle, and a negative test with two chains in the context. A figure selects its number by the exact phrase group of the context and the operand, so check with the formulas of part 3 that the context of a walk formula selects the stored numbers
-2. the walk order selector: the holdings have one follower chain, in the order of the largest lot value, and `is ranked by` also accepts a result; the option "Bank report order" needs its own order for the rows and for `prior`, because one phrase has one previous phrase per chain, so decide this with the formulas of part 3
-3. the formulas in `portfolio_split_calculator.json`: the unit value, the lot value, the target, the counts of the children and the parent and the cumulative deviation exist with a calc-validation of all 42 rows. Still open: the equal part of a position when the rounded counts exceed it, the second child without mirroring: `first child` and `second child` are named in the formulas, so a new child needs a formula by the instances, and a rounding rule for a tie: the sample rounds LISP 3.5 up but SCHP 420.5, STMN 874.5, ABBN 1925.5 and the cent of `CHF cash` down, only because its carried deviation has floating point noise. The stored numbers of these rows are just below the tie (e.g. 420.499999) to keep the counts of the sample, so a calculation from exact numbers rounds them up and the walk differs from there on
-4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
-5. add the number fields of the holdings and the add child task. The modelled realised value, the totals per kind of holding and the realised share stay, because a formula cannot sum over the rows yet
+If possible add a tooltip for the four scenario buttons with an explaining text and a source
 
 ### add costs of CO2-eq reduction to the npp
 
@@ -174,15 +113,6 @@ if done remove this prompt from pending.md
 **next prompt**
 
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
-
-**Prompt:** id check, use cases of the calculator editor, the sample compare and pure HTML views (size L; re-pin,
-because the ahv vat use case gets new data). One phase, four agents in parallel:
-- agent id check: "ID check", the api fixtures like `phrase_data_pv_install.json` in the re-pin check
-- agent ahv vat: "ahv vat", the other targets, their weights and the combined index rating in the use case json
-- agent samples: "config yaml", "more sample" and "compare" of the calculator section below: the pinned views, one
-  check script that every `*_sample.html` has a generated page and is part of the compare and the generation build
-- agent pure html: "pure HTML and JavaScript views", the url parameter with its `*_HUMAN` twin and the JavaScript
-  version of the formula editor
 
 ## create a calculator for the top 5 global problems
 
@@ -242,6 +172,37 @@ add the translations to the export and check where changes due to translations m
 e.g. test if the Calculator Editor can be used with translated data including write tests of translation changes
 
 and finally show the translated page if the url has something link =de
+
+## csv import defined by phrases
+
+**Prompt:** replace `src/main/php/cfg/import/convert_portfolio_csv.php` by a general
+`src/main/php/cfg/import/convert_csv.php` whose parameters are all words, triples and values, so that a new csv
+format e.g. of another bank is a definition json and no code change (size L; the TODO of the developer "should be
+based on phrases without specific code" in `convert_portfolio_csv.php`; no re-pin, if the definition json is a test
+import file, else re-pin for its new words and triples). Three changes, each with its own log and a run before the
+next one:
+
+1. the keywords and the definition json (done, waiting for `/test/reset_db.php`, `/test/test_re_pin.php` and a
+   `/test/test_part.php` run, `docs/llm/log/2026-11-26_csv_format_phrases.md`): `csv_keywords.json` with the code
+   ids in `triples::CSV_KEYWORDS`, the definition json `src/test/resources/import/portfolio_csv/bank_position_csv.json`
+   and the rules in `docs/json_structure.md` *csv format*; decisions of the developer (2026-11-26): the keywords are
+   a system file with code ids, the definition is a test resource until change 3, a cell text is the description
+   of a triple
+2. `convert_csv`: reads the definition from the phrases (by the database or by `import::get_data_object` of the
+   definition json for the unit test), finds the header row, maps each row by its kind and writes the values of the
+   templates, the defaults and the vocabulary; it has no name of a column, a kind or a phrase of its own. Tests:
+   the same positive and negative tests as `convert_portfolio_csv` in `import_tests.php`, and it writes the same two
+   json files of `src/test/resources/import/portfolio_csv/` as `convert_portfolio_csv` (the difference of the two
+   is reported, so that a change is a decision)
+3. remove `convert_portfolio_csv.php` and its tests, once `convert_csv` gives the same results
+
+What the phrases cannot define, because it is a calculation and not a fact of the csv:
+- the walk by the lot value: the import writes the rows in the order of the csv, and the page ranks them with
+  `is ranked by lot value` like today; so the `is follower of` chain of the lot value order of
+  `convert_portfolio_csv` is left out or becomes the order of the csv
+- the bond fund that the bank lists with the bonds but prices per unit (`LU0854923223`), which
+  `convert_portfolio_csv` finds by its market value: either the asset class of the bank is kept, or a formula of the
+  page flags a holding whose holding value differs from its `holding value, expected`
 
 ## user menu
 
@@ -2235,7 +2196,7 @@ These reuse the token helpers of `coding_rule_tests` (`brace_end`, `next_code_id
 | 12 | every parameter has a `@param` line | parameter of the signature without a `@param` with the same name in the docblock | — |
 | 13 | no superglobals in methods | `$_GET`, `$_POST`, `$_SESSION`, `$_REQUEST` only in the entry points and the listed bootstrap classes (`server_guard`, `application`, `frontend`) | 32 |
 | 14 | no `break` / `continue` in loops | `break` or `continue` whose next enclosing block is a `for`, `foreach` or `while`, not a `switch` | — |
-| 15 | an error reported on the message is not sent again with the api answer | a bare `log_err(` followed by an add to a message in the same function must be `log_err_reported` (a review of each hit is needed, because the later add can belong to another error; the reported hits are listed in the `log_err_reported` row of the unexpected changes of `docs/llm/log/save_fields_multi_2026-11-09.md`) | 13 to review |
+| 15 | an error reported on the message is not sent again with the api answer | a bare `log_err(` followed by an add to a message in the same function must be `log_err_reported` (a review of each hit is needed, because the later add can belong to another error; the reported hits are listed in the `log_err_reported` row of the unexpected changes of `docs/llm/log/2026-11-09_save_fields_multi.md`) | 13 to review |
 | 16 | a function with a message reports to the user | a bare `log_err(` in a function with a `user_message $msg` parameter, listed in a generated `docs/code_log_err_exceptions.md` that must shrink | — |
 | 17 | every class declares its suggested var name | the opening docblock of a class file names `$abbr` | — |
 | 18 | one `return` per function | a `return` that is neither the last statement nor in a guard clause at the top of the function | — |

@@ -1,7 +1,7 @@
 # save fields multi (2026-11-09)
 
 Step 2 "the same for sandbox_multi (values and results)" of the prompt "deprecate save_fields_func and the *_old
-functions" of `docs/llm/pending.md`; step 1 is `docs/llm/log/save_fields_func_2026-11-09.md`. The tables were
+functions" of `docs/llm/pending.md`; step 1 is `docs/llm/log/2026-11-09_save_fields_func.md`. The tables were
 written before the first code edit; the line numbers are those of the start state (commit `434e7a542`).
 
 ## Request
@@ -89,7 +89,7 @@ The old lines of a row are those of the state before the row.
    the builder, not an assumed empty result of the builder.
 5. **A counted error without its text is lost.** The run reported "8 internal errors", but the database
    recreation of the run had removed the `sys_log` rows, and the 2 test errors of the 12:22 run were overwritten
-   by the console. This is lesson 3 of `docs/llm/log/row_mapper_guard_2026-11-09.md` again: first make the text
+   by the console. This is lesson 3 of `docs/llm/log/2026-11-09_row_mapper_guard.md` again: first make the text
    reach the output, then guess the cause. Every place that counts an error also keeps its text, and a cause named
    without the text is reported as a guess, like the row of `change_field_by_name_and_id.sql`.
 6. **A switch for a test belongs to the test.** The developer corrected the general `$sys->log_test_only` to a

@@ -45,6 +45,11 @@ use Zukunft\ZukunftCom\main\php\shared\const\chars;
 class arithmetic
 {
 
+    // round and floor take their argument rounded to these decimals, the same as an operand of calculator_json.js
+    // (toFixed(12)), so that a tie with float noise e.g. 100.49999999999999 is a tie in all evaluators, but a number
+    // that is more than the noise below a tie e.g. 420.49999999999926 is not (docs/llm/log/2026-11-25_noise_cell_timing.md)
+    const int ROUND_NOISE_DECIMALS = 12;
+
     // the text to calculate and the position of the next char to read
     private string $txt = '';
     private int $pos = 0;
@@ -66,9 +71,10 @@ class arithmetic
             chars::FUNC_ABS => abs($num),
             chars::FUNC_COS => cos($num),
             chars::FUNC_EXP => exp($num),
+            chars::FUNC_FLOOR => floor(round($num, self::ROUND_NOISE_DECIMALS)),
             chars::FUNC_LN => log($num),
             chars::FUNC_LOG => log10($num),
-            chars::FUNC_ROUND => round($num),
+            chars::FUNC_ROUND => round(round($num, self::ROUND_NOISE_DECIMALS)),
             chars::FUNC_SEC => 1 / cos($num),
             chars::FUNC_SIN => sin($num),
             chars::FUNC_SQRT => sqrt($num),
@@ -106,6 +112,8 @@ class arithmetic
             chars::FUNC_SUM => array_sum($nums),
             chars::FUNC_COUNT => count($nums),
             chars::FUNC_MEAN => array_sum($nums) / count($nums),
+            chars::FUNC_LARGEST => $nums == [] ? NAN : max($nums),
+            chars::FUNC_SMALLEST => $nums == [] ? NAN : min($nums),
             default => NAN,
         };
     }
@@ -124,6 +132,16 @@ class arithmetic
         $sep = chars::FUNC_ARG_SEPARATOR;
         $rest = preg_replace('/\b(?:' . $names . ')\s*\(' . $arg . '(?:' . $sep . $arg . ')*\)/', '', $txt);
         return preg_match('/\b(?:' . $names . ')\s*\(/', $rest) !== 1;
+    }
+
+    /**
+     * @param string $before the expression before an operand e.g. 'sum( '
+     * @return bool true if the operand is an argument of a list function and stands for all its numbers
+     */
+    static function is_list_argument(string $before): bool
+    {
+        $names = implode('|', chars::FUNC_LIST);
+        return preg_match('/\b(?:' . $names . ')\s*\([^()]*$/', $before) === 1;
     }
 
     /**

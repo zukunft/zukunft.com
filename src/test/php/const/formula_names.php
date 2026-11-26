@@ -95,6 +95,9 @@ class formula_names
     const string PRIOR = 'prior';
     const int PRIOR_ID = 45;
     const string PRIOR_EXP = '=value["time jump"->,"Now"->"follower"]';
+    // the formula of portfolio_split_calculator.json that reads the deviation of the previous row of the split walk
+    // with "cumulative deviation","prior" and the count and unit value of its own row
+    const string WALK_DEVIATION = 'walk deviation of a child';
     const string PERCENT = 'percent';
     const string INCREASE = shared_formulas::INCREASE;
     const int INCREASE_ID = shared_formulas::INCREASE_ID;

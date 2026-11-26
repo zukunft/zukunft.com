@@ -133,7 +133,7 @@ repeated input.
 |---|---|---|
 | checkbox | `solar thermal` · `can be` · `calculator checkbox` | a checkbox; checked is the value 1, unchecked 0, so a formula can use it as a factor |
 | read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the number of the item phrase instead of a field |
-| repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field |
+| repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field; what the repeat triple `has a` are the instances that the add button adds in the browser, the next one that is no instance yet, with the number of the first instance (a share at most what the others leave of 100 %) and the results of the first instance calculated again; the button is disabled if none is left; the remove button takes an instance with its numbers and results from the page, while there are more than one, and an instance keeps the name of its phrase |
 | warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero; the page calculates the result again when an input changes |
 | slider | `house heating input heated area` · `has a` · `calculator slider` | a range slider coupled to the number field, with the field limits and the field step of the phrase; a `field step` value of the triple itself is the step of the slider; without javascript only the number field is shown |
 | preset | `house heating` · `has a` · `calculator preset` | a list with one button per item, with the label and the hint of the item; the button sets each input to the value that has the item phrase and the phrases of the input, e.g. `budget case`, `heat pump efficiency`; without javascript the buttons are not shown |
@@ -160,6 +160,7 @@ A repeated input:
 | editable column | `house heating detail column price` · `has a` · `calculator editable` | the cells are number fields that join the save form |
 | phrase column | `house heating detail column billing unit` · `has a` · `calculator phrase column` | a cell shows the phrase that the numbers of the row have and that is a column phrase, e.g. `CHF per kWh` with `CHF per kWh` · `is a` · `billing unit` |
 | page independent | `house heating detail fuel` · `has a` · `calculator page independent` | the cells select their numbers without the page phrase, e.g. the energy prices that are the same for every house; also for an item or the check table |
+| alternative order | `walk order option bank statement` · `has a` · `calculator alternative order` | while the user has chosen this selector option, the rows of a detail table and the operand `prior` follow the `is alternative follower of` triple of a phrase instead of its `is follower of` triple, and the table is not ranked by its `is ranked by` phrase; only the javascript page walks it so far |
 | diagram | `house heating detail column price` · `has a` · `calculator diagram` | the column is also drawn as a line along the rows, with a tooltip per point and a legend of the last numbers; if the filter of the column is an instance of a repeated input, one line per instance in the colours of the instances |
 | decimals | the value `price`, `calculator decimals` = 3 | the cells of the row of the phrase in the result table show this number of decimals |
 | result width | the value `house heating`, `calculator result width` = 896 | the result panel of the page has this width in pixels instead of the standard width |
@@ -229,11 +230,12 @@ The formula engine calculates with `+ - * /`, brackets, `min( a ; b ; … )`, th
 its arguments, and `max( a ; b ; … )`, the largest; the arguments are separated by `;`, because
 a `,` joins the phrase names of one operand (`"delivered electricity","lifetime"`). It also
 calculates `if( condition ; then ; else )` with `=`, `&` and `|` in the condition and only
-the chosen part, the power `^` and the functions of one number `abs`, `cos`, `exp`, `ln`, `log`
-(base 10, or `log( x ; base )`), `round`, `sec`, `sin` and `sqrt`, with an angle in radian. `sum`, `count` and `mean`
-take a list: a phrase as their argument stands for every stored value that names the phrase and
+the chosen part, the power `^` and the functions of one number `abs`, `cos`, `exp`, `floor` (round down), `ln`, `log`
+(base 10, or `log( x ; base )`), `round`, `sec`, `sin` and `sqrt`, with an angle in radian. `sum`, `count`, `mean`,
+`largest` and `smallest` take a list: a phrase as their argument stands for every stored value that names the phrase and
 all phrases of the calculation, without calculated results and without a value that also names a
-variance or a confidence, and a calculation inside the argument like `sum( "a" * "b" )` gives an
+variance or a confidence or all phrases of another value of the list and more (e.g. the expected count of an
+agreement next to the count of the walk), and a calculation inside the argument like `sum( "a" * "b" )` gives an
 error. All functions are listed in `docs/math.md`. A calculator
 like the portfolio split also needs rounding to a multiple, a sort by
 a result and a walk that carries a number from one row into the next. Until the engine
@@ -242,3 +244,38 @@ them again. A formula may name a function that the engine does not have, e.g. to
 law, but calculating it shows the user an error that names the function and gives no number.
 If a calculation fails, the stored result is overwritten with nothing and never kept, so that
 the problem is obvious on every page instead of hidden behind an outdated number.
+
+## csv format
+
+The format of a csv file, e.g. the bank statement of the positions that fills the holdings of the portfolio split
+page, is a phrase with triples to the keywords of `csv_keywords.json` and with value templates, so that a new format
+is a definition json and no code. Example: `src/test/resources/import/portfolio_csv/bank_position_csv.json`. A cell
+text of the csv, e.g. a header or an asset class of the bank, is the description of a triple and is compared with
+the complete cell, so the phrase names stay lower case.
+
+| keyword | triple in the example | effect |
+|---|---|---|
+| header start | `bank position csv` · `has a` · `csv header start` | the description is the first cell of the header row; the lines below it with as many cells are the rows |
+| column | `bank position csv columns` · `has a` · `quantity` | a list: each item of the group triple to `csv column` is a column, its description the header text; the first column of the header row with this text |
+| required, number, positive | `bank position csv quantity` · `has a` · `csv number` | a row whose cell is empty, no number or not above zero is left out and reported |
+| fallback | `bank position csv price currency` · `has a` · `csv fallback` | the description names the column whose cell is taken while this cell is empty |
+| row name, row description | `bank position csv instrument` · `has a` · `csv row name` | the cell is the name or the description of the word of the row |
+| kind | `bank position csv asset class kind` · `has a` · `stock` | a list from the kind column: each item maps the cell of its description to its kind; the word of a row is a its kind, and a row whose cell has no item is left out and reported |
+| context | `bank position csv instrument` · `is part of` · `csv context` | stands for the first phrase of the context of the conversion, e.g. the portfolio |
+| optional | a word of a value template | no value for an empty or zero number cell |
+
+The templates:
+
+- a **value** of the definition is a template: per row each column item is the phrase of its cell, the cell of a
+  number column times the number of the template is the number (`0.01` for a price in percent), a template without
+  a number column writes its own number (a default lot size), a kind phrase limits the template to the rows of that
+  kind or of a kind that is a it, and a template without the row name column is written once per phrases, e.g. the
+  exchange rate of a currency pair; a written value gets the source of the csv, a template with `assumed` none
+- a **triple** of the definition from or to a column item that is no triple to a csv keyword is a template too, e.g.
+  the hint of a holding or the currency pair: each column item is the phrase of its cell, and `{<header text>}` in
+  its description is the cell of that column (`{Instrument Name}`); a template whose name starts with the name of its
+  from column gets the row cell instead (`bank position csv instrument hint` gives `2120.001.01 hint`), the others
+  no name; a template whose from and to are the same cell writes nothing, neither does a value template that uses
+  it; a written triple whose from, verb and to the definition declares is written as that declaration, e.g. a
+  currency pair of `portfolio_split_calculator.json`
+- the words and triples that the templates use are declared like in any import json and copied into the result

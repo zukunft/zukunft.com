@@ -102,6 +102,7 @@ class math_function_report
         'abs' => ['the number without its sign', 'abs( -2.5 )', '2.5'],
         'cos' => ['cosine of an angle in radian', 'cos( 0 )', '1'],
         'exp' => ['e to the power of the number', 'exp( 0 )', '1'],
+        'floor' => ['the largest whole number not above the number e.g. the round lots of a part', 'floor( 2.7 )', '2'],
         'ln' => ['natural logarithm', 'ln( 1 )', '0'],
         'log' => ['logarithm to the base 10', 'log( 100 )', '2'],
         'log( ; )' => ['logarithm to the base of the second argument', 'log( 8 ; 2 )', '3'],
@@ -112,6 +113,8 @@ class math_function_report
         'sum' => ['the sum of a list: a phrase stands for all its stored values', 'sum( 1 ; 2 ; 3 )', '6'],
         'count' => ['the number of values of a list', 'count( 1 ; 2 ; 3 )', '3'],
         'mean' => ['the average of a list', 'mean( 1 ; 2 ; 3 )', '2'],
+        'largest' => ['the largest number of a list e.g. the largest target share of all children', 'largest( 1 ; 3 ; 2 )', '3'],
+        'smallest' => ['the smallest number of a list', 'smallest( 1 ; 3 ; 2 )', '1'],
     ];
 
     // the texts on which the evaluators could differ: each gives one number or no number in all of them
@@ -136,9 +139,13 @@ class math_function_report
         'if( 1 ) 5', 'if( 0 ) 5', 'if( 1 ; 2 )', 'if( 1 ; 2 ; 3 ; 4 )', 'if( 1 ; 2 ; 5 / 0 )', 'if( abc ; 1 ; 2 )',
         // a function or an operator that is missing everywhere
         'tan( 1 )', '10 - tan( 1 )', 'median( 2.6 ) * 3', 'sum( ) * 3', 'sum( 1 ; abc )', '5 %',
+        'largest( )', 'smallest( ) + 1', 'largest( 1 ; abc )', 'largest( -5 ; -2 )', 'smallest( 0.3 ; -0.1 ; 0.2 )',
         // the functions of one number and the power with a number that they cannot give
         'sqrt( -1 )', 'log( 0 )', 'log( 8 ; 1 )', 'log( 8 ; 0 )', 'log( 8 ; 2 ; 3 )', 'ln( -1 )', 'exp( 1000 )', 'sqrt( 4 ; 9 )', 'sqrt( abc )',
         '0 ^ -1', '( -8 ) ^ 0.5', '2 ^ 3 ^ 2', '-2 ^ 2', '( -3 ) ^ 2', '2 ^ -1', 'round( -2.5 )', 'round( 2.5 )',
+        'floor( -2.5 )', 'floor( 2.5 )', 'floor( 1 ; 2 )',
+        // a tie with float noise below 12 decimals is a tie, more than the noise below a tie is not
+        'round( 1.005 * 1000 / 10 )', 'floor( 0.29 * 100 )', 'round( 420.49999999999926 )',
         'if( 0 ; 5 / 0 + 1 ; 2 )', 'if( 1 ; 2 ; 5 / 0 + 1 )', 'if( 1 ; 5 / 0 ; 2 )', 'if( 1 = 1 & 2 = 3 ; 5 ; 6 )', 'if( 1 = 1 | 2 = 3 ; 5 ; 6 )',
     ];
 

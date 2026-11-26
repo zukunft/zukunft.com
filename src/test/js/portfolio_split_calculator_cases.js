@@ -29,5 +29,13 @@ const CASES = {
     differ: {
         "Target weight first child": "30",
         "Target weight second child": "40"
+    },
+    /* a third child, which gets the weight of the first child if the parent can still give it, so 30 % */
+    add_child: {
+        "press": ["Add child"]
+    },
+    /* a third child and then the second one removed, so the first and the former third child remain */
+    remove_child: {
+        "press": ["Add child", "Remove the second child"]
     }
 };

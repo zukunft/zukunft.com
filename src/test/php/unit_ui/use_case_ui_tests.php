@@ -57,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\calc\phrase_kinds;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
@@ -273,6 +274,20 @@ class use_case_ui_tests
         $frm_be_lst->add($frm_be, $msg);
         $num_be = new formula_calc()->result($t_res->result_zh_sum_ui($sum), $t_val->value_list_assumptions_ui(), $frm_be_lst);
         $t->assert_null($test_name, $num_be);
+        // of two values within the context the one with a phrase of the result is the operand, whatever the order
+        // of the page list, e.g. the target share of a child and not the one of the whole portfolio
+        $test_name = 'of two values in the context the one with a phrase of the result is the operand';
+        $frm_city = new formula_ui();
+        $frm_city->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_city->set_usr_text('"total" = "' . triple_names::CITY_ZH_NAME . '"');
+        $frm_city_lst = new formula_list_ui();
+        $frm_city_lst->add($frm_city, $msg);
+        $num_city = new formula_calc()->result($t_res->result_zh_sum_ui($sum), $t_val->value_list_operand_choice_ui(true), $frm_city_lst);
+        $t->assert($test_name, $num_city, 20.0);
+        // negative: a phrase of the result never takes a value outside the context
+        $test_name = '... but a value with more phrases of the result outside the context is no operand';
+        $num_ctx = new formula_calc()->result($t_res->result_zh_sum_ui($sum), $t_val->value_list_operand_choice_ui(false), $frm_city_lst);
+        $t->assert($test_name, $num_ctx, 10.0);
         // a calculator page repeats the calculation in the browser, so the expression is given as
         // tokens with the html id of each operand instead of the formula text, which the browser
         // never runs as code
@@ -341,6 +356,47 @@ class use_case_ui_tests
         $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" * 2 )');
         $t->assert_null($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
         $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
+        // a number with all phrases of another and more is the same fact with a qualifier e.g. the expected count
+        $test_name = '... and without a number that includes all phrases of another number';
+        $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" ) / count( "' . word_names::INHABITANTS . '" )');
+        $qualified_lst = $t_val->value_list_list_function_ui(true);
+        $qualified_avg = new formula_calc()->result($t_res->result_zh_sum_ui($sum), $qualified_lst, $frm_list_lst);
+        $t->assert($test_name, $qualified_avg, 15.0);
+        // a result of the operand is a number of the list too e.g. the value that a beneficiary receives per row of a walk
+        $test_name = 'a list function takes the results of its operand too';
+        $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" ) / count( "' . word_names::INHABITANTS . '" )');
+        $res_list_lst = $t_val->value_list_list_function_ui();
+        $res_list_lst->add_results($t_res->result_list_list_function_ui(true, false), $msg);
+        $t->assert($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $res_list_lst, $frm_list_lst), 30.0);
+        // negative: a result outside the context is no number of the list, like a value
+        $test_name = '... but not a result outside the context';
+        $out_list_lst = $t_val->value_list_list_function_ui();
+        $out_list_lst->add_results($t_res->result_list_list_function_ui(false, false), $msg);
+        $t->assert($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $out_list_lst, $frm_list_lst), 15.0);
+        // negative: the stored number of the formula that is calculated is its result before this calculation
+        $test_name = '... and never a result of the formula that is calculated';
+        $own_list_lst = $t_val->value_list_list_function_ui();
+        $own_list_lst->add_results($t_res->result_list_list_function_ui(true, true), $msg);
+        $t->assert($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $own_list_lst, $frm_list_lst), 15.0);
+        // a list takes the numbers of a kind e.g. the walk rows of LISP for the stocks, because LISP is a stock
+        $test_name = 'a list function takes the numbers of a kind of its operand';
+        $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '","' . word_names::CITY . '" )');
+        $kind_links = phrase_kinds::with_link([], triple_names::CITY_ZH_NAME, word_names::CITY);
+        $kind_sum = new formula_calc([], $kind_links)->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst);
+        $t->assert($test_name, $kind_sum, 30.0);
+        // negative: without the is a link no number of the list names the city, so the list gives no number
+        $test_name = '... but only by an is a link of the page';
+        $t->assert_null($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
+        // the page reads the is a links from its triples e.g. Zurich is a city
+        $test_name = 'the is a links of the page are the triples with the verb is a';
+        $dto_knd = new data_object();
+        $dto_knd->phr_lst = new test_phrases($t)->list_zh_ui();
+        $zh_kinds = new ui_list()->kind_names($dto_knd)[word_names::ZH] ?? [];
+        $t->assert_contains($test_name, $zh_kinds, [word_names::CITY, word_names::CANTON]);
+        // negative: a page without triples has no is a link
+        $test_name = '... and a page without triples has none';
+        $dto_knd->phr_lst = new phrase_list_ui();
+        $t->assert($test_name, new ui_list()->kind_names($dto_knd), []);
 
         $t->subheader($ts . 'result tooltip');
         // the tooltip of a result shows the result number with the numbers of the page used and below the formula with the term names
@@ -488,6 +544,71 @@ class use_case_ui_tests
         $test_name = '... but without them not';
         $user_pct_txt = $list->calculator_cell_text($pct_val, new number_format(), false, $msg);
         $t->assert_text_not_contains($test_name, $user_pct_txt, '100.000');
+        // a number that rounds to zero is shown as 0.00, so its cell has neither the plus sign nor the negative style
+        $test_name = 'a negative number that a cell rounds to zero is not shown as negative';
+        $fmt_two = new number_format();
+        $fmt_two->decimals = 2;
+        $zh_inh = [$t_wrd->word_zh()->phrase(), $t_wrd->word_inhabitant()->phrase()];
+        $tiny_val = new test_lib()->ui_value($t_val->value_for_phrases($zh_inh, -0.004));
+        $tiny_neg = $list->calculator_cell_shown($tiny_val, $fmt_two, $msg) < 0;
+        $t->assert($test_name, $tiny_neg, false);
+        // negative: a number that does not round to zero keeps its sign
+        $test_name = '... but one that rounds to a cent is';
+        $cent_val = new test_lib()->ui_value($t_val->value_for_phrases($zh_inh, -0.006));
+        $cent_neg = $list->calculator_cell_shown($cent_val, $fmt_two, $msg) < 0;
+        $t->assert($test_name, $cent_neg, true);
+        // a share is rounded in percent with the decimals of its row e.g. -0.004 % with two decimals
+        $test_name = '... and a share rounds in percent with the decimals of its row';
+        $pct_phr = [$t_wrd->word_city()->phrase(), $t_wrd->word_bern()->phrase(), $t_wrd->word_percent()->phrase()];
+        $tiny_pct_val = new test_lib()->ui_value($t_val->value_for_phrases($pct_phr, -0.00004));
+        $tiny_pct_neg = $list->calculator_cell_shown($tiny_pct_val, new number_format(), $msg, 2) < 0;
+        $t->assert($test_name, $tiny_pct_neg, false);
+        $test_name = '... but -0.01 % is negative with two decimals';
+        $pct_cent_val = new test_lib()->ui_value($t_val->value_for_phrases($pct_phr, -0.0001));
+        $pct_cent_neg = $list->calculator_cell_shown($pct_cent_val, new number_format(), $msg, 2) < 0;
+        $t->assert($test_name, $pct_cent_neg, true);
+        $test_name = '... and without row decimals with the percent decimals of the user';
+        $noise_pct_val = new test_lib()->ui_value($t_val->value_for_phrases($pct_phr, -0.000000000001));
+        $noise_pct_neg = $list->calculator_cell_shown($noise_pct_val, new number_format(), $msg) < 0;
+        $t->assert($test_name, $noise_pct_neg, false);
+        $test_name = '... but a half share is negative also without row decimals';
+        $half_pct_val = new test_lib()->ui_value($t_val->value_for_phrases($pct_phr, -0.5));
+        $half_pct_neg = $list->calculator_cell_shown($half_pct_val, new number_format(), $msg) < 0;
+        $t->assert($test_name, $half_pct_neg, true);
+        // a cell of a page independent table reads the one result of its phrases if no one value qualifies
+        // e.g. a row of the portfolio split walk, which is a result of a formula (step 9 part 4)
+        $res_year = $t_res->result_zh_year_ui(2);
+        $res_canton = $t_res->result_zh_canton_ui(3);
+        $gen_val = new test_lib()->ui_value($t_val->value_for_phrases(
+            [$t_wrd->word_zh()->phrase(), $t_wrd->word_inhabitant()->phrase()], 1));
+        // the phrases of the cells as the frontend phrases of the results
+        $zh_phr = $res_year->phr_lst()->get_by_name($t_wrd->word_zh()->name(), $msg);
+        $inh_phr = $res_year->phr_lst()->get_by_name($t_wrd->word_inhabitant()->name(), $msg);
+        $y19_phr = $res_year->phr_lst()->get_by_name($t_wrd->word_2019()->name(), $msg);
+        $cnt_phr = $res_canton->phr_lst()->get_by_name($t_wrd->word_canton()->name(), $msg);
+        $gen_lst = new value_list_ui();
+        $gen_lst->add($gen_val, $msg);
+        $gen_lst->add($res_year, $msg);
+        $test_name = 'a cell of a page independent table reads the one result of its phrases';
+        $gen_num = $list->calculator_general_value([$zh_phr, $inh_phr, $y19_phr], $gen_lst, $msg, [], true);
+        $t->assert($test_name, $gen_num?->number(), 2.0);
+        // negative: a table of a page reads only a stored value, because a result belongs to its page
+        $test_name = '... but a cell of a page table reads no result';
+        $t->assert_null($test_name, $list->calculator_general_value([$zh_phr, $inh_phr, $y19_phr], $gen_lst, $msg));
+        // negative: a value is read before a result, also in a page independent table
+        $test_name = '... and the one value is read before a result with the same phrases';
+        $gen_num = $list->calculator_general_value([$zh_phr, $inh_phr], $gen_lst, $msg, [], true);
+        $t->assert($test_name, $gen_num?->number(), 1.0);
+        // negative: two results are no one result, so the order of the list never picks one
+        $gen_res_lst = new value_list_ui();
+        $gen_res_lst->add($res_year, $msg);
+        $gen_res_lst->add($res_canton, $msg);
+        $test_name = '... and no result if two results qualify';
+        $t->assert_null($test_name, $list->calculator_general_value([$zh_phr, $inh_phr], $gen_res_lst, $msg, [], true));
+        // a result with the phrase of another column is skipped, so the other one is the one result again
+        $test_name = '... but the one result again if the other has the phrase of another column';
+        $gen_num = $list->calculator_general_value([$zh_phr, $inh_phr], $gen_res_lst, $msg, [$cnt_phr], true);
+        $t->assert($test_name, $gen_num?->number(), 2.0);
         // a unit is shown by its symbol e.g. "kWh/a" for kilowatthours per year like behind a
         // number, so also the symbol "€" of Euro for the unit EUR that stands for Euro
         $test_name = 'a field shows the symbol of its unit';
@@ -1003,6 +1124,24 @@ class use_case_ui_tests
         $ro_number = $this->read_only_number($fld_html);
         $ro_url_number = $this->read_only_number($ro_url_html);
         $t->assert($test_name, $ro_url_number, $ro_number);
+        // a read only number that the page calculates e.g. the target weight of the parent as what the children leave
+        $test_name = 'a read only field without a value shows the one result of its phrase';
+        $dto_ro_res = clone $dto_fld;
+        $dto_ro_res->val_lst = new value_list_ui();
+        $ro_res_lst = new result_list_ui();
+        $ro_res_lst->add($t_res->result_zh_sum_ui(1.0), $msg);
+        $dto_ro_res->set_result_list($ro_res_lst);
+        $ro_res_html = $page->calculator_input($zh_city, $msg, $dto_ro_res, $form, views::CALCULATOR, []);
+        $ro_res_number = $this->read_only_number($ro_res_html);
+        $t->assert($test_name, $ro_res_number, '1');
+        // negative: of two results the field never picks one by the order of the list
+        $test_name = '... but no number if two results have its phrase';
+        $ro_two_lst = clone $ro_res_lst;
+        $ro_two_lst->add($t_res->result_zh_canton_ui(2.0), $msg);
+        $dto_ro_res->set_result_list($ro_two_lst);
+        $ro_two_html = $page->calculator_input($zh_city, $msg, $dto_ro_res, $form, views::CALCULATOR, []);
+        $ro_two_number = $this->read_only_number($ro_two_html);
+        $t->assert($test_name, $ro_two_number, '');
         $test_name = 'a checkbox sends 0 by its hidden field if it is unchecked';
         $chk_name = url_var::NUMERIC_VALUE . $dto_fld->phr_lst->get_by_name(word_names::YEAR_2019, $msg)->id();
         $chk_html = $html->input_checkbox($chk_name, true, $form);

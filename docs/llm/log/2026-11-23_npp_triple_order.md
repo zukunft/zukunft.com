@@ -1,6 +1,6 @@
 # npp triple order (2026-11-23)
 
-Part of #247. A fix of the change of `docs/llm/log/npp_assumptions_2026-11-23.md`, in its own log as the developer
+Part of #247. A fix of the change of `docs/llm/log/2026-11-23_npp_assumptions.md`, in its own log as the developer
 has asked.
 
 ## Request
@@ -28,7 +28,7 @@ Fix the import error of the test run:
 
 | file | old | new | reason |
 |---|---|---|---|
-| `src/main/resources/messages/use_cases/npp_ch_vote.json` | the move to the assumptions (`npp_assumptions_2026-11-23.md`) has changed the from of the four "has a" triples to `new NPP assumptions` (defined at line 1571) and the to of `new NPP input capacity order` to `new NPP assumption threshold` (line 1706), both below the changed triples at 1442-1569 | the four blocks moved behind the last assumption; a read-only scan finds no forward reference to a triple of the file any more, and the triple count stays 502 as in the commit | a request of 2026-11-23: the import resolves the from and the to of a triple by the phrases it knows at that point of the file (`docs/llm/json_structure.md` "A building block is defined before the triple that uses it"), so a forward reference to a triple is mapped as an unknown word with id 0 and the whole file fails; I have changed the from and the to without checking the file order, and the order check of the groups I ran then only checked the follower chains, not the position in the file |
+| `src/main/resources/messages/use_cases/npp_ch_vote.json` | the move to the assumptions (`2026-11-23_npp_assumptions.md`) has changed the from of the four "has a" triples to `new NPP assumptions` (defined at line 1571) and the to of `new NPP input capacity order` to `new NPP assumption threshold` (line 1706), both below the changed triples at 1442-1569 | the four blocks moved behind the last assumption; a read-only scan finds no forward reference to a triple of the file any more, and the triple count stays 502 as in the commit | a request of 2026-11-23: the import resolves the from and the to of a triple by the phrases it knows at that point of the file (`docs/llm/json_structure.md` "A building block is defined before the triple that uses it"), so a forward reference to a triple is mapped as an unknown word with id 0 and the whole file fails; I have changed the from and the to without checking the file order, and the order check of the groups I ran then only checked the follower chains, not the position in the file |
 
 ## Lessons learned by llm
 

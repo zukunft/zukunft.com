@@ -626,6 +626,9 @@ class triples
     const string CALCULATOR_COPY_CODE_ID = 'system_calculator_copy';
     const string CALCULATOR_CASE = 'calculator case';
     const string CALCULATOR_CASE_CODE_ID = 'system_calculator_case';
+    // a selector option that walks the "is alternative follower of" order e.g. the bank report order of the holdings
+    const string CALCULATOR_ALTERNATIVE_ORDER = 'calculator alternative order';
+    const string CALCULATOR_ALTERNATIVE_ORDER_CODE_ID = 'system_calculator_alternative_order';
     // the buttons of a calculator list or table by their code id
     const array CALCULATOR_BUTTONS = [
         self::CALCULATOR_FILE_IMPORT => self::CALCULATOR_FILE_IMPORT_CODE_ID,
@@ -727,6 +730,7 @@ class triples
         ...triples::CALCULATOR_PROPOSED,
         ...triples::CALCULATOR_BUTTONS,
         self::CALCULATOR_CASE => self::CALCULATOR_CASE_CODE_ID,
+        self::CALCULATOR_ALTERNATIVE_ORDER => self::CALCULATOR_ALTERNATIVE_ORDER_CODE_ID,
         self::CALCULATOR_DECIMALS => self::CALCULATOR_DECIMALS_CODE_ID,
         self::CALCULATOR_RESULT_WIDTH => self::CALCULATOR_RESULT_WIDTH_CODE_ID,
     ];
@@ -833,6 +837,46 @@ class triples
         self::SYSTEM_PERSIST_USER_CHANGES => self::SYSTEM_PERSIST_USER_CHANGES_CODE_ID,
         self::SYSTEM_RESET_TO_DEFAULT => self::SYSTEM_RESET_TO_DEFAULT_CODE_ID,
         self::SYSTEM_VIEW_VERSION => self::SYSTEM_VIEW_VERSION_CODE_ID,
+    ];
+    // the keywords of a csv format (csv_keywords.json), so that a new csv format is a definition json and no code
+    const string CSV_SYSTEM = 'csv (system)';
+    const string CSV_SYSTEM_CODE_ID = 'system_csv';
+    const string CSV_HEADER_START = 'csv header start';
+    const string CSV_HEADER_START_CODE_ID = 'system_csv_header_start';
+    const string CSV_COLUMN = 'csv column';
+    const string CSV_COLUMN_CODE_ID = 'system_csv_column';
+    const string CSV_REQUIRED = 'csv required';
+    const string CSV_REQUIRED_CODE_ID = 'system_csv_required';
+    const string CSV_NUMBER = 'csv number';
+    const string CSV_NUMBER_CODE_ID = 'system_csv_number';
+    const string CSV_POSITIVE = 'csv positive';
+    const string CSV_POSITIVE_CODE_ID = 'system_csv_positive';
+    const string CSV_FALLBACK = 'csv fallback';
+    const string CSV_FALLBACK_CODE_ID = 'system_csv_fallback';
+    const string CSV_ROW_NAME = 'csv row name';
+    const string CSV_ROW_NAME_CODE_ID = 'system_csv_row_name';
+    const string CSV_ROW_DESCRIPTION = 'csv row description';
+    const string CSV_ROW_DESCRIPTION_CODE_ID = 'system_csv_row_description';
+    const string CSV_KIND = 'csv kind';
+    const string CSV_KIND_CODE_ID = 'system_csv_kind';
+    const string CSV_CONTEXT = 'csv context';
+    const string CSV_CONTEXT_CODE_ID = 'system_csv_context';
+    const string CSV_OPTIONAL = 'csv optional';
+    const string CSV_OPTIONAL_CODE_ID = 'system_csv_optional';
+    // the keywords of a csv format by their code id, which convert_csv finds the definition of a format by
+    const array CSV_KEYWORDS = [
+        self::CSV_SYSTEM => self::CSV_SYSTEM_CODE_ID,
+        self::CSV_HEADER_START => self::CSV_HEADER_START_CODE_ID,
+        self::CSV_COLUMN => self::CSV_COLUMN_CODE_ID,
+        self::CSV_REQUIRED => self::CSV_REQUIRED_CODE_ID,
+        self::CSV_NUMBER => self::CSV_NUMBER_CODE_ID,
+        self::CSV_POSITIVE => self::CSV_POSITIVE_CODE_ID,
+        self::CSV_FALLBACK => self::CSV_FALLBACK_CODE_ID,
+        self::CSV_ROW_NAME => self::CSV_ROW_NAME_CODE_ID,
+        self::CSV_ROW_DESCRIPTION => self::CSV_ROW_DESCRIPTION_CODE_ID,
+        self::CSV_KIND => self::CSV_KIND_CODE_ID,
+        self::CSV_CONTEXT => self::CSV_CONTEXT_CODE_ID,
+        self::CSV_OPTIONAL => self::CSV_OPTIONAL_CODE_ID,
     ];
     // the keyword of each parameter field of the table editor by its field key (SPEC of script/table_editor.js)
     const array TABLE_EDITOR_KEYWORDS = [
