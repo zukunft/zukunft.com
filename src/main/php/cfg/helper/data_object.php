@@ -1596,18 +1596,21 @@ class data_object
      */
     private function list_numbers(array $numbers, array $wanted, formula $frm): array
     {
-        $result = [];
+        $nums = [];
         $keys = [];
+        $phrase_sets = [];
         // e.g. the walk rows of LISP for the stocks, because LISP is a stock
         $knd = new phrase_kinds($this->kind_names());
         foreach ($numbers as [$num, $names]) {
             $key = $this->name_set_key($names);
             if ($this->is_list_number($num, $names, $wanted, $knd, $frm) and !in_array($key, $keys)) {
-                $result[] = $num->number();
+                $nums[] = $num->number();
                 $keys[] = $key;
+                $phrase_sets[] = array_map('strval', array_keys($names));
             }
         }
-        return $result;
+        // e.g. without the expected count of the split agreement next to the count of the walk
+        return phrase_kinds::with_fewest_phrases($nums, $phrase_sets);
     }
 
     /**

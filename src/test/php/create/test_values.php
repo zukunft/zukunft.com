@@ -1724,11 +1724,13 @@ class test_values extends test_objects
 
     /**
      * the values of the list function test (formula_calc::list_values): two values of the inhabitants of
-     * the context of result_zh_sum_ui, the same fact with a confidence and another value without the context
+     * the context of result_zh_sum_ui, which differ by a phrase each, the same fact with a confidence and another value
+     * without the context
      *
+     * @param bool $with_qualified true to add the second value with one more phrase, like the expected count of a split agreement
      * @return value_list_ui the frontend values for unit testing
      */
-    function value_list_list_function_ui(): value_list_ui
+    function value_list_list_function_ui(bool $with_qualified = false): value_list_ui
     {
         $tl = new test_lib();
         $t_wrd = new test_words($this->env);
@@ -1739,11 +1741,15 @@ class test_values extends test_objects
             $t_trp->company_zurich_high_impact()->phrase()
         ];
         $inh = $t_wrd->word_inhabitant()->phrase();
+        $kwh = $t_wrd->word_kwh()->phrase();
         $lst = new value_list($this->env->usr1);
-        $lst->add($this->value_for_phrases([...$ctx, $inh], 10));
-        $lst->add($this->value_for_phrases([...$ctx, $inh, $t_wrd->word_kwh()->phrase()], 20));
+        $lst->add($this->value_for_phrases([...$ctx, $inh, $t_wrd->word_2019()->phrase()], 10));
+        $lst->add($this->value_for_phrases([...$ctx, $inh, $kwh], 20));
         $lst->add($this->value_for_phrases([...$ctx, $inh, $t_wrd->word_confidence()->phrase()], 30));
         $lst->add($this->value_for_phrases([$inh], 40));
+        if ($with_qualified) {
+            $lst->add($this->value_for_phrases([...$ctx, $inh, $kwh, $t_wrd->word_2020()->phrase()], 50));
+        }
         return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 

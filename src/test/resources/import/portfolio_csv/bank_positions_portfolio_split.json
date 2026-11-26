@@ -365,44 +365,44 @@
         {
             "from": "CHF",
             "verb": "per",
-            "to": "0.98",
+            "to": "EUR",
             "type": "measure_unit",
-            "description": "the unit of the exchange rate: CHF per unit of 0.98"
+            "description": "the unit of the EUR/CHF exchange rate: how many Swiss francs one euro buys"
         },
         {
             "from": "CHF",
             "verb": "per",
-            "to": "0.9",
+            "to": "USD",
             "type": "measure_unit",
-            "description": "the unit of the exchange rate: CHF per unit of 0.9"
+            "description": "the unit of the USD/CHF exchange rate: how many Swiss francs one US dollar buys"
         },
         {
             "from": "CHF",
             "verb": "per",
-            "to": "1.13",
+            "to": "GBP",
             "type": "measure_unit",
-            "description": "the unit of the exchange rate: CHF per unit of 1.13"
+            "description": "the unit of the exchange rate: CHF per unit of GBP"
         },
         {
             "from": "CHF",
             "verb": "per",
-            "to": "0.1304",
+            "to": "DKK",
             "type": "measure_unit",
-            "description": "the unit of the exchange rate: CHF per unit of 0.1304"
+            "description": "the unit of the exchange rate: CHF per unit of DKK"
         },
         {
             "from": "CHF",
             "verb": "per",
-            "to": "0.0875",
+            "to": "SEK",
             "type": "measure_unit",
-            "description": "the unit of the exchange rate: CHF per unit of 0.0875"
+            "description": "the unit of the exchange rate: CHF per unit of SEK"
         },
         {
             "from": "CHF",
             "verb": "per",
-            "to": "0.006",
+            "to": "JPY",
             "type": "measure_unit",
-            "description": "the unit of the exchange rate: CHF per unit of 0.006"
+            "description": "the unit of the exchange rate: CHF per unit of JPY"
         },
         {
             "from": "LISP",

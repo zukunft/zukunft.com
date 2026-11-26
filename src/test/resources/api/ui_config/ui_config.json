@@ -30691,7 +30691,7 @@
                 "class": "triple"
             },
             {
-                "id": 5264,
+                "id": 5265,
                 "name": "ABBN (ticker)",
                 "description": "the ticker symbol under which the ABB share is traded on SIX",
                 "from_id": 2645,

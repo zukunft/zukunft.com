@@ -96,6 +96,44 @@ class phrase_kinds
     }
 
     /**
+     * a number whose phrases include all phrases of another number of the list is the same fact with a qualifier
+     * e.g. the expected count of the split agreement next to the count of the walk, so the list takes only the other
+     *
+     * @param array $numbers the numbers of a list
+     * @param array $phrase_sets per key of a number its phrase names or ids
+     * @return array the numbers without a number that includes all phrases of another number, in their order
+     */
+    static function with_fewest_phrases(array $numbers, array $phrase_sets): array
+    {
+        $result = [];
+        foreach ($numbers as $key => $num) {
+            if (!self::includes_another($key, $phrase_sets)) {
+                $result[] = $num;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param int|string $key the key of the number in the phrase sets
+     * @param array $phrase_sets per key of a number its phrase names or ids
+     * @return bool true if the phrases of the number include all phrases of another number and more
+     */
+    private static function includes_another(int|string $key, array $phrase_sets): bool
+    {
+        $result = false;
+        $phrases = $phrase_sets[$key];
+        foreach ($phrase_sets as $other_key => $other) {
+            $is_fewer = ($other_key !== $key and count($other) < count($phrases));
+            $is_part = array_diff($other, $phrases) == [];
+            if ($is_fewer and $is_part) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param array $names the phrase names of a number
      * @return array the names and the names of every phrase that they are a kind of, over all levels,
      *               each once, so that a loop of links in the data ends

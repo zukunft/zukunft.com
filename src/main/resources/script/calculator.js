@@ -364,6 +364,21 @@
     }
 
     /**
+     * @param num the number of a cell
+     * @param cell the format of the cell like for text
+     * @returns the number rounded like its text, so that the sign of a cell is the sign of its text (ui_list::calculator_cell_shown)
+     */
+    function shownNumber(num, cell) {
+        let result;
+        if (cell.percent !== null) {
+            result = round(num * 100, cell.percent_decimals === null ? data.format.percent_decimals : cell.percent_decimals);
+        } else {
+            result = round(round(num * cell.factor, NOISE_DECIMALS), cell.decimals);
+        }
+        return result;
+    }
+
+    /**
      * write the numbers into the cells of the page, a signed cell in the positive or negative style
      *
      * @param numbers the numbers of the page by their html id
@@ -374,7 +389,7 @@
             if (td !== null && cell.number in numbers) {
                 const num = numbers[cell.number];
                 const txt = text(num, cell);
-                const shown = cell.plus ? round(round(num * cell.factor, NOISE_DECIMALS), cell.decimals) : num;
+                const shown = shownNumber(num, cell);
                 if (cell.signed || cell.plus) {
                     const span = document.createElement('span');
                     span.className = shown < 0 ? data.format.negative : (shown > 0 || !cell.plus ? data.format.positive : '');

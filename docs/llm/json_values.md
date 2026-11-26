@@ -506,7 +506,10 @@ list share, e.g. `["fruit basket", "weight", "kg"]` for the weight of the apple 
 pear. A number also counts for a phrase if it has a phrase that is a kind of it by an
 `is a` triple of the file, over several levels, e.g. `["fruit basket", "fruit", "weight",
 "kg"]` sums the apple and the cherry, because the cherry is a stone fruit and a stone fruit
-is a fruit, like the walk rows of LISP for the stocks of the portfolio split. A number that has the operand
+is a fruit, like the walk rows of LISP for the stocks of the portfolio split. A number that has all phrases of
+another number of the list and more is the same fact with a qualifier and is left out (`phrase_kinds::with_fewest_phrases`),
+e.g. the expected count `LISP, split count, first child portfolio, expected` of the split agreement next to the count
+of the walk, so a number with only the wanted phrases is the only number of its list. A number that has the operand
 phrase itself is also in the list, so a result over the list is named by another phrase, e.g. the sum of the target
 shares of the portfolio split is `"child","target share" = sum( "child portfolio" )` and not `"child portfolio",
 "target share"`, which `largest( "child portfolio" )` would take as a target share of a child. A calculation inside the list (`sum( "a" * "b" )`) and an operand that is also used

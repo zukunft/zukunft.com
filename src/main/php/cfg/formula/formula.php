@@ -1249,7 +1249,8 @@ class formula extends formula_map
      * like for one operand (element_group::add_figure), the same rule as the page (formula_calc::list_values) and the
      * import (data_object::list_numbers); a number has each wanted phrase or a kind of it e.g. the walk row of LISP
      * for the stocks; never a result of this formula, because its stored number is the result before this
-     * calculation, and never a second number of the same fact (words::LIST_FUNCTION_EXCLUDED)
+     * calculation, and never a second number of the same fact (words::LIST_FUNCTION_EXCLUDED) or a number that
+     * includes all phrases of another number of the list (phrase_kinds::with_fewest_phrases)
      * public only so that the unit tests can check it without a database
      *
      * @param value_list $val_lst the values loaded for the operand and the context
@@ -1260,16 +1261,18 @@ class formula extends formula_map
      */
     function list_numbers(value_list $val_lst, result_list $res_lst, phrase_kinds $knd, array $wanted): array
     {
-        $result = [];
+        $nums = [];
         $grp_ids = [];
+        $phrase_sets = [];
         foreach ([...$val_lst->lst(), ...$res_lst->lst()] as $num) {
-            $has_all = $knd->has_all(array_map('strval', $num->ids()), $wanted);
-            if ($has_all and $this->is_list_number($num, $grp_ids)) {
-                $result[] = $num;
+            $ids = array_map('strval', $num->ids());
+            if ($knd->has_all($ids, $wanted) and $this->is_list_number($num, $grp_ids)) {
+                $nums[] = $num;
                 $grp_ids[] = $num->grp()->id();
+                $phrase_sets[] = $ids;
             }
         }
-        return $result;
+        return phrase_kinds::with_fewest_phrases($nums, $phrase_sets);
     }
 
     /**

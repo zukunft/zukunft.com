@@ -5203,10 +5203,10 @@ class ui_list extends ui_base
                 $fmt->decimals = $decimals;
             }
             $txt = $html->esc($this->calculator_cell_text($val, $fmt, $with_unit, $msg, $decimals));
+            $shown = $this->calculator_cell_shown($val, $fmt, $msg, $decimals);
             if ($signed) {
-                $txt = $html->span($txt, $val->number() < 0 ? styles::CALC_NEGATIVE : styles::CALC_POSITIVE);
+                $txt = $html->span($txt, $shown < 0 ? styles::CALC_NEGATIVE : styles::CALC_POSITIVE);
             } elseif ($plus) {
-                $shown = round(round($val->number() * $fmt->factor, number_format::NOISE_DECIMALS), $fmt->decimals);
                 $txt = $html->span(($shown > 0 ? '+' : '') . $txt,
                     $shown > 0 ? styles::CALC_POSITIVE : ($shown < 0 ? styles::CALC_NEGATIVE : ''));
             }
@@ -5247,6 +5247,30 @@ class ui_list extends ui_base
             if ($unit != '') {
                 $result .= sandbox_value::UNIT_SEPARATOR . $unit;
             }
+        }
+        return $result;
+    }
+
+    /**
+     * the number rounded like calculator_cell_text, so that the sign of a cell is the sign of its text
+     *
+     * @param sandbox_value $val the number of the cell
+     * @param number_format $fmt the unit and the decimals that the column shows the numbers of this unit with
+     * @param user_message $msg to report a problem of the phrase types
+     * @param int|null $pct_decimals the decimals of a percent that the row sets, null for the percent decimals of the user
+     * @return float the number that the cell shows e.g. 0 for -0.004 with two decimals, a percent times 100
+     */
+    function calculator_cell_shown(sandbox_value $val, number_format $fmt, user_message $msg, ?int $pct_decimals = null): float
+    {
+        global $ui_sys;
+        if ($val->is_percent($msg)) {
+            $decimals = $pct_decimals;
+            if ($decimals === null) {
+                $decimals = $ui_sys->cfg->percent_decimals();
+            }
+            $result = round($val->number() * 100, $decimals);
+        } else {
+            $result = round(round($val->number() * $fmt->factor, number_format::NOISE_DECIMALS), $fmt->decimals);
         }
         return $result;
     }

@@ -6394,7 +6394,8 @@
     \-- positions
         \-- convert_portfolio_csv - @param string $csv the text of the csv of a bank statement of the positions
     \-- holding
-        \-- convert_portfolio_csv - @param array $pos one position of the csv (see positions)
+        \-- convert_portfolio_csv - @param array $pos one position of the csv that position_is_valid has accepted (see p
+                ositions)
 \-- use to apply the time of the parent process for continuous timestamp reporting
     \-- set_start_time
         \-- import - stop the note timer, so that a finished import never shows its skipped step note
@@ -7299,6 +7300,7 @@
     \-- calculator_numbers - section for function calculator_numbers missing in /component/execute/ui_list.php
     \-- calculator_result - section for function calculator_result missing in /component/execute/ui_list.php
     \-- calculator_cell_text - section for function calculator_cell_text missing in /component/execute/ui_list.php
+    \-- calculator_cell_shown - section for function calculator_cell_shown missing in /component/execute/ui_list.php
     \-- calculator_script - section for function calculator_script missing in /component/execute/ui_list.php
     \-- calculator_number_format - section for function calculator_number_format missing in /component/execute/ui_list.p
             hp
@@ -10297,6 +10299,8 @@
         \-- ui_list - the number of a calculator cell: the value or result with all the phrases of the cell and
     \-- calculator_cell_text
         \-- ui_list - @param sandbox_value $val the number of the cell
+    \-- calculator_cell_shown
+        \-- ui_list - the number rounded like calculator_cell_text, so that the sign of a cell is the sign of its text
     \-- calculator_script
         \-- ui_list - the calculation of a calculator page as data and the script that repeats it in the browser
     \-- calculator_number_format

@@ -464,23 +464,23 @@
         {
             "from": "CHF",
             "verb": "per",
-            "to": "0.9323",
+            "to": "EUR",
             "type": "measure_unit",
-            "description": "the unit of the exchange rate: CHF per unit of 0.9323"
+            "description": "the unit of the EUR/CHF exchange rate: how many Swiss francs one euro buys"
         },
         {
             "from": "CHF",
             "verb": "per",
-            "to": "0.8036",
+            "to": "USD",
             "type": "measure_unit",
-            "description": "the unit of the exchange rate: CHF per unit of 0.8036"
+            "description": "the unit of the USD/CHF exchange rate: how many Swiss francs one US dollar buys"
         },
         {
             "from": "CHF",
             "verb": "per",
-            "to": "1.0895",
+            "to": "GBP",
             "type": "measure_unit",
-            "description": "the unit of the exchange rate: CHF per unit of 1.0895"
+            "description": "the unit of the exchange rate: CHF per unit of GBP"
         },
         {
             "from": "2120.001.01",

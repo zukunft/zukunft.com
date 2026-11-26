@@ -366,8 +366,10 @@ class formula_tests
         $frm_other->set(formula_names::CITY_POPULATION_ID, formula_names::CITY_POPULATION);
         $zh = $t_wrd->word_zh()->phrase();
         $inh = $t_wrd->word_inhabitant()->phrase();
+        // the value and the result differ by a phrase each, so that neither includes all phrases of the other
+        $y19 = $t_wrd->word_2019()->phrase();
         $val_lst = new value_list($t->usr1);
-        $val_lst->add($t_val->value_for_phrases([$zh, $inh], 10));
+        $val_lst->add($t_val->value_for_phrases([$zh, $inh, $y19], 10));
         $res_lst = new result_list($t->usr1);
         $res_other = $t_res->result_for_phrases([$zh, $inh, $t_wrd->word_mayor()->phrase()], 20);
         $res_other->set_formula($frm_other);
@@ -378,9 +380,14 @@ class formula_tests
         $t->assert($test_name, $nums, [10.0, 20.0]);
         // negative: a result of the phrases of a value is the same fact, and the value wins like for one operand
         $test_name = '... but not a result of the same phrases as a value';
-        $res_lst->add($t_res->result_for_phrases([$zh, $inh], 30));
+        $res_lst->add($t_res->result_for_phrases([$zh, $inh, $y19], 30));
         $nums_fact = array_map(fn($num) => $num->number(), $frm_sum->list_numbers($val_lst, $res_lst, $no_kinds, $wanted));
         $t->assert($test_name, $nums_fact, [10.0, 20.0]);
+        // negative: a number with all phrases of another and more is the same fact with a qualifier e.g. the expected count
+        $test_name = '... and not a number that includes all phrases of another number';
+        $res_lst->add($t_res->result_for_phrases([$zh, $inh, $t_wrd->word_mayor()->phrase(), $t_wrd->word_canton()->phrase()], 50));
+        $nums_more = array_map(fn($num) => $num->number(), $frm_sum->list_numbers($val_lst, $res_lst, $no_kinds, $wanted));
+        $t->assert($test_name, $nums_more, [10.0, 20.0]);
         // negative: the stored number of the formula that is calculated is its result before this calculation
         $test_name = '... and never a result of the formula that is calculated';
         $res_own = $t_res->result_for_phrases([$zh, $inh, $t_wrd->word_minor()->phrase()], 40);

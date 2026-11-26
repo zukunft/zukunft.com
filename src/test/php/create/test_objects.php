@@ -140,7 +140,7 @@ class test_objects
                 $phr_lst = new phrase_list($obj->get_user());
                 // a message of the user of the value and of this value only, like the other loads of a test row,
                 // so that a problem of an earlier load does not skip the cleanup of this value
-                $phr_lst->load_by_names($obj_name, new user_message($obj->get_user()));
+                $phr_lst->load_by_names($obj_name, new user_message($obj->get_user())); // not reported, see above
                 // a value is named by its complete group, so a phrase list that misses one name
                 // (e.g. because its test word is not created yet or has already been deleted)
                 // names another value and must never be deleted

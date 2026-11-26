@@ -356,6 +356,12 @@ class use_case_ui_tests
         $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" * 2 )');
         $t->assert_null($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
         $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
+        // a number with all phrases of another and more is the same fact with a qualifier e.g. the expected count
+        $test_name = '... and without a number that includes all phrases of another number';
+        $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" ) / count( "' . word_names::INHABITANTS . '" )');
+        $qualified_lst = $t_val->value_list_list_function_ui(true);
+        $qualified_avg = new formula_calc()->result($t_res->result_zh_sum_ui($sum), $qualified_lst, $frm_list_lst);
+        $t->assert($test_name, $qualified_avg, 15.0);
         // a result of the operand is a number of the list too e.g. the value that a beneficiary receives per row of a walk
         $test_name = 'a list function takes the results of its operand too';
         $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" ) / count( "' . word_names::INHABITANTS . '" )');
@@ -538,6 +544,37 @@ class use_case_ui_tests
         $test_name = '... but without them not';
         $user_pct_txt = $list->calculator_cell_text($pct_val, new number_format(), false, $msg);
         $t->assert_text_not_contains($test_name, $user_pct_txt, '100.000');
+        // a number that rounds to zero is shown as 0.00, so its cell has neither the plus sign nor the negative style
+        $test_name = 'a negative number that a cell rounds to zero is not shown as negative';
+        $fmt_two = new number_format();
+        $fmt_two->decimals = 2;
+        $zh_inh = [$t_wrd->word_zh()->phrase(), $t_wrd->word_inhabitant()->phrase()];
+        $tiny_val = new test_lib()->ui_value($t_val->value_for_phrases($zh_inh, -0.004));
+        $tiny_neg = $list->calculator_cell_shown($tiny_val, $fmt_two, $msg) < 0;
+        $t->assert($test_name, $tiny_neg, false);
+        // negative: a number that does not round to zero keeps its sign
+        $test_name = '... but one that rounds to a cent is';
+        $cent_val = new test_lib()->ui_value($t_val->value_for_phrases($zh_inh, -0.006));
+        $cent_neg = $list->calculator_cell_shown($cent_val, $fmt_two, $msg) < 0;
+        $t->assert($test_name, $cent_neg, true);
+        // a share is rounded in percent with the decimals of its row e.g. -0.004 % with two decimals
+        $test_name = '... and a share rounds in percent with the decimals of its row';
+        $pct_phr = [$t_wrd->word_city()->phrase(), $t_wrd->word_bern()->phrase(), $t_wrd->word_percent()->phrase()];
+        $tiny_pct_val = new test_lib()->ui_value($t_val->value_for_phrases($pct_phr, -0.00004));
+        $tiny_pct_neg = $list->calculator_cell_shown($tiny_pct_val, new number_format(), $msg, 2) < 0;
+        $t->assert($test_name, $tiny_pct_neg, false);
+        $test_name = '... but -0.01 % is negative with two decimals';
+        $pct_cent_val = new test_lib()->ui_value($t_val->value_for_phrases($pct_phr, -0.0001));
+        $pct_cent_neg = $list->calculator_cell_shown($pct_cent_val, new number_format(), $msg, 2) < 0;
+        $t->assert($test_name, $pct_cent_neg, true);
+        $test_name = '... and without row decimals with the percent decimals of the user';
+        $noise_pct_val = new test_lib()->ui_value($t_val->value_for_phrases($pct_phr, -0.000000000001));
+        $noise_pct_neg = $list->calculator_cell_shown($noise_pct_val, new number_format(), $msg) < 0;
+        $t->assert($test_name, $noise_pct_neg, false);
+        $test_name = '... but a half share is negative also without row decimals';
+        $half_pct_val = new test_lib()->ui_value($t_val->value_for_phrases($pct_phr, -0.5));
+        $half_pct_neg = $list->calculator_cell_shown($half_pct_val, new number_format(), $msg) < 0;
+        $t->assert($test_name, $half_pct_neg, true);
         // a cell of a page independent table reads the one result of its phrases if no one value qualifies
         // e.g. a row of the portfolio split walk, which is a result of a formula (step 9 part 4)
         $res_year = $t_res->result_zh_year_ui(2);

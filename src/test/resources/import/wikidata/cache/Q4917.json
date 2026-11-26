@@ -4,8 +4,8 @@
             "pageid": 5869,
             "ns": 0,
             "title": "Q4917",
-            "lastrevid": 2574372120,
-            "modified": "2026-11-24T09:54:51Z",
+            "lastrevid": 2575125734,
+            "modified": "2026-11-26T11:38:12Z",
             "type": "item",
             "id": "Q4917",
             "labels": {
@@ -6993,12 +6993,6 @@
                     "badges": [],
                     "url": "https://so.wikipedia.org/wiki/Dollarka_Maraykanka"
                 },
-                "wuuwiki": {
-                    "site": "wuuwiki",
-                    "title": "美圓",
-                    "badges": [],
-                    "url": "https://wuu.wikipedia.org/wiki/%E7%BE%8E%E5%9C%93"
-                },
                 "hawwiki": {
                     "site": "hawwiki",
                     "title": "ʻAmelika Hui Pū ʻia dala",
@@ -7394,6 +7388,12 @@
                     "title": "Доллар АСШ",
                     "badges": [],
                     "url": "https://lez.wikipedia.org/wiki/%D0%94%D0%BE%D0%BB%D0%BB%D0%B0%D1%80_%D0%90%D0%A1%D0%A8"
+                },
+                "wuuwiki": {
+                    "site": "wuuwiki",
+                    "title": "美圆",
+                    "badges": [],
+                    "url": "https://wuu.wikipedia.org/wiki/%E7%BE%8E%E5%9C%86"
                 }
             }
         }

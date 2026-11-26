@@ -846,7 +846,17 @@
                 });
                 return e.kind === 'value' && !isExcluded && isSubset(names, e.wset) && isSubset(Array.from(res.ctx), e.wset);
             });
-            return result;
+            return withFewestPhrases(result);
+        }
+
+        /* the entries without one whose phrases include all phrases of another entry, because it is the same fact with
+           a qualifier e.g. the expected count of the split agreement next to the count of the walk (phrase_kinds::with_fewest_phrases) */
+        function withFewestPhrases(entries) {
+            return entries.filter(function (e) {
+                return !entries.some(function (other) {
+                    return other.wset.size < e.wset.size && isSubset(Array.from(other.wset), e.wset);
+                });
+            });
         }
 
         /* the one phrase of the context in a follower chain for an operand with the name prior, else null (prior_operand::chain_phrase) */

@@ -17,8 +17,9 @@
       value times its price in percent, e.g. a bond fund in units, is a stock
     - the csv has no lot size, so each holding gets the assumed lot size of its kind
     - the holdings follow each other from the largest lot value to the smallest, like the walk of the page
-    every base word that a value uses is declared name-only and every borrowed triple verbatim, because the
-    import resolves a phrase only from its own file (see docs/llm/json_structure.md "Self-consistency")
+    every base word that a value uses is declared name-only and every borrowed triple is copied verbatim from its
+    home file, because the import resolves a phrase only from its own file (see docs/llm/json_structure.md
+    "Self-consistency")
 
 
     This file is part of zukunft.com - calc with words
@@ -50,15 +51,23 @@ namespace Zukunft\ZukunftCom\main\php\cfg\import;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use DateTime;
 use DateTimeInterface;
@@ -80,6 +89,12 @@ class convert_portfolio_csv
     const string COL_REF_CURRENCY = 'Ref. Curr';
     // the first cell of the header row of the positions
     const string HEADER_START = self::COL_ASSET_CLASS;
+    // the cells that a holding needs, so a position with one of them empty is left out and reported; an empty price
+    // currency is the currency of the position and an empty instrument name only leaves the description empty
+    const array COLS_REQUIRED = [self::COL_INSTRUMENT, self::COL_QUANTITY, self::COL_CURRENCY, self::COL_PRICE,
+        self::COL_EXCHANGE_RATE, self::COL_MARKET_VALUE, self::COL_REF_CURRENCY];
+    // the cells that must be a number
+    const array COLS_NUMBER = [self::COL_QUANTITY, self::COL_PRICE, self::COL_EXCHANGE_RATE, self::COL_MARKET_VALUE];
 
     // the keys of a holding (see holding)
     const string KIND = 'kind';
@@ -135,38 +150,26 @@ class convert_portfolio_csv
         'original', 'value', 'price', 'size', 'lot', 'face', 'holding', 'stock', 'shares', 'bond', 'finance', 'cash',
         'rate', 'exchange', 'expected', 'assumed', 'percent', 'zukunft.com', 'system', 'calculator', 'hint',
     ];
-    // the borrowed triples, verbatim as in portfolio_split_calculator.json
+    // the from, verb and to of the borrowed triples, which are copied verbatim from their home file
+    // (files::PORTFOLIO_SPLIT_CALCULATOR_FILE), so that the import of the json never changes them
     const array BASE_TRIPLES = [
-        ['name' => 'zukunft.com system', 'from' => 'zukunft.com', 'verb' => 'is a', 'to' => 'system',
-            'description' => 'keyword for system internal triples such as the column definitions'],
-        ['name' => 'calculator (system)', 'from' => 'calculator', 'verb' => 'can be', 'to' => 'zukunft.com system'],
-        ['name' => 'calculator hint', 'from' => 'calculator (system)', 'verb' => 'has a', 'to' => 'hint'],
-        ['name' => 'exchange rate', 'from' => 'rate', 'verb' => 'of', 'to' => 'exchange',
-            'description' => 'An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country\'s currency in relation to another currency.',
-            'refs' => [['name' => 'Exchange_rate', 'type' => 'wikipedia'], ['name' => 'Q66100', 'type' => 'wikidata']]],
-        ['name' => 'bond (finance)', 'from' => 'bond', 'verb' => 'must be one of', 'to' => 'finance',
-            'description' => 'the finance reading of the ambiguous word \'bond\': a debt security under which the issuer owes the holders the face value and the interest',
-            'refs' => [['name' => 'Bond_(finance)', 'type' => 'wikipedia']]],
-        ['name' => 'stock price', 'from' => 'price', 'verb' => 'of', 'to' => 'stock'],
-        ['name' => 'bond price', 'from' => 'price', 'verb' => 'of', 'to' => 'bond (finance)',
-            'description' => 'the price of a bond in percent of its face value'],
-        ['name' => 'face value', 'from' => 'value', 'verb' => 'kind of', 'to' => 'face',
-            'description' => 'the nominal amount of a bond on which the interest is paid and which is repaid at maturity'],
-        ['name' => 'lot size', 'from' => 'size', 'verb' => 'of', 'to' => 'lot'],
-        ['name' => 'holding value', 'from' => 'value', 'verb' => 'of', 'to' => 'holding',
-            'description' => 'the market value of one holding in CHF: the shares times the stock price, the face value times the bond price, or the cash amount times the exchange rate'],
-        ['from' => 'stock', 'verb' => 'is a', 'to' => 'holding'],
-        ['name' => 'bond holding', 'from' => 'bond (finance)', 'verb' => 'is a', 'to' => 'holding'],
-        ['from' => 'cash', 'verb' => 'is a', 'to' => 'holding'],
+        [words::THIS_SYSTEM, verbs::IS_NAME, words::SYSTEM],
+        ['calculator', verbs::CAN_BE_NAME, 'zukunft.com system'],
+        [triples::SYSTEM_CALCULATOR, verbs::HAS_NAME, 'hint'],
+        ['rate', verbs::OF_NAME, 'exchange'],
+        ['bond', verbs::MUST_BE_ONE_OF_NAME, 'finance'],
+        ['price', verbs::OF_NAME, self::KIND_STOCK],
+        ['price', verbs::OF_NAME, self::KIND_BOND],
+        [words::VALUE, verbs::KIND_OF_NAME, 'face'],
+        [words::SIZE, verbs::OF_NAME, 'lot'],
+        [words::VALUE, verbs::OF_NAME, 'holding'],
+        [self::KIND_STOCK, verbs::IS_NAME, 'holding'],
+        [self::KIND_BOND, verbs::IS_NAME, 'holding'],
+        [self::KIND_CASH, verbs::IS_NAME, 'holding'],
     ];
-    // the description of a currency pair at its home (system_unit_test_data/currencies.json), else CURRENCY_PAIR_DESCRIPTION
-    const array CURRENCY_PAIR_DESCRIPTIONS = [
-        'CHF per USD' => 'the unit of the USD/CHF exchange rate: how many Swiss francs one US dollar buys',
-        'CHF per EUR' => 'the unit of the EUR/CHF exchange rate: how many Swiss francs one euro buys',
-    ];
+    // the description of a currency pair that its home file does not have
     const string CURRENCY_PAIR_DESCRIPTION = 'the unit of the exchange rate: ';
     const string CURRENCY_PAIR_UNIT = ' per unit of ';
-    const string CURRENCY_PAIR_TYPE = 'measure_unit';
 
 
     /*
@@ -175,35 +178,48 @@ class convert_portfolio_csv
 
     /**
      * @param string $csv the text of the csv of a bank statement of the positions
-     * @return array per position below the header row its cells by the name of their column, without the spaces
-     *               around a cell; empty if the csv has no header row that starts with "Asset Class"
+     * @param string $source the name of the csv e.g. the bank statement, which a message names as the place
+     * @param user_message $msg to report a csv without the header row and a line that is left out, because it has
+     *                          another number of cells than the header row e.g. by a comma in a name without quotes
+     * @return array per line number of the csv (from 1) of a position below the header row its cells by the name of
+     *               their column, without the spaces around a cell; empty if the csv has no header row that starts
+     *               with "Asset Class"
      */
-    function positions(string $csv): array
+    function positions(string $csv, string $source, user_message $msg): array
     {
         $result = [];
         $header = null;
-        foreach (preg_split('/\r\n|\n|\r/', $csv) as $line) {
+        foreach (preg_split('/\r\n|\n|\r/', $csv) as $i => $line) {
             $cells = array_map('trim', str_getcsv($line, ',', '"', '\\'));
             if ($header === null) {
                 if (($cells[0] ?? '') == self::HEADER_START) {
                     $header = $cells;
                 }
             } elseif (implode('', $cells) != '') {
-                $pos = [];
-                foreach ($header as $i => $col) {
-                    // the first column of a name e.g. the exchange rate of the market value and not of the cost
-                    if (!array_key_exists($col, $pos)) {
-                        $pos[$col] = $cells[$i] ?? '';
-                    }
+                $line_nbr = $i + 1;
+                if (count($cells) != count($header)) {
+                    $msg->add(msg_id::IMPORT_CSV_LINE_CELLS, [
+                        msg_id::VAR_ID => (string)$line_nbr,
+                        msg_id::VAR_SOURCE_NAME => $source,
+                        msg_id::VAR_VALUE_COUNT => (string)count($cells),
+                        msg_id::VAR_VALUE_COUNT_CHK => (string)count($header),
+                    ]);
+                } else {
+                    $result[$line_nbr] = $this->cells_by_column($header, $cells);
                 }
-                $result[] = $pos;
             }
+        }
+        if ($header === null) {
+            $msg->add(msg_id::IMPORT_CSV_NO_HEADER, [
+                msg_id::VAR_SOURCE_NAME => $source,
+                msg_id::VAR_FIELD_NAME => self::HEADER_START,
+            ]);
         }
         return $result;
     }
 
     /**
-     * @param array $pos one position of the csv (see positions)
+     * @param array $pos one position of the csv that position_is_valid has accepted (see positions)
      * @return array the holding of the position by the keys of this class e.g. self::KIND; the kind is empty for an
      *               asset class without a kind
      */
@@ -212,7 +228,7 @@ class convert_portfolio_csv
         $kind = self::ASSET_CLASS_KINDS[$pos[self::COL_ASSET_CLASS] ?? ''] ?? '';
         $quantity = (float)($pos[self::COL_QUANTITY] ?? 0);
         $price = (float)($pos[self::COL_PRICE] ?? 0);
-        $rate = (float)($pos[self::COL_EXCHANGE_RATE] ?? 1) ?: 1.0;
+        $rate = (float)($pos[self::COL_EXCHANGE_RATE] ?? 1);
         $market = (float)($pos[self::COL_MARKET_VALUE] ?? 0);
         // a bond priced per unit e.g. a bond fund has the value of the units and not of a percent of a face value
         if ($kind == self::KIND_BOND and $market > 0
@@ -233,6 +249,60 @@ class convert_portfolio_csv
         ];
     }
 
+    /**
+     * @param array $header the cells of the header row
+     * @param array $cells the cells of a line with as many cells as the header row
+     * @return array the cells by the name of their column; of a name that is used twice e.g. "Exchange Rate" the
+     *               first one, which belongs to the market value and not to the cost
+     */
+    private function cells_by_column(array $header, array $cells): array
+    {
+        $result = [];
+        foreach ($header as $i => $col) {
+            if (!array_key_exists($col, $result)) {
+                $result[$col] = $cells[$i];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $pos one position of the csv (see positions)
+     * @param int $line_nbr the line of the position in the csv, which a message names
+     * @param string $source the name of the csv, which a message names
+     * @param user_message $msg to report each reason why the position is left out
+     * @return bool true if the asset class has a kind, every cell that a holding needs is filled, each number cell is
+     *              a number and the exchange rate is above zero
+     */
+    private function position_is_valid(array $pos, int $line_nbr, string $source, user_message $msg): bool
+    {
+        $vars = [
+            msg_id::VAR_NAME => $pos[self::COL_INSTRUMENT] ?? '',
+            msg_id::VAR_ID => (string)$line_nbr,
+            msg_id::VAR_SOURCE_NAME => $source,
+        ];
+        $asset_class = $pos[self::COL_ASSET_CLASS] ?? '';
+        $result = array_key_exists($asset_class, self::ASSET_CLASS_KINDS);
+        if (!$result) {
+            $msg->add(msg_id::IMPORT_CSV_UNKNOWN_KIND, $vars + [msg_id::VAR_TYPE => $asset_class]);
+        }
+        foreach (self::COLS_REQUIRED as $col) {
+            $cell = $pos[$col] ?? '';
+            $cell_vars = $vars + [msg_id::VAR_FIELD_NAME => $col, msg_id::VAR_VALUE => $cell];
+            if ($cell == '') {
+                $msg->add(msg_id::IMPORT_CSV_CELL_EMPTY, $cell_vars);
+                $result = false;
+            } elseif (in_array($col, self::COLS_NUMBER) and !is_numeric($cell)) {
+                $msg->add(msg_id::IMPORT_CSV_CELL_NOT_NUMBER, $cell_vars);
+                $result = false;
+            } elseif ($col == self::COL_EXCHANGE_RATE and (float)$cell <= 0) {
+                $msg->add(msg_id::IMPORT_CSV_RATE_NOT_POSITIVE, $cell_vars);
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * convert
@@ -242,26 +312,25 @@ class convert_portfolio_csv
      * @param string $csv the text of the csv of a bank statement of the positions
      * @param array $context the names of the phrases of the portfolio e.g. "example portfolio split"; each holding is
      *                       part of the first one
-     * @param string $source the name of the source of every value e.g. the bank statement
-     * @param user_message $msg to report a position of an asset class without a kind, which is left out
+     * @param string $source the name of the source of every value e.g. the bank statement, which a message names as
+     *                       the csv
+     * @param user_message $msg to report a csv without the header row and each position that is left out with its
+     *                          line and the reason
      * @param string $timestamp the time of the json, now if empty
      * @return string the zukunft.com import json of the holdings
      */
     function convert(string $csv, array $context, string $source, user_message $msg, string $timestamp = ''): string
     {
         $holdings = [];
-        foreach ($this->positions($csv) as $pos) {
-            $hld = $this->holding($pos);
-            if ($hld[self::KIND] == '') {
-                $msg->add(msg_id::IMPORT_UNKNOWN_ELEMENT, [msg_id::VAR_NAME => $pos[self::COL_ASSET_CLASS] ?? '']);
-            } else {
-                $holdings[] = $hld;
+        foreach ($this->positions($csv, $source, $msg) as $line_nbr => $pos) {
+            if ($this->position_is_valid($pos, $line_nbr, $source, $msg)) {
+                $holdings[] = $this->holding($pos);
             }
         }
         $json = $this->header($timestamp);
         $json[json_fields::SELECTION] = $context;
         $json[json_fields::WORDS] = $this->words($holdings, $context);
-        $json[json_fields::TRIPLES] = $this->triples($holdings, $context);
+        $json[json_fields::TRIPLES] = $this->triples($holdings, $context, $msg);
         $json[json_fields::SOURCES] = [[json_fields::NAME => $source]];
         $json[json_fields::VALUES] = $this->values($holdings, $source);
         return json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -288,15 +357,22 @@ class convert_portfolio_csv
     /**
      * @param array $holdings the holdings of the csv (see holding)
      * @param array $context the names of the phrases of the portfolio
+     * @param user_message $msg to report a home file or a borrowed triple that cannot be read
      * @return array the borrowed triples, the currency pairs and per holding its kind, its hint, the portfolio and
      *               its walk step
      */
-    private function triples(array $holdings, array $context): array
+    private function triples(array $holdings, array $context, user_message $msg): array
     {
-        $result = self::BASE_TRIPLES;
-        foreach ($this->foreign_currencies($holdings) as $ref => $currencies) {
-            foreach ($currencies as $currency) {
-                $result[] = $this->currency_pair($ref, $currency);
+        $result = [];
+        $home = $this->home_triples($msg);
+        // without the home file, which home_triples has reported, every borrowed triple would be reported as missing
+        if ($home !== null) {
+            $result = $this->borrowed_triples($home, $msg);
+        }
+        // the currencies are the keys of the exchange rates
+        foreach ($this->foreign_currencies($holdings) as $ref => $rates) {
+            foreach (array_keys($rates) as $currency) {
+                $result[] = $this->currency_pair($ref, $currency, $home ?? []);
             }
         }
         $portfolio = $context[0] ?? '';
@@ -425,19 +501,80 @@ class convert_portfolio_csv
     /**
      * @param string $ref the reference currency e.g. CHF
      * @param string $currency the other currency e.g. GBP
-     * @return array the triple of the unit of the exchange rate, with the description of its home
+     * @param array $home the triples of the home file (see home_triples)
+     * @return array the triple of the unit of the exchange rate: verbatim from the home file, or with the general
+     *               description if the home file does not have this currency pair
      */
-    private function currency_pair(string $ref, string $currency): array
+    private function currency_pair(string $ref, string $currency, array $home): array
     {
-        $name = $ref . self::PER . $currency;
-        return [
-            json_fields::EX_FROM => $ref,
-            json_fields::EX_VERB => verbs::PER_NAME,
-            json_fields::EX_TO => $currency,
-            json_fields::TYPE_NAME => self::CURRENCY_PAIR_TYPE,
-            json_fields::DESCRIPTION => self::CURRENCY_PAIR_DESCRIPTIONS[$name]
-                ?? self::CURRENCY_PAIR_DESCRIPTION . $ref . self::CURRENCY_PAIR_UNIT . $currency,
-        ];
+        $result = $this->home_triple($home, [$ref, verbs::PER_NAME, $currency]);
+        if ($result === null) {
+            $result = [
+                json_fields::EX_FROM => $ref,
+                json_fields::EX_VERB => verbs::PER_NAME,
+                json_fields::EX_TO => $currency,
+                json_fields::TYPE_NAME => phrase_types::MEASURE,
+                json_fields::DESCRIPTION => self::CURRENCY_PAIR_DESCRIPTION . $ref . self::CURRENCY_PAIR_UNIT . $currency,
+            ];
+        }
+        return $result;
+    }
+
+    /**
+     * @param user_message $msg to report a home file that cannot be read, which is a problem of the installation
+     * @return array|null the triples of the home file of the borrowed triples, null if the file cannot be read
+     */
+    private function home_triples(user_message $msg): ?array
+    {
+        $result = null;
+        $home = null;
+        if (is_readable(files::PORTFOLIO_SPLIT_CALCULATOR_FILE)) {
+            $home = json_decode(file_get_contents(files::PORTFOLIO_SPLIT_CALCULATOR_FILE), true);
+        }
+        if (is_array($home) and is_array($home[json_fields::TRIPLES] ?? null)) {
+            $result = $home[json_fields::TRIPLES];
+        } else {
+            log_err_msg('the borrowed triples of the bank csv cannot be read from the triples of '
+                . files::PORTFOLIO_SPLIT_CALCULATOR_FILE, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $home the triples of the home file (see home_triples)
+     * @param user_message $msg to report a borrowed triple that the home file does not have
+     * @return array the borrowed triples verbatim from the home file in the order of self::BASE_TRIPLES
+     */
+    private function borrowed_triples(array $home, user_message $msg): array
+    {
+        $result = [];
+        foreach (self::BASE_TRIPLES as $key) {
+            $trp = $this->home_triple($home, $key);
+            if ($trp === null) {
+                log_err_msg('the borrowed triple "' . implode(' ', $key) . '" of the bank csv is missing in '
+                    . files::PORTFOLIO_SPLIT_CALCULATOR_FILE, $msg);
+            } else {
+                $result[] = $trp;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $home the triples of the home file (see home_triples)
+     * @param array $key the from, verb and to of a triple
+     * @return array|null the first triple of the home file with this from, verb and to, null if it has none
+     */
+    private function home_triple(array $home, array $key): ?array
+    {
+        $result = null;
+        foreach ($home as $trp) {
+            $trp_key = [$trp[json_fields::EX_FROM] ?? '', $trp[json_fields::EX_VERB] ?? '', $trp[json_fields::EX_TO] ?? ''];
+            if ($result === null and $trp_key == $key) {
+                $result = $trp;
+            }
+        }
+        return $result;
     }
 
     /**

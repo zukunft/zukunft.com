@@ -355,7 +355,8 @@ class formula_calc
     /**
      * the same selection as the backend (formula::list_numbers): all values and results that name the operand and
      * the context or a kind of it (phrase_kinds) e.g. the walk rows of LISP for the stocks, without a second number
-     * of the same fact and never a result of the formula that is calculated,
+     * of the same fact, without a number that includes all phrases of another number of the list
+     * (phrase_kinds::with_fewest_phrases) and never a result of the formula that is calculated,
      * because its stored number is the result before this calculation; a value and a result of the same phrases are
      * never both in the list, because the list keeps one number per phrase group (value_list::add_results)
      *
@@ -367,16 +368,18 @@ class formula_calc
      */
     private function list_values(array $names, array $ctx, result $res, value_list $val_lst): array
     {
-        $result = [];
+        $vals = [];
+        $phrase_sets = [];
         foreach ($val_lst->lst() as $val) {
             $phr_names = $this->phrase_names($val);
             $has_all = $this->knd->has_all($phr_names, [...$names, ...$ctx]);
             $is_excluded = array_intersect($phr_names, words::LIST_FUNCTION_EXCLUDED) != [];
             if ($has_all and !$is_excluded and !$this->is_same_formula($val, $res)) {
-                $result[] = $val;
+                $vals[] = $val;
+                $phrase_sets[] = $phr_names;
             }
         }
-        return $result;
+        return phrase_kinds::with_fewest_phrases($vals, $phrase_sets);
     }
 
     /**

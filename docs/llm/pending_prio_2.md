@@ -304,6 +304,8 @@ Only `calculator_json.js` walks the `is alternative follower of` triples of an o
 
 ## rounded count of a child in the portfolio split walk
 
+Done with change 3 of step 3 on 2026-11-26, waiting for the run (section 4 of `docs/llm/log/2026-11-25_csv_child_shares.md`).
+
 The formulas "walk count of the first child" and "walk count of the second child" of `portfolio_split_calculator.json` repeat the rounded count of a child, `min( max( round( "target quantity","first child portfolio" / "lot size" ) * "lot size" ; 0 ) ; "original" )`, three or four times for the equal part cap (`docs/llm/log/2026-11-25_equal_part.md`). The page without javascript holds the tokens of the formula per result, so the 84 results of the two formulas made `portfolio_split_calculator_no_js.html` grow from 2.8 MB to 4.0 MB. Add a formula "walk rounded count of a child" with its own result word (e.g. `rounded count`) for each child, and let the two count formulas read it, e.g. `if( max( "rounded count","first child portfolio" + "rounded count","second child portfolio" - "original" - "lot size" / 1000000 ; 0 ) = 0 ; ... )`, so that each expression is short. This needs the new word, 84 calc-validations of the new results (the stored numbers are the rounded counts, which are the stored counts of the standard case, because no stored row reaches the cap), the contexts of the count calc-validations with the new word instead of the operands of the rounded count, and a re-pin, because the new word shifts the ids of the later words; tests: the calc-validation of the import for every row and a case report of the case over with 0 differences. Do it with the formulas by the instances of step 3 (`docs/llm/pending.md`), which change the same formulas.
 
 ## calculator scripts without a browser test of a checkbox
@@ -3475,3 +3477,16 @@ no value for an option whose numbers differ, and `listEntries` takes the results
 of the phrases of a value and without a result of the formula that is calculated, and the numbers of a kind of a
 wanted phrase over several levels of `is a` (`hasAllKinds`, `withKinds`). Add a node test that loads the
 script with a small seed, positive and negative for each, like the php tests in `unit_ui/use_case_ui_tests.php`.
+Added on 2026-11-26: also `shownNumber` of `calculator.js` and `calculator_json.js`, the number as its cell rounds it,
+whose sign decides the style of a signed cell (positive: -0.004 with two decimals is no negative number, negative:
+-0.006 is), because only `ui_list::calculator_cell_shown` has a unit test.
+
+## a share that rounds to zero is shown as -0 by sandbox_value::val_formatted
+
+Added on 2026-11-26: `val_formatted` writes a percent as `(string)round($number * 100, $percent_decimals)`, so a
+small negative share e.g. -0.00004 with one percent decimal becomes the text `-0 %`, while `calculator.js` and
+`calculator_json.js` write `0 %`; the same `(string)round($number, 2)` holds for a number below 1000. Decision 4 of
+the portfolio split (`docs/llm/pending.md`) says a number that rounds to zero is never shown with a sign. The style
+of the sign already follows the rounded number (`ui_list::calculator_cell_shown`), but the text of the cell does not.
+`val_formatted` is used on many pages, so the fix needs its own change: a test with such a share in
+`unit_ui/use_case_ui_tests.php`, positive (`0 %`) and negative (-0.0006 is `-0.1 %`), and a check of the snapshots.

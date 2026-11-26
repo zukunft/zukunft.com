@@ -929,7 +929,19 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
                 result.push(e);
             }
         });
-        return result;
+        return withFewestPhrases(result);
+    }
+
+    /* the entries without one whose phrases include all phrases of another entry, because it is the same fact with a
+       qualifier e.g. the expected count of the split agreement next to the count of the walk (phrase_kinds::with_fewest_phrases) */
+    function withFewestPhrases(entries) {
+        return entries.filter(function (e) {
+            return !entries.some(function (other) {
+                return other.words.length < e.words.length && other.words.every(function (w) {
+                    return e.words.indexOf(w) >= 0;
+                });
+            });
+        });
     }
 
     /* each wanted phrase is a phrase of the number or a phrase that one of them is a kind of (phrase_kinds::has_all) */
@@ -1329,12 +1341,33 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     function percentText(entry, decimals) {
         const word = entry.words.find(isPercent);
         const percent = Number(entry.number) * 100;
+        const num = decimals === null ? String(percentRounded(entry)) : formatNumber(percent, decimals);
+        const sym = isRatioUnit(word) ? '' : (symbols.get(word) || '');
+        const result = num + (sym === '' ? '' : FMT.unit_sep + sym);
+        return result;
+    }
+
+    /* a share in percent rounded like a cell without the decimals of its row shows it */
+    function percentRounded(entry) {
+        const percent = Number(entry.number) * 100;
         // a recalculated share has all its digits, and from 10 % on the whole percent is what a reader compares;
         // a stored value keeps the percent decimals like sandbox_value::val_formatted, e.g. a bond price of 100.5 %
         const scale = Math.abs(percent) >= 10 && entry.result ? 1 : Math.pow(10, FMT.percent_decimals);
-        const num = decimals === null ? String(Math.round(percent * scale) / scale) : formatNumber(percent, decimals);
-        const sym = isRatioUnit(word) ? '' : (symbols.get(word) || '');
-        const result = num + (sym === '' ? '' : FMT.unit_sep + sym);
+        return Math.round(percent * scale) / scale;
+    }
+
+    /* the number rounded like numberText, so that the sign of a cell is the sign of its text (ui_list::calculator_cell_shown) */
+    function shownNumber(entry, formats, decimals) {
+        const rowDecimals = decimals === undefined ? null : decimals;
+        let result;
+        if (isPercentEntry(entry) && rowDecimals === null) {
+            result = percentRounded(entry);
+        } else if (isPercentEntry(entry)) {
+            result = roundedNumber(Number(entry.number) * 100, rowDecimals);
+        } else {
+            const fmt = formats.get(unitOf(entry));
+            result = roundedNumber(Number(entry.number) * fmt.factor, rowDecimals === null ? fmt.decimals : rowDecimals);
+        }
         return result;
     }
 
@@ -1358,11 +1391,10 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         let text = '';
         if (entry !== null) {
             text = esc(numberText(entry, formats, withUnit, decimals));
+            const shown = shownNumber(entry, formats, decimals);
             if (signed) {
-                text = block('span', text, Number(entry.number) < 0 ? FMT.negative : FMT.positive);
+                text = block('span', text, shown < 0 ? FMT.negative : FMT.positive);
             } else if (plus) {
-                const fmt = formats.get(unitOf(entry));
-                const shown = roundedNumber(Number(entry.number) * fmt.factor, decimals === null || decimals === undefined ? fmt.decimals : decimals);
                 text = block('span', (shown > 0 ? '+' : '') + text, shown > 0 ? FMT.positive : (shown < 0 ? FMT.negative : ''));
             }
             if (sub) {

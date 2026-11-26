@@ -197,23 +197,24 @@ class value_write_url_tests extends value_url_tests
      */
     private function assert_no_value_history(test_cleanup $t): void
     {
+        $msg = new user_message($t->usr1);
         foreach (self::TEST_VALUE_GROUPS as $names) {
-            $msg = new user_message($t->usr1);
+            $val_names = implode(', ', $names);
+            $test_name = 'the change log of the value of ' . $val_names . ' is read';
             $phr_lst = new phrase_list($t->usr1);
             $phr_lst->load_by_names($names, $msg);
+            // without all its phrases the value cannot exist, so it has no change log
+            $log_cnt = 0;
             if ($phr_lst->count() == count($names)) {
                 $grp = new group($t->usr1);
                 $grp->set_phrase_list($phr_lst);
-                // the cleanup is called again directly, so that the report tells whether cleanup_objects has not
-                // reached it (entries before and none after) or whether the delete itself fails (entries after)
-                $before = $t->value_change_log_count($grp->id());
-                if ($before > 0) {
-                    $t->cleanup_change_log_value($grp, $phr_lst, $names);
-                }
-                $test_name = 'the value of ' . implode(', ', $names) . ' has no change log of an earlier run (group '
-                    . $grp->id() . ', ' . $before . ' entries left by the cleanup of the workflow tests)';
-                $t->assert($test_name, (string)$t->value_change_log_count($grp->id()), '0', $t::TIMEOUT_LIMIT_DB_MULTI);
+                $log_cnt = $t->value_change_log_count($grp->id(), $msg);
             }
+            $t->assert_msg($test_name, $msg, $t::TIMEOUT_LIMIT_DB_MULTI);
+            $msg->reset();
+            // checked without a repair, so that an entry that cleanup_objects has left fails the test
+            $test_name = 'the value of ' . $val_names . ' has no change log of an earlier run';
+            $t->assert($test_name, (string)$log_cnt, '0');
         }
     }
 

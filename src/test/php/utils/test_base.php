@@ -5075,11 +5075,9 @@ class test_base
                     $msg = new user_message($this->usr_system);
                     $qp = $this->value_change_log_del_qp($sc, $chg_class, $tbl, $grp_id);
                     $db_con->delete($qp, 'cleanup value change log of ' . $chg_class, $msg);
-                    // a failed delete leaves the history of a test value for the next run, so it is never silent
-                    if (!$msg->is_ok()) {
-                        log_err('the change log of the test value ' . $grp_id . ' in ' . $tbl
-                            . ' could not be removed: ' . $msg->text());
-                    }
+                    // a failed delete leaves the history of a test value for the next run, so it fails the test
+                    $this->assert_msg('the change log of the test value ' . $grp_id . ' in ' . $tbl
+                        . ' is removed', $msg);
                 }
             }
         }
@@ -5087,11 +5085,11 @@ class test_base
 
     /**
      * @param int|string $grp_id the group id of a test value
+     * @param user_message $msg to collect a failed read, which the caller asserts, because a failed read counts 0
      * @return int the number of change log entries of the value e.g. to check that a cleanup has removed them all
      */
-    function value_change_log_count(int|string $grp_id): int
+    function value_change_log_count(int|string $grp_id, user_message $msg): int
     {
-        $msg = new user_message($this->usr_system);
         $log_lst = new change_log_list();
         // raise the default page limit so that every entry of the value is counted
         $log_lst->limit = sql_db::ROW_MAX;

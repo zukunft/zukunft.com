@@ -178,6 +178,20 @@ class formula_calc_tests
         $loop_links = phrase_kinds::with_link($kind_links, word_names::MATH, word_names::PI);
         $knd_loop = new phrase_kinds($loop_links);
         $t->assert($test_name, $knd_loop->has_all([word_names::PI], [word_names::CITY]), false);
+        // a number with all phrases of another and more is the same fact with a qualifier e.g. the expected count
+        $test_name = 'a list leaves out a number that includes all phrases of another number';
+        $pi_sets = [
+            [word_names::PI, word_names::MATH],
+            [word_names::PI, word_names::MATH, word_names::CONST_NAME],
+            [word_names::PI, word_names::CITY]
+        ];
+        $fewest = phrase_kinds::with_fewest_phrases([1, 2, 3], $pi_sets);
+        $t->assert($test_name, $fewest, [1, 3]);
+        // negative: numbers that differ by a phrase each are both in the list
+        $test_name = '... but keeps numbers that differ by a phrase each';
+        $other_sets = [[word_names::PI, word_names::MATH], [word_names::PI, word_names::CITY]];
+        $both = phrase_kinds::with_fewest_phrases([1, 3], $other_sets);
+        $t->assert($test_name, $both, [1, 3]);
 
         $t->subheader($ts . 'expression');
 
