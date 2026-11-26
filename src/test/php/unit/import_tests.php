@@ -1393,15 +1393,7 @@ class import_tests
         $test_name = '... and the columns linked to the keyword "csv column" that the file declares';
         $fmt_trp_names = $fmt_dto->triple_list()->names();
         $t->assert_contains($test_name, $fmt_trp_names, triples::CSV_COLUMN);
-        // negative: without its declaration the keyword is a new word of the file, so no code id finds the columns
-        $test_name = '... but without its declaration "csv column" is no triple';
-        $fmt_broken = $fmt_arr;
-        $fmt_broken[json_fields::TRIPLES] = array_values(array_filter($fmt_arr[json_fields::TRIPLES],
-            fn(array $trp) => ($trp[json_fields::NAME] ?? '') != triples::CSV_COLUMN));
-        $fmt_broken_dto = $csv_imp->get_data_object($fmt_broken, $csv_msg);
-        $fmt_broken_names = $fmt_broken_dto->triple_list()->names();
-        $t->assert_contains_not($test_name, $fmt_broken_names, triples::CSV_COLUMN, $t::TIMEOUT_LIMIT_IMPORT);
-        $csv_msg->reset();
+        // the negative test, a definition without the keyword csv column, comes with convert_csv, which reports it
 
         // XBRL fileset unpacker (first step of import_convert_xbrl)
         $lib = new library();

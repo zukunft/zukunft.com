@@ -928,9 +928,10 @@ The keywords of the process catch pages, fields and buttons are in `process_catc
 triple without its `code_id` (see *Use case files never carry a `code_id`*).
 
 The keywords of a csv format are in `csv_keywords.json`: a cell text of the csv is the description of a triple,
-compared with the complete cell, and the description of a triple template may name a cell by `{<header text>}`,
-the only placeholder of a csv format, which the conversion replaces by the cell of that column of the same row;
-the rules of the templates are in `docs/json_structure.md` *csv format*.
+compared with the complete cell, and the description of a triple template or of its triple to `csv name` may name a
+cell by `{<header text>}`, the only placeholder of a csv format, which the conversion replaces by the cell of that
+column of the same row; a written triple gets a name only by `csv name`, never by a part of the template name; the
+rules of the templates are in `docs/json_structure.md` *csv format*.
 
 ## Formulas
 

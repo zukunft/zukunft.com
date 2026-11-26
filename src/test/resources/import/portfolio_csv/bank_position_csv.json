@@ -78,6 +78,7 @@
     {"name": "csv kind", "from": "csv (system)", "verb": "has a", "to": "kind"},
     {"name": "csv context", "from": "csv (system)", "verb": "has a", "to": "context"},
     {"name": "csv optional", "from": "csv (system)", "verb": "has a", "to": "optional"},
+    {"name": "csv name", "from": "csv (system)", "verb": "has a", "to": "name"},
     {"name": "exchange rate", "from": "rate", "verb": "of", "to": "exchange", "description": "An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country's currency in relation to another currency.", "refs": [{"name": "Exchange_rate", "type": "wikipedia"}, {"name": "Q66100", "type": "wikidata"}]},
     {"name": "bond (finance)", "from": "bond", "verb": "must be one of", "to": "finance", "description": "the finance reading of the ambiguous word 'bond': a debt security under which the issuer owes the holders the face value and the interest", "refs": [{"name": "Bond_(finance)", "type": "wikipedia"}]},
     {"name": "stock price", "from": "price", "verb": "of", "to": "stock"},
@@ -136,6 +137,7 @@
     {"name": "bank position csv bonds", "description": "Bonds and similar positions", "from": "bank position csv asset class kind", "verb": "has a", "to": "bond (finance)"},
     {"name": "bank position csv cash", "description": "Cash and short-term investments", "from": "bank position csv asset class kind", "verb": "has a", "to": "cash"},
     {"name": "bank position csv instrument hint", "description": "{Instrument Name}", "from": "bank position csv instrument", "verb": "has a", "to": "calculator hint"},
+    {"name": "bank position csv instrument hint name", "description": "{Instrument} hint", "from": "bank position csv instrument hint", "verb": "has a", "to": "csv name"},
     {"name": "bank position csv portfolio part", "from": "bank position csv instrument", "verb": "is part of", "to": "csv context"},
     {"name": "bank position csv currency pair", "description": "the unit of the exchange rate: {Ref. Curr} per unit of {Price Curr}", "type": "measure_unit", "from": "bank position csv reference currency", "verb": "per", "to": "bank position csv price currency"}
   ],

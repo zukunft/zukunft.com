@@ -863,6 +863,8 @@ class triples
     const string CSV_CONTEXT_CODE_ID = 'system_csv_context';
     const string CSV_OPTIONAL = 'csv optional';
     const string CSV_OPTIONAL_CODE_ID = 'system_csv_optional';
+    const string CSV_NAME = 'csv name';
+    const string CSV_NAME_CODE_ID = 'system_csv_name';
     // the keywords of a csv format by their code id, which convert_csv finds the definition of a format by
     const array CSV_KEYWORDS = [
         self::CSV_SYSTEM => self::CSV_SYSTEM_CODE_ID,
@@ -877,6 +879,7 @@ class triples
         self::CSV_KIND => self::CSV_KIND_CODE_ID,
         self::CSV_CONTEXT => self::CSV_CONTEXT_CODE_ID,
         self::CSV_OPTIONAL => self::CSV_OPTIONAL_CODE_ID,
+        self::CSV_NAME => self::CSV_NAME_CODE_ID,
     ];
     // the keyword of each parameter field of the table editor by its field key (SPEC of script/table_editor.js)
     const array TABLE_EDITOR_KEYWORDS = [

@@ -1279,6 +1279,7 @@ messages:
   calculator_added_not_saved: "Added on this page only: a save does not keep it yet."
   calculator_added_no_number: "No number, because the first entry above has none."
   calculator_removed_not_saved: "Removed on this page only, a save keeps:"
+  calculator_moved_not_saved: "Moved on this page only: a save does not change the number of the database yet."
   calculator_check_value: "Value"
   calculator_check_expected: "Expected"
   calculator_check_calculated: "Calculated"

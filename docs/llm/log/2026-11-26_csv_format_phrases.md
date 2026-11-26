@@ -43,6 +43,28 @@ Planned before the first edit:
 - not defined by phrases, as `docs/llm/pending.md` says: the walk by the lot value and the bond fund priced per unit;
   change 2 decides on them
 
+#### Follow-up request of 2026-11-26
+
+"do" findings 2 to 4 of the review after the run:
+- Finding 2: the negative test packs a filter with a closure into one line, and it pins the silent fallback of the
+  importer (an undeclared keyword becomes a word without a message) instead of a reported outcome.
+- Finding 3: the rule "a template whose name starts with the name of its from column gets the row cell" compares a
+  prefix, which rule 3 forbids.
+- Finding 4: `docs/llm/pending.md` still calls change 5 of step 3 and this change "waiting for the run".
+
+Decisions of the developer (2026-11-26):
+1. the name of a written triple is marked explicitly by a 12th keyword `csv name`: the triple from a triple template
+   to it has the name of the written triple as its description, with the existing placeholder, e.g. `{Instrument}
+   hint`; a template without it writes no name
+2. the negative test moves to change 2, where `convert_csv` reports a definition without the keyword `csv column`
+   with a `msg_id`
+
+Planned: the triple `csv name` appended at the end of `csv_keywords.json` with its const and code id, so that only
+the ids after the system file shift by one more (again `test/reset_db.php` and `test/test_re_pin.php`); in
+`bank_position_csv.json` the keyword repeated and the triple `bank position csv instrument hint name`; the prefix
+rule replaced in the description of `csv (system)` and in `docs/json_structure.md`; the negative test removed from
+`import_tests.php` and planned in change 2; `docs/llm/pending.md` without the done change 5.
+
 ### Expected changes
 
 | file | old lines | new lines | target / reason |
@@ -82,6 +104,26 @@ As planned:
 | `src/test/php/const/triple_names.php` | — | `SHARE_RATIO_ID` 3789 → 3804, `SHARE_SYMBOL_ID` 3841 → 3856 | `test/test_re_pin.php` re-pinned the two consts of `pv_lifetime_balance.json` by the shift of 15 |
 | `src/test/resources/web/html/use_cases/table_editor.html` | the word `csv`: the import of `table_editor_sample.json` changes nothing | the seed json of the page lists `csv` 22 entries earlier | the seed lists the words by their id, and `csv` has a lower id now |
 | `docs/llm/pending.md`, `docs/llm/log/2026-11-25_csv_child_shares.md` | — | change 5 of step 3 and its log | not by this change: change 5 was in the same run and section 7 of its log has its results |
+| `src/main/resources/messages/csv_keywords.json`, `src/main/php/shared/const/triples.php` (`CSV_NAME`, `CSV_KEYWORDS`) | the name of a written triple by the prefix of the template name | the 12th keyword `csv name` at the end of the file, and the description of `csv (system)` names it instead of the prefix rule | follow-up of 2026-11-26, finding 3 and decision 1; expected after the next run: the triple ids after the system file shift by one more (`test/reset_db.php`, `test/test_re_pin.php`), the word `name` exists already |
+| `src/test/resources/import/portfolio_csv/bank_position_csv.json` | the hint template named by the prefix | the keyword `csv name` repeated and the triple `bank position csv instrument hint name` with the description `{Instrument} hint` | follow-up, decision 1; a test resource, so no id shift |
+| `docs/json_structure.md` *csv format*, `docs/llm/json_structure.md` | the prefix rule | the keyword row `name` and the template rule by `csv name` | follow-up, decision 1 |
+| `src/test/php/unit/import_tests.php` | the negative test without the declaration of `csv column` | removed, with a comment that it comes with `convert_csv` | follow-up, finding 2 and decision 2: it packed a filter into one line and pinned the silent fallback of the importer |
+| `docs/llm/pending.md` | change 5 of step 3 and this change waiting for the run | change 5 removed as done; this change done with its follow-up waiting for the run; the negative test planned in change 2 | follow-up, finding 4 |
+
+The second run of 2026-11-26 (`test/reset_db.php`, `test/test_re_pin.php`, `test/test_part.php`, again with
+`files::AUTO_UPDATE_TEST_FILES` set to `true`) covered the follow-up, together with
+`docs/llm/log/2026-11-26_scale_font_icons.md` and the follow-up of section 7 of
+`docs/llm/log/2026-11-25_csv_child_shares.md`. As the follow-up rows expect:
+- `csv name` is triple 3759, and the triples after the system file shift by one more. Examples: the pinned links of
+  `index.html`, `pv`, `nnp` and `portfolio_split`; `SHARE_RATIO_ID` 3804 → 3805 and `SHARE_SYMBOL_ID` 3856 → 3857,
+  re-pinned in `triple_names.php`; the api fixtures `type_lists.json`, `ui_config.json` and
+  `phrase_list_without_link_by_verb_id.json`.
+- `src/test/resources/unit/word/list.csv` did not change, because the word `name` exists already.
+- `docs/json_findings.md` has no new finding.
+
+Whether the tests of `bank_position_csv.json` passed with the triple to `csv name` is in the output of the run. The
+shift of the three hint triples of the portfolio split page is in the log of that change. No further unexpected
+change.
 
 ### Lessons learned by llm (2026-11-26)
 

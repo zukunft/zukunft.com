@@ -31,7 +31,7 @@
         "class": "triple"
     },
     {
-        "id": 4455,
+        "id": 4456,
         "name": "bond (finance)",
         "description": "the finance reading of the ambiguous word 'bond': a debt security under which the issuer owes the holders the face value and the interest",
         "class": "triple"
@@ -56,7 +56,7 @@
         "class": "triple"
     },
     {
-        "id": 4541,
+        "id": 4542,
         "name": "child portfolio",
         "description": "the part of the original portfolio that one child receives; every child portfolio is a child portfolio, so that the page shows one input and one column per child",
         "class": "triple"
@@ -185,7 +185,7 @@
         "class": "word"
     },
     {
-        "id": 4005,
+        "id": 4006,
         "name": "existing NPP",
         "description": "Beznau 1 and 2, G\u00f6sgen and Leibstadt",
         "class": "triple"
@@ -324,7 +324,7 @@
         "class": "triple"
     },
     {
-        "id": 4004,
+        "id": 4005,
         "name": "new NPP",
         "description": "a nuclear power plant built after the vote of 2027, in operation from about 2050",
         "class": "triple"
@@ -401,7 +401,7 @@
         "class": "word"
     },
     {
-        "id": 3793,
+        "id": 3794,
         "name": "replacement mix",
         "description": "the mix of the electricity that the PV electricity replaces at the margin, the second reference next to the Swiss consumption mix",
         "class": "triple"
@@ -436,7 +436,7 @@
         "class": "word"
     },
     {
-        "id": 5694,
+        "id": 5698,
         "name": "sector of revenue",
         "description": "a part of the revenue of a company split by its business area, the rows of the table of this use case",
         "class": "triple"

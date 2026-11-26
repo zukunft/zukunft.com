@@ -2714,6 +2714,8 @@ enum messages: string
     case CALCULATOR_ADDED_NO_NUMBER = 'calculator_added_no_number';
     // in front of the names of the instances that the remove button has taken from the page but not from the database
     case CALCULATOR_REMOVED_NOT_SAVED = 'calculator_removed_not_saved';
+    // the hint of an instance whose number the remove button has moved, but which has no number of the database behind it
+    case CALCULATOR_MOVED_NOT_SAVED = 'calculator_moved_not_saved';
     // the header and the status texts of the check table of a calculator page
     case CALCULATOR_CHECK_VALUE = 'calculator_check_value';
     case CALCULATOR_CHECK_EXPECTED = 'calculator_check_expected';

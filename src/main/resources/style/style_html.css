@@ -1269,6 +1269,10 @@ a:hover {
     font-size: 11px;
     fill: var(--page-grey);
 }
+/* the three numbers of the scale are the first texts of the svg (html_base::line_diagram, lineDiagram of calculator_json.js) */
+.use-case .chart text:nth-of-type(-n+3) {
+    font-family: ui-monospace, monospace;
+}
 .use-case .legend {
     display: flex;
     flex-wrap: wrap;

@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
@@ -1081,7 +1082,17 @@ class use_case_ui_tests
         $test_name = 'the buttons of a list show their label and only if the list has them';
         $btn_calc = new calculator($zh_city->phrase(), $t_phr->list_calculator_button_ui());
         $btn_html = $list->calculator_buttons($btn_calc, $btn_calc->group(triples::CALCULATOR_INPUT));
-        $t->assert_text_contains($test_name, $btn_html, '>' . triple_names::CALC_BUTTON_COM . '</button>');
+        $t->assert_text_contains($test_name, $btn_html, icons::CALC_DOWNLOAD . '"></i> ' . triple_names::CALC_BUTTON_COM . '</button>');
+        $test_name = '... with the hint of the button as its tooltip';
+        $t->assert_text_contains($test_name, $btn_html, html_base::TITLE_HTML . '="' . triple_names::CALC_BUTTON_HINT_COM . '"');
+        $test_name = 'the tooltip of a button is the hint of its triple';
+        $btn_inputs = $btn_calc->group(triples::CALCULATOR_INPUT);
+        $btn_hint = $btn_calc->button_hint($btn_inputs, triples::CALCULATOR_DOWNLOAD);
+        $t->assert($test_name, $btn_hint, triple_names::CALC_BUTTON_HINT_COM);
+        // negative: a button that the list does not have has no hint
+        $test_name = '... but a button that the list does not have has none';
+        $no_hint = $btn_calc->button_hint($btn_inputs, triples::CALCULATOR_REPORT);
+        $t->assert($test_name, $no_hint, '');
         // the input list shows two buttons per line with the save button in front of the download
         $test_name = 'the save button is part of the two buttons per line of the input list';
         $save_html = $list->calculator_buttons($btn_calc, $btn_calc->group(triples::CALCULATOR_INPUT), self::CALC_SAVE_HTML);
@@ -1295,7 +1306,7 @@ class use_case_ui_tests
         $test_name = 'the imports of a page are a section with a button per item';
         $imports_html = $list->calculator_imports($ins_calc);
         $t->assert_text_contains($test_name, $imports_html, triple_names::CALC_IMPORTS_LABEL);
-        $t->assert_text_contains($test_name, $imports_html, '>' . triple_names::CALC_IMPORT_LABEL . '</button>');
+        $t->assert_text_contains($test_name, $imports_html, icons::CALC_IMPORT . '"></i> ' . triple_names::CALC_IMPORT_LABEL . '</button>');
         // negative: a page without the list has no section
         $test_name = '... but a page without the list has none';
         $t->assert($test_name, $list->calculator_imports($one_calc), '');
@@ -1323,7 +1334,7 @@ class use_case_ui_tests
         $in_colours = array_filter(array_column($in_cols, 3));
         $t->assert($test_name, $in_colours, []);
         $test_name = '... and the button to add an instance';
-        $t->assert_text_contains($test_name, $fld_html, '>' . triple_names::CALC_ADD_LABEL . '</button>');
+        $t->assert_text_contains($test_name, $fld_html, icons::CALC_ADD . '"></i> ' . triple_names::CALC_ADD_LABEL . '</button>');
         // negative: without the triples of the field types the fields stay number fields and a selector
         $test_name = 'a field without a field type has no checkbox';
         $t->assert_text_not_contains($test_name, $in_html, 'type="checkbox"');

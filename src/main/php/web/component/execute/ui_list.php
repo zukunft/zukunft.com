@@ -3488,7 +3488,7 @@ class ui_list extends ui_base
         $html = new html_base();
         $buttons = '';
         foreach ($calc->items(triples::CALCULATOR_FILE_IMPORT) as $item) {
-            $buttons .= $html->button($html->esc($calc->label($item)), html_base::BUTTON, styles::CALC_BUTTON);
+            $buttons .= $this->calculator_icon_button($calc->label($item), icons::CALC_IMPORT, styles::CALC_BUTTON, '');
         }
         $summary = $calc->own_label($calc->group(triples::CALCULATOR_FILE_IMPORT));
         return $buttons == '' ? '' : $html->details($html->esc($summary), $html->div($buttons, styles::CALC_IMPORTS));
@@ -3658,15 +3658,12 @@ class ui_list extends ui_base
         user_message $msg
     ): string
     {
-        $html = new html_base();
         $result = '';
         foreach ($calc->kinds($phr) as $instance) {
             $result .= $this->calculator_number($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, false, $src_ids, $msg, $instance);
         }
         $add = $calc->repeat_label($item);
-        if ($add != '') {
-            $result .= $html->button($html->esc($add), html_base::BUTTON, styles::CALC_BUTTON_ADD);
-        }
+        $result .= $this->calculator_icon_button($add, icons::CALC_ADD, styles::CALC_BUTTON_ADD, '');
         return $result;
     }
 
@@ -4705,12 +4702,14 @@ class ui_list extends ui_base
         if ($item != null and $calc->has_flag($item, triples::CALCULATOR_COPY)) {
             $copy = [$mtr->txt(msg_id::CALCULATOR_COPY_JSON), $mtr->txt(msg_id::CALCULATOR_COPY_CSV)];
         }
-        $result = $this->calculator_plain_buttons([$calc->button_label($item, triples::CALCULATOR_FILE_IMPORT)])
+        $result = $this->calculator_keyword_button($calc, $item, triples::CALCULATOR_FILE_IMPORT, icons::CALC_IMPORT)
             . $save
-            . $this->calculator_plain_buttons([$calc->button_label($item, triples::CALCULATOR_DOWNLOAD)]);
+            . $this->calculator_keyword_button($calc, $item, triples::CALCULATOR_DOWNLOAD, icons::CALC_DOWNLOAD);
         $report = $calc->button_label($item, triples::CALCULATOR_REPORT);
         if ($report != '') {
-            $result .= $html->ref_to_frame($this->calculator_report_url($calc->phrase_id()), $report, styles::CALC_REPORT_FRAME, styles::CALC_BUTTON_LINK);
+            $url = $this->calculator_report_url($calc->phrase_id());
+            $title = $calc->button_hint($item, triples::CALCULATOR_REPORT);
+            $result .= $html->ref_to_frame($url, $report, styles::CALC_REPORT_FRAME, styles::CALC_BUTTON_LINK, icons::CALC_REPORT, $title);
         }
         $result .= $this->calculator_plain_buttons($copy);
         if ($report != '') {
@@ -4729,6 +4728,37 @@ class ui_list extends ui_base
         $result = '';
         foreach (array_filter($labels) as $label) {
             $result .= $html->button($html->esc($label), html_base::BUTTON, styles::CALC_BUTTON);
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase|null $item the list or the detail table e.g. portfolio split inputs
+     * @param string $keyword the name of the button keyword e.g. triples::CALCULATOR_DOWNLOAD
+     * @param string $icon the icon in front of the text by the kind of the button e.g. icons::CALC_DOWNLOAD
+     * @return string the html code of the button with its label and its hint as tooltip, '' if the item has no such button
+     */
+    private function calculator_keyword_button(calculator $calc, ?phrase $item, string $keyword, string $icon): string
+    {
+        $label = $calc->button_label($item, $keyword);
+        $title = $calc->button_hint($item, $keyword);
+        return $this->calculator_icon_button($label, $icon, styles::CALC_BUTTON, $title);
+    }
+
+    /**
+     * @param string $label the text of the button, of which an empty one has no button
+     * @param string $icon the icon in front of the text by the kind of the button e.g. icons::CALC_DOWNLOAD
+     * @param string $style the style of the button e.g. styles::CALC_BUTTON
+     * @param string $title the tooltip of the button, '' for none
+     * @return string the html code of the button without a function so far
+     */
+    private function calculator_icon_button(string $label, string $icon, string $style, string $title): string
+    {
+        $html = new html_base();
+        $result = '';
+        if ($label != '') {
+            $result = $html->button($html->icon_and_text($icon, $label), html_base::BUTTON, $style, '', $title);
         }
         return $result;
     }

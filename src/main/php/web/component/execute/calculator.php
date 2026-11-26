@@ -377,6 +377,16 @@ class calculator
     }
 
     /**
+     * @param phrase|null $item a list or a detail table e.g. portfolio split inputs
+     * @param string $keyword the name of the button keyword e.g. triples::CALCULATOR_DOWNLOAD
+     * @return string the hint of the triple from the item to the keyword, which is the tooltip of the button, '' if none
+     */
+    function button_hint(?phrase $item, string $keyword): string
+    {
+        return $this->own_text($this->property($item, $keyword), triples::CALCULATOR_HINT) ?? '';
+    }
+
+    /**
      * @return bool true if the page is built from another phrase, of which a case can be another kind
      */
     function has_base(): bool

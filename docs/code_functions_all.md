@@ -6778,6 +6778,8 @@
             xecute/calculator.php
     \-- button_label - section for function button_label not yet defined that it should be texts and flags in /component
             /execute/calculator.php
+    \-- button_hint - section for function button_hint not yet defined that it should be texts and flags in /component/e
+            xecute/calculator.php
     \-- has_base - section for function has_base not yet defined that it should be texts and flags in /component/execute
             /calculator.php
     \-- case_name - section for function case_name not yet defined that it should be texts and flags in /component/execu
@@ -7777,6 +7779,8 @@
     \-- frame - section for function frame not yet defined that it should be header & footer in /html/html_base.php
     \-- ref_to_frame - section for function ref_to_frame not yet defined that it should be header & footer in /html/html
             _base.php
+    \-- icon_and_text - section for function icon_and_text not yet defined that it should be header & footer in /html/ht
+            ml_base.php
     \-- refresh - section for function refresh not yet defined that it should be header & footer in /html/html_base.php
     \-- loading_step - section for function loading_step not yet defined that it should be header & footer in /html/html
             _base.php
@@ -10600,6 +10604,8 @@
         \-- calculator - @param phrase $item a row e.g. PV installation row saving PV-weighted mix
     \-- button_label
         \-- calculator - @param phrase|null $item a list or a detail table e.g. portfolio split inputs
+    \-- button_hint
+        \-- calculator - @param phrase|null $item a list or a detail table e.g. portfolio split inputs
     \-- has_base
         \-- calculator - @return bool true if the page is built from another phrase, of which a case can be another kind
     \-- case_name
@@ -11379,6 +11385,8 @@
         \-- html_base - @param string $name the name of the frame, which a link selects as its target, and its style
     \-- ref_to_frame
         \-- html_base - @param string $url the url that the frame loads
+    \-- icon_and_text
+        \-- html_base - @param string $icon the icon css class from web/const/icons.php e.g. icons::CALC_ADD
     \-- refresh
         \-- html_base - @param string $url the url that the browser loads next,
                  which starts a download without a script if it is a file

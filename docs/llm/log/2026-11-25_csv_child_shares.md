@@ -472,6 +472,23 @@ the numbers of the sample (e.g. Stocks 3'413'937 | 3'424'013 | 2'930'550) and th
 (e.g. LISP 4 | 3 | 3, LISN 9 | 12 | 19); removing the added third child instead gives the page of the start again
 with "Add child" enabled.
 
+#### Follow-up request of 2026-11-26
+
+"try to avoid" the five missing and three additional items of `_remove_child.md`, "if possible": the field "Target
+weight second child", the two check rows of the second child and the two tables with a "Second child" column are
+missing, and the page shows the third child instead. This replaces decision 2.
+
+Planned: the instances of a repeated input keep their place, as the sample numbers the children by their position.
+The remove button no longer takes its own instance from the page. Instead, each field from the removed one to the
+second last takes the number of the field behind it, and the last instance is removed:
+- an entry of the database keeps its id, so its number changes like an input that the save writes
+- if the instance behind has no number, the field in front has none either
+- if the field in front has no number but the one behind has, it gets an added number like a new instance
+- the hint and the bookkeeping of the added and the removed instances go by the last instance
+
+So after "Add child" and "Remove the second child" the page shows the first child at 35 % and the second at 30 %,
+and the second child keeps its check rows. The changes are listed as rows of "Unexpected changes" below.
+
 ### Expected changes
 
 | file | old lines | new lines | target / reason |
@@ -508,6 +525,28 @@ The other case reports did not change.
 | `portfolio_split_calculator_js.html`, `npp_ch_vote_js.html`, `pv_lifetime_balance_js.html`, `calculator_editor.html`, `npp_ch_vote_editor.html` | the new text and `data-remove` on each remove button | only the three new texts in the settings of the page script (`calculator_added_not_saved` and `calculator_added_no_number` of the follow-up of section 6 too), twice in the two editor pages; no `data-remove` | a js snapshot holds the seed and the settings, the script links `calculator_json.js` and draws the buttons in the browser, so a drawn attribute never shows in a snapshot; the editors carry the page settings twice, like `calculator_remove` |
 | the ids, `src/test/resources/unit/*/list.csv`, `src/test/php/const/triple_names.php`, `index.html`, `nnp`, `pv`, `portfolio_split` | none | shifted | not by this change: change 1 of `docs/llm/log/2026-11-26_csv_format_phrases.md` was in the same run and its log names the shift |
 | `docs/code_user_message_exceptions.md` | — | `system_page.php:2258` → `:2261` | the generated report names the line of each unexplained message, and the three new ids of `CALC_PAGE_TEXT_IDS` (one of this change, two of the follow-up of section 6) move it by three lines |
+| `src/main/resources/script/calculator_json.js` (`removeInstance`, new `moveNumber` and `removeEntry`) | the remove button takes its own instance from the page, and the page shows the first and the third child (decision 2) | each field from the removed one on takes the number of the field behind it, and the last instance is taken from the page; `removeEntries`, the hint and the added and removed instances go by the last instance | follow-up of 2026-11-26: the children keep their place like in the sample. The read-only scratch script `sim_remove_child.js` gives, after "Add child" and "Remove the second child", the fields "first child" 35 and "second child" 30, the tables "Parent \| First child \| Second child" and "First \| Second" with the numbers of the sample, and the check rows "LISN share, second child portfolio" 9 \| 12 and "LISP share, second child portfolio" 4 \| 3, both "differs" as in the sample. Removing the added third child brings back the start page; removing the first child moves 35 and 30 up; removing a child of the database without an add names it in the hint. Expected after the run: `_remove_child.md` with 0 missing, 0 different and nothing only in the generated page |
+| `src/main/resources/script/calculator_json.js` (the pool of the values, `saveVars`) | the save baseline (`8`-prefixed var) of a number field is the number of its entry | the stored number of the value, kept at the load like the stored number of a result | found with the follow-up: a redraw of the fields of a repeated input wrote a changed number as the baseline, so the save saw no change and kept the old number in the database. This happened with a number that a remove has moved, and also with a number that the user changed before pressing "Add child" (change 4); the simulation shows the baseline 35 behind the moved 30 |
+| `docs/json_structure.md` (the repeat row), `docs/llm/pending.md` | an instance keeps the name of its phrase; decision 2 | the instances keep their place; the follow-up waiting for the run | follow-up of 2026-11-26 |
+| `src/main/resources/script/calculator_json.js` (`moveNumber`, `removeInstance`, `addedHint`, new `movedInstances`), `src/main/php/shared/enum/messages.php`, `src/main/php/web/component/execute/system_page.php` (`CALC_PAGE_TEXT_IDS`), `src/main/resources/translations/en.yaml`, `de.yaml` | a field whose number a remove has moved without a number of the database behind it shows a number that the save does not write, or none while the database keeps one, without a hint | the instance is kept in `movedInstances`, and its field gets the hint `calculator_moved_not_saved` "Moved on this page only: a save does not change the number of the database yet."; the instance leaves the set when a remove takes it from the page | finding 2 of the review of 2026-11-26: never fail silently. The simulation without the target share of the first child in the seed showed 35 for the first child after "Remove the first child", without save vars and without a hint. Expected after the run: the new text in the settings of the js snapshots, the case reports unchanged |
+| `src/main/resources/script/calculator_json.js` (`removeInstance`) | the name of the instance read inside the `indexOf` call with a ternary | a named step `instance` | finding 4 of the review: one logical element per line |
+
+The second run of 2026-11-26 (`test/reset_db.php`, `test/test_re_pin.php`, `test/test_part.php`, again with
+`files::AUTO_UPDATE_TEST_FILES` set to `true`) covered the follow-up rows above, together with
+`docs/llm/log/2026-11-26_scale_font_icons.md` and the follow-up of `docs/llm/log/2026-11-26_csv_format_phrases.md`.
+As the follow-up rows expect:
+- `_remove_child.md` has 0 missing, 0 different and nothing only in the generated page.
+- The other case reports did not change.
+- The text `calculator_moved_not_saved` is in the settings of `portfolio_split_calculator_js.html`,
+  `npp_ch_vote_js.html` and `pv_lifetime_balance_js.html`, and twice in `calculator_editor.html` and
+  `npp_ch_vote_editor.html`.
+
+The moves, the save baseline and the moved hint are drawn by the script, so no snapshot shows them; the simulations
+above are what checks them.
+
+| file | old | new | reason |
+|---|---|---|---|
+| `docs/code_user_message_exceptions.md` | — | `system_page.php:2261` → `:2262` | the new id of finding 2 in `CALC_PAGE_TEXT_IDS` moves the line by one; the finding 2 row missed it, although the lessons below name it |
 
 ### Lessons learned by llm (2026-11-26)
 

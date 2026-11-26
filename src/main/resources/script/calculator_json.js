@@ -62,6 +62,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     // the icon of the button to remove an instance and the instances that a field keeps, the same as ui_list CALC_REMOVE_ICON and CALC_MIN_INSTANCES
     const REMOVE_ICON = 'fas fa-times';
     const MIN_INSTANCES = 1;
+    // the icon in front of the text of a button by its kind, the same as icons CALC_ADD, CALC_IMPORT, CALC_DOWNLOAD and CALC_REPORT
+    const ICON = {add: 'fas fa-plus', fileImport: 'fas fa-file-import', download: 'fas fa-download', report: 'fas fa-file-pdf'};
     // the operand name that reads the number of the previous row, the same as phrase_types PRIOR_NAME
     const PRIOR_NAME = 'prior';
     // the word of a value of the check table, the same as words EXPECTED
@@ -121,7 +123,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         details: 'calculator_details', sources: 'calculator_sources', more: '... more',
         copy_json: 'calculator_copy_json', copy_csv: 'calculator_copy_csv', remove: 'calculator_remove',
         added_not_saved: 'calculator_added_not_saved', added_no_number: 'calculator_added_no_number',
-        removed_not_saved: 'calculator_removed_not_saved',
+        removed_not_saved: 'calculator_removed_not_saved', moved_not_saved: 'calculator_moved_not_saved',
         diagram_final: 'calculator_diagram_final',
         case_name: 'calculator_case_name', case_failed: 'calculator_case_failed',
         check_value: 'calculator_check_value', check_expected: 'calculator_check_expected',
@@ -173,9 +175,10 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             acronyms.set(t.to, t.from);
         }
     });
-    // the numbers of the page: the values first, then the results, as the server resolves an operand
+    // the numbers of the page: the values first, then the results, as the server resolves an operand; the stored number
+    // of a value is what the save compares with, because a redraw of a field must not take a changed number as stored
     const pool = (seed.values || []).map(function (v) {
-        return {id: String(v.id), words: v.words || [], number: v.number, source: v.source || '', description: v.description || ''};
+        return {id: String(v.id), words: v.words || [], number: v.number, stored: v.number, source: v.source || '', description: v.description || ''};
     }).concat((seed.results || []).map(function (r) {
         // the stored number is kept, so that a calculation that differs from it can be reported
         return {id: String(r.id), words: r.words || [], number: r.number, stored: r.number, formula: r.formula || '', context: r.context || [], result: true};
@@ -204,6 +207,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     const addedInstances = new Set();
     // per instance of the database that the remove button has taken from the page the repeated phrase, which the save keeps yet
     const removedInstances = new Map();
+    // the instances of the database whose number a remove has moved without a number of the database behind it, which the save does not change yet
+    const movedInstances = new Set();
     // the sensitivity table calculates the page once per cell, so only while the user has it open
     let sensitivityOpen = false;
     // the values and results that the results of the page use (see operandValues)
@@ -1713,7 +1718,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
 
     /* the hidden vars that the save needs for a number field, with the stored number as the shown one (ui_list::calculator_save_vars) */
     function saveVars(key, entry, lbl, unit) {
-        let result = hidden(GROUP_VAR + key, entry.id) + hidden(PRE_VAR + NUMBER_VAR + key, unit === UNIT_PERCENT ? fieldShown(entry.number, entry) : entry.number) + hidden(NAME_VAR + key, lbl);
+        let result = hidden(GROUP_VAR + key, entry.id) + hidden(PRE_VAR + NUMBER_VAR + key, unit === UNIT_PERCENT ? fieldShown(entry.stored, entry) : entry.stored) + hidden(NAME_VAR + key, lbl);
         if (unit !== '') {
             result += hidden(UNIT_VAR + key, unit);
         }
@@ -1768,14 +1773,17 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     }
 
     /* the hint of an instance that the add button has added, because the save leaves it out until it has its own triple
-       (step 3, change 6), with the reason first if it has no number */
+       (step 3, change 6), with the reason first if it has no number; or of an instance whose number a remove has moved
+       without a number of the database, which the save does not change either */
     function addedHint(instance, entry) {
-        let result = '';
+        let text = '';
         if (addedInstances.has(instance)) {
             const noNumber = entry === null ? TEXTS[TXT.added_no_number] + ' ' : '';
-            result = block('span', esc(noNumber + TEXTS[TXT.added_not_saved]), STYLE.hint);
+            text = noNumber + TEXTS[TXT.added_not_saved];
+        } else if (movedInstances.has(instance)) {
+            text = TEXTS[TXT.moved_not_saved];
         }
-        return result;
+        return text === '' ? '' : block('span', esc(text), STYLE.hint);
     }
 
     /* the operand values of the results that no listed assumption shows, sorted by their label (ui_list::assumption_fields) */
@@ -1954,7 +1962,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             return numberField(item, name, false, instance, optionEntry(valuePhrase, instance));
         }).join('');
         const disabled = nextInstances(item).length === 0 ? ' disabled' : '';
-        const button = '<button type="button" class="' + STYLE.addButton + '" ' + ADD_ATTR + '="' + esc(item.name) + '"' + disabled + '>' + esc(add) + '</button>';
+        const button = '<button type="button" class="' + STYLE.addButton + '" ' + ADD_ATTR + '="' + esc(item.name) + '"' + disabled + '>' + iconText(ICON.add, add) + '</button>';
         return result + removedHint(item) + (add ? button : '');
     }
 
@@ -2012,25 +2020,83 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         }
     }
 
-    /* the remove button of a repeated input takes its instance from the page: the is a triple, so that it is no instance
-       and no column any more, and its numbers and results, so that no sum takes them; an instance of the database stays
-       there until the save can remove it (step 3, change 6), an added one can be added again */
+    /* the remove button of a repeated input keeps the instances at their place, because e.g. the children are named by
+       their position like in the sample: each field from the removed one on takes the number of the field behind it,
+       and the last instance is taken from the page with its is a triple, so that it is no instance and no column any
+       more, and with its numbers and results, so that no sum takes them; an instance of the database stays there until
+       the save can remove it (step 3, change 6), an added one can be added again */
     function removeInstance(event) {
         const button = event.target.closest('[' + REMOVE_ATTR + ']');
         const field = button === null ? null : button.closest('[' + PART_ATTR + ']');
         const item = field === null ? undefined : phrases.get(field.getAttribute(PART_ATTR));
-        if (item !== undefined && kinds(item.to).length > MIN_INSTANCES) {
-            const instance = button.getAttribute(REMOVE_ATTR);
-            removeKindLink(instance, item.to);
-            removeEntries(instance);
-            if (addedInstances.has(instance)) {
-                addedInstances.delete(instance);
+        const list = item === undefined ? [] : kinds(item.to);
+        const instance = button === null ? null : button.getAttribute(REMOVE_ATTR);
+        const pos = list.indexOf(instance);
+        if (pos >= 0 && list.length > MIN_INSTANCES) {
+            const valuePhrase = repeatValuePhrase(item.to);
+            for (let i = pos; i < list.length - 1; i++) {
+                moveNumber(list[i + 1], list[i], valuePhrase);
+            }
+            const last = list[list.length - 1];
+            removeKindLink(last, item.to);
+            removeEntries(last);
+            movedInstances.delete(last);
+            if (addedInstances.has(last)) {
+                addedInstances.delete(last);
             } else {
-                removedInstances.set(instance, item.to);
+                removedInstances.set(last, item.to);
             }
             redrawRepeatFields(item);
             redrawResults();
         }
+    }
+
+    /* the number of the instance behind for the instance in front, like an input of the user: an entry of the database
+       keeps its id, so the save writes the new number; without a number behind the field in front has none either, and
+       a field in front without a number gets an added one like a new instance (newInstanceEntry); in these two cases
+       the save does not change the number of the database yet, so the field says so (addedHint) */
+    function moveNumber(from, to, valuePhrase) {
+        const source = optionEntry(valuePhrase, from);
+        const target = optionEntry(valuePhrase, to);
+        if (!addedInstances.has(to) && movesUnsaved(source, target)) {
+            movedInstances.add(to);
+        }
+        if (source === null) {
+            removeEntry(target);
+        } else if (target === null) {
+            const words = replacedPhrase(source.words, from, to);
+            pool.push({
+                id: newId(words),
+                words: words,
+                number: source.number,
+                source: source.source,
+                description: source.description,
+                added: true
+            });
+        } else {
+            target.number = source.number;
+        }
+    }
+
+    /* true if the moved number differs from what the save keeps: the number of the database is taken from the field,
+       or the field shows a number that has none in the database */
+    function movesUnsaved(source, target) {
+        const takesStored = source === null && target !== null && !target.added;
+        const showsAdded = source !== null && target === null;
+        return takesStored || showsAdded;
+    }
+
+    /* the entry taken from the numbers and the inputs of the page, nothing for null */
+    function removeEntry(entry) {
+        const i = pool.indexOf(entry);
+        if (i >= 0) {
+            pool.splice(i, 1);
+        }
+        inputEntries.forEach(function (e, field) {
+            if (e === entry) {
+                inputEntries.delete(field);
+            }
+        });
     }
 
     /* the instance is no kind of the phrase any more on the page, the opposite of addTriple for its is a triple */
@@ -2573,22 +2639,36 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
 
     /* the buttons of a list or a detail table at their place: the report is a link to the pdf and the others have no function so far; save: the html of the save button of the input list between the import and the download, which then shows two buttons per line (ui_list::calculator_buttons) */
     function buttons(item, save) {
-        let fileImport = null;
-        let download = null;
         let report = null;
         let copy = [];
         if (item !== null && item !== undefined) {
-            fileImport = buttonLabel(item, KW.file_import);
-            download = buttonLabel(item, KW.download);
             report = buttonLabel(item, KW.report);
             if (hasFlag(item, KW.copy)) {
                 copy = [TEXTS[TXT.copy_json], TEXTS[TXT.copy_csv]];
             }
         }
-        const link = report ? '<a href="' + esc(settings.report) + '" target="' + STYLE.reportFrame + '" class="' + STYLE.button + '">' + esc(report) + '</a>' : '';
+        const title = report ? titleAttr(buttonHint(item, KW.report)) : '';
+        const link = report ? '<a href="' + esc(settings.report) + '" target="' + STYLE.reportFrame + '" class="' + STYLE.button + '"' + title + '>' + iconText(ICON.report, report) + '</a>' : '';
         const frame = report ? '<iframe name="' + STYLE.reportFrame + '" class="' + STYLE.reportFrame + '" title="' + esc(report) + '"></iframe>' : '';
-        const result = plainButtons([fileImport]) + (save || '') + plainButtons([download]) + link + plainButtons(copy) + frame;
+        const result = keywordButton(item, KW.file_import, ICON.fileImport) + (save || '') + keywordButton(item, KW.download, ICON.download) + link + plainButtons(copy) + frame;
         return save ? block('div', result, STYLE.actions) : result;
+    }
+
+    /* the button of the keyword with its label, its icon and its hint as tooltip, '' if the item has no such button (ui_list::calculator_keyword_button) */
+    function keywordButton(item, keyword, icon) {
+        const hasItem = item !== null && item !== undefined;
+        return hasItem ? iconButton(buttonLabel(item, keyword), icon, buttonHint(item, keyword)) : '';
+    }
+
+    /* the hint of the triple from the item to the button keyword, which is the tooltip of the button, '' if none (calculator::button_hint) */
+    function buttonHint(item, keyword) {
+        const prop = property(item.name, keyword);
+        return prop === null ? '' : ownText(prop.name, KW.hint) || '';
+    }
+
+    /* the title attribute with its leading space, '' for no tooltip (html_base::title_attr) */
+    function titleAttr(title) {
+        return title ? ' title="' + esc(title) + '"' : '';
     }
 
     /* the label of the triple from the item to the button keyword, null if the item has no such button (calculator::button_label) */
@@ -2603,6 +2683,16 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         }).map(function (text) {
             return '<button type="button" class="' + STYLE.button + '">' + esc(text) + '</button>';
         }).join('');
+    }
+
+    /* the button without a function so far with the icon of its kind, '' without a text (ui_list::calculator_icon_button) */
+    function iconButton(text, icon, title) {
+        return text ? '<button type="button" class="' + STYLE.button + '"' + titleAttr(title) + '>' + iconText(icon, text) + '</button>' : '';
+    }
+
+    /* the icon and the escaped text of a button or a link, like the sample pages (html_base::icon_and_text) */
+    function iconText(icon, text) {
+        return '<i class="' + icon + '"></i> ' + esc(text);
     }
 
     /* true if the numbers differ only by the float noise of a calculation (ui_list::calculator_check_same) */
@@ -2752,7 +2842,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     /* the section with the import buttons of the page, without a function so far (ui_list::calculator_imports) */
     function importSection() {
         const html = items(KW.file_import).map(function (item) {
-            return '<button type="button" class="' + STYLE.button + '">' + esc(label(item)) + '</button>';
+            return iconButton(label(item), ICON.fileImport, '');
         }).join('');
         return html === '' ? '' : block('details', block('summary', esc(ownText(group(KW.file_import).name, KW.label) || '')) + block('div', html, STYLE.imports));
     }

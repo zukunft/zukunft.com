@@ -1064,12 +1064,24 @@ class html_base
      * @param string $name the text of the link
      * @param string $frame the name of the frame, so that the page with the link stays
      * @param string $css_class the style of the link
+     * @param string $icon the icon css class in front of the text from web/const/icons.php e.g. icons::CALC_REPORT
+     * @param string $title the tooltip of the link, '' for none
      * @return string the html code of the link
      */
-    function ref_to_frame(string $url, string $name, string $frame, string $css_class): string
+    function ref_to_frame(string $url, string $name, string $frame, string $css_class, string $icon, string $title): string
     {
         return '<' . self::A . ' ' . self::HREF . '="' . htmlspecialchars($url, ENT_QUOTES) . '" ' . self::TARGET . '="' . $frame . '" '
-            . self::CLASS_HTML . '="' . $css_class . '">' . $this->esc($name) . '</' . self::A . '>';
+            . self::CLASS_HTML . '="' . $css_class . '"' . $this->title_attr($title) . '>' . $this->icon_and_text($icon, $name) . '</' . self::A . '>';
+    }
+
+    /**
+     * @param string $icon the icon css class from web/const/icons.php e.g. icons::CALC_ADD
+     * @param string $text the text behind the icon, which is escaped here
+     * @return string the html code of the icon and the text of a button or a link, like the sample pages
+     */
+    function icon_and_text(string $icon, string $text): string
+    {
+        return $this->icon($icon) . ' ' . $this->esc($text);
     }
 
     /**
@@ -4051,9 +4063,10 @@ class html_base
      * @param string $typ the button type e.g. submit
      * @param string $class additional CSS classes for the button
      * @param string $name the url key that the button posts e.g. url_var::POST_SUBMIT for a data-changing submit, '' for none
+     * @param string $title the tooltip of the button e.g. the hint of a calculator button, '' for none
      * @return string the wrapped button code
      */
-    function button(string $txt, string $typ, string $class = '', string $name = ''): string
+    function button(string $txt, string $typ, string $class = '', string $name = '', string $title = ''): string
     {
         if ($class != '') {
             $class = self::CLASS_BUTTON . ' ' . $class;
@@ -4065,7 +4078,7 @@ class html_base
             $name_attr = ' ' . self::NAME . '="' . $name . '"';
         }
         return '<' . self::BUTTON . ' ' . self::TYPE . '="' . $typ . '" ' . self::CLASS_HTML . '="' . $class . '"'
-            . $name_attr . '>' . $txt . '</' . self::BUTTON . '>';
+            . $name_attr . $this->title_attr($title) . '>' . $txt . '</' . self::BUTTON . '>';
     }
 
     /**
@@ -4178,12 +4191,8 @@ class html_base
         if ($id != '') {
             $attr .= ' ' . self::ID . '="' . htmlspecialchars($id, ENT_QUOTES) . '"';
         }
-        $title_attr = '';
-        if ($title != '') {
-            $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
-        }
         $result = '<' . self::DETAILS . $attr . '>';
-        $result .= '<' . self::SUMMARY . $title_attr . '>' . $summary . '</' . self::SUMMARY . '>';
+        $result .= '<' . self::SUMMARY . $this->title_attr($title) . '>' . $summary . '</' . self::SUMMARY . '>';
         return $result . $body . '</' . self::DETAILS . '>';
     }
 
@@ -4197,12 +4206,8 @@ class html_base
      */
     function definition(string $term, string $definition, string $title = ''): string
     {
-        $title_attr = '';
-        if ($title != '') {
-            $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
-        }
         $result = '<' . self::DL . '>';
-        $result .= '<' . self::DT . $title_attr . '>' . $term . '</' . self::DT . '>';
+        $result .= '<' . self::DT . $this->title_attr($title) . '>' . $term . '</' . self::DT . '>';
         $result .= '<' . self::DD . '>' . $definition . '</' . self::DD . '>';
         return $result . '</' . self::DL . '>';
     }
@@ -4269,6 +4274,19 @@ class html_base
             $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
         }
         return '<' . self::UL . $attr . '>' . $txt . '</' . self::UL . '>';
+    }
+
+    /**
+     * @param string $title the tooltip, which is escaped here with its quotes, because it is an attribute value
+     * @return string the title attribute with its leading space, '' for no tooltip
+     */
+    private function title_attr(string $title): string
+    {
+        $result = '';
+        if ($title != '') {
+            $result = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        return $result;
     }
 
     /**

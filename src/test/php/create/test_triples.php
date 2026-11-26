@@ -1739,7 +1739,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple[] the keyword, the download button of the inputs and its label that the button test adds to the calculator input test
+     * @return triple[] the keyword, the download button of the inputs with its label and its hint that the button test adds to the calculator input test
      */
     function calculator_zh_button(): array
     {
@@ -1750,13 +1750,19 @@ class test_triples extends test_objects
         $lbl = new triple($this->env->usr1);
         $lbl->set($id--, triples::CALCULATOR_LABEL);
         $grp = null;
+        $hint = null;
         foreach ($this->calculator_zh() as $trp) {
             if ($trp->get_to()?->name() == triples::CALCULATOR_INPUT) {
                 $grp = $trp;
             }
+            if ($trp->name() == triples::CALCULATOR_HINT) {
+                $hint = $trp;
+            }
         }
         $btn = $this->calc_triple($id, 'Zurich inputs download', $grp->phrase(), $has, $kw);
         $result = [$kw, $btn, $this->calc_triple($id, 'Zurich inputs download label', $btn->phrase(), $has, $lbl, triple_names::CALC_BUTTON_COM)];
+        $hint_id = triple_names::CALC_BUTTON_HINT_ID;
+        $result[] = $this->calc_triple($hint_id, 'Zurich inputs download hint', $btn->phrase(), $has, $hint, triple_names::CALC_BUTTON_HINT_COM);
         $case_id = triple_names::CALC_CASE_FIRST_ID;
         $kw = new triple($this->env->usr1);
         $kw->set($case_id--, triples::CALCULATOR_CASE);

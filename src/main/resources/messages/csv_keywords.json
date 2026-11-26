@@ -69,7 +69,7 @@
     },
     {
       "name": "csv (system)",
-      "description": "keyword of the csv formats; a phrase is the format of a csv by its triples to the keywords below. A value of the definition of a format is a template: per row each column item of it is the phrase of the cell of its column, the cell of a number column times the number of the template is the number e.g. a scale of 0.01 for a price in percent, a template without a number column writes its own number e.g. a default lot size, a kind phrase limits the template to the rows of that kind and is not written, and a template without the row name column is written once per phrases with the number of the first row; a written value gets the source of the csv, a template with the word assumed none. A triple of the definition from or to a column item that is no triple to a csv keyword is a template too: per row each column item is the phrase of its cell and {<header text>} in its description is the cell of that column; a template whose name starts with the name of its from column gets the name of the row cell and the rest of the name, the others no name; a template whose from and to are the same cell writes nothing and neither does a value template that uses it; a written triple whose from, verb and to the definition declares is written as that declaration",
+      "description": "keyword of the csv formats; a phrase is the format of a csv by its triples to the keywords below. A value of the definition of a format is a template: per row each column item of it is the phrase of the cell of its column, the cell of a number column times the number of the template is the number e.g. a scale of 0.01 for a price in percent, a template without a number column writes its own number e.g. a default lot size, a kind phrase limits the template to the rows of that kind and is not written, and a template without the row name column is written once per phrases with the number of the first row; a written value gets the source of the csv, a template with the word assumed none. A triple of the definition from or to a column item that is no triple to a csv keyword is a template too: per row each column item is the phrase of its cell and {<header text>} in its description is the cell of that column; the name of a written triple is the description of the triple from the template to csv name, the others get no name; a template whose from and to are the same cell writes nothing and neither does a value template that uses it; a written triple whose from, verb and to the definition declares is written as that declaration",
       "from": "csv",
       "verb": "can be",
       "to": "zukunft.com system",
@@ -180,6 +180,14 @@
       "verb": "has a",
       "to": "optional",
       "code_id": "system_csv_optional"
+    },
+    {
+      "name": "csv name",
+      "description": "text property of a triple template: the description of the triple from a template to this keyword is the name of the triple that the template writes per row, in which {<header text>} is the cell of that column e.g. {Instrument} hint; a template without it writes no name, so that the import generates the name",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "name",
+      "code_id": "system_csv_name"
     }
   ]
 }

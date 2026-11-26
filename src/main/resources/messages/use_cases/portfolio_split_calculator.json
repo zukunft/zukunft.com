@@ -642,7 +642,10 @@
     {"name": "third child portfolio label", "description": "third child", "from": "third child portfolio", "verb": "has a", "to": "calculator label"},
     {"name": "portfolio split walk column third child", "from": "portfolio split walk column child portfolio", "verb": "has a", "to": "third child portfolio"},
     {"name": "portfolio split walk column third child label", "description": "Third", "from": "portfolio split walk column third child", "verb": "has a", "to": "calculator label"},
-    {"name": "portfolio split input child portfolio repeat third child", "description": "the child that the button Add child adds next", "from": "portfolio split input child portfolio repeat", "verb": "has a", "to": "third child portfolio"}
+    {"name": "portfolio split input child portfolio repeat third child", "description": "the child that the button Add child adds next", "from": "portfolio split input child portfolio repeat", "verb": "has a", "to": "third child portfolio"},
+    {"name": "portfolio split inputs import hint", "description": "Import the portfolio of the Spot rates", "from": "portfolio split inputs import", "verb": "has a", "to": "calculator hint"},
+    {"name": "portfolio split inputs download hint", "description": "Export the portfolio splitting as a spreadsheet", "from": "portfolio split inputs download", "verb": "has a", "to": "calculator hint"},
+    {"name": "portfolio split inputs printable report hint", "description": "Show the Portfolio Split as a printable PDF", "from": "portfolio split inputs printable report", "verb": "has a", "to": "calculator hint"}
   ],
   "formulas": [
     {"name": "stock holding value", "description": "the market value of a stock holding: the shares times the stock price", "expression": "\"holding value\" = \"shares\" * \"stock price\"", "assigned_word": "stock price"},

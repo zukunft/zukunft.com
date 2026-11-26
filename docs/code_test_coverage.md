@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1764 of 6559 public functions have at least 2 unit test calls; the 4585 functions below do not; the 210 functions of the last section are called nowhere
+1767 of 6561 public functions have at least 2 unit test calls; the 4584 functions below do not; the 210 functions of the last section are called nowhere
 
 ## 1826 functions of main backend have no test at all
 
@@ -2099,7 +2099,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 893 functions of frontend have no test at all
+## 892 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2338,7 +2338,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- add_style - 0 unit test calls
     \-- br - 0 unit test calls
     \-- br2 - 0 unit test calls
-    \-- button - 0 unit test calls
     \-- button_icon - 0 unit test calls
     \-- button_submit - 0 unit test calls
     \-- change_blocked - 0 unit test calls
@@ -2389,6 +2388,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- h2 - 0 unit test calls
     \-- h3 - 0 unit test calls
     \-- icon - 0 unit test calls
+    \-- icon_and_text - 0 unit test calls
     \-- icon_link - 0 unit test calls
     \-- icon_with_title - 0 unit test calls
     \-- img - 0 unit test calls
@@ -2407,7 +2407,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- pre_url_array - 0 unit test calls
     \-- pre_url_part - 0 unit test calls
     \-- prefixed_url_array - 0 unit test calls
-    \-- ref_to_frame - 0 unit test calls
     \-- row_center - 0 unit test calls shared by 2 classes
     \-- row_start - 0 unit test calls shared by 2 classes
     \-- search_input - 0 unit test calls

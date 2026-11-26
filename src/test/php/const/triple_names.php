@@ -370,6 +370,9 @@ class triple_names
     // the keyword, the button and its label of the button test, which follow the check
     const int CALC_BUTTON_FIRST_ID = 906;
     const string CALC_BUTTON_COM = 'Download the inhabitants';
+    // the hint of the download button of the button test, its tooltip; between the case and the check hint ids, which are free
+    const int CALC_BUTTON_HINT_ID = 1975;
+    const string CALC_BUTTON_HINT_COM = 'Export the inhabitants as a spreadsheet';
     // the keyword and the flag of the field of the case name
     const int CALC_CASE_FIRST_ID = 1970;
     // the keywords and the triples of the test of a page for a decision, which follow the field of the case name
@@ -726,9 +729,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 482;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 3804;
+    const int SHARE_RATIO_ID = 3805;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 3856;
+    const int SHARE_SYMBOL_ID = 3857;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 492;
     const string IN_EUR = "in EUR";

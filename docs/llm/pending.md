@@ -22,8 +22,9 @@ src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html and the
 
 Status of 2026-11-26: all case reports list 0 differences (plain, differ, low, high, standard and over), also with
 the walk counts by the instances (change 3 of step 3, section 4 of `docs/llm/log/2026-11-25_csv_child_shares.md`);
-`_add_child.md` too after the run of 14:49 with the button "Add child" (change 4 of step 3); only `_remove_child.md`
-differs, until the run of change 5.
+`_add_child.md` too after the run of 14:49 with the button "Add child" (change 4 of step 3); `_remove_child.md` has no
+different number after the run of change 5, and its follow-up (the children keep their place) should remove its
+label differences too (waiting for the run, section 7 of `docs/llm/log/2026-11-25_csv_child_shares.md`).
 
 The remaining tasks in the suggested order:
 1. phase 1, in parallel:
@@ -32,9 +33,9 @@ The remaining tasks in the suggested order:
    - "import", the TODO of the developer in `convert_portfolio_csv.php`: "should be based on phrases without specific
      code", so the columns of the bank, the asset classes with their kind, the assumed lot sizes and the phrases of
      the values come from the data instead of the consts of the class (the task "csv import defined by phrases",
-     change 1 of 3 done, waiting for the run)
-   - the look: step 5 (the colours of the walk cells and the hint), the font of the diagram scale ("check",
-     decision 3) and the icons of step 7
+     change 1 of 3 done, its follow-up `csv name` waiting for the run)
+   - the look: the font of the diagram scale ("check", decision 3), the icons and the tooltips of step 7 (done,
+     waiting for the run, `docs/llm/log/2026-11-26_scale_font_icons.md`)
    - stop for a run: `/test/test_part.php` with the tests that are likely to break by these changes, and before
      the commit an error free full `/test/test.php`
 2. phase 2, in parallel: part 5 of step 9 with the number fields of the holdings (step 5 (6)) and step 3 (add child
@@ -53,12 +54,11 @@ The rows of the walk are stored results of the formulas, and the browser calcula
 
 #### check
 
-- Diagram scale font (decision 3): the sample uses a monospace font for it, the generated page the normal one, so use a monospace font for the scale; the Import position stays (decision 2)
+- Diagram scale font (decision 3): the sample uses a monospace font for it, the generated page the normal one, so use a monospace font for the scale (done, waiting for the run: `.use-case .chart text:nth-of-type(-n+3)` in `style_html.css`); the Import position stays (decision 2)
 
 #### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
 
 - the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
-- the colours of the walk cells and the hint below the holdings
 
 #### step 3: the input fields (1), (2), (3), (4)
 
@@ -66,24 +66,25 @@ Decision of the developer (2026-11-25): the full step 3, so that the reports `_a
 reach 0 differences ("Missing in the generated page": the field of the third child, the warning "Weights differ", the
 result table and the walk with a third child column and a remove button per child). The changes, each with its own
 log and a run before the next one (change 1 to 3, every formula and warning by the instances of `child portfolio`,
-and change 4, the button "Add child" in the browser, are done, `docs/llm/log/2026-11-25_csv_child_shares.md`):
-5. "Remove the ..." in the browser (done, waiting for a `/test/test_part.php` run with `system_views_read_tests`,
-   section 7 of `docs/llm/log/2026-11-25_csv_child_shares.md`): the button takes the instance with its numbers and
-   results from the page. Decision of the developer (2026-11-26): a child keeps the name of its phrase, so after the
-   case `remove_child` the page shows the first and the third child, while the sample numbers them by position and
-   shows "second child"; these label differences and the check rows of the removed second child stay in
-   `_remove_child.md` on purpose, the numbers should equal the sample
+change 4, the button "Add child", and change 5, the button "Remove the ..." in the browser, are done,
+`docs/llm/log/2026-11-25_csv_child_shares.md`; follow-up request of the developer (2026-11-26): the children keep
+their place like in the sample, so a remove moves the numbers behind it up by one and takes the last child from the
+page, waiting for the run):
 6. the logged save of the changed instances: a child that "Add child" has added with its `is a child portfolio`
    triple and its target share, and a removed child of the database with the logged delete of its `is a` triple;
    until then the save and a new case leave out an added child and keep a removed one, and the hints
-   `calculator_added_not_saved` (`addedHint`) and `calculator_removed_not_saved` (`removedHint` in
-   `calculator_json.js`) say so, which go with the save; a removed child of the database can be added again only by
-   a reload of the page, because the add button adds only the declared instances
+   `calculator_added_not_saved` and `calculator_moved_not_saved` (`addedHint`, for a number that a remove has moved
+   without a number of the database) and `calculator_removed_not_saved` (`removedHint` in `calculator_json.js`) say
+   so, which go with the save; a removed child of the database can be added again only by
+   a reload of the page, because the add button adds only the declared instances; the removed child is always the
+   last one, and the numbers that a remove has moved up are written by the save already, like an input
 
 #### step 7: the buttons (13)
 
 - the buttons "Download", "Import", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
-- the icons of the sample
+- the icons of the sample (done, waiting for the run: `icons::CALC_ADD`, `CALC_IMPORT`, `CALC_DOWNLOAD` and
+  `CALC_REPORT` in front of the text of the add, import, download and report buttons), and the tooltips of the sample
+  on "Import", "Download" and "Report" by the `calculator hint` of the button triple (done, waiting for the run)
 
 ### Swiss NPP
 
@@ -182,18 +183,21 @@ based on phrases without specific code" in `convert_portfolio_csv.php`; no re-pi
 import file, else re-pin for its new words and triples). Three changes, each with its own log and a run before the
 next one:
 
-1. the keywords and the definition json (done, waiting for `/test/reset_db.php`, `/test/test_re_pin.php` and a
-   `/test/test_part.php` run, `docs/llm/log/2026-11-26_csv_format_phrases.md`): `csv_keywords.json` with the code
-   ids in `triples::CSV_KEYWORDS`, the definition json `src/test/resources/import/portfolio_csv/bank_position_csv.json`
-   and the rules in `docs/json_structure.md` *csv format*; decisions of the developer (2026-11-26): the keywords are
-   a system file with code ids, the definition is a test resource until change 3, a cell text is the description
-   of a triple
+1. the keywords and the definition json (done, `docs/llm/log/2026-11-26_csv_format_phrases.md`; its follow-up, the
+   keyword `csv name` instead of the name prefix rule, waits for `/test/reset_db.php`, `/test/test_re_pin.php` and
+   a `/test/test_part.php` run): `csv_keywords.json` with the code ids in `triples::CSV_KEYWORDS`, the definition
+   json `src/test/resources/import/portfolio_csv/bank_position_csv.json` and the rules in `docs/json_structure.md`
+   *csv format*; decisions of the developer (2026-11-26): the keywords are a system file with code ids, the
+   definition is a test resource until change 3, a cell text is the description of a triple, and a written triple
+   gets its name only by `csv name`
 2. `convert_csv`: reads the definition from the phrases (by the database or by `import::get_data_object` of the
    definition json for the unit test), finds the header row, maps each row by its kind and writes the values of the
    templates, the defaults and the vocabulary; it has no name of a column, a kind or a phrase of its own. Tests:
    the same positive and negative tests as `convert_portfolio_csv` in `import_tests.php`, and it writes the same two
    json files of `src/test/resources/import/portfolio_csv/` as `convert_portfolio_csv` (the difference of the two
-   is reported, so that a change is a decision)
+   is reported, so that a change is a decision); the negative test of the definition, moved from change 1 by the
+   decision of 2026-11-26: a definition without the keyword `csv column` is reported with a `msg_id`, because the
+   importer alone adds an undeclared keyword as a plain word without a message
 3. remove `convert_portfolio_csv.php` and its tests, once `convert_csv` gives the same results
 
 What the phrases cannot define, because it is a calculation and not a fact of the csv:

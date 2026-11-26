@@ -77,5 +77,11 @@ class icons
     const string SORT_DOWN = 'fas fa-sort-down';
     // the small save button of a value that is changed in place e.g. a setting of the settings page
     const string SAVE = 'fas fa-floppy-disk';
+    // in front of the text of the buttons of a calculator page by their keyword: the add button of a
+    // repeated input, a file import, the download and the link to the printable report
+    const string CALC_ADD = 'fas fa-plus';
+    const string CALC_IMPORT = 'fas fa-file-import';
+    const string CALC_DOWNLOAD = 'fas fa-download';
+    const string CALC_REPORT = 'fas fa-file-pdf';
 
 }

@@ -637,6 +637,7 @@ messages:
   calculator_added_not_saved: "Nur auf dieser Seite hinzugefügt: das Speichern übernimmt es noch nicht."
   calculator_added_no_number: "Keine Zahl, weil der erste Eintrag oben keine hat."
   calculator_removed_not_saved: "Nur auf dieser Seite entfernt, das Speichern behält:"
+  calculator_moved_not_saved: "Nur auf dieser Seite verschoben: das Speichern ändert die Zahl der Datenbank noch nicht."
   calculator_check_value: "Wert"
   calculator_check_expected: "Erwartet"
   calculator_check_calculated: "Berechnet"
