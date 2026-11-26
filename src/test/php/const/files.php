@@ -460,6 +460,8 @@ class files
     CONST string IMPORT_PORTFOLIO_CSV_SAMPLE_JSON = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_sample' . self::JSON;
     CONST string IMPORT_PORTFOLIO_CSV_SPLIT = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_portfolio_split' . self::CSV;
     CONST string IMPORT_PORTFOLIO_CSV_SPLIT_JSON = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_portfolio_split' . self::JSON;
+    // the format of this csv as phrases and value templates, which convert_csv reads (docs/json_structure.md "csv format")
+    CONST string IMPORT_PORTFOLIO_CSV_FORMAT = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_position_csv' . self::JSON;
     CONST string IMPORT_PORTFOLIO_INSTRUMENTS = test_paths::IMPORT . 'portfolio_instruments' . self::JSON;
     CONST string IMPORT_PORTFOLIO_REPORT = test_paths::IMPORT . 'portfolio_report' . self::JSON;
     CONST string IMPORT_PORTFOLIO_SPLIT_PARAMETERS_SAMPLE = test_paths::IMPORT . 'portfolio_split_parameters_sample' . self::JSON;

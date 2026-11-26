@@ -1,10 +1,11 @@
 # portfolio csv, child cases and the instances of the children (2026-11-25)
 
-Six changes of 2026-11-25 and 2026-11-26 of the portfolio split page in `docs/llm/pending.md`, each with its own
+Seven changes of 2026-11-25 and 2026-11-26 of the portfolio split page in `docs/llm/pending.md`, each with its own
 plan: the import json from the csv of a bank statement ("import"), the input cases that add a child and remove one
 (step 2), the target shares by the instances of `child portfolio` (step 3, change 1 of 5), the walk counts by the
-instances (step 3, change 3 of 5), the list rule that the count of the parent of change 3 needs and the button "Add
-child" in the browser (step 3, change 4 of 5); change 2 of step 3 has its own log
+instances (step 3, change 3 of 5), the list rule that the count of the parent of change 3 needs, the button "Add
+child" in the browser (step 3, change 4 of 5) and the button "Remove the ..." in the browser (step 3, change 5 of
+6); change 2 of step 3 has its own log
 (`docs/llm/log/2026-11-26_target_share_spread.md`). Each plan was started before the first edit of
 its change, so its tables are the plan; its "Unexpected changes" stay empty until the developer has run the tests.
 
@@ -380,6 +381,19 @@ deviation.", the result table and the walk with the third child column, three re
 all 56 rows of the table, the check table and the walk with the numbers of the sample (e.g. LISP 3, 3, 3 and 1 by the
 equal part). Not checked by it: whether the phrase data walk delivers the new triples, and the browser itself.
 
+#### Follow-up request of 2026-11-26
+
+"try to solve the findings" of the review of change 4: (1) the id shift belongs in "Unexpected changes" (done
+there), (2) the object literals of `copyResults` and `newInstanceEntry` pack too much into one line, (3) the name
+`formulaNames` reads like a list getter and its line packs three fallbacks, (4) a save after "Add child" leaves out
+the new child without telling the user, (5) a new child without a number is only reported on the console.
+
+Planned: one field per line in the two object literals; `formulaHasOperand` with the formula in a named step; a hint
+below the field of an added instance that the save does not keep it yet, and in front of it that it has no number
+because the first instance has none; two new message ids with en and de texts for the page script. The console
+warning stays, because an error message is never removed. The hint is a second hint span of the field, and the case
+report compares only the first one, so `_add_child.md` stays at 0.
+
 ### Expected changes
 
 | file | old lines | new lines | target / reason |
@@ -410,6 +424,8 @@ After the run of 2026-11-26 14:49 (`test/reset_db.php`, `test/test_re_pin.php`, 
 | `src/test/resources/web/html/use_cases/portfolio_split_calculator_no_js.html` | stays the same | the visible page stays the same, but the seed json of the page has the word `third` and the six triples, besides the shifted ids | the seed is the phrase data of the page also without javascript |
 | `src/test/resources/api/phrase_data/phrase_data_portfolio_split.json` | gets the third child | unchanged | the file is the input of the calculator report test of `phrase_data_ui_tests` (last changed 2026-11-18) and the run never writes it |
 | `src/test/resources/web/html/use_cases/portfolio_split_calculator_diff_remove_child.md` | 1 missing, 55 different | 2 missing, 57 different: the generated page shows the parent at 0 % and the three children, so the two tables of the sample with only the first and the second child are missing | as the expected row says: the button "Add child" works, the remove button has no function until change 5 |
+| `src/main/resources/script/calculator_json.js` (`newInstanceEntry`, `copyResults`, `formulaNames`) | object literals with six and eight fields in one line; `formulaNames` with three fallbacks in one line | one field per line; `formulaHasOperand` reads the formula in a named step | follow-up of 2026-11-26, findings 2 and 3 of the review |
+| `src/main/resources/script/calculator_json.js` (`numberField`, new `addedHint`, `addInstance`), `src/main/php/shared/enum/messages.php`, `src/main/php/web/component/execute/system_page.php` (`CALC_PAGE_TEXT_IDS`), `src/main/resources/translations/en.yaml`, `de.yaml` | the field of an added instance without a hint of its own | a hint below the field that the save does not keep it yet, and that it has no number if the first instance has none (`calculator_added_not_saved`, `calculator_added_no_number`) | follow-up of 2026-11-26, findings 4 and 5: the user sees what the save leaves out; expected after the run: the texts of the page script in the js snapshots of every calculator page, the case reports unchanged |
 
 ### Lessons learned by llm (2026-11-26)
 
@@ -417,3 +433,92 @@ After the run of 2026-11-26 14:49 (`test/reset_db.php`, `test/test_re_pin.php`, 
   triples that link a triple, so a triple appended at the end can still shift the ids of the file itself. Before
   claiming that no id of the file changes, check where `list.csv` puts a triple of the same kind.
 - Before listing a fixture as a side effect, check that the run writes it; an input fixture of a test stays as it is.
+
+## 7. remove child in the browser
+
+Part of #247, step 3, change 5 of 6: the button "Remove the ..." removes an instance on the javascript page and the
+page calculates without it.
+
+### Request
+
+"do the next open task in pending.md": change 5 of step 3.
+
+Decisions of the developer (2026-11-26):
+1. change 5 is only the remove on the page, so that `_remove_child.md` can reach its target; the logged save of an
+   added or a removed child becomes change 6 with its own plan and run
+2. a child keeps the name of its phrase after a remove: the case `remove_child` adds the third child and removes the
+   second, and the page shows the first and the third child, while the hand made sample numbers the children by their
+   position and shows the former third child as "second child"; these label differences stay in `_remove_child.md`
+   on purpose
+
+Planned before the first edit:
+- the remove button names its instance (`data-remove`), and the click takes the instance from the page: its `is a`
+  triple of the repeated phrase, so that it is no instance and no column any more, and every number and result whose
+  phrases or context name it, so that no sum and no table takes it; the page then draws the fields of the repeated
+  input again and calculates the results
+- a removed instance that the add button has added is gone completely and the add button can add it again; a
+  removed instance of the database stays in the database, because the save leaves out its number without its field,
+  so a hint below the fields of the repeated input names it ("Removed on this page only, a save keeps: ...") until
+  change 6
+- the fields of a repeated input are drawn again by its part name, so that the remove works also without an add button
+- the numbers of the case report after the run: the first child at 35 % and the third at 30 %, so the parent at 35 %
+  like the sample; the differences left are the labels "third child" and "Third" of decision 2
+
+Checked after the edits and before the run, with the read-only scratch script `sim_remove_child.js` (node, a
+minimal stand in of the DOM, the seed of the snapshot of 14:49): after "Add child" and "Remove the second child"
+the fields "Target weight first child" 35 and "Target weight third child" 30, the hint "Removed on this page only, a
+save keeps: second child", the warning "Weights differ", the result table "Parent | First child | Third child" with
+the numbers of the sample (e.g. Stocks 3'413'937 | 3'424'013 | 2'930'550) and the walk with the numbers of the sample
+(e.g. LISP 4 | 3 | 3, LISN 9 | 12 | 19); removing the added third child instead gives the page of the start again
+with "Add child" enabled.
+
+### Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/resources/script/calculator_json.js` (`removeButton`, `redrawRepeatFields`, `repeatFields`, new `removeInstance` with its helpers, the click listener) | the remove button without a function | the button takes its instance, its numbers and its results from the page and calculates again; a hint names the removed instances of the database | the tables of `_remove_child.md` with the first and the third child and the numbers of the sample |
+| `src/main/php/shared/enum/messages.php`, `src/main/php/web/component/execute/system_page.php` (`CALC_PAGE_TEXT_IDS`), `src/main/resources/translations/en.yaml`, `de.yaml` | — | `calculator_removed_not_saved` | the text of the hint |
+| `docs/json_structure.md`, `docs/llm/pending.md` | the repeat keyword with the add button; change 5 open | the remove button on the page; change 5 done, waiting for the run, change 6 the logged save, decision 2 | the description and the task list |
+
+### Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| `portfolio_split_calculator_js.html` and the js snapshots of the other calculator pages | — | — | the new text in the texts of the page script, and `data-remove` on each remove button of a repeated input |
+| `portfolio_split_calculator_diff_remove_child.md` | 2 missing, 57 different | only the differences of decision 2: the field "Target weight third child" instead of "second child", the columns "Third child" and "Third", and the two check rows of the second child (`LISN share` and `LISP share`) missing, because the page removes the expected values of the removed second child and the third child has none, while the sample shows them for its renumbered second child; the numbers as in the sample | the remove button works |
+| the other case reports | 0 differences | 0 differences | they press no remove button |
+| the ids | — | — | none: no import file changes, so `test/test_part.php` without `test/reset_db.php` |
+
+### Unexpected changes
+
+The run of 2026-11-26 (`test/reset_db.php`, `test/test_re_pin.php`, `test/test_part.php`) covered this change
+together with change 1 of `docs/llm/log/2026-11-26_csv_format_phrases.md` and with `files::AUTO_UPDATE_TEST_FILES`
+set to `true`. So the snapshots were overwritten instead of failing, and this table compares the regenerated files
+with the plan. `_remove_child.md` is as the expected row says:
+- "Different (0)", so the numbers equal the sample.
+- "Missing (5)": the field "Target weight second child", the two check rows of the second child and the two tables
+  with a "Second child" column.
+- "Only in the generated page (3)": the field "Target weight third child" and the two tables with a "Third child"
+  column.
+
+The other case reports did not change.
+
+| file | old | new | reason |
+|---|---|---|---|
+| `portfolio_split_calculator_js.html`, `npp_ch_vote_js.html`, `pv_lifetime_balance_js.html`, `calculator_editor.html`, `npp_ch_vote_editor.html` | the new text and `data-remove` on each remove button | only the three new texts in the settings of the page script (`calculator_added_not_saved` and `calculator_added_no_number` of the follow-up of section 6 too), twice in the two editor pages; no `data-remove` | a js snapshot holds the seed and the settings, the script links `calculator_json.js` and draws the buttons in the browser, so a drawn attribute never shows in a snapshot; the editors carry the page settings twice, like `calculator_remove` |
+| the ids, `src/test/resources/unit/*/list.csv`, `src/test/php/const/triple_names.php`, `index.html`, `nnp`, `pv`, `portfolio_split` | none | shifted | not by this change: change 1 of `docs/llm/log/2026-11-26_csv_format_phrases.md` was in the same run and its log names the shift |
+| `docs/code_user_message_exceptions.md` | — | `system_page.php:2258` → `:2261` | the generated report names the line of each unexplained message, and the three new ids of `CALC_PAGE_TEXT_IDS` (one of this change, two of the follow-up of section 6) move it by three lines |
+
+### Lessons learned by llm (2026-11-26)
+
+- A snapshot of a javascript page has the data of the page, not the html that the script draws: before listing an
+  attribute of a drawn element as a side effect, check that the snapshot has the html of that element; the case
+  reports are what show the effect of the script.
+- A generated report that names a line number changes with every line added above it; list it as a side effect of
+  each change to a file that the report names.
+- "No id change" holds only for a run of this change alone; when two changes share one run, the plan names the
+  other change, so that the shift is not read as a side effect of this one.
+
+### Lessons learned by human
+
+has been fine, but test still takes long

@@ -1,0 +1,185 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-11-26 12:00:00",
+  "user": "timon",
+  "selection": [
+    "the system phrases that define the format of a csv file"
+  ],
+  "description": "The keywords of a csv format (docs/json_structure.md 'csv format'), so that the columns of a csv, the kinds of its rows and the words, triples and values of the import json of a csv are defined by the triples and values of a definition json and not by code. A list is a group triple from an object to a list keyword, whose items are the triples from the group; a text property or a flag is a triple from an object to the keyword. This file is imported as the last appended system file, so that no database id of a tested phrase moves.",
+  "words": [
+    {
+      "name": "csv",
+      "description": "comma-separated values, a text format with one line per table row"
+    },
+    {
+      "name": "header"
+    },
+    {
+      "name": "start"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "required"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "positive"
+    },
+    {
+      "name": "fallback"
+    },
+    {
+      "name": "row"
+    },
+    {
+      "name": "name"
+    },
+    {
+      "name": "description"
+    },
+    {
+      "name": "kind"
+    },
+    {
+      "name": "context"
+    },
+    {
+      "name": "optional"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    }
+  ],
+  "triples": [
+    {
+      "name": "zukunft.com system",
+      "description": "keyword for system internal triples such as the column definitions",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system",
+      "code_id": "zukunft_com_system"
+    },
+    {
+      "name": "csv (system)",
+      "description": "keyword of the csv formats; a phrase is the format of a csv by its triples to the keywords below. A value of the definition of a format is a template: per row each column item of it is the phrase of the cell of its column, the cell of a number column times the number of the template is the number e.g. a scale of 0.01 for a price in percent, a template without a number column writes its own number e.g. a default lot size, a kind phrase limits the template to the rows of that kind and is not written, and a template without the row name column is written once per phrases with the number of the first row; a written value gets the source of the csv, a template with the word assumed none. A triple of the definition from or to a column item that is no triple to a csv keyword is a template too: per row each column item is the phrase of its cell and {<header text>} in its description is the cell of that column; a template whose name starts with the name of its from column gets the name of the row cell and the rest of the name, the others no name; a template whose from and to are the same cell writes nothing and neither does a value template that uses it; a written triple whose from, verb and to the definition declares is written as that declaration",
+      "from": "csv",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_csv"
+    },
+    {
+      "name": "header start",
+      "from": "start",
+      "verb": "of",
+      "to": "header"
+    },
+    {
+      "name": "row name",
+      "from": "name",
+      "verb": "of",
+      "to": "row"
+    },
+    {
+      "name": "row description",
+      "from": "description",
+      "verb": "of",
+      "to": "row"
+    },
+    {
+      "name": "csv header start",
+      "description": "text property: the description of the triple from a csv format to this keyword is the complete first cell of its header row; the lines below it with as many cells as the header row are the rows of the csv, and a csv without it is reported",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "header start",
+      "code_id": "system_csv_header_start"
+    },
+    {
+      "name": "csv column",
+      "description": "list: the items of the group triple from a csv format to this keyword are the columns that the format reads; the description of an item is the complete header text of its column, which is the first cell of the header row with this text, and a template names the cell of the column by the item",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "column",
+      "code_id": "system_csv_column"
+    },
+    {
+      "name": "csv required",
+      "description": "flag: a row whose cell of a column with a triple to this keyword is empty is left out and reported",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "required",
+      "code_id": "system_csv_required"
+    },
+    {
+      "name": "csv number",
+      "description": "flag: a row whose cell of a column with a triple to this keyword is not empty and no number is left out and reported",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "number",
+      "code_id": "system_csv_number"
+    },
+    {
+      "name": "csv positive",
+      "description": "flag: a row whose number of a column with a triple to this keyword is not above zero is left out and reported e.g. an exchange rate",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "positive",
+      "code_id": "system_csv_positive"
+    },
+    {
+      "name": "csv fallback",
+      "description": "text property: the description of a triple from a column to this keyword is the header text of the column whose cell is taken while the cell of this column is empty e.g. the currency of a position for an empty price currency",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "fallback",
+      "code_id": "system_csv_fallback"
+    },
+    {
+      "name": "csv row name",
+      "description": "flag: the cell of the column with a triple to this keyword is the name of the word of its row, which a template names by this column",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "row name",
+      "code_id": "system_csv_row_name"
+    },
+    {
+      "name": "csv row description",
+      "description": "flag: the cell of the column with a triple to this keyword is the description of the word of its row",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "row description",
+      "code_id": "system_csv_row_description"
+    },
+    {
+      "name": "csv kind",
+      "description": "list: the items of the group triple from a column to this keyword map a cell of the column to the kind of its row; the description of an item is the complete cell and the to of the item is the kind; the word of a row is a (is a) the kind of its cell, a value template with a kind applies to the rows whose kind is it or is a it, and a row whose cell has no item is left out and reported",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "kind",
+      "code_id": "system_csv_kind"
+    },
+    {
+      "name": "csv context",
+      "description": "placeholder: a template with this keyword gets the first phrase of the context of the conversion instead e.g. the portfolio of the holdings",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "context",
+      "code_id": "system_csv_context"
+    },
+    {
+      "name": "csv optional",
+      "description": "flag of a value template: a value whose cell of the number column is empty or zero is not written e.g. the market value that the bank does not know",
+      "from": "csv (system)",
+      "verb": "has a",
+      "to": "optional",
+      "code_id": "system_csv_optional"
+    }
+  ]
+}

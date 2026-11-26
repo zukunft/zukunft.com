@@ -2709,6 +2709,11 @@ enum messages: string
     case TABLE_EDITOR_MEASURED = 'table_editor_measured';
     // in front of the name of an instance on the button that removes it from a repeated input
     case CALCULATOR_REMOVE = 'calculator_remove';
+    // the hint of an instance that the add button of a repeated input has added, until the save can keep it
+    case CALCULATOR_ADDED_NOT_SAVED = 'calculator_added_not_saved';
+    case CALCULATOR_ADDED_NO_NUMBER = 'calculator_added_no_number';
+    // in front of the names of the instances that the remove button has taken from the page but not from the database
+    case CALCULATOR_REMOVED_NOT_SAVED = 'calculator_removed_not_saved';
     // the header and the status texts of the check table of a calculator page
     case CALCULATOR_CHECK_VALUE = 'calculator_check_value';
     case CALCULATOR_CHECK_EXPECTED = 'calculator_check_expected';

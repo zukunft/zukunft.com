@@ -22,7 +22,8 @@ src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html and the
 
 Status of 2026-11-26: all case reports list 0 differences (plain, differ, low, high, standard and over), also with
 the walk counts by the instances (change 3 of step 3, section 4 of `docs/llm/log/2026-11-25_csv_child_shares.md`);
-only `_add_child.md` and `_remove_child.md` differ, because the buttons have no function yet.
+`_add_child.md` too after the run of 14:49 with the button "Add child" (change 4 of step 3); only `_remove_child.md`
+differs, until the run of change 5.
 
 The remaining tasks in the suggested order:
 1. phase 1, in parallel:
@@ -30,7 +31,8 @@ The remaining tasks in the suggested order:
      developer)
    - "import", the TODO of the developer in `convert_portfolio_csv.php`: "should be based on phrases without specific
      code", so the columns of the bank, the asset classes with their kind, the assumed lot sizes and the phrases of
-     the values come from the data instead of the consts of the class (the task "csv import defined by phrases")
+     the values come from the data instead of the consts of the class (the task "csv import defined by phrases",
+     change 1 of 3 done, waiting for the run)
    - the look: step 5 (the colours of the walk cells and the hint), the font of the diagram scale ("check",
      decision 3) and the icons of step 7
    - stop for a run: `/test/test_part.php` with the tests that are likely to break by these changes, and before
@@ -45,7 +47,8 @@ The rows of the walk are stored results of the formulas, and the browser calcula
 
 - part 1, the previous row in the backend (`docs/llm/log/2026-11-24_operand_groups.md`): a figure selects its number by the exact phrase group of the context and the operand, so check with a calculation job that the context of a walk formula is the phrases of the row, e.g. `LISN` and `first child portfolio`, and not the context of the calc-validation, which has more phrases
 - part 3, the formulas in `portfolio_split_calculator.json`: every formula is by the instances now (change 1 to 3 of
-  step 3); still open: the results of a new instance, which the page has no stored result of (change 4 of step 3)
+  step 3), and the page calculates the results of a new instance (change 4 of step 3); still open: the save of a new
+  instance (change 6 of step 3)
 - part 5, the number fields of the holdings and the add child task (the realised rows of this part are done, `docs/llm/log/2026-11-24_sum_over_results.md`)
 
 #### check
@@ -63,15 +66,19 @@ Decision of the developer (2026-11-25): the full step 3, so that the reports `_a
 reach 0 differences ("Missing in the generated page": the field of the third child, the warning "Weights differ", the
 result table and the walk with a third child column and a remove button per child). The changes, each with its own
 log and a run before the next one (change 1 to 3, every formula and warning by the instances of `child portfolio`,
-are done, `docs/llm/log/2026-11-25_csv_child_shares.md`):
-4. "Add child" in the browser (done, waiting for `/test/reset_db.php`, `/test/test_re_pin.php` and a
-   `/test/test_part.php` run with `system_views_read_tests`, section 6 of
-   `docs/llm/log/2026-11-25_csv_child_shares.md`): the button adds the third child, which the json declares, with
-   the weight of the first child or the rest and the results of the first child calculated again; then compare
-   `_add_child.md` with the sample
-5. "Remove the ..." removes an instance on the page, and the save of the page saves a new instance with its
-   `is a child portfolio` triple and its target share through the logged save; until then the save and a new case
-   leave out a child that "Add child" has added. The target is `_remove_child.md`.
+and change 4, the button "Add child" in the browser, are done, `docs/llm/log/2026-11-25_csv_child_shares.md`):
+5. "Remove the ..." in the browser (done, waiting for a `/test/test_part.php` run with `system_views_read_tests`,
+   section 7 of `docs/llm/log/2026-11-25_csv_child_shares.md`): the button takes the instance with its numbers and
+   results from the page. Decision of the developer (2026-11-26): a child keeps the name of its phrase, so after the
+   case `remove_child` the page shows the first and the third child, while the sample numbers them by position and
+   shows "second child"; these label differences and the check rows of the removed second child stay in
+   `_remove_child.md` on purpose, the numbers should equal the sample
+6. the logged save of the changed instances: a child that "Add child" has added with its `is a child portfolio`
+   triple and its target share, and a removed child of the database with the logged delete of its `is a` triple;
+   until then the save and a new case leave out an added child and keep a removed one, and the hints
+   `calculator_added_not_saved` (`addedHint`) and `calculator_removed_not_saved` (`removedHint` in
+   `calculator_json.js`) say so, which go with the save; a removed child of the database can be added again only by
+   a reload of the page, because the add button adds only the declared instances
 
 #### step 7: the buttons (13)
 
@@ -175,25 +182,12 @@ based on phrases without specific code" in `convert_portfolio_csv.php`; no re-pi
 import file, else re-pin for its new words and triples). Three changes, each with its own log and a run before the
 next one:
 
-1. the keywords and the definition json: keywords like the calculator keywords (`calculator_keywords.json`,
-   `triples::CALCULATOR_KEYWORDS`), e.g. `csv header start`, `csv row name`, `csv kind`, `csv value` and `csv
-   scale`, and the definition json of the format of the bank statement of the positions:
-   - the format is a phrase e.g. `bank position csv`, and its header row is the triple to `csv header start` with
-     the first cell as its description (`Asset Class`)
-   - the column that names the row (`Instrument`) and its description column (`Instrument Name`) as triples of the
-     format to `csv row name`, the column of the kind (`Asset Class`) as the triple to `csv kind`
-   - the kind of each cell of the kind column as a triple e.g. `Equities and similar positions` `is a` `stock`, so
-     that a new asset class is a new triple; a row of a kind without a triple is left out and reported
-     (`msg_id::IMPORT_UNKNOWN_ELEMENT`, as today)
-   - per kind and column the phrases of its value as a template e.g. `Quantity` for a stock `shares, original` and
-     for a bond `face value, {Currency}, original`, where `{Currency}` is the cell of that column of the same row;
-     the placeholder syntax is new and gets its rule in `docs/llm/json_structure.md`
-   - the defaults as values, e.g. `stock, lot size, shares, assumed` = 1, `bond (finance), lot size, assumed` = 1000
-     and `cash, lot size, assumed` = 0.01, instead of `convert_portfolio_csv::LOT_SIZES`
-   - a scale of a column as a value e.g. 0.01 for the price of a bond in percent points
-   - the words and triples that the templates use, declared like in any import json, so that `convert_csv` copies
-     them into its result and the result stays self-consistent (`docs/llm/json_structure.md` *Self-consistency*)
-   - tests: `import::get_data_object` reads the definition json without the database and without a message
+1. the keywords and the definition json (done, waiting for `/test/reset_db.php`, `/test/test_re_pin.php` and a
+   `/test/test_part.php` run, `docs/llm/log/2026-11-26_csv_format_phrases.md`): `csv_keywords.json` with the code
+   ids in `triples::CSV_KEYWORDS`, the definition json `src/test/resources/import/portfolio_csv/bank_position_csv.json`
+   and the rules in `docs/json_structure.md` *csv format*; decisions of the developer (2026-11-26): the keywords are
+   a system file with code ids, the definition is a test resource until change 3, a cell text is the description
+   of a triple
 2. `convert_csv`: reads the definition from the phrases (by the database or by `import::get_data_object` of the
    definition json for the unit test), finds the header row, maps each row by its kind and writes the values of the
    templates, the defaults and the vocabulary; it has no name of a column, a kind or a phrase of its own. Tests:

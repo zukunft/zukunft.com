@@ -1380,6 +1380,29 @@ class import_tests
         $split_json_cnt = count($split_arr[json_fields::VALUES]);
         $t->assert($test_name, $split_dto_cnt, $split_json_cnt, $t::TIMEOUT_LIMIT_IMPORT);
 
+        // the format of the bank csv as phrases, which convert_csv reads instead of the consts of convert_portfolio_csv
+        $test_name = 'the definition json of the bank csv format is read without a message';
+        $fmt_arr = json_decode(file_get_contents(test_files::IMPORT_PORTFOLIO_CSV_FORMAT), true);
+        $fmt_dto = $csv_imp->get_data_object($fmt_arr, $csv_msg);
+        $t->assert_msg($test_name, $csv_msg, $t::TIMEOUT_LIMIT_IMPORT);
+        $csv_msg->reset();
+        $test_name = '... with every value template';
+        $fmt_dto_cnt = $fmt_dto->value_list()->count();
+        $fmt_json_cnt = count($fmt_arr[json_fields::VALUES]);
+        $t->assert($test_name, $fmt_dto_cnt, $fmt_json_cnt, $t::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... and the columns linked to the keyword "csv column" that the file declares';
+        $fmt_trp_names = $fmt_dto->triple_list()->names();
+        $t->assert_contains($test_name, $fmt_trp_names, triples::CSV_COLUMN);
+        // negative: without its declaration the keyword is a new word of the file, so no code id finds the columns
+        $test_name = '... but without its declaration "csv column" is no triple';
+        $fmt_broken = $fmt_arr;
+        $fmt_broken[json_fields::TRIPLES] = array_values(array_filter($fmt_arr[json_fields::TRIPLES],
+            fn(array $trp) => ($trp[json_fields::NAME] ?? '') != triples::CSV_COLUMN));
+        $fmt_broken_dto = $csv_imp->get_data_object($fmt_broken, $csv_msg);
+        $fmt_broken_names = $fmt_broken_dto->triple_list()->names();
+        $t->assert_contains_not($test_name, $fmt_broken_names, triples::CSV_COLUMN, $t::TIMEOUT_LIMIT_IMPORT);
+        $csv_msg->reset();
+
         // XBRL fileset unpacker (first step of import_convert_xbrl)
         $lib = new library();
         $test_name = 'XBRL zip unpacker creates a unique extraction folder';
