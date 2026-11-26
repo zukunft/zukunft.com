@@ -166,7 +166,8 @@
     {"name": "RocheBond28", "description": "the bond Roche Holdings 1.0% 2028 in CHF"},
     {"name": "BundDE30", "description": "the bond Bund 0% 2030 in EUR"},
     {"name": "TreasuryUS27", "description": "the bond US Treasury 2.5% 2027 in USD"},
-    {"name": "rounded"}
+    {"name": "rounded"},
+    {"name": "third"}
   ],
   "triples": [
     {"name": "exchange rate", "from": "rate", "verb": "of", "to": "exchange", "description": "An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country's currency in relation to another currency.", "refs": [{"name": "Exchange_rate", "type": "wikipedia"}, {"name": "Q66100", "type": "wikidata"}]},
@@ -635,7 +636,13 @@
     {"name": "SEK cash hint", "description": "Cash SEK", "from": "SEK cash", "verb": "has a", "to": "calculator hint"},
     {"name": "portfolio split assumptions import", "from": "portfolio split assumptions", "verb": "has a", "to": "calculator file import"},
     {"name": "portfolio split assumptions import label", "description": "Import FX rates", "from": "portfolio split assumptions import", "verb": "has a", "to": "calculator label"},
-    {"name": "rounded count", "from": "count", "verb": "kind of", "to": "rounded", "description": "the target of a child in units of a holding rounded to the lot size, at most the whole holding, before the cap of an equal part"}
+    {"name": "rounded count", "from": "count", "verb": "kind of", "to": "rounded", "description": "the target of a child in units of a holding rounded to the lot size, at most the whole holding, before the cap of an equal part"},
+    {"name": "third child", "from": "child", "verb": "kind of", "to": "third"},
+    {"name": "third child portfolio", "from": "portfolio", "verb": "of", "to": "third child", "description": "the part of the original portfolio that a third child receives, once the button Add child has made it a child portfolio"},
+    {"name": "third child portfolio label", "description": "third child", "from": "third child portfolio", "verb": "has a", "to": "calculator label"},
+    {"name": "portfolio split walk column third child", "from": "portfolio split walk column child portfolio", "verb": "has a", "to": "third child portfolio"},
+    {"name": "portfolio split walk column third child label", "description": "Third", "from": "portfolio split walk column third child", "verb": "has a", "to": "calculator label"},
+    {"name": "portfolio split input child portfolio repeat third child", "description": "the child that the button Add child adds next", "from": "portfolio split input child portfolio repeat", "verb": "has a", "to": "third child portfolio"}
   ],
   "formulas": [
     {"name": "stock holding value", "description": "the market value of a stock holding: the shares times the stock price", "expression": "\"holding value\" = \"shares\" * \"stock price\"", "assigned_word": "stock price"},

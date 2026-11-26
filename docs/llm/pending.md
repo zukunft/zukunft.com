@@ -20,8 +20,9 @@ src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html and the
 4. a deviation that rounds to zero: shown as `0.00`, never as `-0.00`, so without the sign and without the style of
    a negative number; the sample is not followed in this point
 
-Status of 2026-11-25: all case reports list 0 differences (plain, differ, low, high, standard and over), since the
-equal part of part 3 of step 9 (`docs/llm/log/2026-11-25_equal_part.md`).
+Status of 2026-11-26: all case reports list 0 differences (plain, differ, low, high, standard and over), also with
+the walk counts by the instances (change 3 of step 3, section 4 of `docs/llm/log/2026-11-25_csv_child_shares.md`);
+only `_add_child.md` and `_remove_child.md` differ, because the buttons have no function yet.
 
 The remaining tasks in the suggested order:
 1. phase 1, in parallel:
@@ -30,14 +31,12 @@ The remaining tasks in the suggested order:
    - "import", the TODO of the developer in `convert_portfolio_csv.php`: "should be based on phrases without specific
      code", so the columns of the bank, the asset classes with their kind, the assumed lot sizes and the phrases of
      the values come from the data instead of the consts of the class (the task "csv import defined by phrases")
-   - the look: step 4 (a deviation that rounds to zero, decision 4; done, waiting for a `/test/test_part.php` run
-     with `use_case_ui_tests` and `system_views_read_tests`), step 5 (the colours of the walk cells and the
-     hint), the font of the diagram scale ("check", decision 3) and the icons of step 7
+   - the look: step 5 (the colours of the walk cells and the hint), the font of the diagram scale ("check",
+     decision 3) and the icons of step 7
    - stop for a run: `/test/test_part.php` with the tests that are likely to break by these changes, and before
      the commit an error free full `/test/test.php`
 2. phase 2, in parallel: part 5 of step 9 with the number fields of the holdings (step 5 (6)) and step 3 (add child
-   and remove, the formulas and the warnings by the instances, which also closes the instances of part 3, together
-   with "rounded count of a child in the portfolio split walk" of `docs/llm/pending_prio_2.md`)
+   and remove, the results of a new instance, which also closes the instances of part 3)
 3. after step 9: the functions of the buttons of step 7, each a task of its own
 
 #### step 9: calculate the split again in the browser (18)
@@ -45,18 +44,13 @@ The remaining tasks in the suggested order:
 The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation, and on the javascript page the `is alternative follower of` chain while an option with `calculator alternative order` is chosen (`docs/llm/log/2026-11-24_alternative_order.md`). Each part with a positive and a negative test and a run before the next part; the open points:
 
 - part 1, the previous row in the backend (`docs/llm/log/2026-11-24_operand_groups.md`): a figure selects its number by the exact phrase group of the context and the operand, so check with a calculation job that the context of a walk formula is the phrases of the row, e.g. `LISN` and `first child portfolio`, and not the context of the calc-validation, which has more phrases
-- part 3, the formulas in `portfolio_split_calculator.json` (the equal part is done, `docs/llm/log/2026-11-25_equal_part.md`). Still open: a formula by the instances, because `first child` and `second child` are named in the formulas and a new child has none (with step 3). The rounding noise is done: `round` and `floor` take their argument rounded to
-  12 decimals (`arithmetic::ROUND_NOISE_DECIMALS` and the same const in the three scripts), so all five evaluators
-  give the same tie (`docs/llm/log/2026-11-25_noise_cell_timing.md`)
+- part 3, the formulas in `portfolio_split_calculator.json`: every formula is by the instances now (change 1 to 3 of
+  step 3); still open: the results of a new instance, which the page has no stored result of (change 4 of step 3)
 - part 5, the number fields of the holdings and the add child task (the realised rows of this part are done, `docs/llm/log/2026-11-24_sum_over_results.md`)
 
 #### check
 
 - Diagram scale font (decision 3): the sample uses a monospace font for it, the generated page the normal one, so use a monospace font for the scale; the Import position stays (decision 2)
-
-#### step 4: the result table (9), (17)
-
-- a deviation that rounds to zero (decision 4): done, waiting for the run; the style of the sign follows the number as the cell rounds it (`ui_list::calculator_cell_shown`, `shownNumber` in `calculator.js` and `calculator_json.js`), so -0.004 with two decimals has neither the plus sign nor the negative style in every use case
 
 #### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
 
@@ -65,31 +59,19 @@ The rows of the walk are stored results of the formulas, and the browser calcula
 
 #### step 3: the input fields (1), (2), (3), (4)
 
-- the formulas of the warnings name the first and the second child: 
-  a new child needs a sum over the instances, so update them with the add child task
-
 Decision of the developer (2026-11-25): the full step 3, so that the reports `_add_child.md` and `_remove_child.md`
 reach 0 differences ("Missing in the generated page": the field of the third child, the warning "Weights differ", the
-result table and the walk with a third child column and a remove button per child). Six formulas of
-`portfolio_split_calculator.json` name `first child portfolio` and `second child portfolio`; they become formulas by
-the instances of `child portfolio` with the list functions over a kind (part 5 of step 9). The changes, each with
-its own log and a run before the next one, the stored numbers of the two children staying the same (change 1 and 2,
-the target share sum and spread by the instances, are done):
-3. the walk counts by the instances (done, waiting for `/test/reset_db.php`, `/test/test_re_pin.php` and a
-   `/test/test_part.php` run, section 4 of `docs/llm/log/2026-11-25_csv_child_shares.md`, with the list rule of
-   section 5 that it needs for the count of the parent)
-4. the browser calculates the results of a new instance: the page has no stored result of a third child, so
-   `calculator_json.js` creates its results from the formulas of the other instances
-5. the buttons: "Add child" adds an instance on the page (the weight of the first child if the parent can still
-   give it, else the rest, like the sample) with its field and a remove button per child, "Remove the ..." removes
-   it; the instance is saved as a phrase with its `is a child portfolio` triple and its target share through the
-   logged save of the page
-
-The buttons "Add child" and remove are a separate task after step 9, 
-because a new child has no allocation before the walk is calculated: 
-a new instance needs its own phrase, its "is a" triple and its target share through the logged save, 
-and the page needs the remove button per field. The button stays without a function until then.
-The target are the case reports `portfolio_split_calculator_diff_add_child.md` and `_remove_child.md`.
+result table and the walk with a third child column and a remove button per child). The changes, each with its own
+log and a run before the next one (change 1 to 3, every formula and warning by the instances of `child portfolio`,
+are done, `docs/llm/log/2026-11-25_csv_child_shares.md`):
+4. "Add child" in the browser (done, waiting for `/test/reset_db.php`, `/test/test_re_pin.php` and a
+   `/test/test_part.php` run with `system_views_read_tests`, section 6 of
+   `docs/llm/log/2026-11-25_csv_child_shares.md`): the button adds the third child, which the json declares, with
+   the weight of the first child or the rest and the results of the first child calculated again; then compare
+   `_add_child.md` with the sample
+5. "Remove the ..." removes an instance on the page, and the save of the page saves a new instance with its
+   `is a child portfolio` triple and its target share through the logged save; until then the save and a new case
+   leave out a child that "Add child" has added. The target is `_remove_child.md`.
 
 #### step 7: the buttons (13)
 

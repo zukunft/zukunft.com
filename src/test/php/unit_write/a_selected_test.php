@@ -706,7 +706,7 @@ class a_selected_test extends all_unit_tests
             //new component_list_ui_tests()->run($this);
             //new process_catch_ui_tests()->run($this);
             new use_case_ui_tests()->run($this);
-            //new phrase_data_ui_tests()->run($this);
+            new phrase_data_ui_tests()->run($this);
             //new language_ui_tests()->run($this);
             //new change_log_ui_tests()->run($this);
             //new sys_log_ui_tests()->run($this);

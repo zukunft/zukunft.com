@@ -1,41 +1,41 @@
 phrase_id,phrase_name
--6858,low voltage products (sector)
--6857,discrete automation and motion (sector)
--6393,corporate and other (sector)
--6392,power systems (sector)
--6391,power products (sector)
--6390,process automation (sector)
--5748,ABB Automation AMEA (sector of revenue)
--5747,ABB Automation Americas (sector of revenue)
--5746,ABB Automation Europe (sector of revenue)
--5745,ABB Motion AMEA (sector of revenue)
--5744,ABB Motion Americas (sector of revenue)
--5743,ABB Motion Europe (sector of revenue)
--5742,ABB Electrification AMEA (sector of revenue)
--5741,ABB Electrification Americas (sector of revenue)
--5740,ABB Electrification Europe (sector of revenue)
--5692,ABB Robotics division (sector of revenue)
--5691,ABB Corporate and Other (sector of revenue)
--5690,ABB Automation (sector of revenue)
--5689,ABB Motion (sector of revenue)
--5688,ABB Electrification (sector of revenue)
--4720,bond price kind
--4686,second child portfolio instance
--4685,first child portfolio instance
--4674,stock price kind
--4640,SEK cash holding
--4639,DKK cash holding
--4638,JPY cash holding
--4637,GBP cash holding
--4636,USD cash holding
--4635,EUR cash holding
--4634,CHF cash holding
--4631,bond holding
--4627,TreasuryUS27 (bond (finance))
--4626,BundDE30 (bond (finance))
--4625,RocheBond28 (bond (finance))
--4624,NestleBond27 (bond (finance))
--4623,ConfedBond30 (bond (finance))
+-6864,low voltage products (sector)
+-6863,discrete automation and motion (sector)
+-6399,corporate and other (sector)
+-6398,power systems (sector)
+-6397,power products (sector)
+-6396,process automation (sector)
+-5754,ABB Automation AMEA (sector of revenue)
+-5753,ABB Automation Americas (sector of revenue)
+-5752,ABB Automation Europe (sector of revenue)
+-5751,ABB Motion AMEA (sector of revenue)
+-5750,ABB Motion Americas (sector of revenue)
+-5749,ABB Motion Europe (sector of revenue)
+-5748,ABB Electrification AMEA (sector of revenue)
+-5747,ABB Electrification Americas (sector of revenue)
+-5746,ABB Electrification Europe (sector of revenue)
+-5698,ABB Robotics division (sector of revenue)
+-5697,ABB Corporate and Other (sector of revenue)
+-5696,ABB Automation (sector of revenue)
+-5695,ABB Motion (sector of revenue)
+-5694,ABB Electrification (sector of revenue)
+-4722,bond price kind
+-4688,second child portfolio instance
+-4687,first child portfolio instance
+-4675,stock price kind
+-4641,SEK cash holding
+-4640,DKK cash holding
+-4639,JPY cash holding
+-4638,GBP cash holding
+-4637,USD cash holding
+-4636,EUR cash holding
+-4635,CHF cash holding
+-4632,bond holding
+-4628,TreasuryUS27 (bond (finance))
+-4627,BundDE30 (bond (finance))
+-4626,RocheBond28 (bond (finance))
+-4625,NestleBond27 (bond (finance))
+-4624,ConfedBond30 (bond (finance))
 -4576,SEK (currency)
 -4575,DKK (currency)
 -4574,JPY (currency)

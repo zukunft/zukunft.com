@@ -302,11 +302,15 @@ A selector that mixes options with and without a number keeps the last results w
 
 Only `calculator_json.js` walks the `is alternative follower of` triples of an option with `calculator alternative order` (`docs/llm/log/2026-11-24_alternative_order.md`). The page without javascript (`calculator.php` `sorted` and `previous_in_list`, `ui_list::prior_names` and `ranked_rows`, which reach the six callers of `ui_list::page_calc` without the calculator reader), the backend (`element_group::prior_names`), the import check (`data_object::prior_names`) and `formula_editor.js` walk only the `is follower of` chain. So a page that `uses` the alternative option, or a saved case that has chosen it, shows the main order there, and the backend job of a save calculates the walk of the main order, which the double calculation check reports as a difference. Give these readers the chosen order of the page, each with a positive and a negative test; the stored results need the phrase of the order in their group, so that both walks can be stored.
 
-## rounded count of a child in the portfolio split walk
+## the order of the instances of a repeated input
 
-Done with change 3 of step 3 on 2026-11-26, waiting for the run (section 4 of `docs/llm/log/2026-11-25_csv_child_shares.md`).
-
-The formulas "walk count of the first child" and "walk count of the second child" of `portfolio_split_calculator.json` repeat the rounded count of a child, `min( max( round( "target quantity","first child portfolio" / "lot size" ) * "lot size" ; 0 ) ; "original" )`, three or four times for the equal part cap (`docs/llm/log/2026-11-25_equal_part.md`). The page without javascript holds the tokens of the formula per result, so the 84 results of the two formulas made `portfolio_split_calculator_no_js.html` grow from 2.8 MB to 4.0 MB. Add a formula "walk rounded count of a child" with its own result word (e.g. `rounded count`) for each child, and let the two count formulas read it, e.g. `if( max( "rounded count","first child portfolio" + "rounded count","second child portfolio" - "original" - "lot size" / 1000000 ; 0 ) = 0 ; ... )`, so that each expression is short. This needs the new word, 84 calc-validations of the new results (the stored numbers are the rounded counts, which are the stored counts of the standard case, because no stored row reaches the cap), the contexts of the count calc-validations with the new word instead of the operands of the rounded count, and a re-pin, because the new word shifts the ids of the later words; tests: the calc-validation of the import for every row and a case report of the case over with 0 differences. Do it with the formulas by the instances of step 3 (`docs/llm/pending.md`), which change the same formulas.
+Added on 2026-11-26: `calculator_json.js` (`kinds` with `sorted`) and the page without javascript order the instances
+of a repeated input by their label, so `first child`, `second child`, `third child` are in order, but a `fourth child`
+would be shown before the `second child`. So `portfolio_split_calculator.json` declares only the third child as the
+next instance of "Add child" (section 6 of `docs/llm/log/2026-11-25_csv_child_shares.md`), and the button is disabled
+after it. To add more children, give the instances an order of their own, e.g. by the order of the triples that the
+repeat triple has, in both renderers, with a positive test (the fourth child after the third) and a negative one (an
+instance without a declared place keeps the order by its label).
 
 ## calculator scripts without a browser test of a checkbox
 

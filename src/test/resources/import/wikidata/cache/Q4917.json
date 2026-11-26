@@ -4,8 +4,8 @@
             "pageid": 5869,
             "ns": 0,
             "title": "Q4917",
-            "lastrevid": 2575125734,
-            "modified": "2026-11-26T11:38:12Z",
+            "lastrevid": 2575173258,
+            "modified": "2026-11-26T15:07:15Z",
             "type": "item",
             "id": "Q4917",
             "labels": {
@@ -107,7 +107,7 @@
                 },
                 "cy": {
                     "language": "cy",
-                    "value": "$ (UDA)"
+                    "value": "$"
                 },
                 "da": {
                     "language": "da",

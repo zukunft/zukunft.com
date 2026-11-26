@@ -30,15 +30,15 @@
         "delete": [
             {
                 "class": "triple",
-                "id": 5802
-            },
-            {
-                "class": "triple",
-                "id": 5799
-            },
-            {
-                "class": "triple",
                 "id": 5808
+            },
+            {
+                "class": "triple",
+                "id": 5805
+            },
+            {
+                "class": "triple",
+                "id": 5814
             }
         ]
     }

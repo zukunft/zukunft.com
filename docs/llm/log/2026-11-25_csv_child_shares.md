@@ -1,10 +1,11 @@
 # portfolio csv, child cases and the instances of the children (2026-11-25)
 
-Five changes of 2026-11-25 and 2026-11-26 of the portfolio split page in `docs/llm/pending.md`, each with its own
+Six changes of 2026-11-25 and 2026-11-26 of the portfolio split page in `docs/llm/pending.md`, each with its own
 plan: the import json from the csv of a bank statement ("import"), the input cases that add a child and remove one
 (step 2), the target shares by the instances of `child portfolio` (step 3, change 1 of 5), the walk counts by the
-instances (step 3, change 3 of 5) and the list rule that the count of the parent of change 3 needs; change 2 of step 3
-has its own log (`docs/llm/log/2026-11-26_target_share_spread.md`). Each plan was started before the first edit of
+instances (step 3, change 3 of 5), the list rule that the count of the parent of change 3 needs and the button "Add
+child" in the browser (step 3, change 4 of 5); change 2 of step 3 has its own log
+(`docs/llm/log/2026-11-26_target_share_spread.md`). Each plan was started before the first edit of
 its change, so its tables are the plan; its "Unexpected changes" stay empty until the developer has run the tests.
 
 ## 1. portfolio csv
@@ -285,8 +286,14 @@ size of a cash row is an `assumed` value, so the contexts of the rounded count a
 
 | file | old | new | reason |
 |---|---|---|---|
+| `src/test/resources/web/html/use_cases/portfolio_split_calculator_diff_high.md`, `_low.md`, `_over.md`, `_differ.md` | 0 differences | 50 differences in the high report after the first run of 2026-11-26 (about 11:05): the parent keeps its stored counts, so its realised values and its weight of 30 % stay, while both children are calculated again | the run without `test/reset_db.php`: the database still had the removed formulas `walk count of the first child` and `walk count of the second child` and the old context of the count of the parent without `child`, so the page found no number for `"child","split count"` and kept the stored number; the run of 11:47 after `test/reset_db.php` and `test/test_re_pin.php` gives 0 differences in all these reports, so no file was changed for it |
 
 ### Lessons learned by llm (2026-11-26)
+
+- The second time in two days that a changed context of a calc-validation showed up as many differences of numbers
+  instead of one clear message: the page keeps the stored number of a result whose operand is missing without telling
+  the user, so a missing operand looks like a wrong calculation. A change that renames a formula or changes the
+  context of a calc-validation names `test/reset_db.php` as a must in its report, not only as a side effect.
 
 ## 5. list without the more specific number
 
@@ -325,7 +332,88 @@ changed so that their numbers differ by a phrase each, which keeps what they tes
 
 ### Unexpected changes
 
+None found: after the run of 2026-11-26 11:47 the case reports of the portfolio split stay at 0 differences, and the
+changes were committed with 12592d34f.
+
 | file | old | new | reason |
 |---|---|---|---|
 
 ### Lessons learned by llm (2026-11-26)
+
+## 6. add child in the browser
+
+Part of #247, step 3, change 4 of 5: the button "Add child" adds the next child on the javascript page and the page
+calculates its results.
+
+### Request
+
+"do the next open task of the portfolio split page", with the "Missing in the generated page (5)" of
+`portfolio_split_calculator_diff_add_child.md` selected (the field of the third child, the warning "Weights differ",
+the result table and the walk with a third child column, the three remove buttons).
+
+Decisions of the developer (2026-11-26):
+1. change 4 is the button "Add child" in the browser with the results of the new child, so that its run shows the
+   case report `_add_child.md`; change 5 is the remove button and the logged save of a new child
+2. the name of a new child is declared in the json: the repeat triple `has a` the children that the button can add,
+   without their `is a child portfolio` triple, and the button takes the next one that is no child yet
+
+Planned before the first edit:
+- only the third child is declared: the page orders the instances by their label (`sorted` in `calculator_json.js`),
+  so a declared `fourth child` would be shown before the `second child`; more children need an order of the
+  instances first (`docs/llm/pending_prio_2.md`); after the third child the button is disabled, like the sample after
+  its last ordinal
+- the new child gets the weight of the first child if the other instances leave enough of 100 %, else the rest, like
+  the sample; a field that is no share gets the number of the first child
+- the results of the new child are copies of the results of the first child with the new child instead of the first
+  one in their phrases and their context and without a stored number, so that the page calculates them; a result whose
+  formula names the first child is not copied, because it calculates only the first child; the sums over the children
+  take the new child, because its `is a child portfolio` triple makes it a kind of `child portfolio` (`withKinds`)
+- the new field is shown without its save vars, so that the save leaves it out (`frontend::calculator_changes`) until
+  change 5 saves the child with its phrase, its triple and its weight
+
+Checked after the edits and before the run, with a read-only scratch script without database: `calculator_json.js`
+in node with a minimal stand in of the DOM, the seed of the snapshot `portfolio_split_calculator_js.html` of 11:46
+plus the six new triples and the word of the json as the phrase data walk should deliver them, and a press of "Add
+child" through its click handler. Every item of the report `_add_child.md` of 2026-11-25 is then the one of the
+sample: the field "Target weight third child", the warning "Weights differ, so every child is rounded on its own
+deviation.", the result table and the walk with the third child column, three remove buttons, the parent at 0 % and
+all 56 rows of the table, the check table and the walk with the numbers of the sample (e.g. LISP 3, 3, 3 and 1 by the
+equal part). Not checked by it: whether the phrase data walk delivers the new triples, and the browser itself.
+
+### Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/resources/messages/use_cases/portfolio_split_calculator.json` (words, triples) | the first and the second child | the word `third` and the triples `third child`, `third child portfolio`, its label, the short walk column `Third` and the repeat triple `has a` `third child portfolio`, at the end of their blocks | the name, the labels and the column of the child that "Add child" adds; at the end, so that no object of the file gets another id |
+| `src/main/resources/script/calculator_json.js` (`repeatFields`, new `addInstance` with its helpers, the click listener) | the button without a function | the button adds the next declared instance with its weight and the copies of the results of the first instance, draws the fields of the repeated input again and calculates the results; disabled without a next instance | the field, the warning, the tables and the remove buttons of the third child |
+| `docs/json_structure.md`, `docs/llm/pending.md`, `docs/llm/pending_prio_2.md` | the repeat keyword without new instances; change 4 open | the declared instances of the repeat triple; change 4 done, waiting for the run; the order of more instances | the description and the task list |
+
+### Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| the ids and `src/test/resources/unit/*/list.csv` | — | — | the new word and triples shift the ids of the words and triples of every later import file: `test/reset_db.php` and `test/test_re_pin.php` before `test/test_part.php` |
+| `portfolio_split_calculator_js.html`, `src/test/resources/api/phrase_data/phrase_data_portfolio_split.json` | — | — | the seed gets the third child and its labels by the walk over the `has a` items; the page without javascript stays the same, because the third child is no instance |
+| `portfolio_split_calculator_diff_add_child.md` | 5 missing, 57 different, 2 only in the generated page | the five missing items and the two tables found; differences in the numbers can stay where the sample calculates its own way (to be read after the run) | the button works |
+| `portfolio_split_calculator_diff_remove_child.md` | 1 missing, 55 different | changes too, because it presses "Add child" first; the remove button still has no function (change 5) | — |
+| the other case reports | 0 differences | 0 differences | they press no button |
+
+### Unexpected changes
+
+After the run of 2026-11-26 14:49 (`test/reset_db.php`, `test/test_re_pin.php`, `test/test_part.php`) the report
+`_add_child.md` has 0 differences, the other case reports without a button stay at 0, and the seed of
+`portfolio_split_calculator_js.html` has the new triples with their labels, so the phrase data walk delivers them.
+
+| file | old | new | reason |
+|---|---|---|---|
+| `src/test/resources/unit/triple/list.csv` and the snapshots with a triple id, `index.html`, `portfolio_split` | the expected row says: at the end, so that no object of the file gets another id | `third child` gets the id 4618 before `first child portfolio`, and the other five new triples get ids between the triples of the file too (4684, 4728, 4845, 4846, 4849), so every triple of the portfolio split file after 4618 shifts by one to five, e.g. the page triple `example portfolio split` from -4620 to -4621 in the pinned link of `index.html` and in `portfolio_split`; the triples of the later files shift by six | the importer does not write the triples in the order of the json: `third child` links two words and is written before the triples that link a triple, like `first child portfolio`; no `*_ID` const pins one of the shifted ids, so `test/test_re_pin.php` changed no const; the word `third` is no new word, because `solution_prio.json` has it already, so the word ids stay |
+| `src/test/resources/web/html/use_cases/portfolio_split_calculator_no_js.html` | stays the same | the visible page stays the same, but the seed json of the page has the word `third` and the six triples, besides the shifted ids | the seed is the phrase data of the page also without javascript |
+| `src/test/resources/api/phrase_data/phrase_data_portfolio_split.json` | gets the third child | unchanged | the file is the input of the calculator report test of `phrase_data_ui_tests` (last changed 2026-11-18) and the run never writes it |
+| `src/test/resources/web/html/use_cases/portfolio_split_calculator_diff_remove_child.md` | 1 missing, 55 different | 2 missing, 57 different: the generated page shows the parent at 0 % and the three children, so the two tables of the sample with only the first and the second child are missing | as the expected row says: the button "Add child" works, the remove button has no function until change 5 |
+
+### Lessons learned by llm (2026-11-26)
+
+- The id of a new triple is not its position in the json: the importer writes a triple of two words before the
+  triples that link a triple, so a triple appended at the end can still shift the ids of the file itself. Before
+  claiming that no id of the file changes, check where `list.csv` puts a triple of the same kind.
+- Before listing a fixture as a side effect, check that the run writes it; an input fixture of a test stays as it is.

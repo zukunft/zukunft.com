@@ -107,6 +107,12 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     const VERDICT_STATES = ['yes', 'no', 'open'];
     // the attribute of a part with the name of the triple that defines it, which the calculator editor reads (PART_ATTR there)
     const PART_ATTR = 'data-part';
+    // the attribute of the add button of a repeated input with the name of its item triple
+    const ADD_ATTR = 'data-add';
+    // the shares of the instances of a repeated input together, which a new instance never exceeds (100 %)
+    const WHOLE_SHARE = 1;
+    // in front of the phrase names of a number that the page adds for a new instance, which has no database id yet
+    const NEW_ID_PREFIX = 'new: ';
     // the translated texts by their message id (system_page::CALC_PAGE_TEXT_IDS)
     const TXT = {
         inputs: 'calculator_inputs', assumptions: 'calculator_assumptions', result: 'calculator_result',
@@ -154,11 +160,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     (seed.triples || []).forEach(function (t) {
         const name = t.name || generatedName(t);
         const trp = {name: name, id: '-' + t.id, type: t.type || '', from: t.from, verb: t.verb, to: t.to, description: t.description || '', impact: Number(t.impact) || 0};
-        phrases.set(name, trp);
-        if (!children.has(t.from)) {
-            children.set(t.from, []);
-        }
-        children.get(t.from).push(trp);
+        addTriple(trp);
         if (t.verb === VERB.symbol) {
             symbols.set(t.to, t.from);
             owners.set(t.from, t.to);
@@ -206,6 +208,15 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     /* ------------------------------------------------------------------ */
     /* helpers                                                              */
     /* ------------------------------------------------------------------ */
+
+    /* a triple of the seed or the is a triple of a new instance by its name and by its from phrase */
+    function addTriple(trp) {
+        phrases.set(trp.name, trp);
+        if (!children.has(trp.from)) {
+            children.set(trp.from, []);
+        }
+        children.get(trp.from).push(trp);
+    }
 
     /* like the backend triple::generate_name, because the other objects name a triple without its own name so */
     function generatedName(t) {
@@ -1389,7 +1400,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     /* plus: true to show the sign with the plus sign, the style of the sign only for a number that does not round to zero; sub: the sub text behind the number; colour: the colour style of the column of a detail table (ui_list::calculator_cell) */
     function cellHtml(entry, formats, signed, withUnit, decimals, plus, sub, colour) {
         let text = '';
-        if (entry !== null) {
+        // a result of a new instance that cannot be calculated has no number, which is no zero
+        if (entry !== null && entry.number !== null) {
             text = esc(numberText(entry, formats, withUnit, decimals));
             const shown = shownNumber(entry, formats, decimals);
             if (signed) {
@@ -1731,8 +1743,11 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             inputPhrases.set(field, name);
         }
         const unit = entry === null ? '' : fieldUnit(entry);
-        if (entry !== null) {
+        // a new instance has no database row yet, so without its save vars the save leaves it out (step 3, change 5)
+        if (entry !== null && !entry.added) {
             input += saveVars(key, entry, lbl, unit);
+        }
+        if (entry !== null) {
             inputEntries.set(field, entry);
         }
         if (unit !== '') {
@@ -1911,15 +1926,126 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* a field per instance of a repeated input and the button to add one, which has no function yet, because a new instance needs its own phrase (ui_list::calculator_repeat) */
+    /* a field per instance of a repeated input and the button that adds the next declared instance, disabled if none is left (ui_list::calculator_repeat) */
     function repeatFields(item, name) {
-        const has = subItems(name, VERB.has)[0];
-        const valuePhrase = has === undefined ? name : has.to;
+        const valuePhrase = repeatValuePhrase(name);
         const add = ownText(item.name, KW.repeat);
         const result = kinds(name).map(function (instance) {
             return numberField(item, name, false, instance, optionEntry(valuePhrase, instance));
         }).join('');
-        return result + (add ? '<button type="button" class="' + STYLE.addButton + '">' + esc(add) + '</button>' : '');
+        const disabled = nextInstances(item).length === 0 ? ' disabled' : '';
+        const button = '<button type="button" class="' + STYLE.addButton + '" ' + ADD_ATTR + '="' + esc(item.name) + '"' + disabled + '>' + esc(add) + '</button>';
+        return result + (add ? button : '');
+    }
+
+    /* the phrase that each instance of a repeated input has a number of e.g. the target share of a child portfolio */
+    function repeatValuePhrase(name) {
+        const has = subItems(name, VERB.has)[0];
+        return has === undefined ? name : has.to;
+    }
+
+    /* the instances that the add button of a repeated input adds, in their order: what its repeat triple has, but is no instance yet */
+    function nextInstances(item) {
+        const repeat = property(item.name, KW.repeat);
+        const known = kinds(item.to);
+        const declared = repeat === null ? [] : subItems(repeat.name, VERB.has);
+        return declared.map(function (t) {
+            return t.to;
+        }).filter(function (name) {
+            return known.indexOf(name) < 0;
+        });
+    }
+
+    /* the add button of a repeated input makes its next instance a kind of the repeated phrase on the page, with the
+       number of the new instance and the results of the first instance for it, and shows its field and its results */
+    function addInstance(event) {
+        const button = event.target.closest('[' + ADD_ATTR + ']');
+        const item = button === null ? undefined : phrases.get(button.getAttribute(ADD_ATTR));
+        const instance = item === undefined ? undefined : nextInstances(item)[0];
+        if (instance !== undefined) {
+            const template = kinds(item.to)[0];
+            const entry = newInstanceEntry(item.to, template, instance);
+            if (entry === null) {
+                console.warn('the first instance ' + template + ' has no number of ' + repeatValuePhrase(item.to) + ', so ' + instance + ' has none');
+            }
+            // the triple has no database id until the instance is saved (step 3, change 5)
+            const link = {from: instance, verb: VERB.is, to: item.to};
+            addTriple(Object.assign({name: generatedName(link), id: '', type: '', description: '', impact: 0}, link));
+            copyResults(template, instance);
+            redrawRepeatFields(item, button);
+            redrawResults();
+        }
+    }
+
+    /* the number of a new instance: the number of the first instance with the new instance, a share at most what the
+       other instances leave of 100 %, like the weight of a new child in the sample; null if the first instance has none */
+    function newInstanceEntry(name, template, instance) {
+        const valuePhrase = repeatValuePhrase(name);
+        const first = optionEntry(valuePhrase, template);
+        let result = null;
+        if (first !== null) {
+            let number = Number(first.number);
+            if (isPercentEntry(first)) {
+                const rest = WITHOUT_NOISE(WHOLE_SHARE - instancesSum(name, valuePhrase));
+                number = Math.max(0, Math.min(number, rest));
+            }
+            const words = replacedPhrase(first.words, template, instance);
+            result = {id: newId(words), words: words, number: number, source: first.source, description: first.description, added: true};
+            pool.push(result);
+        }
+        return result;
+    }
+
+    /* the sum of the numbers of the instances of a repeated input e.g. 0.7 for two children of 35 % */
+    function instancesSum(name, valuePhrase) {
+        return kinds(name).reduce(function (sum, instance) {
+            const entry = optionEntry(valuePhrase, instance);
+            return entry === null ? sum : sum + Number(entry.number);
+        }, 0);
+    }
+
+    /* the results of the first instance again for a new instance, without a stored number so that the page calculates
+       them; not a result whose formula names the first instance, because that formula calculates only the first one */
+    function copyResults(template, instance) {
+        pool.filter(function (e) {
+            return e.result && e.words.indexOf(template) >= 0 && !formulaNames(e.formula, template);
+        }).forEach(function (e) {
+            const words = replacedPhrase(e.words, template, instance);
+            const copy = {id: newId(words), words: words, number: null, stored: null, formula: e.formula, context: replacedPhrase(e.context, template, instance), result: true, added: true};
+            pool.push(copy);
+            if (pageResults.indexOf(e) >= 0) {
+                pageResults.push(copy);
+            }
+        });
+    }
+
+    /* true if the expression of the formula has the phrase as an operand name */
+    function formulaNames(formula, name) {
+        const expression = String((formulas.get(formula) || {}).expression || '');
+        return expression.indexOf('"' + name + '"') >= 0;
+    }
+
+    function replacedPhrase(names, from, to) {
+        return names.map(function (n) {
+            return n === from ? to : n;
+        });
+    }
+
+    /* the id of a number of a new instance by its phrases, because a list keeps each id once (listEntries) */
+    function newId(words) {
+        return NEW_ID_PREFIX + words.slice().sort().join(', ');
+    }
+
+    /* the fields of a repeated input and its button again, so that every instance shows its remove button */
+    function redrawRepeatFields(item, button) {
+        const old = Array.from(host.querySelectorAll('.' + STYLE.field)).filter(function (f) {
+            return f.getAttribute(PART_ATTR) === item.name;
+        });
+        button.insertAdjacentHTML('beforebegin', repeatFields(item, item.to));
+        old.forEach(function (f) {
+            f.remove();
+        });
+        button.remove();
     }
 
     function fields(list, assumption) {
@@ -2001,8 +2127,9 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         }).map(function (t) {
             return {name: t.name.replace(page.name, caseTriple), from: caseTriple, verb: t.verb, to: t.to};
         });
+        // without the number of a new instance, whose instance triple the case cannot save yet (step 3, change 5)
         const values = pool.filter(function (e) {
-            return !e.result && e.words.indexOf(page.name) >= 0;
+            return !e.result && !e.added && e.words.indexOf(page.name) >= 0;
         }).map(function (e) {
             const json = {
                 words: e.words.map(function (w) {
@@ -2712,6 +2839,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     host.addEventListener('change', refreshResults);
     host.addEventListener('submit', saveCase);
     host.addEventListener('click', applyPreset);
+    host.addEventListener('click', addInstance);
     host.addEventListener('toggle', toggleSensitivity, true);
 
 }
