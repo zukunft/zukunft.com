@@ -2346,74 +2346,74 @@
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2695,
+                            "id": 2697,
                             "name": "Swiss franc",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2774,
+                            "id": 2776,
                             "name": "US dollar",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2778,
+                            "id": 2780,
                             "name": "EPS",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2779,
+                            "id": 2781,
                             "name": "trailing",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2785,
+                            "id": 2787,
                             "name": "enterprise",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2786,
+                            "id": 2788,
                             "name": "multiple",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2792,
+                            "id": 2794,
                             "name": "upside",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2795,
+                            "id": 2797,
                             "name": "capitalisation",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2796,
+                            "id": 2798,
                             "name": "outstanding",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2797,
+                            "id": 2799,
                             "name": "guidance",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2798,
+                            "id": 2800,
                             "name": "operational",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2801,
+                            "id": 2803,
                             "name": "EBITA",
                             "description": "earnings before interest, taxes and amortisation, the operating profit measure ABB reports",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2803,
+                            "id": 2805,
                             "name": "EV",
                             "description": "the usual acronym for enterprise value",
                             "type_code_id": "default"
                         },
                         {
-                            "id": 2804,
+                            "id": 2806,
                             "name": "P/E",
                             "description": "the price-earnings ratio: the share price divided by the earnings per share",
                             "type_code_id": "default"
@@ -7897,8 +7897,8 @@
                             "name": "target share excess formula",
                             "description": "how much the target shares of the children exceed the whole portfolio; above zero the page shows a warning",
                             "type_code_id": "default",
-                            "expression": "\"target share excess\" = \"first child portfolio\" + \"second child portfolio\" - \"original\"",
-                            "latex": "\\text{target share excess} = \\text{first child portfolio} + \\text{second child portfolio} - \\text{original}",
+                            "expression": "\"target share excess\" = \"child\",\"target share\" - \"original\"",
+                            "latex": "\\text{target share excess} = \\text{child},\\text{target share} - \\text{original}",
                             "assigned_word": "target share",
                             "impact": null
                         },
@@ -7907,8 +7907,8 @@
                             "name": "target share difference formula",
                             "description": "how much the target shares of the children differ while mirroring is asked; above zero the page shows a warning",
                             "type_code_id": "default",
-                            "expression": "\"target share difference\" = \"mirror\" * ( max( \"first child portfolio\" ; \"second child portfolio\" ) - min( \"first child portfolio\" ; \"second child portfolio\" ) )",
-                            "latex": "\\text{target share difference} = \\text{mirror} \\cdot ( max( \\text{first child portfolio} ; \\text{second child portfolio} ) - min( \\text{first child portfolio} ; \\text{second child portfolio} ) )",
+                            "expression": "\"target share difference\" = \"mirror\" * \"child\",\"target share difference\"",
+                            "latex": "\\text{target share difference} = \\text{mirror} \\cdot \\text{child},\\text{target share difference}",
                             "assigned_word": "target share",
                             "impact": null
                         },
@@ -7977,8 +7977,8 @@
                             "name": "target share of the parent",
                             "description": "the parent keeps what the target shares of the children leave of the whole portfolio",
                             "type_code_id": "default",
-                            "expression": "\"parent portfolio\",\"target share\" = \"original\" - \"first child portfolio\" - \"second child portfolio\"",
-                            "latex": "\\text{parent portfolio},\\text{target share} = \\text{original} - \\text{first child portfolio} - \\text{second child portfolio}",
+                            "expression": "\"parent portfolio\",\"target share\" = \"original\" - \"child\",\"target share\"",
+                            "latex": "\\text{parent portfolio},\\text{target share} = \\text{original} - \\text{child},\\text{target share}",
                             "assigned_word": "target share",
                             "impact": null
                         },
@@ -8023,7 +8023,27 @@
                             "impact": null
                         },
                         {
-                            "id": 295,
+                            "id": 269,
+                            "name": "target share of the children",
+                            "description": "the sum of the target shares of all child portfolios, so that a new child is part of the excess and of the share of the parent; its own formula, because a list takes only the numbers with every phrase of its context and a plain operand only a number whose phrases are all in the context; named by child and not by child portfolio, because a list over the child portfolios would take a number with the phrase child portfolio itself",
+                            "type_code_id": "default",
+                            "expression": "\"child\",\"target share\" = sum( \"child portfolio\" )",
+                            "latex": "\\text{child},\\text{target share} = sum( \\text{child portfolio} )",
+                            "assigned_word": "target share",
+                            "impact": null
+                        },
+                        {
+                            "id": 270,
+                            "name": "target share spread of the children",
+                            "description": "the largest minus the smallest target share of all child portfolios, so that a new child is part of the difference; its own formula for the same reason as the target share of the children",
+                            "type_code_id": "default",
+                            "expression": "\"child\",\"target share difference\" = largest( \"child portfolio\" ) - smallest( \"child portfolio\" )",
+                            "latex": "\\text{child},\\text{target share difference} = largest( \\text{child portfolio} ) - smallest( \\text{child portfolio} )",
+                            "assigned_word": "target share",
+                            "impact": null
+                        },
+                        {
+                            "id": 297,
                             "name": "currency conversion per share",
                             "description": "ABB reports in US dollars and the share is quoted in Swiss francs, so every per-share figure in USD is multiplied by the USD/CHF rate before it meets the price",
                             "type_code_id": "default",
@@ -8036,7 +8056,7 @@
                             "impact": null
                         },
                         {
-                            "id": 296,
+                            "id": 298,
                             "name": "earnings multiple target",
                             "description": "the target by the earnings multiple: the earnings per share 2027 times the fair price-earnings ratio, in CHF",
                             "type_code_id": "default",
@@ -8050,7 +8070,7 @@
                             "impact": null
                         },
                         {
-                            "id": 297,
+                            "id": 299,
                             "name": "free cash flow per share formula",
                             "description": "the free cash flow of 2026 divided by the shares outstanding; billion USD divided by billion shares gives USD per share, times the exchange rate CHF per share",
                             "type_code_id": "default",
@@ -8064,7 +8084,7 @@
                             "impact": null
                         },
                         {
-                            "id": 298,
+                            "id": 300,
                             "name": "net debt per share formula",
                             "description": "the net debt divided by the shares outstanding, in CHF",
                             "type_code_id": "default",
@@ -8078,7 +8098,7 @@
                             "impact": null
                         },
                         {
-                            "id": 303,
+                            "id": 305,
                             "name": "upside formula",
                             "description": "the target divided by the price minus one, as a share; positive means the share is below its target; the percent measure shows it as a percentage",
                             "type_code_id": "default",
@@ -8091,7 +8111,7 @@
                             "impact": null
                         },
                         {
-                            "id": 304,
+                            "id": 306,
                             "name": "method upside formula",
                             "description": "the upside of one method's target against the price, the vs. price column of the method rows",
                             "type_code_id": "default",
@@ -8104,7 +8124,7 @@
                             "impact": null
                         },
                         {
-                            "id": 308,
+                            "id": 310,
                             "name": "trailing P/E formula",
                             "description": "the price divided by the last twelve months' EPS in CHF",
                             "type_code_id": "default",
@@ -8118,7 +8138,7 @@
                             "impact": null
                         },
                         {
-                            "id": 309,
+                            "id": 311,
                             "name": "forward P/E formula",
                             "description": "the price divided by the EPS 2027 in CHF",
                             "type_code_id": "default",
@@ -8131,7 +8151,7 @@
                             "impact": null
                         },
                         {
-                            "id": 312,
+                            "id": 314,
                             "name": "market capitalisation formula",
                             "description": "the price times the shares outstanding; CHF times billion shares gives billion CHF",
                             "type_code_id": "default",
@@ -8144,7 +8164,7 @@
                             "impact": null
                         },
                         {
-                            "id": 313,
+                            "id": 315,
                             "name": "enterprise value multiple formula",
                             "description": "the market capitalisation in USD plus the net debt, divided by the operational EBITA 2026",
                             "type_code_id": "default",
@@ -8159,7 +8179,7 @@
                             "impact": null
                         },
                         {
-                            "id": 314,
+                            "id": 316,
                             "name": "free cash flow yield formula",
                             "description": "the free cash flow per share in CHF divided by the price",
                             "type_code_id": "default",
@@ -8172,7 +8192,7 @@
                             "impact": null
                         },
                         {
-                            "id": 315,
+                            "id": 317,
                             "name": "dividend yield formula",
                             "description": "the dividend per share divided by the price",
                             "type_code_id": "default",
@@ -10870,7 +10890,7 @@
                             "number": 1.09
                         },
                         {
-                            "id": "5l-46-1u+9t+e5+fK+",
+                            "id": "5l-46-1u+9t+e7+fM+",
                             "words": [
                                 "2026",
                                 "October",
@@ -11125,11 +11145,10 @@
                             ],
                             "formula": "target share excess formula",
                             "context": [
+                                "child",
                                 "example portfolio split",
-                                "first child portfolio",
                                 "original",
                                 "percent",
-                                "second child portfolio",
                                 "target share"
                             ],
                             "number": -0.3
@@ -11144,12 +11163,11 @@
                             "formula": "target share difference formula",
                             "context": [
                                 "assumed",
+                                "child",
                                 "example portfolio split",
-                                "first child portfolio",
                                 "mirror",
                                 "percent",
-                                "second child portfolio",
-                                "target share"
+                                "target share difference"
                             ],
                             "number": 0
                         },
@@ -19841,14 +19859,29 @@
                             ],
                             "formula": "target share of the parent",
                             "context": [
+                                "child",
                                 "example portfolio split",
-                                "first child portfolio",
                                 "original",
                                 "percent",
-                                "second child portfolio",
                                 "target share"
                             ],
                             "number": 0.3
+                        },
+                        {
+                            "id": "/69-/3W-1b+2C+",
+                            "words": [
+                                "child",
+                                "percent",
+                                "example portfolio split",
+                                "target share"
+                            ],
+                            "formula": "target share of the children",
+                            "context": [
+                                "example portfolio split",
+                                "percent",
+                                "target share"
+                            ],
+                            "number": 0.7
                         },
                         {
                             "id": "/69-/3X-/3P-6f+",
@@ -22869,6 +22902,22 @@
                                 "unit value"
                             ],
                             "number": 374220
+                        },
+                        {
+                            "id": "/6J-/69-1b+2C+",
+                            "words": [
+                                "child",
+                                "percent",
+                                "example portfolio split",
+                                "target share difference"
+                            ],
+                            "formula": "target share spread of the children",
+                            "context": [
+                                "example portfolio split",
+                                "percent",
+                                "target share"
+                            ],
+                            "number": 0
                         }
                     ]
                 }

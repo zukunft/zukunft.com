@@ -915,6 +915,12 @@ unreadable page never updates the expected import json of the last run
 (`test_files::IMPORT_WIKIPEDIA_REFRESH_*`). The hand made `summary_Geneva.json` and
 `summary_Zurich.json` of the unit tests are no such copy and are never written by a run.
 
+So these live copies change every time a test run updates the data from the internet, e.g. a
+new `tid` of the page: `import/wikipedia/cache/live_Geneva.json`, `import/wikipedia/cache/live_Health.json`
+and the wikidata property `import/wikidata/cache/P1082.json`. That is expected and fine: they are
+committed as the last run has written them, never reported as a polluted snapshot and never
+restored together with the html snapshots of a run on a database with leftovers.
+
 ## Phrase id consts are re-baselined from the regenerated list.csv, never guessed
 
 `src/test/php/const/{word,triple,verb}_names.php` pin the **seed database ids**
@@ -1179,7 +1185,10 @@ differences of the two as a markdown report next to the page (`html_page_diff`,
 `pv_lifetime_balance_diff.md` for the server page without javascript) and after the input cases
 standard, high and low for the page of the browser (`pv_lifetime_balance_diff_standard.md`,
 `_high.md` and `_low.md`). The table in `docs/deployment.md` "use case pages and their samples" lists which sample has
-this setup and how to add it. The folder is not
+this setup and how to add it. A case of `src/test/js/<name>_cases.js` types its numbers by the label of the field
+(`src/test/js/use_case_cases.js`); its key `press` lists the buttons that the case presses before, by their text,
+title or aria label, e.g. `"press": ["Add child", "Remove the second child"]` of the portfolio split cases
+`add_child` and `remove_child`, and a button or a field that the page lacks is listed as missing. The folder is not
 below `views_by_object`, because the view test deletes every snapshot there that it has
 not written, which would remove the sample.
 

@@ -1,0 +1,2878 @@
+{
+    "pod": "zukunft.com",
+    "version": "0.0.3",
+    "data_version": "0.0.1",
+    "time": "2024-04-05T08:35:30+00:00",
+    "selection": [
+        "example portfolio split"
+    ],
+    "words": [
+        {
+            "name": "example portfolio split"
+        },
+        {
+            "name": "original"
+        },
+        {
+            "name": "value"
+        },
+        {
+            "name": "price"
+        },
+        {
+            "name": "size"
+        },
+        {
+            "name": "lot"
+        },
+        {
+            "name": "face"
+        },
+        {
+            "name": "holding"
+        },
+        {
+            "name": "stock"
+        },
+        {
+            "name": "shares"
+        },
+        {
+            "name": "bond"
+        },
+        {
+            "name": "finance"
+        },
+        {
+            "name": "cash"
+        },
+        {
+            "name": "rate"
+        },
+        {
+            "name": "exchange"
+        },
+        {
+            "name": "expected"
+        },
+        {
+            "name": "assumed"
+        },
+        {
+            "name": "percent"
+        },
+        {
+            "name": "zukunft.com"
+        },
+        {
+            "name": "system"
+        },
+        {
+            "name": "calculator"
+        },
+        {
+            "name": "hint"
+        },
+        {
+            "name": "CHF"
+        },
+        {
+            "name": "EUR"
+        },
+        {
+            "name": "USD"
+        },
+        {
+            "name": "GBP"
+        },
+        {
+            "name": "DKK"
+        },
+        {
+            "name": "SEK"
+        },
+        {
+            "name": "JPY"
+        },
+        {
+            "name": "LISP",
+            "description": "Lindt & Sprüngli AG (PS)"
+        },
+        {
+            "name": "LISN",
+            "description": "Lindt & Sprüngli AG (registered)"
+        },
+        {
+            "name": "GIVN",
+            "description": "Givaudan SA"
+        },
+        {
+            "name": "PGHN",
+            "description": "Partners Group Holding AG"
+        },
+        {
+            "name": "GEBN",
+            "description": "Geberit AG"
+        },
+        {
+            "name": "LONN",
+            "description": "Lonza Group AG"
+        },
+        {
+            "name": "ZURN",
+            "description": "Zurich Insurance Group AG"
+        },
+        {
+            "name": "SCMN",
+            "description": "Swisscom AG"
+        },
+        {
+            "name": "VACN",
+            "description": "VAT Group AG"
+        },
+        {
+            "name": "ROG",
+            "description": "Roche Holding AG"
+        },
+        {
+            "name": "SOON",
+            "description": "Sonova Holding AG"
+        },
+        {
+            "name": "SCHP",
+            "description": "Schindler Holding AG (PS)"
+        },
+        {
+            "name": "SIKA",
+            "description": "Sika AG"
+        },
+        {
+            "name": "KNIN",
+            "description": "Kuehne + Nagel International AG"
+        },
+        {
+            "name": "UHR",
+            "description": "The Swatch Group AG"
+        },
+        {
+            "name": "CFR",
+            "description": "Compagnie Financière Richemont SA"
+        },
+        {
+            "name": "SREN",
+            "description": "Swiss Re AG"
+        },
+        {
+            "name": "STMN",
+            "description": "Straumann Holding AG"
+        },
+        {
+            "name": "LOGN",
+            "description": "Logitech International SA"
+        },
+        {
+            "name": "NOVN",
+            "description": "Novartis AG"
+        },
+        {
+            "name": "SGSN",
+            "description": "SGS SA"
+        },
+        {
+            "name": "HOLN",
+            "description": "Holcim AG"
+        },
+        {
+            "name": "NESN",
+            "description": "Nestlé S.A."
+        },
+        {
+            "name": "ALC",
+            "description": "Alcon AG"
+        },
+        {
+            "name": "BAER",
+            "description": "Julius Bär Group AG"
+        },
+        {
+            "name": "BANB",
+            "description": "Bachem Holding AG"
+        },
+        {
+            "name": "ABBN",
+            "description": "ABB Ltd"
+        },
+        {
+            "name": "SDZ",
+            "description": "Sandoz Group AG"
+        },
+        {
+            "name": "ADEN",
+            "description": "Adecco Group AG"
+        },
+        {
+            "name": "UBSG",
+            "description": "UBS Group AG"
+        },
+        {
+            "name": "ConfedBond30",
+            "description": "Swiss Confederation 1.25% 2030"
+        },
+        {
+            "name": "NestleBond27",
+            "description": "Nestlé Holdings 0.875% 2027"
+        },
+        {
+            "name": "RocheBond28",
+            "description": "Roche Holdings 1.0% 2028"
+        },
+        {
+            "name": "BundDE30",
+            "description": "Bund 0% 2030"
+        },
+        {
+            "name": "TreasuryUS27",
+            "description": "US Treasury 2.5% 2027"
+        },
+        {
+            "name": "GBP cash",
+            "description": "Cash GBP"
+        },
+        {
+            "name": "CHF cash",
+            "description": "Cash CHF"
+        },
+        {
+            "name": "EUR cash",
+            "description": "Cash EUR"
+        },
+        {
+            "name": "USD cash",
+            "description": "Cash USD"
+        },
+        {
+            "name": "DKK cash",
+            "description": "Cash DKK"
+        },
+        {
+            "name": "SEK cash",
+            "description": "Cash SEK"
+        },
+        {
+            "name": "JPY cash",
+            "description": "Cash JPY"
+        }
+    ],
+    "triples": [
+        {
+            "name": "zukunft.com system",
+            "from": "zukunft.com",
+            "verb": "is a",
+            "to": "system",
+            "description": "keyword for system internal triples such as the column definitions"
+        },
+        {
+            "name": "calculator (system)",
+            "from": "calculator",
+            "verb": "can be",
+            "to": "zukunft.com system"
+        },
+        {
+            "name": "calculator hint",
+            "from": "calculator (system)",
+            "verb": "has a",
+            "to": "hint"
+        },
+        {
+            "name": "exchange rate",
+            "from": "rate",
+            "verb": "of",
+            "to": "exchange",
+            "description": "An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country's currency in relation to another currency.",
+            "refs": [
+                {
+                    "name": "Exchange_rate",
+                    "type": "wikipedia"
+                },
+                {
+                    "name": "Q66100",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "bond (finance)",
+            "from": "bond",
+            "verb": "must be one of",
+            "to": "finance",
+            "description": "the finance reading of the ambiguous word 'bond': a debt security under which the issuer owes the holders the face value and the interest",
+            "refs": [
+                {
+                    "name": "Bond_(finance)",
+                    "type": "wikipedia"
+                }
+            ]
+        },
+        {
+            "name": "stock price",
+            "from": "price",
+            "verb": "of",
+            "to": "stock"
+        },
+        {
+            "name": "bond price",
+            "from": "price",
+            "verb": "of",
+            "to": "bond (finance)",
+            "description": "the price of a bond in percent of its face value"
+        },
+        {
+            "name": "face value",
+            "from": "value",
+            "verb": "kind of",
+            "to": "face",
+            "description": "the nominal amount of a bond on which the interest is paid and which is repaid at maturity"
+        },
+        {
+            "name": "lot size",
+            "from": "size",
+            "verb": "of",
+            "to": "lot"
+        },
+        {
+            "name": "holding value",
+            "from": "value",
+            "verb": "of",
+            "to": "holding",
+            "description": "the market value of one holding in CHF: the shares times the stock price, the face value times the bond price, or the cash amount times the exchange rate"
+        },
+        {
+            "from": "stock",
+            "verb": "is a",
+            "to": "holding"
+        },
+        {
+            "name": "bond holding",
+            "from": "bond (finance)",
+            "verb": "is a",
+            "to": "holding"
+        },
+        {
+            "from": "cash",
+            "verb": "is a",
+            "to": "holding"
+        },
+        {
+            "from": "CHF",
+            "verb": "per",
+            "to": "0.98",
+            "type": "measure_unit",
+            "description": "the unit of the exchange rate: CHF per unit of 0.98"
+        },
+        {
+            "from": "CHF",
+            "verb": "per",
+            "to": "0.9",
+            "type": "measure_unit",
+            "description": "the unit of the exchange rate: CHF per unit of 0.9"
+        },
+        {
+            "from": "CHF",
+            "verb": "per",
+            "to": "1.13",
+            "type": "measure_unit",
+            "description": "the unit of the exchange rate: CHF per unit of 1.13"
+        },
+        {
+            "from": "CHF",
+            "verb": "per",
+            "to": "0.1304",
+            "type": "measure_unit",
+            "description": "the unit of the exchange rate: CHF per unit of 0.1304"
+        },
+        {
+            "from": "CHF",
+            "verb": "per",
+            "to": "0.0875",
+            "type": "measure_unit",
+            "description": "the unit of the exchange rate: CHF per unit of 0.0875"
+        },
+        {
+            "from": "CHF",
+            "verb": "per",
+            "to": "0.006",
+            "type": "measure_unit",
+            "description": "the unit of the exchange rate: CHF per unit of 0.006"
+        },
+        {
+            "from": "LISP",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "LISP hint",
+            "description": "Lindt & Sprüngli AG (PS)",
+            "from": "LISP",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "LISP",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "LISN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "LISN hint",
+            "description": "Lindt & Sprüngli AG (registered)",
+            "from": "LISN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "LISN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "GIVN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "GIVN hint",
+            "description": "Givaudan SA",
+            "from": "GIVN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "GIVN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "PGHN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "PGHN hint",
+            "description": "Partners Group Holding AG",
+            "from": "PGHN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "PGHN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "GEBN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "GEBN hint",
+            "description": "Geberit AG",
+            "from": "GEBN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "GEBN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "LONN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "LONN hint",
+            "description": "Lonza Group AG",
+            "from": "LONN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "LONN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "ZURN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "ZURN hint",
+            "description": "Zurich Insurance Group AG",
+            "from": "ZURN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "ZURN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "SCMN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "SCMN hint",
+            "description": "Swisscom AG",
+            "from": "SCMN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "SCMN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "VACN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "VACN hint",
+            "description": "VAT Group AG",
+            "from": "VACN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "VACN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "ROG",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "ROG hint",
+            "description": "Roche Holding AG",
+            "from": "ROG",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "ROG",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "SOON",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "SOON hint",
+            "description": "Sonova Holding AG",
+            "from": "SOON",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "SOON",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "SCHP",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "SCHP hint",
+            "description": "Schindler Holding AG (PS)",
+            "from": "SCHP",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "SCHP",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "SIKA",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "SIKA hint",
+            "description": "Sika AG",
+            "from": "SIKA",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "SIKA",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "KNIN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "KNIN hint",
+            "description": "Kuehne + Nagel International AG",
+            "from": "KNIN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "KNIN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "UHR",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "UHR hint",
+            "description": "The Swatch Group AG",
+            "from": "UHR",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "UHR",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "CFR",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CFR hint",
+            "description": "Compagnie Financière Richemont SA",
+            "from": "CFR",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CFR",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "SREN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "SREN hint",
+            "description": "Swiss Re AG",
+            "from": "SREN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "SREN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "STMN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "STMN hint",
+            "description": "Straumann Holding AG",
+            "from": "STMN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "STMN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "LOGN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "LOGN hint",
+            "description": "Logitech International SA",
+            "from": "LOGN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "LOGN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "NOVN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "NOVN hint",
+            "description": "Novartis AG",
+            "from": "NOVN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "NOVN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "SGSN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "SGSN hint",
+            "description": "SGS SA",
+            "from": "SGSN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "SGSN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "HOLN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "HOLN hint",
+            "description": "Holcim AG",
+            "from": "HOLN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "HOLN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "NESN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "NESN hint",
+            "description": "Nestlé S.A.",
+            "from": "NESN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "NESN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "ALC",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "ALC hint",
+            "description": "Alcon AG",
+            "from": "ALC",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "ALC",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "BAER",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "BAER hint",
+            "description": "Julius Bär Group AG",
+            "from": "BAER",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "BAER",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "BANB",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "BANB hint",
+            "description": "Bachem Holding AG",
+            "from": "BANB",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "BANB",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "ABBN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "ABBN hint",
+            "description": "ABB Ltd",
+            "from": "ABBN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "ABBN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "SDZ",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "SDZ hint",
+            "description": "Sandoz Group AG",
+            "from": "SDZ",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "SDZ",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "ADEN",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "ADEN hint",
+            "description": "Adecco Group AG",
+            "from": "ADEN",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "ADEN",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "UBSG",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "UBSG hint",
+            "description": "UBS Group AG",
+            "from": "UBSG",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "UBSG",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "ConfedBond30",
+            "verb": "is a",
+            "to": "bond (finance)"
+        },
+        {
+            "name": "ConfedBond30 hint",
+            "description": "Swiss Confederation 1.25% 2030",
+            "from": "ConfedBond30",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "ConfedBond30",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "NestleBond27",
+            "verb": "is a",
+            "to": "bond (finance)"
+        },
+        {
+            "name": "NestleBond27 hint",
+            "description": "Nestlé Holdings 0.875% 2027",
+            "from": "NestleBond27",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "NestleBond27",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "RocheBond28",
+            "verb": "is a",
+            "to": "bond (finance)"
+        },
+        {
+            "name": "RocheBond28 hint",
+            "description": "Roche Holdings 1.0% 2028",
+            "from": "RocheBond28",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "RocheBond28",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "BundDE30",
+            "verb": "is a",
+            "to": "bond (finance)"
+        },
+        {
+            "name": "BundDE30 hint",
+            "description": "Bund 0% 2030",
+            "from": "BundDE30",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "BundDE30",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "TreasuryUS27",
+            "verb": "is a",
+            "to": "bond (finance)"
+        },
+        {
+            "name": "TreasuryUS27 hint",
+            "description": "US Treasury 2.5% 2027",
+            "from": "TreasuryUS27",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "TreasuryUS27",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "GBP cash",
+            "verb": "is a",
+            "to": "cash"
+        },
+        {
+            "name": "GBP cash hint",
+            "description": "Cash GBP",
+            "from": "GBP cash",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "GBP cash",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "CHF cash",
+            "verb": "is a",
+            "to": "cash"
+        },
+        {
+            "name": "CHF cash hint",
+            "description": "Cash CHF",
+            "from": "CHF cash",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CHF cash",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "EUR cash",
+            "verb": "is a",
+            "to": "cash"
+        },
+        {
+            "name": "EUR cash hint",
+            "description": "Cash EUR",
+            "from": "EUR cash",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "EUR cash",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "USD cash",
+            "verb": "is a",
+            "to": "cash"
+        },
+        {
+            "name": "USD cash hint",
+            "description": "Cash USD",
+            "from": "USD cash",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "USD cash",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "DKK cash",
+            "verb": "is a",
+            "to": "cash"
+        },
+        {
+            "name": "DKK cash hint",
+            "description": "Cash DKK",
+            "from": "DKK cash",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "DKK cash",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "SEK cash",
+            "verb": "is a",
+            "to": "cash"
+        },
+        {
+            "name": "SEK cash hint",
+            "description": "Cash SEK",
+            "from": "SEK cash",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "SEK cash",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "JPY cash",
+            "verb": "is a",
+            "to": "cash"
+        },
+        {
+            "name": "JPY cash hint",
+            "description": "Cash JPY",
+            "from": "JPY cash",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "JPY cash",
+            "verb": "is part of",
+            "to": "example portfolio split"
+        },
+        {
+            "from": "LISN",
+            "verb": "is follower of",
+            "to": "LISP"
+        },
+        {
+            "from": "GIVN",
+            "verb": "is follower of",
+            "to": "LISN"
+        },
+        {
+            "from": "PGHN",
+            "verb": "is follower of",
+            "to": "GIVN"
+        },
+        {
+            "from": "ConfedBond30",
+            "verb": "is follower of",
+            "to": "PGHN"
+        },
+        {
+            "from": "NestleBond27",
+            "verb": "is follower of",
+            "to": "ConfedBond30"
+        },
+        {
+            "from": "RocheBond28",
+            "verb": "is follower of",
+            "to": "NestleBond27"
+        },
+        {
+            "from": "BundDE30",
+            "verb": "is follower of",
+            "to": "RocheBond28"
+        },
+        {
+            "from": "TreasuryUS27",
+            "verb": "is follower of",
+            "to": "BundDE30"
+        },
+        {
+            "from": "GEBN",
+            "verb": "is follower of",
+            "to": "TreasuryUS27"
+        },
+        {
+            "from": "LONN",
+            "verb": "is follower of",
+            "to": "GEBN"
+        },
+        {
+            "from": "ZURN",
+            "verb": "is follower of",
+            "to": "LONN"
+        },
+        {
+            "from": "SCMN",
+            "verb": "is follower of",
+            "to": "ZURN"
+        },
+        {
+            "from": "VACN",
+            "verb": "is follower of",
+            "to": "SCMN"
+        },
+        {
+            "from": "ROG",
+            "verb": "is follower of",
+            "to": "VACN"
+        },
+        {
+            "from": "SOON",
+            "verb": "is follower of",
+            "to": "ROG"
+        },
+        {
+            "from": "SCHP",
+            "verb": "is follower of",
+            "to": "SOON"
+        },
+        {
+            "from": "SIKA",
+            "verb": "is follower of",
+            "to": "SCHP"
+        },
+        {
+            "from": "KNIN",
+            "verb": "is follower of",
+            "to": "SIKA"
+        },
+        {
+            "from": "UHR",
+            "verb": "is follower of",
+            "to": "KNIN"
+        },
+        {
+            "from": "CFR",
+            "verb": "is follower of",
+            "to": "UHR"
+        },
+        {
+            "from": "SREN",
+            "verb": "is follower of",
+            "to": "CFR"
+        },
+        {
+            "from": "STMN",
+            "verb": "is follower of",
+            "to": "SREN"
+        },
+        {
+            "from": "LOGN",
+            "verb": "is follower of",
+            "to": "STMN"
+        },
+        {
+            "from": "NOVN",
+            "verb": "is follower of",
+            "to": "LOGN"
+        },
+        {
+            "from": "SGSN",
+            "verb": "is follower of",
+            "to": "NOVN"
+        },
+        {
+            "from": "HOLN",
+            "verb": "is follower of",
+            "to": "SGSN"
+        },
+        {
+            "from": "NESN",
+            "verb": "is follower of",
+            "to": "HOLN"
+        },
+        {
+            "from": "ALC",
+            "verb": "is follower of",
+            "to": "NESN"
+        },
+        {
+            "from": "BAER",
+            "verb": "is follower of",
+            "to": "ALC"
+        },
+        {
+            "from": "BANB",
+            "verb": "is follower of",
+            "to": "BAER"
+        },
+        {
+            "from": "ABBN",
+            "verb": "is follower of",
+            "to": "BANB"
+        },
+        {
+            "from": "SDZ",
+            "verb": "is follower of",
+            "to": "ABBN"
+        },
+        {
+            "from": "ADEN",
+            "verb": "is follower of",
+            "to": "SDZ"
+        },
+        {
+            "from": "UBSG",
+            "verb": "is follower of",
+            "to": "ADEN"
+        },
+        {
+            "from": "GBP cash",
+            "verb": "is follower of",
+            "to": "UBSG"
+        },
+        {
+            "from": "CHF cash",
+            "verb": "is follower of",
+            "to": "GBP cash"
+        },
+        {
+            "from": "EUR cash",
+            "verb": "is follower of",
+            "to": "CHF cash"
+        },
+        {
+            "from": "USD cash",
+            "verb": "is follower of",
+            "to": "EUR cash"
+        },
+        {
+            "from": "DKK cash",
+            "verb": "is follower of",
+            "to": "USD cash"
+        },
+        {
+            "from": "SEK cash",
+            "verb": "is follower of",
+            "to": "DKK cash"
+        },
+        {
+            "from": "JPY cash",
+            "verb": "is follower of",
+            "to": "SEK cash"
+        }
+    ],
+    "sources": [
+        {
+            "name": "bank reporting bank leu client xy"
+        }
+    ],
+    "values": [
+        {
+            "words": [
+                "exchange rate",
+                "CHF per EUR"
+            ],
+            "number": "0.98",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "exchange rate",
+                "CHF per USD"
+            ],
+            "number": "0.9",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "exchange rate",
+                "CHF per GBP"
+            ],
+            "number": "1.13",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "exchange rate",
+                "CHF per DKK"
+            ],
+            "number": "0.1304",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "exchange rate",
+                "CHF per SEK"
+            ],
+            "number": "0.0875",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "exchange rate",
+                "CHF per JPY"
+            ],
+            "number": "0.006",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LISP",
+                "shares",
+                "original"
+            ],
+            "number": "10",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LISP",
+                "stock price",
+                "CHF"
+            ],
+            "number": "117000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LISP",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "LISP",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "1170000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LISN",
+                "shares",
+                "original"
+            ],
+            "number": "40",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LISN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "11000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LISN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "LISN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "440000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "GIVN",
+                "shares",
+                "original"
+            ],
+            "number": "100",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "GIVN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "3700",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "GIVN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "GIVN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "370000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "PGHN",
+                "shares",
+                "original"
+            ],
+            "number": "250",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "PGHN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "1200",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "PGHN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "PGHN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "300000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "GEBN",
+                "shares",
+                "original"
+            ],
+            "number": "500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "GEBN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "590",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "GEBN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "GEBN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "295000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LONN",
+                "shares",
+                "original"
+            ],
+            "number": "600",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LONN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "530",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LONN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "LONN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "318000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ZURN",
+                "shares",
+                "original"
+            ],
+            "number": "600",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ZURN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "530",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ZURN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "ZURN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "318000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SCMN",
+                "shares",
+                "original"
+            ],
+            "number": "600",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SCMN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "530",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SCMN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "SCMN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "318000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "VACN",
+                "shares",
+                "original"
+            ],
+            "number": "800",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "VACN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "380",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "VACN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "VACN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "304000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ROG",
+                "shares",
+                "original"
+            ],
+            "number": "2000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ROG",
+                "stock price",
+                "CHF"
+            ],
+            "number": "240",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ROG",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "ROG",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "480000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SOON",
+                "shares",
+                "original"
+            ],
+            "number": "1200",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SOON",
+                "stock price",
+                "CHF"
+            ],
+            "number": "240",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SOON",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "SOON",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "288000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SCHP",
+                "shares",
+                "original"
+            ],
+            "number": "1200",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SCHP",
+                "stock price",
+                "CHF"
+            ],
+            "number": "230",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SCHP",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "SCHP",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "276000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SIKA",
+                "shares",
+                "original"
+            ],
+            "number": "1300",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SIKA",
+                "stock price",
+                "CHF"
+            ],
+            "number": "220",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SIKA",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "SIKA",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "286000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "KNIN",
+                "shares",
+                "original"
+            ],
+            "number": "1300",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "KNIN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "220",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "KNIN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "KNIN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "286000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "UHR",
+                "shares",
+                "original"
+            ],
+            "number": "1500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "UHR",
+                "stock price",
+                "CHF"
+            ],
+            "number": "180",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "UHR",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "UHR",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "270000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "CFR",
+                "shares",
+                "original"
+            ],
+            "number": "2000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "CFR",
+                "stock price",
+                "CHF"
+            ],
+            "number": "130",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "CFR",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CFR",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "260000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SREN",
+                "shares",
+                "original"
+            ],
+            "number": "2000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SREN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "130",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SREN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "SREN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "260000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "STMN",
+                "shares",
+                "original"
+            ],
+            "number": "2500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "STMN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "110",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "STMN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "STMN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "275000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LOGN",
+                "shares",
+                "original"
+            ],
+            "number": "3000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LOGN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "90",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "LOGN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "LOGN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "270000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "NOVN",
+                "shares",
+                "original"
+            ],
+            "number": "3000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "NOVN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "90",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "NOVN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "NOVN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "270000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SGSN",
+                "shares",
+                "original"
+            ],
+            "number": "3000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SGSN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "87",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SGSN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "SGSN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "261000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "HOLN",
+                "shares",
+                "original"
+            ],
+            "number": "3500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "HOLN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "80",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "HOLN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "HOLN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "280000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "NESN",
+                "shares",
+                "original"
+            ],
+            "number": "3500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "NESN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "80",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "NESN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "NESN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "280000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ALC",
+                "shares",
+                "original"
+            ],
+            "number": "3500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ALC",
+                "stock price",
+                "CHF"
+            ],
+            "number": "75",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ALC",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "ALC",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "262500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "BAER",
+                "shares",
+                "original"
+            ],
+            "number": "4500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "BAER",
+                "stock price",
+                "CHF"
+            ],
+            "number": "60",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "BAER",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "BAER",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "270000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "BANB",
+                "shares",
+                "original"
+            ],
+            "number": "4500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "BANB",
+                "stock price",
+                "CHF"
+            ],
+            "number": "60",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "BANB",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "BANB",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "270000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ABBN",
+                "shares",
+                "original"
+            ],
+            "number": "5500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ABBN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "50",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ABBN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "ABBN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "275000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SDZ",
+                "shares",
+                "original"
+            ],
+            "number": "7000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SDZ",
+                "stock price",
+                "CHF"
+            ],
+            "number": "38",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SDZ",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "SDZ",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "266000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ADEN",
+                "shares",
+                "original"
+            ],
+            "number": "9000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ADEN",
+                "stock price",
+                "CHF"
+            ],
+            "number": "30",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ADEN",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "ADEN",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "270000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "UBSG",
+                "shares",
+                "original"
+            ],
+            "number": "10000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "UBSG",
+                "stock price",
+                "CHF"
+            ],
+            "number": "28",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "UBSG",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "UBSG",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "280000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ConfedBond30",
+                "face value",
+                "CHF",
+                "original"
+            ],
+            "number": "1500000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ConfedBond30",
+                "bond price",
+                "percent"
+            ],
+            "number": "1.005",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "ConfedBond30",
+                "lot size",
+                "CHF",
+                "assumed"
+            ],
+            "number": "1000"
+        },
+        {
+            "words": [
+                "ConfedBond30",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "1507500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "NestleBond27",
+                "face value",
+                "CHF",
+                "original"
+            ],
+            "number": "1500000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "NestleBond27",
+                "bond price",
+                "percent"
+            ],
+            "number": "0.998",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "NestleBond27",
+                "lot size",
+                "CHF",
+                "assumed"
+            ],
+            "number": "1000"
+        },
+        {
+            "words": [
+                "NestleBond27",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "1497000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "RocheBond28",
+                "face value",
+                "CHF",
+                "original"
+            ],
+            "number": "1000000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "RocheBond28",
+                "bond price",
+                "percent"
+            ],
+            "number": "0.99",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "RocheBond28",
+                "lot size",
+                "CHF",
+                "assumed"
+            ],
+            "number": "1000"
+        },
+        {
+            "words": [
+                "RocheBond28",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "990000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "BundDE30",
+                "face value",
+                "EUR",
+                "original"
+            ],
+            "number": "1000000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "BundDE30",
+                "bond price",
+                "percent"
+            ],
+            "number": "0.96",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "BundDE30",
+                "lot size",
+                "EUR",
+                "assumed"
+            ],
+            "number": "1000"
+        },
+        {
+            "words": [
+                "BundDE30",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "940800",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "TreasuryUS27",
+                "face value",
+                "USD",
+                "original"
+            ],
+            "number": "1200000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "TreasuryUS27",
+                "bond price",
+                "percent"
+            ],
+            "number": "0.99",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "TreasuryUS27",
+                "lot size",
+                "USD",
+                "assumed"
+            ],
+            "number": "1000"
+        },
+        {
+            "words": [
+                "TreasuryUS27",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "1069200",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "GBP cash",
+                "GBP",
+                "original"
+            ],
+            "number": "200000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "GBP cash",
+                "lot size",
+                "GBP",
+                "assumed"
+            ],
+            "number": "0.01"
+        },
+        {
+            "words": [
+                "GBP cash",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "226000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "CHF cash",
+                "CHF",
+                "original"
+            ],
+            "number": "1000000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "CHF cash",
+                "lot size",
+                "CHF",
+                "assumed"
+            ],
+            "number": "0.01"
+        },
+        {
+            "words": [
+                "CHF cash",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "1000000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "EUR cash",
+                "EUR",
+                "original"
+            ],
+            "number": "1800000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "EUR cash",
+                "lot size",
+                "EUR",
+                "assumed"
+            ],
+            "number": "0.01"
+        },
+        {
+            "words": [
+                "EUR cash",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "1764000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "USD cash",
+                "USD",
+                "original"
+            ],
+            "number": "500000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "USD cash",
+                "lot size",
+                "USD",
+                "assumed"
+            ],
+            "number": "0.01"
+        },
+        {
+            "words": [
+                "USD cash",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "450000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "DKK cash",
+                "DKK",
+                "original"
+            ],
+            "number": "1000000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "DKK cash",
+                "lot size",
+                "DKK",
+                "assumed"
+            ],
+            "number": "0.01"
+        },
+        {
+            "words": [
+                "DKK cash",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "130400",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SEK cash",
+                "SEK",
+                "original"
+            ],
+            "number": "1000000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "SEK cash",
+                "lot size",
+                "SEK",
+                "assumed"
+            ],
+            "number": "0.01"
+        },
+        {
+            "words": [
+                "SEK cash",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "87500",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "JPY cash",
+                "JPY",
+                "original"
+            ],
+            "number": "30000000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "JPY cash",
+                "lot size",
+                "JPY",
+                "assumed"
+            ],
+            "number": "0.01"
+        },
+        {
+            "words": [
+                "JPY cash",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "180000",
+            "source": "bank reporting bank leu client xy"
+        }
+    ]
+}

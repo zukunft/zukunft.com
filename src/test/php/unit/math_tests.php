@@ -327,6 +327,13 @@ class math_tests
             ['count(4)', 1],
             ['10 - mean(2;4) * 2', 4],
             ['min(sum(1;2);count(1;2)) + 1', 3],
+            // the largest and the smallest number of a list e.g. the spread of the target shares of the children
+            ['largest(1;3;2)', 3],
+            ['smallest(1;3;2)', 1],
+            ['largest(-1;-2.5)', -1],
+            ['smallest(4)', 4],
+            ['largest(0.5;0.25;0.5) - smallest(0.5;0.25;0.5)', 0.25],
+            ['largest(0.35;0.35) - smallest(0.35;0.35)', 0],
         ];
         foreach ($cases as [$math_text, $expected]) {
             $t->assert($ts . 'calc "' . $math_text . '"', (float)$calc->parse($math_text, $msg), (float)$expected);
@@ -337,11 +344,19 @@ class math_tests
         $t->assert($ts . 'no sum of a text "' . $math_text . '"', $num_txt, calc_internal::NO_NUMBER);
         $t->assert_false($ts . 'the user is told about the text in "' . $math_text . '"', $msg->is_ok());
         $msg->reset();
+        $math_text = "smallest(1;abc)";
+        $num_txt = $calc->math_list($math_text, $msg);
+        $t->assert($ts . 'no smallest of a text "' . $math_text . '"', $num_txt, calc_internal::NO_NUMBER);
+        $t->assert_false($ts . 'the user is told about the text in "' . $math_text . '"', $msg->is_ok());
+        $msg->reset();
         // a list function takes plain operands only, because a calculated argument would need pairs of values
         $t->assert_true($ts . 'plain list arguments', arithmetic::list_args_are_plain('sum( x ; 2 ) / count(x) + x * 3'));
         $t->assert_false($ts . 'no calculation in a list argument', arithmetic::list_args_are_plain('sum( x * x )'));
         $t->assert_false($ts . 'no bracket in a list argument', arithmetic::list_args_are_plain('mean( ( x ) )'));
         $t->assert_false($ts . 'no empty list', arithmetic::list_args_are_plain('count( )'));
+        $t->assert_false($ts . 'no calculation in the largest of a list', arithmetic::list_args_are_plain('largest( x * 2 )'));
+        // negative: max and min stay functions of their arguments, so the walk formulas keep a calculated argument
+        $t->assert_true($ts . 'max is no list function', arithmetic::list_args_are_plain('max( x * 2 ; 0 ) + sum( x )'));
         // an operand inside a list function stands for all its numbers
         $t->assert_true($ts . 'a list argument', arithmetic::is_list_argument('1 + sum( "a" ; '));
         $t->assert_false($ts . 'no list argument after the list', arithmetic::is_list_argument('sum( "a" ) + '));

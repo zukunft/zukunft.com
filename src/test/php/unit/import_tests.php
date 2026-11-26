@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
+include_once paths::MODEL_IMPORT . 'convert_portfolio_csv.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_IMPORT . 'update_put.php';
 include_once paths::MODEL_CONST . 'files.php';
@@ -63,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
+use Zukunft\ZukunftCom\main\php\cfg\import\convert_portfolio_csv;
 use Zukunft\ZukunftCom\main\php\cfg\import\update_put;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -79,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
@@ -1202,6 +1205,101 @@ class import_tests
         $result = json_decode($conv_str, true);
         $target = json_decode($json_str, true);
         $t->assert_json($test_name, $result, $target);
+
+        // the csv of a bank statement of the positions to the import json of the holdings (convert_portfolio_csv)
+        $conv_csv = new convert_portfolio_csv();
+        $csv_txt = file_get_contents(test_files::IMPORT_PORTFOLIO_CSV_SAMPLE);
+        $pos_lst = $conv_csv->positions($csv_txt);
+        $test_name = 'the positions of a bank csv are the rows below its header row';
+        $t->assert($test_name, count($pos_lst), 69);
+        $test_name = '... with the cells named by the header and without the spaces around a cell';
+        $t->assert($test_name, $pos_lst[0][convert_portfolio_csv::COL_INSTRUMENT] ?? '', '2120.001.01');
+        // negative: a csv without the header row of a bank statement has no position
+        $test_name = '... but a csv without the header row has no position';
+        $t->assert($test_name, $conv_csv->positions("Asset,Name\nstock,ABB\n"), []);
+        $by_instrument = fn(string $key) => array_values(array_filter($pos_lst,
+            fn(array $pos) => $pos[convert_portfolio_csv::COL_INSTRUMENT] == $key))[0];
+        $test_name = 'an equity position is a stock with its shares and its price';
+        $hld = $conv_csv->holding($by_instrument('CH0012221716'));
+        $t->assert($test_name, [$hld[convert_portfolio_csv::KIND], $hld[convert_portfolio_csv::QUANTITY], $hld[convert_portfolio_csv::PRICE]],
+            [convert_portfolio_csv::KIND_STOCK, 6000.0, 61.74]);
+        $test_name = 'a bond position priced in percent of its face value is a bond';
+        $hld = $conv_csv->holding($by_instrument('US742718FY05'));
+        $t->assert($test_name, $hld[convert_portfolio_csv::KIND], convert_portfolio_csv::KIND_BOND);
+        // negative: a bond fund with a price per unit is no bond, because its value is no percent of a face value
+        $test_name = '... but a bond fund priced per unit is a stock';
+        $hld = $conv_csv->holding($by_instrument('LU0854923223'));
+        $t->assert($test_name, $hld[convert_portfolio_csv::KIND], convert_portfolio_csv::KIND_STOCK);
+        $test_name = 'a cash position is cash in its currency with the exchange rate of the bank';
+        $hld = $conv_csv->holding($by_instrument('2120.814.01'));
+        $t->assert($test_name, [$hld[convert_portfolio_csv::KIND], $hld[convert_portfolio_csv::CURRENCY], $hld[convert_portfolio_csv::EXCHANGE_RATE]],
+            [convert_portfolio_csv::KIND_CASH, 'EUR', 0.9323]);
+        $csv_msg = new user_message($t->usr1);
+        $csv_json = $conv_csv->convert($csv_txt, ['portfolio 040270501213'], 'bank statement 040270501213 of 06.02.26',
+            $csv_msg, test_base::TEST_TIMESTAMP);
+        $csv_arr = json_decode($csv_json, true);
+        $val_of = fn(array $words) => array_values(array_filter($csv_arr[json_fields::VALUES] ?? [],
+            fn(array $val) => $val[json_fields::WORDS] == $words))[0][json_fields::NUMBER] ?? null;
+        $test_name = 'the import json of a bank csv has the shares of a stock';
+        $t->assert($test_name, $val_of(['CH0012221716', 'shares', 'original']), '6000');
+        $test_name = '... and the exchange rate of a currency of the bank';
+        $t->assert($test_name, $val_of(['exchange rate', 'CHF per EUR']), '0.9323');
+        $test_name = '... and one walk step for each holding but the first';
+        $steps = array_filter($csv_arr[json_fields::TRIPLES] ?? [],
+            fn(array $trp) => ($trp[json_fields::EX_VERB] ?? '') == verbs::FOLLOW_NAME);
+        $t->assert($test_name, count($steps), 68);
+        $test_name = '... and is written as the expected import json';
+        $t->assert_file($test_name, $csv_json, test_files::IMPORT_PORTFOLIO_CSV_SAMPLE_JSON, test_files::JSON);
+        $test_name = '... without a message';
+        $t->assert_true($test_name, $csv_msg->is_ok());
+        // the import reads every phrase of a value from its own file, so the json can be imported only if it
+        // declares all of them (docs/llm/json_structure.md "Self-consistency")
+        // the data object of the import is created for the user of the import, which a direct call has to set; the
+        // normal test user, because the json has no code id
+        $csv_imp = new import();
+        $csv_imp->usr = $t->usr1;
+        $csv_imp_msg = new user_message($t->usr1);
+        $csv_dto = $csv_imp->get_data_object($csv_arr, $csv_imp_msg);
+        $test_name = '... which the import reads without a message';
+        // the import of a json with some hundred values takes longer than a function, so the import timeout is used
+        $t->assert_msg($test_name, $csv_imp_msg, $t::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... and with all its values';
+        $t->assert($test_name, $csv_dto->value_list()->count(), count($csv_arr[json_fields::VALUES]), $t::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... and the price of a stock as the triple "stock price" that the file declares';
+        $t->assert_true($test_name, $csv_dto->triple_list()->get_by_name(convert_portfolio_csv::STOCK_PRICE, $csv_imp_msg) != null);
+        // negative: the import adds a phrase that a file does not declare as a name without a message
+        // (phrase_list::import_mapper), so without the declaration "stock price" would not be the price of a stock
+        $broken_arr = $csv_arr;
+        $broken_arr[json_fields::TRIPLES] = array_values(array_filter($csv_arr[json_fields::TRIPLES],
+            fn(array $trp) => ($trp[json_fields::NAME] ?? '') != convert_portfolio_csv::STOCK_PRICE));
+        $broken_msg = new user_message($t->usr1);
+        $broken_dto = $csv_imp->get_data_object($broken_arr, $broken_msg);
+        $test_name = '... but without its declaration "stock price" is no triple';
+        $t->assert_true($test_name, $broken_dto->triple_list()->get_by_name(convert_portfolio_csv::STOCK_PRICE, $broken_msg) == null,
+            $t::TIMEOUT_LIMIT_IMPORT);
+        // negative: a position of an asset class without a kind is left out and named in the message
+        $unknown_msg = new user_message($t->usr1);
+        $unknown_csv = implode("\n", array_slice(explode("\n", $csv_txt), 0, 4))
+            . "\nDerivatives , Call option,DER0001,10,,CHF,5,CHF,,,1,50,CHF\n";
+        $unknown_arr = json_decode($conv_csv->convert($unknown_csv, ['portfolio 040270501213'], 'bank statement',
+            $unknown_msg, test_base::TEST_TIMESTAMP), true);
+        $test_name = 'a position of an unknown asset class is left out';
+        $t->assert($test_name, $unknown_arr[json_fields::VALUES] ?? [], []);
+        $test_name = '... and named in the message';
+        $t->assert_text_contains($test_name, $unknown_msg->text(), 'Derivatives');
+        // the csv of the 42 holdings of portfolio_split_calculator.json with their tickers, to compare the two json
+        $test_name = 'the import json of the holdings of the portfolio split sample is written to compare it';
+        $split_msg = new user_message($t->usr1);
+        $split_json = $conv_csv->convert(file_get_contents(test_files::IMPORT_PORTFOLIO_CSV_SPLIT),
+            ['example portfolio split'], 'bank reporting bank leu client xy', $split_msg, test_base::TEST_TIMESTAMP);
+        $t->assert_file($test_name, $split_json, test_files::IMPORT_PORTFOLIO_CSV_SPLIT_JSON, test_files::JSON);
+        $split_arr = json_decode($split_json, true);
+        $split_imp_msg = new user_message($t->usr1);
+        $split_dto = $csv_imp->get_data_object($split_arr, $split_imp_msg);
+        $test_name = '... which the import reads without a message';
+        $t->assert_msg($test_name, $split_imp_msg, $t::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... and with all its values';
+        $t->assert($test_name, $split_dto->value_list()->count(), count($split_arr[json_fields::VALUES]), $t::TIMEOUT_LIMIT_IMPORT);
 
         // XBRL fileset unpacker (first step of import_convert_xbrl)
         $lib = new library();

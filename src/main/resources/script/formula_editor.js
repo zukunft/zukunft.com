@@ -290,7 +290,7 @@
         /* the logarithm like arithmetic::log_number, to the base 10 if no base is given */
         const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);
         /* the functions of a list like arithmetic::list_number, a plain operand stands for all its values, except a second number of the same fact (words::LIST_FUNCTION_EXCLUDED) */
-        const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
+        const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length, largest: (nums) => nums.length === 0 ? NaN : Math.max(...nums), smallest: (nums) => nums.length === 0 ? NaN : Math.min(...nums)};
         const LIST_EXCLUDED = ['variance low (system)', 'variance high (system)', 'confidence'];
         const MORE_FUNCTIONS = [FUNC_MIN, FUNC_MAX, FUNC_IF, ...Object.keys(ONE_NUMBER), ...Object.keys(LIST_NUMBER)];
         const MORE_STRUCTURE = [FUNC_ARG_SEPARATOR, '=', '&', '|'];
@@ -478,7 +478,7 @@
            the functions, the separator of their arguments and the chars of a condition are structure tokens like the brackets */
         function tokenize(text) {
             const result = {ok: true, error: '', tokens: []};
-            const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|([-+*\/^])|([();=&|]|(?:min|max|if|abs|cos|exp|floor|ln|log|round|sec|sin|sqrt|sum|count|mean)(?=\s*\())|(,)|(\S))/y;
+            const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|([-+*\/^])|([();=&|]|(?:min|max|if|abs|cos|exp|floor|ln|log|round|sec|sin|sqrt|sum|count|mean|largest|smallest)(?=\s*\())|(,)|(\S))/y;
             let joinNext = false;
             let m = re.exec(text);
             while (result.ok && m !== null) {

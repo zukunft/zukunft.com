@@ -27,11 +27,15 @@ The remaining tasks in the suggested order:
 1. phase 1, in parallel:
    - part 1 of step 9: the open check of the context of a walk formula with a calculation job (needs a run of the
      developer)
-   - part 4 of step 9: the unit test of a cell with a result (done, waiting for a `/test/test_part.php` run with
-     `use_case_ui_tests`, `docs/llm/log/2026-11-25_noise_cell_timing.md`)
    - "import" (at the end of this section): the csv of the sample, the csv of the existing test data and the json
-     created from each
-   - step 2: the add two children and remove one child test case
+     created from each (done, waiting for a `/test/test_part.php` run with `import_tests`, which writes the two
+     json files of `src/test/resources/import/portfolio_csv/`, `docs/llm/log/2026-11-25_csv_child_shares.md`)
+   - step 2: the add child and remove child test cases (done, waiting for a `/test/test_part.php` run with
+     `system_views_read_tests`, which writes `portfolio_split_calculator_diff_add_child.md` and
+     `_remove_child.md`, `docs/llm/log/2026-11-25_csv_child_shares.md`)
+   - "import", the TODO of the developer in `convert_portfolio_csv.php`: "should be based on phrases without specific
+     code", so the columns of the bank, the asset classes with their kind, the assumed lot sizes and the phrases of
+     the values come from the data instead of the consts of the class (the task "csv import defined by phrases")
    - the look: step 4 (a deviation that rounds to zero, decision 4), step 5 (the colours of the walk cells and the
      hint), the font of the diagram scale ("check", decision 3) and the icons of step 7
    - stop for a run: `/test/test_part.php` with the tests that are likely to break by these changes, and before
@@ -49,13 +53,14 @@ The rows of the walk are stored results of the formulas, and the browser calcula
 - part 3, the formulas in `portfolio_split_calculator.json` (the equal part is done, `docs/llm/log/2026-11-25_equal_part.md`). Still open: a formula by the instances, because `first child` and `second child` are named in the formulas and a new child has none (with step 3). The rounding noise is done: `round` and `floor` take their argument rounded to
   12 decimals (`arithmetic::ROUND_NOISE_DECIMALS` and the same const in the three scripts), so all five evaluators
   give the same tie (`docs/llm/log/2026-11-25_noise_cell_timing.md`)
-- part 4, the results of the rows in the phrase data: the unit test of a cell with a result is done, waiting for the run (`docs/llm/log/2026-11-25_noise_cell_timing.md`)
 - part 5, the number fields of the holdings and the add child task (the realised rows of this part are done, `docs/llm/log/2026-11-24_sum_over_results.md`)
 
 #### step 2: add a "Add child" and remove
 
-Add an add two children and remove one child test case similar to the high and low test cases 
-so that all main test cases are covered
+The cases `add_child` (press "Add child": three children) and `remove_child` (press "Add child" and "Remove the
+second child": the first and the former third child) are done, waiting for the run
+(`docs/llm/log/2026-11-25_csv_child_shares.md`); their reports are the target of step 3, because the buttons of the
+generated page have no function yet.
 
 #### check
 
@@ -75,12 +80,34 @@ so that all main test cases are covered
 - the formulas of the warnings name the first and the second child: 
   a new child needs a sum over the instances, so update them with the add child task
 
+Decision of the developer (2026-11-25): the full step 3, so that the reports `_add_child.md` and `_remove_child.md`
+reach 0 differences ("Missing in the generated page": the field of the third child, the warning "Weights differ", the
+result table and the walk with a third child column and a remove button per child). Six formulas of
+`portfolio_split_calculator.json` name `first child portfolio` and `second child portfolio`; they become formulas by
+the instances of `child portfolio` with the list functions over a kind (part 5 of step 9). The changes, each with
+its own log and a run before the next one, the stored numbers of the two children staying the same:
+2. the difference of the target shares by the instances with the new list functions `largest` and `smallest`
+   (decision of the developer 2026-11-26): the spread `"child","target share difference"` and `target share
+   difference` as the mirror times the spread; the sum of change 1 is renamed to `"child","target share"`, because
+   a list over the child portfolios would take it (done, waiting for `/test/reset_db.php` and a
+   `/test/test_part.php` run with `math_tests`, the re-import of `portfolio_split_calculator.json` and
+   `system_views_read_tests`, `docs/llm/log/2026-11-26_target_share_spread.md`)
+3. the walk counts by the instances: the result `rounded count` per child ("rounded count of a child in the
+   portfolio split walk" of `docs/llm/pending_prio_2.md`), the count of a child capped by the sum of the rounded
+   counts and the equal part `floor( "original" / count( "child portfolio" ) / "lot size" ) * "lot size"`, and the
+   count of the parent as the original minus the sum of the counts; new phrases and a re-pin
+4. the browser calculates the results of a new instance: the page has no stored result of a third child, so
+   `calculator_json.js` creates its results from the formulas of the other instances
+5. the buttons: "Add child" adds an instance on the page (the weight of the first child if the parent can still
+   give it, else the rest, like the sample) with its field and a remove button per child, "Remove the ..." removes
+   it; the instance is saved as a phrase with its `is a child portfolio` triple and its target share through the
+   logged save of the page
+
 The buttons "Add child" and remove are a separate task after step 9, 
 because a new child has no allocation before the walk is calculated: 
 a new instance needs its own phrase, its "is a" triple and its target share through the logged save, 
 and the page needs the remove button per field. The button stays without a function until then.
-
-add to src/test/resources/web/html/use_cases test files for the the case that 'add child' has been pressed so for the three children case and another file for the case that 'remove second child' has been pressed so that child 1 and 3 are remaining
+The target are the case reports `portfolio_split_calculator_diff_add_child.md` and `_remove_child.md` (step 2).
 
 #### step 7: the buttons (13)
 
@@ -259,6 +286,50 @@ add the translations to the export and check where changes due to translations m
 e.g. test if the Calculator Editor can be used with translated data including write tests of translation changes
 
 and finally show the translated page if the url has something link =de
+
+## csv import defined by phrases
+
+**Prompt:** replace `src/main/php/cfg/import/convert_portfolio_csv.php` by a general
+`src/main/php/cfg/import/convert_csv.php` whose parameters are all words, triples and values, so that a new csv
+format e.g. of another bank is a definition json and no code change (size L; the TODO of the developer "should be
+based on phrases without specific code" in `convert_portfolio_csv.php`; no re-pin, if the definition json is a test
+import file, else re-pin for its new words and triples). Three changes, each with its own log and a run before the
+next one:
+
+1. the keywords and the definition json: keywords like the calculator keywords (`calculator_keywords.json`,
+   `triples::CALCULATOR_KEYWORDS`), e.g. `csv header start`, `csv row name`, `csv kind`, `csv value` and `csv
+   scale`, and the definition json of the format of the bank statement of the positions:
+   - the format is a phrase e.g. `bank position csv`, and its header row is the triple to `csv header start` with
+     the first cell as its description (`Asset Class`)
+   - the column that names the row (`Instrument`) and its description column (`Instrument Name`) as triples of the
+     format to `csv row name`, the column of the kind (`Asset Class`) as the triple to `csv kind`
+   - the kind of each cell of the kind column as a triple e.g. `Equities and similar positions` `is a` `stock`, so
+     that a new asset class is a new triple; a row of a kind without a triple is left out and reported
+     (`msg_id::IMPORT_UNKNOWN_ELEMENT`, as today)
+   - per kind and column the phrases of its value as a template e.g. `Quantity` for a stock `shares, original` and
+     for a bond `face value, {Currency}, original`, where `{Currency}` is the cell of that column of the same row;
+     the placeholder syntax is new and gets its rule in `docs/llm/json_structure.md`
+   - the defaults as values, e.g. `stock, lot size, shares, assumed` = 1, `bond (finance), lot size, assumed` = 1000
+     and `cash, lot size, assumed` = 0.01, instead of `convert_portfolio_csv::LOT_SIZES`
+   - a scale of a column as a value e.g. 0.01 for the price of a bond in percent points
+   - the words and triples that the templates use, declared like in any import json, so that `convert_csv` copies
+     them into its result and the result stays self-consistent (`docs/llm/json_structure.md` *Self-consistency*)
+   - tests: `import::get_data_object` reads the definition json without the database and without a message
+2. `convert_csv`: reads the definition from the phrases (by the database or by `import::get_data_object` of the
+   definition json for the unit test), finds the header row, maps each row by its kind and writes the values of the
+   templates, the defaults and the vocabulary; it has no name of a column, a kind or a phrase of its own. Tests:
+   the same positive and negative tests as `convert_portfolio_csv` in `import_tests.php`, and it writes the same two
+   json files of `src/test/resources/import/portfolio_csv/` as `convert_portfolio_csv` (the difference of the two
+   is reported, so that a change is a decision)
+3. remove `convert_portfolio_csv.php` and its tests, once `convert_csv` gives the same results
+
+What the phrases cannot define, because it is a calculation and not a fact of the csv:
+- the walk by the lot value: the import writes the rows in the order of the csv, and the page ranks them with
+  `is ranked by lot value` like today; so the `is follower of` chain of the lot value order of
+  `convert_portfolio_csv` is left out or becomes the order of the csv
+- the bond fund that the bank lists with the bonds but prices per unit (`LU0854923223`), which
+  `convert_portfolio_csv` finds by its market value: either the asset class of the bank is kept, or a formula of the
+  page flags a holding whose holding value differs from its `holding value, expected`
 
 ## user menu
 

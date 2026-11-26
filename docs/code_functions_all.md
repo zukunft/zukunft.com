@@ -2512,6 +2512,13 @@
     \-- check - section for function check not yet defined that it should be db helper in /helper/type_object.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
             j,order of section set and get has difference at set_description should be before set_from_api
+\-- convert_portfolio_csv
+    \-- positions - section for function positions not yet defined that it should be read in /import/convert_portfolio_c
+            sv.php
+    \-- holding - section for function holding not yet defined that it should be read in /import/convert_portfolio_csv.p
+            hp
+    \-- convert - section for function convert not yet defined that it should be convert in /import/convert_portfolio_cs
+            v.php
 \-- convert_wikipedia_table
     \-- convert - section for function convert missing in /import/convert_wikipedia_table.php
     \-- convert_wiki_json - section for function convert_wiki_json missing in /import/convert_wikipedia_table.php
@@ -6236,6 +6243,7 @@
     \-- nodes
         \-- config_tree - the nodes of the given part of config.yaml in the order of the file, without the keys
     \-- convert
+        \-- convert_portfolio_csv - @param string $csv the text of the csv of a bank statement of the positions
         \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
                  json
     \-- entity_id
@@ -6382,6 +6390,11 @@
         \-- type_list - @param array $code_id_list with the code ids that should be converted
     \-- component_id_list
         \-- type_list - @param array $code_id_list with the code ids that should be converted
+\-- read
+    \-- positions
+        \-- convert_portfolio_csv - @param string $csv the text of the csv of a bank statement of the positions
+    \-- holding
+        \-- convert_portfolio_csv - @param array $pos one position of the csv (see positions)
 \-- use to apply the time of the parent process for continuous timestamp reporting
     \-- set_start_time
         \-- import - stop the note timer, so that a finished import never shows its skipped step note

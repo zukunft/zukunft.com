@@ -78,7 +78,8 @@ class formula_calc
     const string TOKEN_PATTERN = '/\G\s*(\d+(?:\.\d+)?|[-+*\/()^=&|' . chars::FUNC_ARG_SEPARATOR . ']|'
         . chars::FUNC_MIN . '|' . chars::FUNC_MAX . '|' . chars::FUNC_IF . '|' . chars::FUNC_ABS . '|' . chars::FUNC_COS . '|'
         . chars::FUNC_EXP . '|' . chars::FUNC_FLOOR . '|' . chars::FUNC_LN . '|' . chars::FUNC_LOG . '|' . chars::FUNC_ROUND . '|' . chars::FUNC_SEC . '|'
-        . chars::FUNC_SIN . '|' . chars::FUNC_SQRT . '|' . chars::FUNC_SUM . '|' . chars::FUNC_COUNT . '|' . chars::FUNC_MEAN . ')/';
+        . chars::FUNC_SIN . '|' . chars::FUNC_SQRT . '|' . chars::FUNC_SUM . '|' . chars::FUNC_COUNT . '|' . chars::FUNC_MEAN . '|'
+        . chars::FUNC_LARGEST . '|' . chars::FUNC_SMALLEST . ')/';
 
     // per value object the value itself and its phrase names, because each operand of each
     // result is searched in all values of the page, but the phrases of a value do not change;

@@ -1,0 +1,4551 @@
+{
+    "pod": "zukunft.com",
+    "version": "0.0.3",
+    "data_version": "0.0.1",
+    "time": "2024-04-05T08:35:30+00:00",
+    "selection": [
+        "portfolio 040270501213"
+    ],
+    "words": [
+        {
+            "name": "portfolio 040270501213"
+        },
+        {
+            "name": "original"
+        },
+        {
+            "name": "value"
+        },
+        {
+            "name": "price"
+        },
+        {
+            "name": "size"
+        },
+        {
+            "name": "lot"
+        },
+        {
+            "name": "face"
+        },
+        {
+            "name": "holding"
+        },
+        {
+            "name": "stock"
+        },
+        {
+            "name": "shares"
+        },
+        {
+            "name": "bond"
+        },
+        {
+            "name": "finance"
+        },
+        {
+            "name": "cash"
+        },
+        {
+            "name": "rate"
+        },
+        {
+            "name": "exchange"
+        },
+        {
+            "name": "expected"
+        },
+        {
+            "name": "assumed"
+        },
+        {
+            "name": "percent"
+        },
+        {
+            "name": "zukunft.com"
+        },
+        {
+            "name": "system"
+        },
+        {
+            "name": "calculator"
+        },
+        {
+            "name": "hint"
+        },
+        {
+            "name": "CHF"
+        },
+        {
+            "name": "EUR"
+        },
+        {
+            "name": "USD"
+        },
+        {
+            "name": "GBP"
+        },
+        {
+            "name": "2120.001.01",
+            "description": "CH00 0000 0000 0000 0000 1"
+        },
+        {
+            "name": "2120.814.01",
+            "description": "CH00 0000 0000 0000 0000 2"
+        },
+        {
+            "name": "N987272-",
+            "description": "TREUHAND CALLGELD - Deutsch Bank BONDS S.A."
+        },
+        {
+            "name": "2120.333.01",
+            "description": "CH00 0000 0000 0000 0000 3"
+        },
+        {
+            "name": "LU0854923223",
+            "description": "Oak Lu Fd Gl RhC"
+        },
+        {
+            "name": "LU0854923140",
+            "description": "Oak Lu Fd Gl RhC"
+        },
+        {
+            "name": "US742718FY05",
+            "description": "4.1 PG 26 Bds"
+        },
+        {
+            "name": "US29874QEX88",
+            "description": "4.375 EBRD 28 Bds"
+        },
+        {
+            "name": "US4581X0EH74",
+            "description": "4 Inter-Am 28 Bds"
+        },
+        {
+            "name": "CH0012221716",
+            "description": "ABB Rg"
+        },
+        {
+            "name": "CH1169360919",
+            "description": "Accelleron Ind Rg"
+        },
+        {
+            "name": "CH0432492467",
+            "description": "Alcon Rg"
+        },
+        {
+            "name": "CH1430134226",
+            "description": "Amrize Rg"
+        },
+        {
+            "name": "CH0038389992",
+            "description": "BB Biotech N"
+        },
+        {
+            "name": "CH0210483332",
+            "description": "CieFinRichemont N"
+        },
+        {
+            "name": "CH0030170408",
+            "description": "Geberit N"
+        },
+        {
+            "name": "CH0010645932",
+            "description": "Givaudan N"
+        },
+        {
+            "name": "CH0466642201",
+            "description": "Helvetia Bal Hl Rg"
+        },
+        {
+            "name": "CH0012214059",
+            "description": "Holcim N"
+        },
+        {
+            "name": "CH0363463438",
+            "description": "Idorsia Rg"
+        },
+        {
+            "name": "CH0010570759",
+            "description": "Lindt & Spruengli N"
+        },
+        {
+            "name": "CH0038863350",
+            "description": "Nestle N"
+        },
+        {
+            "name": "CH0012005267",
+            "description": "Novartis N"
+        },
+        {
+            "name": "CH0012032048",
+            "description": "Roche Hldg DR"
+        },
+        {
+            "name": "CH1243598427",
+            "description": "Sandoz Group Rg"
+        },
+        {
+            "name": "CH1256740924",
+            "description": "SGS Rg"
+        },
+        {
+            "name": "CH0012549785",
+            "description": "Sonova Hldg N"
+        },
+        {
+            "name": "CH1175448666",
+            "description": "Straumann Hldg Rg"
+        },
+        {
+            "name": "CH0008742519",
+            "description": "Swisscom Rg"
+        },
+        {
+            "name": "CH0244767585",
+            "description": "UBS Group N"
+        },
+        {
+            "name": "CH0011075394",
+            "description": "Zurich Insur Gr N"
+        },
+        {
+            "name": "BE0974293251",
+            "description": "AB InBev"
+        },
+        {
+            "name": "DE000A1EWWW0",
+            "description": "adidas N"
+        },
+        {
+            "name": "DE0008404005",
+            "description": "Allianz Rg"
+        },
+        {
+            "name": "FR0000120628",
+            "description": "AXA"
+        },
+        {
+            "name": "DE000BASF111",
+            "description": "BASF N"
+        },
+        {
+            "name": "DE000BAY0017",
+            "description": "Bayer N"
+        },
+        {
+            "name": "DE000DTR0CK8",
+            "description": "Daimler Tr Hldg Rg"
+        },
+        {
+            "name": "FR0000120644",
+            "description": "Danone"
+        },
+        {
+            "name": "DE000ENAG999",
+            "description": "E.ON N"
+        },
+        {
+            "name": "LU0048580004",
+            "description": "Fid Germany AD"
+        },
+        {
+            "name": "LU0294851513",
+            "description": "MEDICAL BioH IC"
+        },
+        {
+            "name": "DE0007100000",
+            "description": "Mercedes-BenzGr N"
+        },
+        {
+            "name": "DE0007037129",
+            "description": "RWE I"
+        },
+        {
+            "name": "GB00BP6MXD84",
+            "description": "Shell Rg"
+        },
+        {
+            "name": "DE000ENER6Y0",
+            "description": "Siemens Energy Rg"
+        },
+        {
+            "name": "DE0007236101",
+            "description": "Siemens N"
+        },
+        {
+            "name": "GB0005405286",
+            "description": "HSBC Hldg Rg"
+        },
+        {
+            "name": "GB00BH4HKS39",
+            "description": "Vodafone Group Rg"
+        },
+        {
+            "name": "US02209S1033",
+            "description": "Altria Group Rg"
+        },
+        {
+            "name": "US0311621009",
+            "description": "Amgen Rg"
+        },
+        {
+            "name": "US0970231058",
+            "description": "Boeing Co Rg"
+        },
+        {
+            "name": "US14448C1045",
+            "description": "Carrier Global Rg"
+        },
+        {
+            "name": "US1729674242",
+            "description": "Citigroup Rg"
+        },
+        {
+            "name": "US3696043013",
+            "description": "GE Aerospace Rg"
+        },
+        {
+            "name": "US6687711084",
+            "description": "Gen Digital Rg"
+        },
+        {
+            "name": "US36828A1016",
+            "description": "GE Vernova Rg"
+        },
+        {
+            "name": "IE00B5377D42",
+            "description": "iShs MSCI Au USD-Ac"
+        },
+        {
+            "name": "IE00B53SZB19",
+            "description": "iShs NASDAQ USD-Ac"
+        },
+        {
+            "name": "US4781601046",
+            "description": "Johnson&Johnson Rg"
+        },
+        {
+            "name": "US68902V1070",
+            "description": "Otis Worldwide Rg"
+        },
+        {
+            "name": "US7134481081",
+            "description": "Pepsico Rg"
+        },
+        {
+            "name": "US7170811035",
+            "description": "Pfizer Rg"
+        },
+        {
+            "name": "US7181721090",
+            "description": "Philip Mrrs Int Rg"
+        },
+        {
+            "name": "US7427181091",
+            "description": "Procter&Gamble Rg"
+        },
+        {
+            "name": "US75513E1010",
+            "description": "RTX Rg"
+        },
+        {
+            "name": "US92343V1044",
+            "description": "Verizon Comm Rg"
+        },
+        {
+            "name": "LU0274209740",
+            "description": "Xtr MSCI Jap 1CC"
+        },
+        {
+            "name": "CH0047533549",
+            "description": "SwCHGETF -EA (USD)-"
+        }
+    ],
+    "triples": [
+        {
+            "name": "zukunft.com system",
+            "from": "zukunft.com",
+            "verb": "is a",
+            "to": "system",
+            "description": "keyword for system internal triples such as the column definitions"
+        },
+        {
+            "name": "calculator (system)",
+            "from": "calculator",
+            "verb": "can be",
+            "to": "zukunft.com system"
+        },
+        {
+            "name": "calculator hint",
+            "from": "calculator (system)",
+            "verb": "has a",
+            "to": "hint"
+        },
+        {
+            "name": "exchange rate",
+            "from": "rate",
+            "verb": "of",
+            "to": "exchange",
+            "description": "An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country's currency in relation to another currency.",
+            "refs": [
+                {
+                    "name": "Exchange_rate",
+                    "type": "wikipedia"
+                },
+                {
+                    "name": "Q66100",
+                    "type": "wikidata"
+                }
+            ]
+        },
+        {
+            "name": "bond (finance)",
+            "from": "bond",
+            "verb": "must be one of",
+            "to": "finance",
+            "description": "the finance reading of the ambiguous word 'bond': a debt security under which the issuer owes the holders the face value and the interest",
+            "refs": [
+                {
+                    "name": "Bond_(finance)",
+                    "type": "wikipedia"
+                }
+            ]
+        },
+        {
+            "name": "stock price",
+            "from": "price",
+            "verb": "of",
+            "to": "stock"
+        },
+        {
+            "name": "bond price",
+            "from": "price",
+            "verb": "of",
+            "to": "bond (finance)",
+            "description": "the price of a bond in percent of its face value"
+        },
+        {
+            "name": "face value",
+            "from": "value",
+            "verb": "kind of",
+            "to": "face",
+            "description": "the nominal amount of a bond on which the interest is paid and which is repaid at maturity"
+        },
+        {
+            "name": "lot size",
+            "from": "size",
+            "verb": "of",
+            "to": "lot"
+        },
+        {
+            "name": "holding value",
+            "from": "value",
+            "verb": "of",
+            "to": "holding",
+            "description": "the market value of one holding in CHF: the shares times the stock price, the face value times the bond price, or the cash amount times the exchange rate"
+        },
+        {
+            "from": "stock",
+            "verb": "is a",
+            "to": "holding"
+        },
+        {
+            "name": "bond holding",
+            "from": "bond (finance)",
+            "verb": "is a",
+            "to": "holding"
+        },
+        {
+            "from": "cash",
+            "verb": "is a",
+            "to": "holding"
+        },
+        {
+            "from": "CHF",
+            "verb": "per",
+            "to": "0.9323",
+            "type": "measure_unit",
+            "description": "the unit of the exchange rate: CHF per unit of 0.9323"
+        },
+        {
+            "from": "CHF",
+            "verb": "per",
+            "to": "0.8036",
+            "type": "measure_unit",
+            "description": "the unit of the exchange rate: CHF per unit of 0.8036"
+        },
+        {
+            "from": "CHF",
+            "verb": "per",
+            "to": "1.0895",
+            "type": "measure_unit",
+            "description": "the unit of the exchange rate: CHF per unit of 1.0895"
+        },
+        {
+            "from": "2120.001.01",
+            "verb": "is a",
+            "to": "cash"
+        },
+        {
+            "name": "2120.001.01 hint",
+            "description": "CH00 0000 0000 0000 0000 1",
+            "from": "2120.001.01",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "2120.001.01",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "2120.814.01",
+            "verb": "is a",
+            "to": "cash"
+        },
+        {
+            "name": "2120.814.01 hint",
+            "description": "CH00 0000 0000 0000 0000 2",
+            "from": "2120.814.01",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "2120.814.01",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "N987272-",
+            "verb": "is a",
+            "to": "cash"
+        },
+        {
+            "name": "N987272- hint",
+            "description": "TREUHAND CALLGELD - Deutsch Bank BONDS S.A.",
+            "from": "N987272-",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "N987272-",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "2120.333.01",
+            "verb": "is a",
+            "to": "cash"
+        },
+        {
+            "name": "2120.333.01 hint",
+            "description": "CH00 0000 0000 0000 0000 3",
+            "from": "2120.333.01",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "2120.333.01",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "LU0854923223",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "LU0854923223 hint",
+            "description": "Oak Lu Fd Gl RhC",
+            "from": "LU0854923223",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "LU0854923223",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "LU0854923140",
+            "verb": "is a",
+            "to": "bond (finance)"
+        },
+        {
+            "name": "LU0854923140 hint",
+            "description": "Oak Lu Fd Gl RhC",
+            "from": "LU0854923140",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "LU0854923140",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US742718FY05",
+            "verb": "is a",
+            "to": "bond (finance)"
+        },
+        {
+            "name": "US742718FY05 hint",
+            "description": "4.1 PG 26 Bds",
+            "from": "US742718FY05",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US742718FY05",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US29874QEX88",
+            "verb": "is a",
+            "to": "bond (finance)"
+        },
+        {
+            "name": "US29874QEX88 hint",
+            "description": "4.375 EBRD 28 Bds",
+            "from": "US29874QEX88",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US29874QEX88",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US4581X0EH74",
+            "verb": "is a",
+            "to": "bond (finance)"
+        },
+        {
+            "name": "US4581X0EH74 hint",
+            "description": "4 Inter-Am 28 Bds",
+            "from": "US4581X0EH74",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US4581X0EH74",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0012221716",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0012221716 hint",
+            "description": "ABB Rg",
+            "from": "CH0012221716",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0012221716",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH1169360919",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH1169360919 hint",
+            "description": "Accelleron Ind Rg",
+            "from": "CH1169360919",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH1169360919",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0432492467",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0432492467 hint",
+            "description": "Alcon Rg",
+            "from": "CH0432492467",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0432492467",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH1430134226",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH1430134226 hint",
+            "description": "Amrize Rg",
+            "from": "CH1430134226",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH1430134226",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0038389992",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0038389992 hint",
+            "description": "BB Biotech N",
+            "from": "CH0038389992",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0038389992",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0210483332",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0210483332 hint",
+            "description": "CieFinRichemont N",
+            "from": "CH0210483332",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0210483332",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0030170408",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0030170408 hint",
+            "description": "Geberit N",
+            "from": "CH0030170408",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0030170408",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0010645932",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0010645932 hint",
+            "description": "Givaudan N",
+            "from": "CH0010645932",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0010645932",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0466642201",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0466642201 hint",
+            "description": "Helvetia Bal Hl Rg",
+            "from": "CH0466642201",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0466642201",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0012214059",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0012214059 hint",
+            "description": "Holcim N",
+            "from": "CH0012214059",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0012214059",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0363463438",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0363463438 hint",
+            "description": "Idorsia Rg",
+            "from": "CH0363463438",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0363463438",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0010570759",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0010570759 hint",
+            "description": "Lindt & Spruengli N",
+            "from": "CH0010570759",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0010570759",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0038863350",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0038863350 hint",
+            "description": "Nestle N",
+            "from": "CH0038863350",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0038863350",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0012005267",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0012005267 hint",
+            "description": "Novartis N",
+            "from": "CH0012005267",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0012005267",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0012032048",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0012032048 hint",
+            "description": "Roche Hldg DR",
+            "from": "CH0012032048",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0012032048",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH1243598427",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH1243598427 hint",
+            "description": "Sandoz Group Rg",
+            "from": "CH1243598427",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH1243598427",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH1256740924",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH1256740924 hint",
+            "description": "SGS Rg",
+            "from": "CH1256740924",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH1256740924",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0012549785",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0012549785 hint",
+            "description": "Sonova Hldg N",
+            "from": "CH0012549785",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0012549785",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH1175448666",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH1175448666 hint",
+            "description": "Straumann Hldg Rg",
+            "from": "CH1175448666",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH1175448666",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0008742519",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0008742519 hint",
+            "description": "Swisscom Rg",
+            "from": "CH0008742519",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0008742519",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0244767585",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0244767585 hint",
+            "description": "UBS Group N",
+            "from": "CH0244767585",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0244767585",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0011075394",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0011075394 hint",
+            "description": "Zurich Insur Gr N",
+            "from": "CH0011075394",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0011075394",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "BE0974293251",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "BE0974293251 hint",
+            "description": "AB InBev",
+            "from": "BE0974293251",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "BE0974293251",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "DE000A1EWWW0",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "DE000A1EWWW0 hint",
+            "description": "adidas N",
+            "from": "DE000A1EWWW0",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "DE000A1EWWW0",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "DE0008404005",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "DE0008404005 hint",
+            "description": "Allianz Rg",
+            "from": "DE0008404005",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "DE0008404005",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "FR0000120628",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "FR0000120628 hint",
+            "description": "AXA",
+            "from": "FR0000120628",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "FR0000120628",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "DE000BASF111",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "DE000BASF111 hint",
+            "description": "BASF N",
+            "from": "DE000BASF111",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "DE000BASF111",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "DE000BAY0017",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "DE000BAY0017 hint",
+            "description": "Bayer N",
+            "from": "DE000BAY0017",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "DE000BAY0017",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "DE000DTR0CK8",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "DE000DTR0CK8 hint",
+            "description": "Daimler Tr Hldg Rg",
+            "from": "DE000DTR0CK8",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "DE000DTR0CK8",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "FR0000120644",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "FR0000120644 hint",
+            "description": "Danone",
+            "from": "FR0000120644",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "FR0000120644",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "DE000ENAG999",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "DE000ENAG999 hint",
+            "description": "E.ON N",
+            "from": "DE000ENAG999",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "DE000ENAG999",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "LU0048580004",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "LU0048580004 hint",
+            "description": "Fid Germany AD",
+            "from": "LU0048580004",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "LU0048580004",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "LU0294851513",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "LU0294851513 hint",
+            "description": "MEDICAL BioH IC",
+            "from": "LU0294851513",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "LU0294851513",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "DE0007100000",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "DE0007100000 hint",
+            "description": "Mercedes-BenzGr N",
+            "from": "DE0007100000",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "DE0007100000",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "DE0007037129",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "DE0007037129 hint",
+            "description": "RWE I",
+            "from": "DE0007037129",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "DE0007037129",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "GB00BP6MXD84",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "GB00BP6MXD84 hint",
+            "description": "Shell Rg",
+            "from": "GB00BP6MXD84",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "GB00BP6MXD84",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "DE000ENER6Y0",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "DE000ENER6Y0 hint",
+            "description": "Siemens Energy Rg",
+            "from": "DE000ENER6Y0",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "DE000ENER6Y0",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "DE0007236101",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "DE0007236101 hint",
+            "description": "Siemens N",
+            "from": "DE0007236101",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "DE0007236101",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "GB0005405286",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "GB0005405286 hint",
+            "description": "HSBC Hldg Rg",
+            "from": "GB0005405286",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "GB0005405286",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "GB00BH4HKS39",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "GB00BH4HKS39 hint",
+            "description": "Vodafone Group Rg",
+            "from": "GB00BH4HKS39",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "GB00BH4HKS39",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US02209S1033",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US02209S1033 hint",
+            "description": "Altria Group Rg",
+            "from": "US02209S1033",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US02209S1033",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US0311621009",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US0311621009 hint",
+            "description": "Amgen Rg",
+            "from": "US0311621009",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US0311621009",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US0970231058",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US0970231058 hint",
+            "description": "Boeing Co Rg",
+            "from": "US0970231058",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US0970231058",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US14448C1045",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US14448C1045 hint",
+            "description": "Carrier Global Rg",
+            "from": "US14448C1045",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US14448C1045",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US1729674242",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US1729674242 hint",
+            "description": "Citigroup Rg",
+            "from": "US1729674242",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US1729674242",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US3696043013",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US3696043013 hint",
+            "description": "GE Aerospace Rg",
+            "from": "US3696043013",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US3696043013",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US6687711084",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US6687711084 hint",
+            "description": "Gen Digital Rg",
+            "from": "US6687711084",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US6687711084",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US36828A1016",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US36828A1016 hint",
+            "description": "GE Vernova Rg",
+            "from": "US36828A1016",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US36828A1016",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "IE00B5377D42",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "IE00B5377D42 hint",
+            "description": "iShs MSCI Au USD-Ac",
+            "from": "IE00B5377D42",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "IE00B5377D42",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "IE00B53SZB19",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "IE00B53SZB19 hint",
+            "description": "iShs NASDAQ USD-Ac",
+            "from": "IE00B53SZB19",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "IE00B53SZB19",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US4781601046",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US4781601046 hint",
+            "description": "Johnson&Johnson Rg",
+            "from": "US4781601046",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US4781601046",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US68902V1070",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US68902V1070 hint",
+            "description": "Otis Worldwide Rg",
+            "from": "US68902V1070",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US68902V1070",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US7134481081",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US7134481081 hint",
+            "description": "Pepsico Rg",
+            "from": "US7134481081",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US7134481081",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US7170811035",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US7170811035 hint",
+            "description": "Pfizer Rg",
+            "from": "US7170811035",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US7170811035",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US7181721090",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US7181721090 hint",
+            "description": "Philip Mrrs Int Rg",
+            "from": "US7181721090",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US7181721090",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US7427181091",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US7427181091 hint",
+            "description": "Procter&Gamble Rg",
+            "from": "US7427181091",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US7427181091",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US75513E1010",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US75513E1010 hint",
+            "description": "RTX Rg",
+            "from": "US75513E1010",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US75513E1010",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "US92343V1044",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "US92343V1044 hint",
+            "description": "Verizon Comm Rg",
+            "from": "US92343V1044",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "US92343V1044",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "LU0274209740",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "LU0274209740 hint",
+            "description": "Xtr MSCI Jap 1CC",
+            "from": "LU0274209740",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "LU0274209740",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0047533549",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
+            "name": "CH0047533549 hint",
+            "description": "SwCHGETF -EA (USD)-",
+            "from": "CH0047533549",
+            "verb": "has a",
+            "to": "calculator hint"
+        },
+        {
+            "from": "CH0047533549",
+            "verb": "is part of",
+            "to": "portfolio 040270501213"
+        },
+        {
+            "from": "CH0010645932",
+            "verb": "is follower of",
+            "to": "CH0010570759"
+        },
+        {
+            "from": "CH0047533549",
+            "verb": "is follower of",
+            "to": "CH0010645932"
+        },
+        {
+            "from": "LU0854923140",
+            "verb": "is follower of",
+            "to": "CH0047533549"
+        },
+        {
+            "from": "IE00B53SZB19",
+            "verb": "is follower of",
+            "to": "LU0854923140"
+        },
+        {
+            "from": "US29874QEX88",
+            "verb": "is follower of",
+            "to": "IE00B53SZB19"
+        },
+        {
+            "from": "US4581X0EH74",
+            "verb": "is follower of",
+            "to": "US29874QEX88"
+        },
+        {
+            "from": "US742718FY05",
+            "verb": "is follower of",
+            "to": "US4581X0EH74"
+        },
+        {
+            "from": "CH0008742519",
+            "verb": "is follower of",
+            "to": "US742718FY05"
+        },
+        {
+            "from": "CH0030170408",
+            "verb": "is follower of",
+            "to": "CH0008742519"
+        },
+        {
+            "from": "CH0011075394",
+            "verb": "is follower of",
+            "to": "CH0030170408"
+        },
+        {
+            "from": "US36828A1016",
+            "verb": "is follower of",
+            "to": "CH0011075394"
+        },
+        {
+            "from": "DE0008404005",
+            "verb": "is follower of",
+            "to": "US36828A1016"
+        },
+        {
+            "from": "CH0012032048",
+            "verb": "is follower of",
+            "to": "DE0008404005"
+        },
+        {
+            "from": "CH0012549785",
+            "verb": "is follower of",
+            "to": "CH0012032048"
+        },
+        {
+            "from": "US0311621009",
+            "verb": "is follower of",
+            "to": "CH0012549785"
+        },
+        {
+            "from": "US3696043013",
+            "verb": "is follower of",
+            "to": "US0311621009"
+        },
+        {
+            "from": "DE0007236101",
+            "verb": "is follower of",
+            "to": "US3696043013"
+        },
+        {
+            "from": "CH0466642201",
+            "verb": "is follower of",
+            "to": "DE0007236101"
+        },
+        {
+            "from": "US0970231058",
+            "verb": "is follower of",
+            "to": "CH0466642201"
+        },
+        {
+            "from": "CH0210483332",
+            "verb": "is follower of",
+            "to": "US0970231058"
+        },
+        {
+            "from": "DE000A1EWWW0",
+            "verb": "is follower of",
+            "to": "CH0210483332"
+        },
+        {
+            "from": "LU0854923223",
+            "verb": "is follower of",
+            "to": "DE000A1EWWW0"
+        },
+        {
+            "from": "US4781601046",
+            "verb": "is follower of",
+            "to": "LU0854923223"
+        },
+        {
+            "from": "US7181721090",
+            "verb": "is follower of",
+            "to": "US4781601046"
+        },
+        {
+            "from": "US75513E1010",
+            "verb": "is follower of",
+            "to": "US7181721090"
+        },
+        {
+            "from": "US7427181091",
+            "verb": "is follower of",
+            "to": "US75513E1010"
+        },
+        {
+            "from": "US7134481081",
+            "verb": "is follower of",
+            "to": "US7427181091"
+        },
+        {
+            "from": "CH1175448666",
+            "verb": "is follower of",
+            "to": "US7134481081"
+        },
+        {
+            "from": "CH1256740924",
+            "verb": "is follower of",
+            "to": "CH1175448666"
+        },
+        {
+            "from": "CH0012005267",
+            "verb": "is follower of",
+            "to": "CH1256740924"
+        },
+        {
+            "from": "LU0274209740",
+            "verb": "is follower of",
+            "to": "CH0012005267"
+        },
+        {
+            "from": "DE000ENER6Y0",
+            "verb": "is follower of",
+            "to": "LU0274209740"
+        },
+        {
+            "from": "US68902V1070",
+            "verb": "is follower of",
+            "to": "DE000ENER6Y0"
+        },
+        {
+            "from": "CH0038863350",
+            "verb": "is follower of",
+            "to": "US68902V1070"
+        },
+        {
+            "from": "CH0432492467",
+            "verb": "is follower of",
+            "to": "CH0038863350"
+        },
+        {
+            "from": "US1729674242",
+            "verb": "is follower of",
+            "to": "CH0432492467"
+        },
+        {
+            "from": "CH0012221716",
+            "verb": "is follower of",
+            "to": "US1729674242"
+        },
+        {
+            "from": "CH0012214059",
+            "verb": "is follower of",
+            "to": "CH0012221716"
+        },
+        {
+            "from": "CH1169360919",
+            "verb": "is follower of",
+            "to": "CH0012214059"
+        },
+        {
+            "from": "US14448C1045",
+            "verb": "is follower of",
+            "to": "CH1169360919"
+        },
+        {
+            "from": "FR0000120644",
+            "verb": "is follower of",
+            "to": "US14448C1045"
+        },
+        {
+            "from": "BE0974293251",
+            "verb": "is follower of",
+            "to": "FR0000120644"
+        },
+        {
+            "from": "DE0007100000",
+            "verb": "is follower of",
+            "to": "BE0974293251"
+        },
+        {
+            "from": "CH1430134226",
+            "verb": "is follower of",
+            "to": "DE0007100000"
+        },
+        {
+            "from": "US02209S1033",
+            "verb": "is follower of",
+            "to": "CH1430134226"
+        },
+        {
+            "from": "DE000BASF111",
+            "verb": "is follower of",
+            "to": "US02209S1033"
+        },
+        {
+            "from": "CH1243598427",
+            "verb": "is follower of",
+            "to": "DE000BASF111"
+        },
+        {
+            "from": "CH0038389992",
+            "verb": "is follower of",
+            "to": "CH1243598427"
+        },
+        {
+            "from": "DE000DTR0CK8",
+            "verb": "is follower of",
+            "to": "CH0038389992"
+        },
+        {
+            "from": "US92343V1044",
+            "verb": "is follower of",
+            "to": "DE000DTR0CK8"
+        },
+        {
+            "from": "FR0000120628",
+            "verb": "is follower of",
+            "to": "US92343V1044"
+        },
+        {
+            "from": "IE00B5377D42",
+            "verb": "is follower of",
+            "to": "FR0000120628"
+        },
+        {
+            "from": "DE0007037129",
+            "verb": "is follower of",
+            "to": "IE00B5377D42"
+        },
+        {
+            "from": "CH0244767585",
+            "verb": "is follower of",
+            "to": "DE0007037129"
+        },
+        {
+            "from": "GB00BP6MXD84",
+            "verb": "is follower of",
+            "to": "CH0244767585"
+        },
+        {
+            "from": "LU0048580004",
+            "verb": "is follower of",
+            "to": "GB00BP6MXD84"
+        },
+        {
+            "from": "DE000BAY0017",
+            "verb": "is follower of",
+            "to": "LU0048580004"
+        },
+        {
+            "from": "US6687711084",
+            "verb": "is follower of",
+            "to": "DE000BAY0017"
+        },
+        {
+            "from": "US7170811035",
+            "verb": "is follower of",
+            "to": "US6687711084"
+        },
+        {
+            "from": "LU0294851513",
+            "verb": "is follower of",
+            "to": "US7170811035"
+        },
+        {
+            "from": "DE000ENAG999",
+            "verb": "is follower of",
+            "to": "LU0294851513"
+        },
+        {
+            "from": "GB0005405286",
+            "verb": "is follower of",
+            "to": "DE000ENAG999"
+        },
+        {
+            "from": "CH0363463438",
+            "verb": "is follower of",
+            "to": "GB0005405286"
+        },
+        {
+            "from": "GB00BH4HKS39",
+            "verb": "is follower of",
+            "to": "CH0363463438"
+        },
+        {
+            "from": "2120.001.01",
+            "verb": "is follower of",
+            "to": "GB00BH4HKS39"
+        },
+        {
+            "from": "2120.814.01",
+            "verb": "is follower of",
+            "to": "2120.001.01"
+        },
+        {
+            "from": "N987272-",
+            "verb": "is follower of",
+            "to": "2120.814.01"
+        },
+        {
+            "from": "2120.333.01",
+            "verb": "is follower of",
+            "to": "N987272-"
+        }
+    ],
+    "sources": [
+        {
+            "name": "bank statement 040270501213 of 06.02.26"
+        }
+    ],
+    "values": [
+        {
+            "words": [
+                "exchange rate",
+                "CHF per EUR"
+            ],
+            "number": "0.9323",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "exchange rate",
+                "CHF per USD"
+            ],
+            "number": "0.8036",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "exchange rate",
+                "CHF per GBP"
+            ],
+            "number": "1.0895",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "2120.001.01",
+                "CHF",
+                "original"
+            ],
+            "number": "484296.24",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "2120.001.01",
+                "lot size",
+                "CHF",
+                "assumed"
+            ],
+            "number": "0.01"
+        },
+        {
+            "words": [
+                "2120.001.01",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "484296.24",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "2120.814.01",
+                "EUR",
+                "original"
+            ],
+            "number": "209848.13",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "2120.814.01",
+                "lot size",
+                "EUR",
+                "assumed"
+            ],
+            "number": "0.01"
+        },
+        {
+            "words": [
+                "2120.814.01",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "195641.41",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "N987272-",
+                "EUR",
+                "original"
+            ],
+            "number": "320000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "N987272-",
+                "lot size",
+                "EUR",
+                "assumed"
+            ],
+            "number": "0.01"
+        },
+        {
+            "words": [
+                "N987272-",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "270571.28",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "2120.333.01",
+                "USD",
+                "original"
+            ],
+            "number": "205534.45",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "2120.333.01",
+                "lot size",
+                "USD",
+                "assumed"
+            ],
+            "number": "0.01"
+        },
+        {
+            "words": [
+                "2120.333.01",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "165167.48",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0854923223",
+                "shares",
+                "original"
+            ],
+            "number": "934.784",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0854923223",
+                "stock price",
+                "CHF"
+            ],
+            "number": "150.269",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0854923223",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "LU0854923223",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "140469.06",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0854923140",
+                "face value",
+                "EUR",
+                "original"
+            ],
+            "number": "200000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0854923140",
+                "bond price",
+                "percent"
+            ],
+            "number": "1.4903",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0854923140",
+                "lot size",
+                "EUR",
+                "assumed"
+            ],
+            "number": "1000"
+        },
+        {
+            "words": [
+                "LU0854923140",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "277881.34",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US742718FY05",
+                "face value",
+                "USD",
+                "original"
+            ],
+            "number": "150000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US742718FY05",
+                "bond price",
+                "percent"
+            ],
+            "number": "0.9904",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US742718FY05",
+                "lot size",
+                "USD",
+                "assumed"
+            ],
+            "number": "1000"
+        },
+        {
+            "words": [
+                "US742718FY05",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "119382.82",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US29874QEX88",
+                "face value",
+                "USD",
+                "original"
+            ],
+            "number": "200000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US29874QEX88",
+                "bond price",
+                "percent"
+            ],
+            "number": "1.0151",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US29874QEX88",
+                "lot size",
+                "USD",
+                "assumed"
+            ],
+            "number": "1000"
+        },
+        {
+            "words": [
+                "US29874QEX88",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "165659.9",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US4581X0EH74",
+                "face value",
+                "USD",
+                "original"
+            ],
+            "number": "250000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US4581X0EH74",
+                "bond price",
+                "percent"
+            ],
+            "number": "1.0019",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US4581X0EH74",
+                "lot size",
+                "USD",
+                "assumed"
+            ],
+            "number": "1000"
+        },
+        {
+            "words": [
+                "US4581X0EH74",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "201281.71",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012221716",
+                "shares",
+                "original"
+            ],
+            "number": "6000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012221716",
+                "stock price",
+                "CHF"
+            ],
+            "number": "61.74",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012221716",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0012221716",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "370440",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1169360919",
+                "shares",
+                "original"
+            ],
+            "number": "3000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1169360919",
+                "stock price",
+                "CHF"
+            ],
+            "number": "57.84",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1169360919",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH1169360919",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "173520",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0432492467",
+                "shares",
+                "original"
+            ],
+            "number": "2500",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0432492467",
+                "stock price",
+                "CHF"
+            ],
+            "number": "77.13",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0432492467",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0432492467",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "192825",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1430134226",
+                "shares",
+                "original"
+            ],
+            "number": "5000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1430134226",
+                "stock price",
+                "CHF"
+            ],
+            "number": "48.46",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1430134226",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH1430134226",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "242300",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0038389992",
+                "shares",
+                "original"
+            ],
+            "number": "3500",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0038389992",
+                "stock price",
+                "CHF"
+            ],
+            "number": "41.61",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0038389992",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0038389992",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "145635",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0210483332",
+                "shares",
+                "original"
+            ],
+            "number": "1000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0210483332",
+                "stock price",
+                "CHF"
+            ],
+            "number": "157.69",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0210483332",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0210483332",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "157690",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0030170408",
+                "shares",
+                "original"
+            ],
+            "number": "175",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0030170408",
+                "stock price",
+                "CHF"
+            ],
+            "number": "558",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0030170408",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0030170408",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "97650",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0010645932",
+                "shares",
+                "original"
+            ],
+            "number": "35",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0010645932",
+                "stock price",
+                "CHF"
+            ],
+            "number": "3955.7",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0010645932",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0010645932",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "138449.5",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0466642201",
+                "shares",
+                "original"
+            ],
+            "number": "700",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0466642201",
+                "stock price",
+                "CHF"
+            ],
+            "number": "160.39",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0466642201",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0466642201",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "112273",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012214059",
+                "shares",
+                "original"
+            ],
+            "number": "1750",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012214059",
+                "stock price",
+                "CHF"
+            ],
+            "number": "58.98",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012214059",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0012214059",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "103215",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0363463438",
+                "shares",
+                "original"
+            ],
+            "number": "40000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0363463438",
+                "stock price",
+                "CHF"
+            ],
+            "number": "1.995",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0363463438",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0363463438",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "79800",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0010570759",
+                "shares",
+                "original"
+            ],
+            "number": "20",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0010570759",
+                "stock price",
+                "CHF"
+            ],
+            "number": "10448.32",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0010570759",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0010570759",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "208966.4",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0038863350",
+                "shares",
+                "original"
+            ],
+            "number": "2500",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0038863350",
+                "stock price",
+                "CHF"
+            ],
+            "number": "78.28",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0038863350",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0038863350",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "195700",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012005267",
+                "shares",
+                "original"
+            ],
+            "number": "700",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012005267",
+                "stock price",
+                "CHF"
+            ],
+            "number": "91.15",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012005267",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0012005267",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "63805",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012032048",
+                "shares",
+                "original"
+            ],
+            "number": "700",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012032048",
+                "stock price",
+                "CHF"
+            ],
+            "number": "258.4",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012032048",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0012032048",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "180880",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1243598427",
+                "shares",
+                "original"
+            ],
+            "number": "5000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1243598427",
+                "stock price",
+                "CHF"
+            ],
+            "number": "42.25",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1243598427",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH1243598427",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "211250",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1256740924",
+                "shares",
+                "original"
+            ],
+            "number": "2000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1256740924",
+                "stock price",
+                "CHF"
+            ],
+            "number": "96.48",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1256740924",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH1256740924",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "192960",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012549785",
+                "shares",
+                "original"
+            ],
+            "number": "300",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012549785",
+                "stock price",
+                "CHF"
+            ],
+            "number": "257.67",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0012549785",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0012549785",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "77301",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1175448666",
+                "shares",
+                "original"
+            ],
+            "number": "1750",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1175448666",
+                "stock price",
+                "CHF"
+            ],
+            "number": "111.35",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH1175448666",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH1175448666",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "194862.5",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0008742519",
+                "shares",
+                "original"
+            ],
+            "number": "400",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0008742519",
+                "stock price",
+                "CHF"
+            ],
+            "number": "569",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0008742519",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0008742519",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "227600",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0244767585",
+                "shares",
+                "original"
+            ],
+            "number": "6000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0244767585",
+                "stock price",
+                "CHF"
+            ],
+            "number": "31.89",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0244767585",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0244767585",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "191340",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0011075394",
+                "shares",
+                "original"
+            ],
+            "number": "400",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0011075394",
+                "stock price",
+                "CHF"
+            ],
+            "number": "557.05",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0011075394",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0011075394",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "222820",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "BE0974293251",
+                "shares",
+                "original"
+            ],
+            "number": "700",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "BE0974293251",
+                "stock price",
+                "EUR"
+            ],
+            "number": "59.26",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "BE0974293251",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "BE0974293251",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "38673.67",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000A1EWWW0",
+                "shares",
+                "original"
+            ],
+            "number": "1000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000A1EWWW0",
+                "stock price",
+                "EUR"
+            ],
+            "number": "162.35",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000A1EWWW0",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "DE000A1EWWW0",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "151358.91",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0008404005",
+                "shares",
+                "original"
+            ],
+            "number": "250",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0008404005",
+                "stock price",
+                "EUR"
+            ],
+            "number": "280.45",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0008404005",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "DE0008404005",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "65365.88",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "FR0000120628",
+                "shares",
+                "original"
+            ],
+            "number": "1750",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "FR0000120628",
+                "stock price",
+                "EUR"
+            ],
+            "number": "36.84",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "FR0000120628",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "FR0000120628",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "60105.38",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000BASF111",
+                "shares",
+                "original"
+            ],
+            "number": "4000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000BASF111",
+                "stock price",
+                "EUR"
+            ],
+            "number": "47.11",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000BASF111",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "DE000BASF111",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "175682.61",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000BAY0017",
+                "shares",
+                "original"
+            ],
+            "number": "7000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000BAY0017",
+                "stock price",
+                "EUR"
+            ],
+            "number": "25.33",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000BAY0017",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "DE000BAY0017",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "165306.11",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000DTR0CK8",
+                "shares",
+                "original"
+            ],
+            "number": "6000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000DTR0CK8",
+                "stock price",
+                "EUR"
+            ],
+            "number": "42.07",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000DTR0CK8",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "DE000DTR0CK8",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "235331.17",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "FR0000120644",
+                "shares",
+                "original"
+            ],
+            "number": "1000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "FR0000120644",
+                "stock price",
+                "EUR"
+            ],
+            "number": "60.32",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "FR0000120644",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "FR0000120644",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "56236.34",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000ENAG999",
+                "shares",
+                "original"
+            ],
+            "number": "15000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000ENAG999",
+                "stock price",
+                "EUR"
+            ],
+            "number": "13.81",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000ENAG999",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "DE000ENAG999",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "193125.95",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0048580004",
+                "shares",
+                "original"
+            ],
+            "number": "6000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0048580004",
+                "stock price",
+                "EUR"
+            ],
+            "number": "30.72",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0048580004",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "LU0048580004",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "171841.54",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0294851513",
+                "shares",
+                "original"
+            ],
+            "number": "6000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0294851513",
+                "stock price",
+                "EUR"
+            ],
+            "number": "13.84",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0294851513",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "LU0294851513",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "77418.19",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0007100000",
+                "shares",
+                "original"
+            ],
+            "number": "3500",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0007100000",
+                "stock price",
+                "EUR"
+            ],
+            "number": "56.75",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0007100000",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "DE0007100000",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "185178.09",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0007037129",
+                "shares",
+                "original"
+            ],
+            "number": "7000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0007037129",
+                "stock price",
+                "EUR"
+            ],
+            "number": "35.01",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0007037129",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "DE0007037129",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "228478.76",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "GB00BP6MXD84",
+                "shares",
+                "original"
+            ],
+            "number": "7000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "GB00BP6MXD84",
+                "stock price",
+                "EUR"
+            ],
+            "number": "32.25",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "GB00BP6MXD84",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "GB00BP6MXD84",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "210466.73",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000ENER6Y0",
+                "shares",
+                "original"
+            ],
+            "number": "1500",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000ENER6Y0",
+                "stock price",
+                "EUR"
+            ],
+            "number": "90.96",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE000ENER6Y0",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "DE000ENER6Y0",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "127203.01",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0007236101",
+                "shares",
+                "original"
+            ],
+            "number": "800",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0007236101",
+                "stock price",
+                "EUR"
+            ],
+            "number": "206.61",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "DE0007236101",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "DE0007236101",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "154098",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "GB0005405286",
+                "shares",
+                "original"
+            ],
+            "number": "15000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "GB0005405286",
+                "stock price",
+                "GBP"
+            ],
+            "number": "10.38",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "GB0005405286",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "GB0005405286",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "169635.15",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "GB00BH4HKS39",
+                "shares",
+                "original"
+            ],
+            "number": "230000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "GB00BH4HKS39",
+                "stock price",
+                "GBP"
+            ],
+            "number": "0.776",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "GB00BH4HKS39",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "GB00BH4HKS39",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "194453.96",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US02209S1033",
+                "shares",
+                "original"
+            ],
+            "number": "3000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US02209S1033",
+                "stock price",
+                "USD"
+            ],
+            "number": "55.77",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US02209S1033",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US02209S1033",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "134450.32",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US0311621009",
+                "shares",
+                "original"
+            ],
+            "number": "600",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US0311621009",
+                "stock price",
+                "USD"
+            ],
+            "number": "312.44",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US0311621009",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US0311621009",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "150646.07",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US0970231058",
+                "shares",
+                "original"
+            ],
+            "number": "800",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US0970231058",
+                "stock price",
+                "USD"
+            ],
+            "number": "198.7",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US0970231058",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US0970231058",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "127740.26",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US14448C1045",
+                "shares",
+                "original"
+            ],
+            "number": "1750",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US14448C1045",
+                "stock price",
+                "USD"
+            ],
+            "number": "70.96",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US14448C1045",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US14448C1045",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "99791.05",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US1729674242",
+                "shares",
+                "original"
+            ],
+            "number": "1750",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US1729674242",
+                "stock price",
+                "USD"
+            ],
+            "number": "93.16",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US1729674242",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US1729674242",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "131010.91",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US3696043013",
+                "shares",
+                "original"
+            ],
+            "number": "400",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US3696043013",
+                "stock price",
+                "USD"
+            ],
+            "number": "243.89",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US3696043013",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US3696043013",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "78396",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US6687711084",
+                "shares",
+                "original"
+            ],
+            "number": "7000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US6687711084",
+                "stock price",
+                "USD"
+            ],
+            "number": "26.56",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US6687711084",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US6687711084",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "149405.31",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US36828A1016",
+                "shares",
+                "original"
+            ],
+            "number": "500",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US36828A1016",
+                "stock price",
+                "USD"
+            ],
+            "number": "484.58",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US36828A1016",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US36828A1016",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "194704.24",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "IE00B5377D42",
+                "shares",
+                "original"
+            ],
+            "number": "3000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "IE00B5377D42",
+                "stock price",
+                "USD"
+            ],
+            "number": "40.94",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "IE00B5377D42",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "IE00B5377D42",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "98698.15",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "IE00B53SZB19",
+                "shares",
+                "original"
+            ],
+            "number": "125",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "IE00B53SZB19",
+                "stock price",
+                "USD"
+            ],
+            "number": "1033.48",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "IE00B53SZB19",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "IE00B53SZB19",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "103813.07",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US4781601046",
+                "shares",
+                "original"
+            ],
+            "number": "1750",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US4781601046",
+                "stock price",
+                "USD"
+            ],
+            "number": "169.07",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US4781601046",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US4781601046",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "237763.14",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US68902V1070",
+                "shares",
+                "original"
+            ],
+            "number": "2500",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US68902V1070",
+                "stock price",
+                "USD"
+            ],
+            "number": "99.53",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US68902V1070",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US68902V1070",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "199955.77",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7134481081",
+                "shares",
+                "original"
+            ],
+            "number": "1750",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7134481081",
+                "stock price",
+                "USD"
+            ],
+            "number": "142.62",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7134481081",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US7134481081",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "200566.51",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7170811035",
+                "shares",
+                "original"
+            ],
+            "number": "6000",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7170811035",
+                "stock price",
+                "USD"
+            ],
+            "number": "26.11",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7170811035",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US7170811035",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "125891.98",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7181721090",
+                "shares",
+                "original"
+            ],
+            "number": "1250",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7181721090",
+                "stock price",
+                "USD"
+            ],
+            "number": "158.53",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7181721090",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US7181721090",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "159243.39",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7427181091",
+                "shares",
+                "original"
+            ],
+            "number": "1750",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7427181091",
+                "stock price",
+                "USD"
+            ],
+            "number": "152.13",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US7427181091",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US7427181091",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "213940.42",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US75513E1010",
+                "shares",
+                "original"
+            ],
+            "number": "1250",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US75513E1010",
+                "stock price",
+                "USD"
+            ],
+            "number": "155.86",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US75513E1010",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US75513E1010",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "156561.37",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US92343V1044",
+                "shares",
+                "original"
+            ],
+            "number": "2500",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US92343V1044",
+                "stock price",
+                "USD"
+            ],
+            "number": "43.94",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "US92343V1044",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "US92343V1044",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "88275.46",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0274209740",
+                "shares",
+                "original"
+            ],
+            "number": "1450",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0274209740",
+                "stock price",
+                "USD"
+            ],
+            "number": "106.7701",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "LU0274209740",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "LU0274209740",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "124405.71",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0047533549",
+                "shares",
+                "original"
+            ],
+            "number": "56",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0047533549",
+                "stock price",
+                "USD"
+            ],
+            "number": "4295.92",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "CH0047533549",
+                "lot size",
+                "shares",
+                "assumed"
+            ],
+            "number": "1"
+        },
+        {
+            "words": [
+                "CH0047533549",
+                "holding value",
+                "CHF",
+                "expected"
+            ],
+            "number": "193315.58",
+            "source": "bank statement 040270501213 of 06.02.26"
+        }
+    ]
+}

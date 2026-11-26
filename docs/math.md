@@ -40,6 +40,8 @@ that the saved result does not confirm.
 | `sum` | the sum of a list: a phrase stands for all its stored values | `sum( 1 ; 2 ; 3 )` | 6 |  |
 | `count` | the number of values of a list | `count( 1 ; 2 ; 3 )` | 3 |  |
 | `mean` | the average of a list | `mean( 1 ; 2 ; 3 )` | 2 |  |
+| `largest` | the largest number of a list e.g. the largest target share of all children | `largest( 1 ; 3 ; 2 )` | 3 |  |
+| `smallest` | the smallest number of a list | `smallest( 1 ; 3 ; 2 )` | 1 |  |
 
 ## Missing in a calculation
 
@@ -137,6 +139,11 @@ Each text is calculated by each calculation; a difference is marked with **diff*
 | `sum( ) * 3` | no number | no number | no number | no number | no number |  |
 | `sum( 1 ; abc )` | no number | no number | no number | no number | no number |  |
 | `5 %` | no number | no number | no number | no number | no number |  |
+| `largest( )` | no number | no number | no number | no number | no number |  |
+| `smallest( ) + 1` | no number | no number | no number | no number | no number |  |
+| `largest( 1 ; abc )` | no number | no number | no number | no number | no number |  |
+| `largest( -5 ; -2 )` | -2 | -2 | -2 | -2 | -2 |  |
+| `smallest( 0.3 ; -0.1 ; 0.2 )` | -0.1 | -0.1 | -0.1 | -0.1 | -0.1 |  |
 | `sqrt( -1 )` | no number | no number | no number | no number | no number |  |
 | `log( 0 )` | no number | no number | no number | no number | no number |  |
 | `log( 8 ; 1 )` | no number | no number | no number | no number | no number |  |

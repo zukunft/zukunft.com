@@ -112,6 +112,8 @@ class arithmetic
             chars::FUNC_SUM => array_sum($nums),
             chars::FUNC_COUNT => count($nums),
             chars::FUNC_MEAN => array_sum($nums) / count($nums),
+            chars::FUNC_LARGEST => $nums == [] ? NAN : max($nums),
+            chars::FUNC_SMALLEST => $nums == [] ? NAN : min($nums),
             default => NAN,
         };
     }

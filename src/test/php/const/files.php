@@ -145,8 +145,12 @@ class files
     CONST string PORTFOLIO_CASE_LOW = 'low';
     CONST string PORTFOLIO_CASE_OVER = 'over';
     CONST string PORTFOLIO_CASE_DIFFER = 'differ';
+    // the cases that press the button "Add child" and then the remove button of the second child (step 2 and 3)
+    CONST string PORTFOLIO_CASE_ADD_CHILD = 'add_child';
+    CONST string PORTFOLIO_CASE_REMOVE_CHILD = 'remove_child';
     CONST array PORTFOLIO_CASES = [self::PORTFOLIO_CASE_STANDARD, self::PORTFOLIO_CASE_HIGH, self::PORTFOLIO_CASE_LOW,
-        self::PORTFOLIO_CASE_OVER, self::PORTFOLIO_CASE_DIFFER];
+        self::PORTFOLIO_CASE_OVER, self::PORTFOLIO_CASE_DIFFER, self::PORTFOLIO_CASE_ADD_CHILD,
+        self::PORTFOLIO_CASE_REMOVE_CHILD];
     // the formula editor of the example PV installation in the use case folder next to the hand made
     // formula_editor_sample.html, because the view test removes every file below views_by_object that it has not written
     CONST string FORMULA_EDITOR = 'formula_editor';
@@ -449,6 +453,13 @@ class files
     CONST string IMPORT_TRUE_COST_BURGER = test_paths::IMPORT . 'true_costs_burger' . self::JSON;
 
     CONST string IMPORT_PORTFOLIO_SPLIT_CALC = test_paths::IMPORT . 'portfolio_split_calc' . self::JSON;
+    // the csv of a bank statement of the positions and the import json that convert_portfolio_csv creates from it:
+    // the generated sample of the request and the 42 holdings of portfolio_split_calculator.json with their tickers
+    CONST string IMPORT_PORTFOLIO_CSV_PATH = test_paths::IMPORT . 'portfolio_csv' . DIRECTORY_SEPARATOR;
+    CONST string IMPORT_PORTFOLIO_CSV_SAMPLE = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_sample' . self::CSV;
+    CONST string IMPORT_PORTFOLIO_CSV_SAMPLE_JSON = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_sample' . self::JSON;
+    CONST string IMPORT_PORTFOLIO_CSV_SPLIT = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_portfolio_split' . self::CSV;
+    CONST string IMPORT_PORTFOLIO_CSV_SPLIT_JSON = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_portfolio_split' . self::JSON;
     CONST string IMPORT_PORTFOLIO_INSTRUMENTS = test_paths::IMPORT . 'portfolio_instruments' . self::JSON;
     CONST string IMPORT_PORTFOLIO_REPORT = test_paths::IMPORT . 'portfolio_report' . self::JSON;
     CONST string IMPORT_PORTFOLIO_SPLIT_PARAMETERS_SAMPLE = test_paths::IMPORT . 'portfolio_split_parameters_sample' . self::JSON;

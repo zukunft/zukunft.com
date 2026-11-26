@@ -310,6 +310,19 @@ The formulas "walk count of the first child" and "walk count of the second child
 
 No use case has a formula that reads a checkbox, so no input case toggles one in `calculator.js` or `calculator_json.js`. Add the toggle to `use_case_cases.js` and a case when the first such formula exists, e.g. mirroring in the portfolio split walk.
 
+## the import keeps the context of a stored result
+
+A re-import of a file without a database recreate (e.g. `SELECTED_IMPORT_FILES` of `test_part.php`) keeps the
+context, i.e. the source group, of a result that a calc-validation of the file stores, also if the calc-validation
+has a new context: on 2026-11-25 the results `target share of the parent` and `target share excess` of
+`portfolio_split_calculator.json` kept `example portfolio split, first child portfolio, ..., original` after the
+change to `example portfolio split, child portfolio, original, target share, percent`
+(`docs/llm/log/2026-11-25_csv_child_shares.md`), so the page found no operand and showed the stored number. The
+reason: `result::db_fields_changed` adds the changed `source_group_id` only `if (!$sc_par_lst->is_standard())`, so the
+standard row of a result never gets a new source group by an update, only by a new insert. Decide whether the import
+updates the source group of a stored result of the same formula and phrases, with a positive and a negative test in
+`import_write_tests`; until then a changed context of a calc-validation needs `test/reset_db.php`.
+
 ## formula editor
 
 - the toast of a failed save in `src/main/resources/script/formula_editor.js` says "The message is shown

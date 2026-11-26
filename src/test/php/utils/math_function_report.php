@@ -113,6 +113,8 @@ class math_function_report
         'sum' => ['the sum of a list: a phrase stands for all its stored values', 'sum( 1 ; 2 ; 3 )', '6'],
         'count' => ['the number of values of a list', 'count( 1 ; 2 ; 3 )', '3'],
         'mean' => ['the average of a list', 'mean( 1 ; 2 ; 3 )', '2'],
+        'largest' => ['the largest number of a list e.g. the largest target share of all children', 'largest( 1 ; 3 ; 2 )', '3'],
+        'smallest' => ['the smallest number of a list', 'smallest( 1 ; 3 ; 2 )', '1'],
     ];
 
     // the texts on which the evaluators could differ: each gives one number or no number in all of them
@@ -137,6 +139,7 @@ class math_function_report
         'if( 1 ) 5', 'if( 0 ) 5', 'if( 1 ; 2 )', 'if( 1 ; 2 ; 3 ; 4 )', 'if( 1 ; 2 ; 5 / 0 )', 'if( abc ; 1 ; 2 )',
         // a function or an operator that is missing everywhere
         'tan( 1 )', '10 - tan( 1 )', 'median( 2.6 ) * 3', 'sum( ) * 3', 'sum( 1 ; abc )', '5 %',
+        'largest( )', 'smallest( ) + 1', 'largest( 1 ; abc )', 'largest( -5 ; -2 )', 'smallest( 0.3 ; -0.1 ; 0.2 )',
         // the functions of one number and the power with a number that they cannot give
         'sqrt( -1 )', 'log( 0 )', 'log( 8 ; 1 )', 'log( 8 ; 0 )', 'log( 8 ; 2 ; 3 )', 'ln( -1 )', 'exp( 1000 )', 'sqrt( 4 ; 9 )', 'sqrt( abc )',
         '0 ^ -1', '( -8 ) ^ 0.5', '2 ^ 3 ^ 2', '-2 ^ 2', '( -3 ) ^ 2', '2 ^ -1', 'round( -2.5 )', 'round( 2.5 )',

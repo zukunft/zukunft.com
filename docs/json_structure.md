@@ -231,8 +231,8 @@ its arguments, and `max( a ; b ; … )`, the largest; the arguments are separate
 a `,` joins the phrase names of one operand (`"delivered electricity","lifetime"`). It also
 calculates `if( condition ; then ; else )` with `=`, `&` and `|` in the condition and only
 the chosen part, the power `^` and the functions of one number `abs`, `cos`, `exp`, `floor` (round down), `ln`, `log`
-(base 10, or `log( x ; base )`), `round`, `sec`, `sin` and `sqrt`, with an angle in radian. `sum`, `count` and `mean`
-take a list: a phrase as their argument stands for every stored value that names the phrase and
+(base 10, or `log( x ; base )`), `round`, `sec`, `sin` and `sqrt`, with an angle in radian. `sum`, `count`, `mean`,
+`largest` and `smallest` take a list: a phrase as their argument stands for every stored value that names the phrase and
 all phrases of the calculation, without calculated results and without a value that also names a
 variance or a confidence, and a calculation inside the argument like `sum( "a" * "b" )` gives an
 error. All functions are listed in `docs/math.md`. A calculator

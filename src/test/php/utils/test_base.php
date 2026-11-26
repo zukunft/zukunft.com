@@ -4947,11 +4947,15 @@ class test_base
      *
      * @param group $grp the phrase group that identifies the value whose change log should be removed
      * @param phrase_list $phr_lst the phrases of the value, checked to contain at least one test row
+     * @param array $names the phrase names of the value as the test names it, checked like the phrases
      * @return void
      */
-    function cleanup_change_log_value(group $grp, phrase_list $phr_lst): void
+    function cleanup_change_log_value(group $grp, phrase_list $phr_lst, array $names = []): void
     {
-        if ($this->phrase_list_has_test_row($phr_lst)) {
+        // the names of the test value as the test names it, because a phrase of a list loaded by the names may not
+        // carry its name, and then the history of the value would stay for the next run with the same group id
+        $has_test_name = array_filter($names, fn(string $name) => $this->is_test_phrase_name($name)) != [];
+        if ($has_test_name or $this->phrase_list_has_test_row($phr_lst)) {
             if ($grp->id() != 0 and $grp->id() != '') {
                 $this->delete_value_change_log($grp->id());
                 $this->delete_value_link_change_log($grp->id());
@@ -5056,6 +5060,9 @@ class test_base
     private function delete_value_change_log(int|string $grp_id): void
     {
         global $db_con;
+        // the entries that the history of the value shows, removed by their ids like the log of a named object,
+        // because the delete by the group id below has left them (value_write_url_tests::assert_no_value_history)
+        $this->delete_change_log_of_obj(value::class, $grp_id);
         $size = $this->value_change_log_size($grp_id);
         foreach (change_log::LOG_CLASSES as $chg_class) {
             if (is_subclass_of($chg_class, change_value::class)) {
@@ -5068,9 +5075,28 @@ class test_base
                     $msg = new user_message($this->usr_system);
                     $qp = $this->value_change_log_del_qp($sc, $chg_class, $tbl, $grp_id);
                     $db_con->delete($qp, 'cleanup value change log of ' . $chg_class, $msg);
+                    // a failed delete leaves the history of a test value for the next run, so it is never silent
+                    if (!$msg->is_ok()) {
+                        log_err('the change log of the test value ' . $grp_id . ' in ' . $tbl
+                            . ' could not be removed: ' . $msg->text());
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * @param int|string $grp_id the group id of a test value
+     * @return int the number of change log entries of the value e.g. to check that a cleanup has removed them all
+     */
+    function value_change_log_count(int|string $grp_id): int
+    {
+        $msg = new user_message($this->usr_system);
+        $log_lst = new change_log_list();
+        // raise the default page limit so that every entry of the value is counted
+        $log_lst->limit = sql_db::ROW_MAX;
+        $log_lst->load_by_obj_fld(value::class, $msg, $grp_id, $this->usr_system);
+        return count($log_lst->lst());
     }
 
     /**

@@ -779,7 +779,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     // the terms of an expression e.g. "PV capacity" or "battery charge", "January" (formula_calc::operand_pattern)
     const OPERAND_PATTERN = /"[^"]+"(?:\s*,\s*"[^"]+")*/g;
     // one number, one char of the arithmetic or of a condition or a math function between the operands (formula_calc::TOKEN_PATTERN)
-    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/()^=&|;]|min|max|if|abs|cos|exp|floor|ln|log|round|sec|sin|sqrt|sum|count|mean)/y;
+    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/()^=&|;]|min|max|if|abs|cos|exp|floor|ln|log|round|sec|sin|sqrt|sum|count|mean|largest|smallest)/y;
     // the math functions, the separator of their arguments and the power (the chars::FUNC_* and chars::POW)
     const FUNC_MIN = 'min';
     const FUNC_MAX = 'max';
@@ -789,10 +789,10 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     // the logarithm like arithmetic::log_number, to the base 10 if no base is given
     const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);
     // the functions of a list like arithmetic::list_number, a plain operand stands for all its values, except a second number of the same fact (words::LIST_FUNCTION_EXCLUDED)
-    const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
-    const LIST_ARGUMENT_START = /\b(?:sum|count|mean)\s*\([^()]*$/;
-    const LIST_ARGUMENTS_PLAIN = /\b(?:sum|count|mean)\s*\(\s*(?:x|-?\d+(?:\.\d+)?)\s*(?:;\s*(?:x|-?\d+(?:\.\d+)?)\s*)*\)/g;
-    const LIST_FUNCTION = /\b(?:sum|count|mean)\s*\(/;
+    const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length, largest: (nums) => nums.length === 0 ? NaN : Math.max(...nums), smallest: (nums) => nums.length === 0 ? NaN : Math.min(...nums)};
+    const LIST_ARGUMENT_START = /\b(?:sum|count|mean|largest|smallest)\s*\([^()]*$/;
+    const LIST_ARGUMENTS_PLAIN = /\b(?:sum|count|mean|largest|smallest)\s*\(\s*(?:x|-?\d+(?:\.\d+)?)\s*(?:;\s*(?:x|-?\d+(?:\.\d+)?)\s*)*\)/g;
+    const LIST_FUNCTION = /\b(?:sum|count|mean|largest|smallest)\s*\(/;
     const LIST_EXCLUDED = ['variance low (system)', 'variance high (system)', 'confidence'];
     // round and floor take their argument without the float noise below these decimals like arithmetic::ROUND_NOISE_DECIMALS,
     // the same decimals as an operand of a calculation; toFixed rounds the exact binary value like the php round

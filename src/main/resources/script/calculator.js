@@ -73,7 +73,7 @@
     // the logarithm like arithmetic::log_number, to the base 10 if no base is given
     const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);
     // the functions of a list like arithmetic::list_number; formula_calc::tokens has written all values of a list as the arguments
-    const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
+    const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length, largest: (nums) => nums.length === 0 ? NaN : Math.max(...nums), smallest: (nums) => nums.length === 0 ? NaN : Math.min(...nums)};
     // round and floor take their argument without the float noise below these decimals like arithmetic::ROUND_NOISE_DECIMALS;
     // toFixed rounds the exact binary value like the php round, also for a large number
     const ROUND_NOISE_DECIMALS = 12;
