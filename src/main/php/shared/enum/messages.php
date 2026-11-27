@@ -2505,6 +2505,9 @@ enum messages: string
     case CALCULATOR_SAVE = 'calculator_save';
     // the confirmation of one saved number with its label, the new and the old number, or that no number has been changed
     case CALCULATOR_SAVED = 'calculator_saved';
+    // the confirmation of a number without a database row and of an instance whose is a triple the save has deleted
+    case CALCULATOR_SAVED_NEW = 'calculator_saved_new';
+    case CALCULATOR_REMOVED_SAVED = 'calculator_removed_saved';
     case CALCULATOR_NOTHING_CHANGED = 'calculator_nothing_changed';
     // the first header of the result table, the default summary of the details and the sources heading
     case CALCULATOR_RESULT = 'calculator_result';
@@ -3173,6 +3176,9 @@ enum messages: string
     case IMPORT_CSV_CELL_EMPTY = 'import_csv_cell_empty';
     case IMPORT_CSV_CELL_NOT_NUMBER = 'import_csv_cell_not_number';
     case IMPORT_CSV_RATE_NOT_POSITIVE = 'import_csv_rate_not_positive';
+    // the problems of the definition of a csv format (convert_csv), which the author of the definition can fix
+    case IMPORT_CSV_FORMAT_KEYWORD_MISSING = 'import_csv_format_keyword_missing';
+    case IMPORT_CSV_TEMPLATE_NUMBERS = 'import_csv_template_numbers';
 
     // if a delete has only excluded the object for the user, because it is still used
     // always added with ok = true, because the exclusion is the normal answer to the delete of a used object

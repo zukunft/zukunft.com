@@ -133,7 +133,7 @@ repeated input.
 |---|---|---|
 | checkbox | `solar thermal` · `can be` · `calculator checkbox` | a checkbox; checked is the value 1, unchecked 0, so a formula can use it as a factor |
 | read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the number of the item phrase instead of a field |
-| repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field; what the repeat triple `has a` are the instances that the add button adds in the browser, the next one that is no instance yet, with the number of the first instance (a share at most what the others leave of 100 %) and the results of the first instance calculated again; the button is disabled if none is left; the remove button, while there are more than one, keeps the instances at their place, because e.g. the children are named by their position: each field from the removed one on takes the number of the field behind it, and the last instance is taken from the page with its numbers and results |
+| repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field; what the repeat triple `has a` are the instances that the add button adds in the browser, the next one that is no instance yet, with the number of the first instance (a share at most what the others leave of 100 %) and the results of the first instance calculated again; the button is disabled if none is left; the remove button, while there are more than one, keeps the instances at their place, because e.g. the children are named by their position: each field from the removed one on takes the number of the field behind it, and the last instance is taken from the page with its numbers and results; the save adds the `is a` triple and the numbers of an added instance and deletes the `is a` triple of a removed instance of the database, while a number of the database that a remove has taken from a field stays until the save can exclude it |
 | warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero; the page calculates the result again when an input changes |
 | slider | `house heating input heated area` · `has a` · `calculator slider` | a range slider coupled to the number field, with the field limits and the field step of the phrase; a `field step` value of the triple itself is the step of the slider; without javascript only the number field is shown |
 | preset | `house heating` · `has a` · `calculator preset` | a list with one button per item, with the label and the hint of the item; the button sets each input to the value that has the item phrase and the phrases of the input, e.g. `budget case`, `heat pump efficiency`; without javascript the buttons are not shown |
@@ -279,4 +279,12 @@ The templates:
   generates it; a template whose from and to are the same cell writes nothing, neither does a value template that uses
   it; a written triple whose from, verb and to the definition declares is written as that declaration, e.g. a
   currency pair of `portfolio_split_calculator.json`
-- the words and triples that the templates use are declared like in any import json and copied into the result
+- the words and triples that the templates use are declared like in any import json and copied into the result:
+  each declaration that the result uses, the declarations that it uses in turn, and every declared triple between
+  two phrases of the result, e.g. `stock is a holding`; a cell that the definition does not declare is a word with
+  its name only, the cell of the row name column with the cell of the row description column as its description
+
+`convert_csv` (`src/main/php/cfg/import/convert_csv.php`) converts a csv by the decoded definition json and the name
+of the format phrase. What a format cannot say, because it is a calculation and not a fact of the csv, is not
+written: the `is follower of` walk of the holdings by their lot value, and a kind other than the one of the bank,
+e.g. a bond fund that the bank lists with the bonds but prices per unit.

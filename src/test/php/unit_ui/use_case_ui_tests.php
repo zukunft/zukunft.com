@@ -2294,6 +2294,84 @@ class use_case_ui_tests
         $test_name = '... but reported';
         $t->assert_false($test_name, $txt_msg->is_ok());
 
+        // an instance that the add button has added sends the repeated phrase for its is a triple and its number by the
+        // phrase ids of the value, because neither has a database row yet
+        $added = (string)word_names::CITY_ID;
+        $added_form = array_merge($form, [
+            url_var::PHRASE_LIST . $added => word_names::INHABITANT_ID . ',' . $added,
+            url_var::NUMERIC_VALUE . $added => '30',
+            url_var::PHRASE . $added => sandbox_value::UNIT_PERCENT,
+            url_var::NAME . $added => triple_names::CALC_INHABITANTS_LABEL_COM,
+            url_var::PHRASE_TO . $added => (string)word_names::CANTON_ID,
+        ]);
+        $new_msg = new user_message();
+        $new_values = $ui->calculator_new_values($added_form, $new_msg);
+        $test_name = 'the calculator save adds the number of an added instance with the phrases of its value';
+        // sorted, because the group of a value has no order of its phrases
+        $new_ids = $new_values[$added]->phr_lst()->id_lst();
+        sort($new_ids);
+        $t->assert($test_name, $new_ids, [word_names::CITY_ID, word_names::INHABITANT_ID]);
+        $test_name = '... as the stored ratio of the entered percent';
+        $new_number = $new_values[$added]->number();
+        $t->assert($test_name, $new_number, 0.3);
+        $test_name = '... and only for the added field';
+        $new_count = count($new_values);
+        $t->assert($test_name, $new_count, 1);
+        // negative: a field that the user has emptied adds no value, which is no error
+        $test_name = '... but no value for an emptied field';
+        $empty_form = array_merge($added_form, [url_var::NUMERIC_VALUE . $added => '']);
+        $empty_values = $ui->calculator_new_values($empty_form, $new_msg);
+        $t->assert($test_name, $empty_values, []);
+        // negative: a phrase id that is no number would add a value with fewer phrases, so it is reported instead
+        $test_name = '... and a phrase list with a text is not saved';
+        $bad_ids_form = array_merge($added_form, [url_var::PHRASE_LIST . $added => word_names::INHABITANT_ID . ',']);
+        $bad_ids_values = $ui->calculator_new_values($bad_ids_form, $new_msg);
+        $t->assert($test_name, $bad_ids_values, []);
+        $test_name = '... but reported';
+        $t->assert_false($test_name, $new_msg->is_ok());
+        $test_name = 'the calculator save adds the is a triple of an added instance to the repeated phrase';
+        $link_msg = new user_message();
+        $links = $ui->calculator_new_links($added_form, $link_msg);
+        $link = $links[$added];
+        $link_ids = [$link->get_from()?->id(), $link->get_verb()->id(), $link->get_to()?->id()];
+        $t->assert($test_name, $link_ids, [word_names::CITY_ID, verbs::IS_ID, word_names::CANTON_ID]);
+        // negative: a repeated phrase that is no number is reported and adds no triple
+        $test_name = '... but not to a repeated phrase that is no number';
+        $bad_link_form = array_merge($added_form, [url_var::PHRASE_TO . $added => word_names::INHABITANTS]);
+        $bad_links = $ui->calculator_new_links($bad_link_form, $link_msg);
+        $t->assert($test_name, $bad_links, []);
+        $test_name = '... which is reported';
+        $t->assert_false($test_name, $link_msg->is_ok());
+        // an instance of the database that the remove button has taken from the page sends the id of its is a triple
+        $removed = (string)word_names::CANTON_ID;
+        $removed_form = array_merge($form, [
+            url_var::TRIPLE . $removed => (string)triple_names::CITY_ZH_ID,
+            url_var::NAME . $removed => word_names::INHABITANTS,
+        ]);
+        $del_msg = new user_message();
+        $del_links = $ui->calculator_removed_links($removed_form, $del_msg);
+        $test_name = 'the calculator save deletes the is a triple of a removed instance';
+        $del_id = $del_links[$removed]->id();
+        $t->assert($test_name, $del_id, triple_names::CITY_ZH_ID);
+        $test_name = '... and names the instance in the confirmation';
+        $del_txt = $lib->msg_var_text([$ui->calculator_removed_text($removed_form, $removed)]);
+        $t->assert($test_name, $del_txt, word_names::INHABITANTS . ' removed');
+        // negative: a triple id that is no number is reported and deletes nothing
+        $test_name = '... but a triple id that is no number deletes nothing';
+        $bad_del_form = array_merge($form, [url_var::TRIPLE . $removed => word_names::INHABITANTS]);
+        $bad_del_links = $ui->calculator_removed_links($bad_del_form, $del_msg);
+        $t->assert($test_name, $bad_del_links, []);
+        $test_name = '... which is reported';
+        $t->assert_false($test_name, $del_msg->is_ok());
+        // an added instance is a write even without a changed number, so the save does not say that nothing has changed
+        $test_name = 'a save with an added instance does not say that nothing has been saved';
+        $add_act_msg = new user_message();
+        $add_act_msg->usr = new user_ui();
+        $add_act_form = array_merge($added_form, [url_var::NUMERIC_VALUE . $changed => (string)values::CITY_ZH_INHABITANTS_2019]);
+        $ui->url_to_action($add_act_form, $add_act_msg, $ui->dto, false);
+        $add_info = $add_act_msg->get_last_info();
+        $t->assert_text_not_contains($test_name, (string)$add_info, $mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
+
         // the simulated save shows the calculator page again without the inputs, which the page
         // then shows with the saved numbers
         $test_name = 'a save without a changed number shows the calculator page again';

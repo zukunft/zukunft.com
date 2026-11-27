@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_IMPORT . 'convert_portfolio_csv.php';
+include_once paths::MODEL_IMPORT . 'convert_csv.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_IMPORT . 'update_put.php';
 include_once paths::MODEL_CONST . 'files.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\import\convert_portfolio_csv;
+use Zukunft\ZukunftCom\main\php\cfg\import\convert_csv;
 use Zukunft\ZukunftCom\main\php\cfg\import\update_put;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -109,6 +111,12 @@ class import_tests
     // the general description that convert_portfolio_csv gives a currency pair that this home file does not have
     const string CSV_PAIR_EUR_COM = 'the unit of the EUR/CHF exchange rate: how many Swiss francs one euro buys';
     const string CSV_PAIR_NOK_COM = 'the unit of the exchange rate: CHF per unit of NOK';
+    // the phrase of the format of the bank csv in bank_position_csv.json, the triple that convert_csv names a hint by
+    // and the sections of the import json that the report of the difference of the two conversions compares
+    const string CSV_FORMAT = 'bank position csv';
+    const string CSV_HINT_NAME = 'CH0012221716 hint';
+    const array CSV_DIFF_SECTIONS = [json_fields::SELECTION, json_fields::WORDS, json_fields::TRIPLES,
+        json_fields::SOURCES, json_fields::VALUES];
 
     function run(test_cleanup $t): void
     {
@@ -1393,7 +1401,85 @@ class import_tests
         $test_name = '... and the columns linked to the keyword "csv column" that the file declares';
         $fmt_trp_names = $fmt_dto->triple_list()->names();
         $t->assert_contains($test_name, $fmt_trp_names, triples::CSV_COLUMN);
-        // the negative test, a definition without the keyword csv column, comes with convert_csv, which reports it
+
+        // the conversion of a csv by the phrases of its format, which replaces convert_portfolio_csv with change 3
+        $test_name = 'convert_csv reads the format of the bank csv from its definition without a message';
+        $fmt_conv = new convert_csv();
+        $fmt_conv->set_format($fmt_arr, self::CSV_FORMAT, $csv_msg);
+        $t->assert_msg($test_name, $csv_msg);
+        $csv_msg->reset();
+        $test_name = '... and writes the shares of a stock';
+        $fmt_json = $fmt_conv->convert($csv_txt, ['portfolio 040270501213'], $csv_src, $csv_msg, test_base::TEST_TIMESTAMP);
+        $fmt_csv_arr = json_decode($fmt_json, true);
+        $fmt_val_of = fn(array $words) => array_values(array_filter($fmt_csv_arr[json_fields::VALUES] ?? [],
+            fn(array $val) => $val[json_fields::WORDS] == $words))[0][json_fields::NUMBER] ?? null;
+        $fmt_shares = $fmt_val_of(['CH0012221716', 'shares', 'original']);
+        $t->assert($test_name, $fmt_shares, '6000');
+        $test_name = '... and the exchange rate of a currency of the bank';
+        $fmt_rate = $fmt_val_of(['exchange rate', 'CHF per EUR']);
+        $t->assert($test_name, $fmt_rate, '0.9323');
+        $test_name = '... and the unit of the exchange rate verbatim from the definition';
+        $fmt_eur_com = $pair_com($fmt_csv_arr[json_fields::TRIPLES], 'EUR');
+        $t->assert($test_name, $fmt_eur_com, self::CSV_PAIR_EUR_COM);
+        $test_name = '... and the hint of a holding with the name of csv name';
+        $fmt_trp_lst = array_map(fn(array $trp) => $trp[json_fields::NAME] ?? '', $fmt_csv_arr[json_fields::TRIPLES]);
+        $t->assert_contains($test_name, $fmt_trp_lst, self::CSV_HINT_NAME);
+        $test_name = '... without a message';
+        $t->assert_msg($test_name, $csv_msg);
+        $csv_msg->reset();
+        // the walk, the bond fund and the declarations differ by the decisions of 2026-11-26, so the difference to
+        // convert_portfolio_csv is a report, which changes only by a decision of the developer
+        $test_name = '... and differs from convert_portfolio_csv only as the report says';
+        $old_csv_arr = json_decode(file_get_contents(test_files::IMPORT_PORTFOLIO_CSV_SAMPLE_JSON), true);
+        $fmt_diff = $this->csv_json_diff($old_csv_arr, $fmt_csv_arr);
+        $t->assert_file($test_name, $fmt_diff, test_files::IMPORT_PORTFOLIO_CSV_SAMPLE_DIFF, test_files::MD);
+        $test_name = '... which the import reads without a message, because it copies the declarations it uses';
+        $csv_imp->get_data_object($fmt_csv_arr, $csv_msg);
+        $t->assert_msg($test_name, $csv_msg, $t::TIMEOUT_LIMIT_IMPORT);
+        $csv_msg->reset();
+        // negative: a currency pair that the definition does not declare gets the description of its template
+        $test_name = '... but a currency pair that the definition does not declare the description of its template';
+        $fmt_nok_arr = json_decode($fmt_conv->convert($nok_csv, ['portfolio 040270501213'], $csv_src, $csv_msg,
+            test_base::TEST_TIMESTAMP), true);
+        $fmt_nok_com = $pair_com($fmt_nok_arr[json_fields::TRIPLES], 'NOK');
+        $t->assert($test_name, $fmt_nok_com, self::CSV_PAIR_NOK_COM);
+        $csv_msg->reset();
+        $test_name = 'convert_csv gives the holdings of the portfolio split sample as the report says';
+        $fmt_split_json = $fmt_conv->convert(file_get_contents(test_files::IMPORT_PORTFOLIO_CSV_SPLIT),
+            ['example portfolio split'], 'bank reporting bank leu client xy', $csv_msg, test_base::TEST_TIMESTAMP);
+        $old_split_arr = json_decode(file_get_contents(test_files::IMPORT_PORTFOLIO_CSV_SPLIT_JSON), true);
+        $fmt_split_diff = $this->csv_json_diff($old_split_arr, json_decode($fmt_split_json, true));
+        $t->assert_file($test_name, $fmt_split_diff, test_files::IMPORT_PORTFOLIO_CSV_SPLIT_DIFF, test_files::MD);
+        $test_name = '... without a message';
+        $t->assert_msg($test_name, $csv_msg);
+        $csv_msg->reset();
+        // negative: a row that cannot be converted is left out with the same messages as by convert_portfolio_csv
+        foreach ($bad_rows as $bad_row => $bad_txt) {
+            $test_name = 'convert_csv leaves out a row that cannot be converted: ' . $bad_txt;
+            $fmt_bad_json = $fmt_conv->convert($csv_head . "\n" . $bad_row . "\n", ['portfolio 040270501213'], $csv_src,
+                $csv_msg, test_base::TEST_TIMESTAMP);
+            $fmt_bad_vals = json_decode($fmt_bad_json, true)[json_fields::VALUES];
+            $t->assert($test_name, $fmt_bad_vals, []);
+            $test_name = '... and names it in the message: ' . $bad_txt;
+            $t->assert_text_contains($test_name, $csv_msg->text(), $bad_txt);
+            $csv_msg->reset();
+        }
+        // negative: a csv without the header row of its format has no row, which the message says
+        $test_name = 'convert_csv reports a csv without the header row of its format';
+        $fmt_conv->convert("Asset,Name\nstock,ABB\n", ['portfolio 040270501213'], $csv_src, $csv_msg, test_base::TEST_TIMESTAMP);
+        $t->assert_text_contains($test_name, $csv_msg->text(), $hdr_txt);
+        $csv_msg->reset();
+        // negative: without the triple to csv column the definition has no column, which the message says, because
+        // the importer alone would add the undeclared keyword as a plain word without a message
+        $test_name = 'a csv format without the keyword csv column cannot be used';
+        $fmt_broken = $fmt_arr;
+        $fmt_broken[json_fields::TRIPLES] = array_values(array_filter($fmt_arr[json_fields::TRIPLES],
+            fn(array $trp) => ($trp[json_fields::EX_TO] ?? '') != triples::CSV_COLUMN));
+        $fmt_broken_ok = new convert_csv()->set_format($fmt_broken, self::CSV_FORMAT, $csv_msg);
+        $t->assert($test_name, $fmt_broken_ok, false);
+        $test_name = '... and the message names the keyword';
+        $t->assert_text_contains($test_name, $csv_msg->text(), '"' . triples::CSV_COLUMN . '"');
+        $csv_msg->reset();
 
         // XBRL fileset unpacker (first step of import_convert_xbrl)
         $lib = new library();
@@ -1779,6 +1865,67 @@ class import_tests
         ob_start();
         $imp->show_pending_note();
         return (string)ob_get_clean();
+    }
+
+    /**
+     * @param array $old the import json of a csv by convert_portfolio_csv
+     * @param array $new the import json of the same csv by convert_csv
+     * @return string per section the entries that only one of the two has as markdown, compared as sets, so that a
+     *                line of the report is a difference of the content and never of the order
+     */
+    private function csv_json_diff(array $old, array $new): string
+    {
+        $result = '# convert_csv compared with convert_portfolio_csv' . "\n";
+        foreach (self::CSV_DIFF_SECTIONS as $section) {
+            $old_lst = array_map(fn(mixed $entry) => $this->sorted_json($entry), $old[$section] ?? []);
+            $new_lst = array_map(fn(mixed $entry) => $this->sorted_json($entry), $new[$section] ?? []);
+            $result .= $this->csv_diff_lines($section . ' only by convert_portfolio_csv', array_diff($old_lst, $new_lst));
+            $result .= $this->csv_diff_lines($section . ' only by convert_csv', array_diff($new_lst, $old_lst));
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $title the title of the list e.g. "triples only by convert_csv"
+     * @param array $lines the entries as json
+     * @return string the markdown list with the number of its entries in the title
+     */
+    private function csv_diff_lines(string $title, array $lines): string
+    {
+        $result = "\n" . '## ' . $title . ' (' . count($lines) . ')' . "\n";
+        if ($lines != []) {
+            $result .= "\n";
+        }
+        foreach ($lines as $line) {
+            $result .= '- ' . $line . "\n";
+        }
+        return $result;
+    }
+
+    /**
+     * @param mixed $entry an entry of the import json
+     * @return string the entry as json with the keys of each object sorted, so that the order of the keys is no
+     *                difference
+     */
+    private function sorted_json(mixed $entry): string
+    {
+        return json_encode($this->sorted_keys($entry), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * @param mixed $entry an entry of the import json or a part of it
+     * @return mixed the entry with the keys of each object sorted, the order of a list kept
+     */
+    private function sorted_keys(mixed $entry): mixed
+    {
+        $result = $entry;
+        if (is_array($entry)) {
+            if (!array_is_list($entry)) {
+                ksort($result);
+            }
+            $result = array_map(fn(mixed $part) => $this->sorted_keys($part), $result);
+        }
+        return $result;
     }
 
     /**

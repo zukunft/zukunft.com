@@ -23,7 +23,7 @@ $sys: the system time control including the preloaded types and system configura
 
 MapObject: $map_ui
 button: $b
-change: $chg, $log_named, $log_new
+change: $chg, $log_new
 change_log: $chg, $log
 component: $cmp2, $cmp_added, $cmp_by_id, $cmp_filled, $cmp_frm, $cmp_imp, $cmp_lnk, $cmp_lnk_cmp, $cmp_map, $cmp_no_exc, $cmp_no_lnk, $cmp_no_ovr, $cmp_obj, $cmp_owned, $cmp_plain, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_tab, $cmp_usr2, $cmp_usr2_reloaded, $cmp_zero, $cmp_zero_imp, $dbo, $msk, $obj
 element: $elm_map, $elm_ui
@@ -49,7 +49,7 @@ triple: $bare_trp_ui, $base, $be, $cfg_trp, $colour, $db_trp, $dbo, $dbo_ui, $ef
 user: $adm_usr_ui, $cfm_usr, $changer, $changer_ui, $check_usr, $chk_usr, $db_usr, $dbo, $dbo_ui, $dev_ui, $edit_usr, $existing, $fail_usr, $imp_usr, $init_usr, $ip_ui, $json_usr, $local_usr, $new_owner, $new_usr, $new_usr_ui, $obj, $other, $owner, $owner_ui, $req_usr, $result, $row_usr, $session, $sgn_usr, $sim, $solver, $sys_test_ui, $sys_ui, $sys_usr, $sys_usr_prof_ui, $sys_usr_ui, $test_usr, $test_usr2, $test_usr_normal, $unknown, $unprivileged, $upd_usr, $usr1_ui, $usr_admin, $usr_attacker, $usr_by_id, $usr_by_ip, $usr_by_name, $usr_check, $usr_chk, $usr_db, $usr_key, $usr_load, $usr_no_row, $usr_reload, $usr_sgn_key, $usr_sys, $usr_sys_ui, $usr_test, $usr_ui, $web_usr
 user_log_sum: $new, $sum, $sum_ui
 user_log_sum_list: $lst, $result, $sum_lst
-user_message: $act_msg, $activate_msg, $add_msg, $adm_msg, $all_msg, $anon_msg, $answer_msg, $api_msg, $base_msg, $be_msg, $cac_msg, $cache_msg, $cfg_msg, $cfm_msg, $change_msg, $chg_msg, $chk_msg, $claim_msg, $clash_msg, $cln_msg, $colour_msg, $conv_msg, $cpn_msg, $csv_msg, $db_msg, $del_msg, $done_msg, $dto_msg, $elm_msg, $empty_msg, $err_msg, $exp_msg, $fac_msg, $fail_msg, $fill_msg, $find_msg, $fix_msg, $fld_msg, $font_msg, $form_msg, $found_msg, $frm_msg, $frm_usr_msg, $from_msg, $func_msg, $get_msg, $good_msg, $grp_msg, $imp_msg, $in_line_msg, $info_msg, $ins_usr_msg, $ip_msg, $job_msg, $key_msg, $lim_msg, $lnk_msg, $load_msg, $login_msg, $logoff_msg, $logout_msg, $lst_ins, $lst_msg, $mail_msg, $map_err_msg, $map_msg, $miss_msg, $msg1, $msg2, $msg_2, $msg_activate_ui, $msg_adm, $msg_admin, $msg_api, $msg_be, $msg_buf, $msg_chk, $msg_code, $msg_db, $msg_dev, $msg_err, $msg_exp, $msg_fail, $msg_imp, $msg_ins, $msg_ip, $msg_last, $msg_lnk, $msg_load, $msg_login, $msg_login_ui, $msg_logoff_ui, $msg_missing, $msg_no_row, $msg_no_usr, $msg_nok, $msg_normal, $msg_ok, $msg_reload, $msg_same, $msg_signup_ui, $msg_stale, $msg_sys, $msg_ui, $msg_upd, $msg_usr, $msg_usr2, $msg_wrn, $msg_zero, $no_id_msg, $no_prp_msg, $no_usr_msg, $none_msg, $nxt_msg, $ok_msg, $other_msg, $ovr_msg, $own_msg, $owner_msg, $p, $page_msg, $pair_msg, $phd_msg, $phr_msg, $pod_msg, $put_msg, $pw_msg, $quoted_msg, $rdy_msg, $read_msg, $ref_usr_msg, $refused_msg, $request_msg, $reset_msg, $result, $row_msg, $save_msg, $saved_msg, $sbx_msg, $setup_msg, $sgn_load_msg, $signup_msg, $sim_msg, $sim_name_msg, $sql_msg, $std_msg, $sug_msg, $sys_msg, $tbl_msg, $trm_usr_msg, $two_msg, $txt_msg, $typ_msg, $ui_msg, $undo_msg, $upd_msg, $upd_usr_msg, $url_msg, $usr2_msg, $usr_msg, $usr_msg_calc, $usr_msg_del, $usr_msg_map, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok, $val_msg, $warning, $wiki_msg, $wrong_msg
+user_message: $act_msg, $activate_msg, $add_act_msg, $add_msg, $adm_msg, $all_msg, $anon_msg, $answer_msg, $api_msg, $base_msg, $be_msg, $cac_msg, $cache_msg, $cfg_msg, $cfm_msg, $change_msg, $chg_msg, $chk_msg, $claim_msg, $clash_msg, $cln_msg, $colour_msg, $conv_msg, $cpn_msg, $csv_msg, $db_msg, $del_msg, $done_msg, $dto_msg, $elm_msg, $empty_msg, $err_msg, $exp_msg, $fac_msg, $fail_msg, $fill_msg, $find_msg, $fix_msg, $fld_msg, $font_msg, $form_msg, $found_msg, $frm_msg, $frm_usr_msg, $from_msg, $func_msg, $get_msg, $good_msg, $grp_msg, $imp_msg, $in_line_msg, $info_msg, $ins_usr_msg, $ip_msg, $job_msg, $key_msg, $lim_msg, $link_msg, $lnk_msg, $load_msg, $login_msg, $logoff_msg, $logout_msg, $lst_ins, $lst_msg, $mail_msg, $map_err_msg, $map_msg, $miss_msg, $msg1, $msg2, $msg_2, $msg_activate_ui, $msg_adm, $msg_admin, $msg_api, $msg_be, $msg_buf, $msg_chk, $msg_code, $msg_db, $msg_dev, $msg_err, $msg_exp, $msg_fail, $msg_imp, $msg_ins, $msg_ip, $msg_last, $msg_lnk, $msg_load, $msg_login, $msg_login_ui, $msg_logoff_ui, $msg_missing, $msg_no_row, $msg_no_usr, $msg_nok, $msg_normal, $msg_ok, $msg_reload, $msg_same, $msg_signup_ui, $msg_stale, $msg_sys, $msg_ui, $msg_upd, $msg_usr, $msg_usr2, $msg_wrn, $msg_zero, $new_msg, $no_id_msg, $no_prp_msg, $no_usr_msg, $none_msg, $nxt_msg, $ok_msg, $other_msg, $ovr_msg, $own_msg, $owner_msg, $p, $page_msg, $pair_msg, $phd_msg, $phr_msg, $pod_msg, $put_msg, $pw_msg, $quoted_msg, $rdy_msg, $read_msg, $ref_usr_msg, $refused_msg, $request_msg, $reset_msg, $result, $row_msg, $save_msg, $saved_msg, $sbx_msg, $setup_msg, $sgn_load_msg, $signup_msg, $sim_msg, $sim_name_msg, $sql_msg, $std_msg, $sug_msg, $sys_msg, $tbl_msg, $trm_usr_msg, $two_msg, $txt_msg, $typ_msg, $ui_msg, $undo_msg, $upd_msg, $upd_usr_msg, $url_msg, $usr2_msg, $usr_msg, $usr_msg_calc, $usr_msg_del, $usr_msg_map, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok, $val_msg, $warning, $wiki_msg, $wrong_msg
 user_profile_list: $lst
 user_status_list: $lst
 user_type_list: $lst
@@ -98,20 +98,20 @@ change_log_list: $chg_lst, $chg_lst_lng_ui, $chg_lst_ui, $log, $log_lst, $log_re
 change_log_named: $chg_rem_ui, $chg_ui, $chg_usr_ui, $log_ui
 change_table_field: $tbl_fld
 change_table_list: $cng_tbl_cac
-change_values_big: $chg, $log, $log_named
+change_values_big: $chg, $log
 change_values_geo_big: $chg, $log
 change_values_geo_norm: $chg, $log
 change_values_geo_prime: $chg, $log
-change_values_norm: $chg, $log, $log_named
-change_values_prime: $chg, $chg_usr_val, $chg_val, $log, $log_named
+change_values_norm: $chg, $log
+change_values_prime: $chg, $chg_usr_val, $chg_val, $log
 change_values_text_big: $chg, $log
 change_values_text_norm: $chg, $log
 change_values_text_prime: $chg, $log
 change_values_time_big: $chg, $log
 change_values_time_norm: $chg, $log
 change_values_time_prime: $chg, $log
-changes_big: $chg, $log, $log_named
-changes_norm: $chg, $log, $log_named
+changes_big: $chg, $log
+changes_norm: $chg, $log
 code_test_coverage: $cov
 coding_rule_tests: $t_code
 component_exe: $cmp, $cmp_all, $cmp_as, $cmp_city, $cmp_form, $cmp_lnk_ui, $cmp_lnk_url_ui, $cmp_map_ui, $cmp_no_frm_ui, $cmp_no_pre, $cmp_own, $cmp_pre, $cmp_rel, $cmp_tbl, $cmp_ui, $cmp_zero_ui, $dbo_ui

@@ -78,6 +78,12 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     const PRE_VAR = '8';
     const NAME_VAR = 'k';
     const UNIT_VAR = 'p';
+    // the save of a number without a database row by its phrase ids, of the is a triple of an added instance by its
+    // repeated phrase and the delete of the is a triple of a removed instance, the same as url_var PHRASE_LIST,
+    // PHRASE_TO and TRIPLE (frontend::action_calculator_save)
+    const PHRASE_LIST_VAR = 'pl';
+    const PHRASE_TO_VAR = 'pt';
+    const TRIPLE_VAR = 't';
     // the styles of the calculator page of the server (web/html/styles.php, view_styles::USE_CASE)
     const STYLE = {
         grid: 'grid', panel: 'panel', inputs: 'inputs', field: 'field',
@@ -203,11 +209,12 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     let pageSources = [];
     // per name of a number field its phrase, which a preset sets
     const inputPhrases = new Map();
-    // the names of the instances that the add button of a repeated input has added, which the save does not keep yet
+    // the names of the instances that the add button of a repeated input has added, which the save adds with their is a triple
     const addedInstances = new Set();
-    // per instance of the database that the remove button has taken from the page the repeated phrase, which the save keeps yet
+    // per instance of the database that the remove button has taken from the page the repeated phrase and the phrase ids
+    // of its is a triples, which the save deletes
     const removedInstances = new Map();
-    // the instances of the database whose number a remove has moved without a number of the database behind it, which the save does not change yet
+    // the instances of the database whose number of the database a remove has taken from the field, which the save does not exclude yet
     const movedInstances = new Set();
     // the sensitivity table calculates the page once per cell, so only while the user has it open
     let sensitivityOpen = false;
@@ -1725,6 +1732,17 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
+    /* the hidden vars that the save needs for a number without a database row: its phrase ids instead of a group id and
+       a shown number, so that the save adds the value (frontend::calculator_new_values) */
+    function newSaveVars(key, entry, lbl, unit) {
+        const ids = entry.words.map(idOf);
+        let result = hidden(PHRASE_LIST_VAR + key, ids.join(',')) + hidden(NAME_VAR + key, lbl);
+        if (unit !== '') {
+            result += hidden(UNIT_VAR + key, unit);
+        }
+        return result;
+    }
+
     /* instance and its entry only for a repeated field, which gets its own number and name behind the label */
     function numberField(item, name, assumption, instance, instanceEntry) {
         const entry = instance === undefined ? fieldEntry(name) : instanceEntry;
@@ -1756,9 +1774,14 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             inputPhrases.set(field, name);
         }
         const unit = entry === null ? '' : fieldUnit(entry);
-        // a new instance has no database row yet, so without its save vars the save leaves it out (step 3, change 6)
-        if (entry !== null && !entry.added) {
+        // a number without a database row is saved by its phrases, and an added instance with its is a triple
+        if (entry !== null && entry.added) {
+            input += newSaveVars(key, entry, lbl, unit);
+        } else if (entry !== null) {
             input += saveVars(key, entry, lbl, unit);
+        }
+        if (addedInstances.has(instance)) {
+            input += hidden(PHRASE_TO_VAR + key, idOf(name));
         }
         if (entry !== null) {
             inputEntries.set(field, entry);
@@ -1772,9 +1795,9 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* the hint of an instance that the add button has added, because the save leaves it out until it has its own triple
-       (step 3, change 6), with the reason first if it has no number; or of an instance whose number a remove has moved
-       without a number of the database, which the save does not change either */
+    /* the hint of an instance that the add button has added until the save, with the reason first if it has no number;
+       or of an instance whose number of the database a remove has taken from the field, which the save does not
+       exclude yet */
     function addedHint(instance, entry) {
         let text = '';
         if (addedInstances.has(instance)) {
@@ -1966,17 +1989,21 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result + removedHint(item) + (add ? button : '');
     }
 
-    /* the hint below the fields of a repeated input with the instances that the remove button has taken from the page,
-       but that the database keeps, because the save does not remove them yet (step 3, change 6) */
+    /* the hint below the fields of a repeated input with the instances of the database that the remove button has taken
+       from the page until the save, with the save vars that delete their is a triples (frontend::calculator_removed_links) */
     function removedHint(item) {
         const names = [];
-        removedInstances.forEach(function (name, instance) {
-            if (name === item.to) {
+        let vars = '';
+        removedInstances.forEach(function (removed, instance) {
+            if (removed.name === item.to) {
                 names.push(phraseLabel(instance));
+                vars += removed.links.map(function (link) {
+                    return hidden(TRIPLE_VAR + idOf(instance), link.replace(/^-/, '')) + hidden(NAME_VAR + idOf(instance), phraseLabel(instance));
+                }).join('');
             }
         });
         const text = TEXTS[TXT.removed_not_saved] + ' ' + names.join(', ');
-        const result = names.length === 0 ? '' : block('p', esc(text), STYLE.hint, item.name);
+        const result = names.length === 0 ? '' : block('p', esc(text) + vars, STYLE.hint, item.name);
         return result;
     }
 
@@ -2010,10 +2037,17 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             if (entry === null) {
                 console.warn('the first instance ' + template + ' has no number of ' + repeatValuePhrase(item.to) + ', so ' + instance + ' has none');
             }
-            // the triple has no database id until the instance is saved (step 3, change 6)
+            // the triple has no database id until the save adds it (numberField), except the one of an instance of the
+            // database that a remove has taken from the page, which gets it back, so that the save neither adds nor deletes it
+            const removed = removedInstances.get(instance);
+            const linkId = removed === undefined ? '' : (removed.links[0] || '');
             const link = {from: instance, verb: VERB.is, to: item.to};
-            addTriple(Object.assign({name: generatedName(link), id: '', type: '', description: '', impact: 0}, link));
-            addedInstances.add(instance);
+            addTriple(Object.assign({name: generatedName(link), id: linkId, type: '', description: '', impact: 0}, link));
+            if (removed === undefined) {
+                addedInstances.add(instance);
+            } else {
+                removedInstances.delete(instance);
+            }
             copyResults(template, instance);
             redrawRepeatFields(item);
             redrawResults();
@@ -2023,8 +2057,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     /* the remove button of a repeated input keeps the instances at their place, because e.g. the children are named by
        their position like in the sample: each field from the removed one on takes the number of the field behind it,
        and the last instance is taken from the page with its is a triple, so that it is no instance and no column any
-       more, and with its numbers and results, so that no sum takes them; an instance of the database stays there until
-       the save can remove it (step 3, change 6), an added one can be added again */
+       more, and with its numbers and results, so that no sum takes them; the save deletes the is a triple of an
+       instance of the database (removedHint), an added one can be added again */
     function removeInstance(event) {
         const button = event.target.closest('[' + REMOVE_ATTR + ']');
         const field = button === null ? null : button.closest('[' + PART_ATTR + ']');
@@ -2038,13 +2072,13 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
                 moveNumber(list[i + 1], list[i], valuePhrase);
             }
             const last = list[list.length - 1];
-            removeKindLink(last, item.to);
+            const links = removeKindLink(last, item.to);
             removeEntries(last);
             movedInstances.delete(last);
             if (addedInstances.has(last)) {
                 addedInstances.delete(last);
             } else {
-                removedInstances.set(last, item.to);
+                removedInstances.set(last, {name: item.to, links: links});
             }
             redrawRepeatFields(item);
             redrawResults();
@@ -2052,14 +2086,16 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     }
 
     /* the number of the instance behind for the instance in front, like an input of the user: an entry of the database
-       keeps its id, so the save writes the new number; without a number behind the field in front has none either, and
-       a field in front without a number gets an added one like a new instance (newInstanceEntry); in these two cases
-       the save does not change the number of the database yet, so the field says so (addedHint) */
+       keeps its id, so the save writes the new number, and a field in front without a number gets an added one like a
+       new instance (newInstanceEntry), which the save adds; without a number behind the field in front has none either,
+       and as the save does not exclude a number of the database yet, the field says so (addedHint) */
     function moveNumber(from, to, valuePhrase) {
         const source = optionEntry(valuePhrase, from);
         const target = optionEntry(valuePhrase, to);
-        if (!addedInstances.has(to) && movesUnsaved(source, target)) {
+        if (!addedInstances.has(to) && takesStored(source, target)) {
             movedInstances.add(to);
+        } else if (source !== null) {
+            movedInstances.delete(to);
         }
         if (source === null) {
             removeEntry(target);
@@ -2078,12 +2114,9 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         }
     }
 
-    /* true if the moved number differs from what the save keeps: the number of the database is taken from the field,
-       or the field shows a number that has none in the database */
-    function movesUnsaved(source, target) {
-        const takesStored = source === null && target !== null && !target.added;
-        const showsAdded = source !== null && target === null;
-        return takesStored || showsAdded;
+    /* true if the move takes the number of the database from the field, which the save keeps until it can exclude it */
+    function takesStored(source, target) {
+        return source === null && target !== null && !target.added;
     }
 
     /* the entry taken from the numbers and the inputs of the page, nothing for null */
@@ -2105,12 +2138,17 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             return t.verb === VERB.is && t.to === name;
         };
         const list = triplesFrom(instance);
-        list.filter(isLink).forEach(function (t) {
+        const links = list.filter(isLink);
+        links.forEach(function (t) {
             phrases.delete(t.name);
         });
         children.set(instance, list.filter(function (t) {
             return !isLink(t);
         }));
+        // the phrase ids of the triples of the database, which the save deletes; an added triple has none
+        return links.map(function (t) {
+            return t.id;
+        }).filter(Boolean);
     }
 
     /* the numbers and results that name the phrase in their phrases or their context, taken from the page */

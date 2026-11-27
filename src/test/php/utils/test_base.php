@@ -4797,15 +4797,17 @@ class test_base
         // raise the default page limit so all change log entries of the test row are removed at once
         $log_lst->limit = sql_db::ROW_MAX;
         $log_lst->load_by_obj_fld($class, $msg, $id, $this->usr_system);
-        // a value logs to a change_values_* table and a named object to the changes table, so group the
-        // change log ids by their change log class and delete each group from its own table
-        $ids_by_class = [];
+        // the entries are deleted from the table that they are loaded from e.g. a change_values_* table for a
+        // value, because the list loads every entry as a change and a change id is unique only within its table,
+        // so a delete by the class of the loaded entry removes the changes of other objects with the same ids
+        $chg_class = $log_lst->change_class($class, $id);
+        $ids = [];
         foreach ($log_lst->lst() as $chg) {
             if ($chg->id() != 0 and $this->is_change_of($chg, $chg_usr)) {
-                $ids_by_class[$chg::class][] = $chg->id();
+                $ids[] = $chg->id();
             }
         }
-        foreach ($ids_by_class as $chg_class => $ids) {
+        if ($ids != []) {
             $msg = new user_message($this->usr_system);
             $qp = $db_con->sql_creator()->del_sql_list_without_log($chg_class, change_log::FLD_ID, $ids);
             $db_con->delete($qp, 'cleanup change log of ' . $chg_class, $msg);

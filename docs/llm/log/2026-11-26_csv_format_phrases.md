@@ -2,7 +2,8 @@
 
 Part of #247, the task "csv import defined by phrases" of `docs/llm/pending.md`: `convert_portfolio_csv.php` is
 replaced by a general `convert_csv.php` whose parameters are words, triples and values. Three changes, each with its
-own section and a run before the next one; this log has change 1, the keywords and the definition json.
+own section and a run before the next one; this log has change 1, the keywords and the definition json, and
+change 2, `convert_csv`.
 
 ## 1. the keywords and the definition json
 
@@ -134,3 +135,87 @@ change.
   not for its position in a snapshot.
 - With `files::AUTO_UPDATE_TEST_FILES` set to `true`, a run writes the snapshots instead of failing, so the log can
   confirm only what the files show; the result of a unit test needs the output of the run.
+
+## 2. convert_csv
+
+### Request
+
+"do the next open task in pending.md and remove the task done already": change 1 and its follow-up `csv name` are
+done with the run of 2026-11-26, so the next task is change 2, `convert_csv`.
+
+Decisions of the developer (2026-11-26):
+1. the walk: `convert_csv` writes no `is follower of` chain. The lot value order is a calculation and not a fact of
+   the csv: the csv order matches it in only 11 of 42 places of `bank_positions_portfolio_split.csv` and in none of
+   `bank_positions_sample.csv`. The walk of an imported portfolio by the lot value becomes a task of its own.
+2. the bond fund `LU0854923223`: the asset class of the bank is kept, so it is a bond. The flag of a holding whose
+   holding value differs from its `holding value, expected` becomes a task of its own, a formula of the page.
+3. `convert_csv` reads the definition as the decoded import json, the array that `import::get_data_object` takes,
+   so that the declarations are copied verbatim; change 3 gets this array from the database by the export of the
+   format phrase.
+
+Planned before the first edit:
+- `convert_csv::convert($fmt, $format, $csv, $context, $source, $msg, $timestamp)`: the format is the phrase of
+  the definition, e.g. `bank position csv`, whose triples to `csv header start` and `csv column` are found by the
+  keyword names of `triples::CSV_*`; a definition without one of them is reported with the new
+  `import_csv_format_keyword_missing`, and a value template with more than one number column with the new
+  `import_csv_template_numbers`
+- the rows, the checks and the messages as in `convert_portfolio_csv`, but by the columns and the flags of the
+  definition: the existing `import_csv_*` messages stay, also their texts about the asset class and the exchange rate,
+  because the bank csv is the only format so far
+- the templates by the rules of `docs/json_structure.md` *csv format*, with the row word and its `is a` triple to
+  its kind; the words and triples that the result uses are copied from the declarations of the definition, also the
+  declarations that they use, and every declared triple between two copied phrases, e.g. `stock is a holding`; a
+  cell that the definition does not declare is a word with its name only
+- in `import_tests.php` the tests of `convert_csv` next to those of `convert_portfolio_csv`, which stays until
+  change 3: the shares of a stock, the exchange rate, the currency pair verbatim and with the general description,
+  the hint by `csv name`, the definition without `csv column` (moved here from change 1) and the bad rows; and per
+  test csv a report of the difference to the json of `convert_portfolio_csv`, compared as sets per section, so that
+  each difference is a decision of the developer
+
+### Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/php/cfg/import/convert_csv.php` (new), `src/main/php/shared/enum/messages.php`, `src/main/resources/translations/en.yaml`, `de.yaml` | — | the conversion of a csv by the phrases of its format, with two messages for a definition that it cannot use | the TODO of the developer in `convert_portfolio_csv.php` |
+| `src/test/php/unit/import_tests.php`, `src/test/php/const/files.php` (the two difference reports) | the negative test of the definition planned for this change | the positive and the negative tests of `convert_csv` and the two reports | decisions 1 to 3 |
+| `docs/json_structure.md` *csv format*, `docs/llm/pending.md` | the rules of the templates | the copy of the declarations, the walk and the kind of the bank; change 2 done and waiting for the run, the walk and the bond fund as tasks | the description and the task list |
+
+### Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| `src/test/resources/import/portfolio_csv/bank_positions_sample_diff.md`, `bank_positions_portfolio_split_diff.md` (new) | — | the differences: no walk step, the alternative investments `is a alternative investment` instead of `stock`, the bond fund as a bond, the base words by the declarations | written by the run with `files::AUTO_UPDATE_TEST_FILES`; without it the first run fails, because the reports do not exist yet |
+| `docs/code_test_coverage.md`, `docs/code_functions_all.md` | — | the functions of `convert_csv` | generated reports |
+| the ids, the snapshots | — | unchanged | no import file changes, so `test/test_part.php` without `test/reset_db.php` |
+
+### Unexpected changes
+
+The run of 2026-11-27 (`test/test_part.php`, with `files::AUTO_UPDATE_TEST_FILES` set to `true` and back to
+`false` after it) covered this change together with change 6a of step 3 of the portfolio split page (section 8 of
+`docs/llm/log/2026-11-25_csv_child_shares.md`). It stopped later with a fatal of `a_selected_test.php`, which
+section 8 names, but `import_tests` runs before it, so the two reports were written. Whether the new tests of
+`import_tests.php` passed is in the output of the run, not in a file.
+
+As planned:
+- `bank_positions_portfolio_split_diff.md` has only the 41 `is follower of` triples of the walk (decision 1).
+- `bank_positions_sample_diff.md` has these differences (decision 2 and the copy of the declarations):
+  - the 68 triples of the walk
+  - the bond fund `LU0854923223` and the alternative investment `CH0047533549` `is a stock` only by
+    `convert_portfolio_csv`
+  - only by `convert_csv`: the two declared triples of `alternative investment` with their words `investment` and
+    `alternative`, `LU0854923223 is a bond (finance)` and `CH0047533549 is a alternative investment`
+  - the three values of the bond fund as a bond (face value 934.784 CHF, bond price 1.50269 percent, lot size
+    1000 CHF) instead of as a stock. By these, the market value is 1'404.69 CHF instead of the 140'469.06 CHF of the
+    bank, which is the case of the flag task in `docs/llm/pending.md`.
+- No difference in the selection, the sources and the other words and values.
+- The ids and the snapshots did not change by this change.
+
+| file | old | new | reason |
+|---|---|---|---|
+| `docs/code_objects_all.md` | — | the line of `convert_csv` with its var `$fmt_conv` | the generated object report lists every class; the plan named only the two function reports |
+| `docs/code_functions_all.md` | the functions of `convert_csv` | `convert` "in a section not yet defined" (the report suggests `convert`), and as the description of `convert` its first `@param` line | the docblock of `convert` starts with `@param`, so the report has no description line for it; the report has no section rule for the new function yet. Not changed: a generated report is a signal |
+
+### Lessons learned by llm (2026-11-26)
+
+- A public function gets a description line before its first `@param`, because the function report takes the first
+  line of the docblock as the description (2026-11-27).

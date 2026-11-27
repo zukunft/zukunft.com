@@ -561,3 +561,93 @@ above are what checks them.
 ### Lessons learned by human
 
 has been fine, but test still takes long
+
+## 8. save of an added and a removed child
+
+Part of #247, step 3, change 6a of 6: the save keeps a child that "Add child" has added and removes a child that
+"Remove the ..." has taken from the page.
+
+### Request
+
+"do the next open task in pending.md": the new task "report with three and more children" (the pdf shows only
+two). The report already takes every child of the database (`calculator::columns` by the `is a child portfolio`
+instances); a child added in the browser is missing, because the save leaves it out until change 6 of step 3, and
+the report link sends only the phrase id.
+
+Decisions of the developer (2026-11-27):
+1. change 6 now, before the report
+2. split into 6a, this section: the logged save of an added child and the logged delete of the `is a` triple of a
+   removed child; and 6b, the next change: the server page and the report calculate the results of an instance
+   without stored results, like the browser does for a new instance, because the server checks only stored results
+   (`ui_list::check_results`) and nothing writes the results of a new instance, so without 6b the pdf shows the
+   column of a saved third child without positions
+
+Planned before the first edit:
+- the page (`calculator_json.js`) sends with the save, per field key of the instance (its phrase id):
+  - a number without a database row (an added instance, or a number that a remove has moved into a field without
+    one) its phrase ids as `pl<key>` (`url_var::PHRASE_LIST`) instead of the group id and the shown number
+  - an added instance the phrase id of the repeated phrase as `pt<key>` (`url_var::PHRASE_TO`), for its `is a` triple
+  - a removed instance of the database the id of its `is a` triple as `t<key>` (`url_var::TRIPLE`) and its label as
+    `k<key>`, in the hint of the removed instances
+- `frontend::action_calculator_save` adds the `is a` triples, then the new values, then saves the changed numbers
+  as today, and then deletes the removed `is a` triples, all by the logged writes of the objects (`add_via_api`,
+  `update`, `del`); the parsing is in the public `calculator_new_links`, `calculator_new_values` and
+  `calculator_removed_links`, which the unit tests call like `calculator_changes`
+- the confirmation names a new number with `calculator_saved_new` and a removed instance with
+  `calculator_removed_saved`; an added instance without a number gets no confirmation of its own
+- the hints stay until the save, so their texts say "until the save": `calculator_added_not_saved` and
+  `calculator_removed_not_saved`; the moved hint is only for a number of the database that a remove has taken
+  from a field, because the save does not exclude that value yet (open, `docs/llm/pending.md`)
+- not in this change: the results of a saved new instance (6b), a new case with an added child, and the values of a
+  removed child, which stay in the database without an instance
+
+### Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/resources/script/calculator_json.js` (`numberField`, new `newSaveVars`, `removedHint`, `addInstance`, `removeInstance`, `removeKindLink`, `moveNumber`, `movesUnsaved` as `takesStored`), `src/main/resources/translations/en.yaml`, `de.yaml` (the two hint texts) | an added number and an added or removed instance without save vars, the hints "a save does not keep it yet" | the save vars of an added number, of an added and of a removed instance; an instance of the database that is added again after a remove gets its triple back; the hints until the save | decision 1 |
+| `src/main/php/web/frontend.php` (`action_calculator_save`, new `calculator_new_links`, `calculator_new_values`, `calculator_removed_links`), `src/main/php/shared/enum/messages.php`, `en.yaml`, `de.yaml` (`calculator_saved_new`, `calculator_removed_saved`) | only the changed numbers are saved | the `is a` triples of the added instances, their numbers and the delete of the `is a` triple of a removed instance | decision 1 |
+| `src/test/php/unit_ui/use_case_ui_tests.php` (`calculator_save_tests`), `docs/json_structure.md` (the repeat row), `docs/llm/pending.md` | — | the tests of the three parsers with a negative test each; the save of a repeated input; change 6a done, 6b next | the tests and the task list |
+
+### Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| the js snapshots and the editor snapshots of the calculator pages | — | the two new hint texts in the settings of the page script | the texts are in the settings of each page |
+| the case reports `_add_child.md`, `_remove_child.md` and the others | 0 differences | 0 differences | the save vars are hidden inputs, and a case report compares the texts |
+| `docs/code_test_coverage.md`, `docs/code_functions_all.md` | — | the three new functions | generated reports |
+| the ids | — | unchanged | no import file changes, so `test/test_part.php` without `test/reset_db.php` |
+
+### Unexpected changes
+
+The run of 2026-11-27 (`test/test_part.php`, with `files::AUTO_UPDATE_TEST_FILES` set to `true` and back to
+`false` after it) covered this change together with change 2 of `docs/llm/log/2026-11-26_csv_format_phrases.md`.
+It stopped right after `use_case_ui_tests` with the fatal `Class "...phrase_data_ui_tests" not found` at
+`a_selected_test.php:709`. So the parser tests of this change ran, but the write workflow tests behind it did not,
+e.g. `value_write_url_tests` with the save of the calculator. Whether the tests passed is in the output of the run.
+
+As planned:
+- The two hint texts are in the settings of `portfolio_split_calculator_js.html`, `npp_ch_vote_js.html` and
+  `pv_lifetime_balance_js.html`, and twice in `calculator_editor.html` and `npp_ch_vote_editor.html`.
+- The case reports did not change.
+- The ids did not change.
+
+The save vars are drawn by the script, so no snapshot shows them; the read-only scratch simulation of the plan is
+what checks them so far.
+
+| file | old | new | reason |
+|---|---|---|---|
+| `src/test/php/unit_write/a_selected_test.php` | `phrase_data_ui_tests` called without its include and its use | the include of `phrase_data_ui_tests.php` and its use | not by this change: b46d138d2 (section 6) switched the test on in the selected tests, but only `all_ui_tests.php` loads the class; the fatal stopped the run. A bug fix |
+| `docs/code_test_coverage.md` | the three new functions | the three parsers have two calls or more; `calculator_saved_new_text` has none and `calculator_removed_text` has one | the plan missed the two public text helpers; `calculator_saved_new_text` is called only by the save with `$do_it`, which no unit test runs |
+| `docs/code_functions_all.md` | the three new functions | the five new public functions of `frontend`, each "in a section not yet defined" (the report suggests `execute`), and as the description of `calculator_removed_text` its first `@param` line | the two text helpers are public for the tests; the report has no section rule for the new functions yet, and `calculator_removed_text` starts its docblock with `@param`. Not changed: a generated report is a signal |
+| `docs/code_object_name_exceptions.md` | — | `$add_act_msg` in the list of `user_message` | the var of the new test of the save with an added instance is not a known name of a message |
+| `src/main/php/cfg/log/change_log_list.php` (new `change_class` and `group_size`, used by `load_sql_obj_fld` and `load_sql_obj_last`), `src/test/php/utils/test_base.php` (`delete_change_log_of_obj`), `src/test/php/unit/change_log_tests.php`; generated: `$log_named` no longer in `docs/code_object_name_exceptions.md`, `change_class` in `docs/code_functions_all.md` | the cleanup deletes the loaded change log entries from the table of the class of each entry | the cleanup deletes them from the table that they are loaded from | not by this change: `test/test.php` of 2026-11-27 failed "view component name change" in `change_log_read_tests.php`. Since e8f5b7ba1, the value cleanup of `value_write_url_tests` deleted the ids of the value changes from the `changes` table, because the list loads every entry as a `change`, and with them e.g. the name change of component 1. A bug fix; the deleted rows come back only with `test/reset_db.php` |
+
+### Lessons learned by llm (2026-11-27)
+
+- A test that `a_selected_test.php` switches on needs its include and its use there too, because `php -l` does not
+  find a missing class; a fatal there stops the run, so the tests behind it are not covered by that run.
+- Every new public function is a row of the coverage side effect, also a text helper that is public only for its
+  test; a function that only the save with `$do_it` calls needs a unit test call of its own.
+- A cleanup that deletes by ids takes the table from the query that has loaded the ids, never from the class of the
+  loaded object, because an id is unique only within its table.

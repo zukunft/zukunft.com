@@ -2512,6 +2512,8 @@
     \-- check - section for function check not yet defined that it should be db helper in /helper/type_object.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
             j,order of section set and get has difference at set_description should be before set_from_api
+\-- convert_csv
+    \-- convert - section for function convert not yet defined that it should be convert in /import/convert_csv.php
 \-- convert_portfolio_csv
     \-- positions - section for function positions not yet defined that it should be read in /import/convert_portfolio_c
             sv.php
@@ -2748,6 +2750,8 @@
     \-- load_sql_obj_fld - section for function load_sql_obj_fld is expected to be load sql in /log/change_log_list.php
     \-- load_sql_obj_last - section for function load_sql_obj_last is expected to be load sql in /log/change_log_list.ph
             p
+    \-- change_class - section for function change_class not yet defined that it should be load internals in /log/change
+            _log_list.php
     \-- add - section for function add not yet defined that it should be modify in /log/change_log_list.php
     \-- first_msg - section for function first_msg not yet defined that it should be info in /log/change_log_list.php
 \-- change_table_field
@@ -5487,6 +5491,8 @@
         \-- view_sys_list - @return user the person who wants to see the phrases
     \-- get_user_id
         \-- db_object_multi_user - @return int the id of the user or 0 if the user is not set
+    \-- set_format
+        \-- convert_csv - read the format of a csv from its definition
     \-- json_file
         \-- import_file - import a single json file
     \-- yaml_file
@@ -6243,6 +6249,7 @@
     \-- nodes
         \-- config_tree - the nodes of the given part of config.yaml in the order of the file, without the keys
     \-- convert
+        \-- convert_csv - @param string $csv the text of the csv
         \-- convert_portfolio_csv - @param string $csv the text of the csv of a bank statement of the positions
         \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
                  json
@@ -6472,6 +6479,9 @@
         \-- change_log_list - prepare sql to get the changes of one field of one user sandbox object
     \-- load_sql_obj_last
         \-- change_log_list - prepare sql to get the last changes of a user sandbox object
+    \-- change_class
+        \-- change_log_list - the change log class whose table holds the changes of an object: a value and a result log 
+                to
     \-- load_sql_by_type
         \-- job_list - prepare sql to get all open jobs of one type
     \-- load_sql_by_status
@@ -7533,6 +7543,16 @@
             /frontend.php
     \-- calculator_changes - section for function calculator_changes not yet defined that it should be execute in /front
             end.php
+    \-- calculator_new_values - section for function calculator_new_values not yet defined that it should be execute in 
+            /frontend.php
+    \-- calculator_new_links - section for function calculator_new_links not yet defined that it should be execute in /f
+            rontend.php
+    \-- calculator_removed_links - section for function calculator_removed_links not yet defined that it should be execu
+            te in /frontend.php
+    \-- calculator_saved_new_text - section for function calculator_saved_new_text not yet defined that it should be exe
+            cute in /frontend.php
+    \-- calculator_removed_text - section for function calculator_removed_text not yet defined that it should be execute
+             in /frontend.php
     \-- url_to_back_url - section for function url_to_back_url not yet defined that it should be execute in /frontend.ph
             p
     \-- url_with_selected_phrase - section for function url_with_selected_phrase not yet defined that it should be execu
@@ -11226,6 +11246,20 @@
                  because the new number links to the default view of the value
     \-- calculator_changes
         \-- frontend - the values of a calculator save whose number the user has changed: each number field sends its
+    \-- calculator_new_values
+        \-- frontend - the new values of a calculator save: a number without a database row,
+                 e.g. of an instance that the add button
+    \-- calculator_new_links
+        \-- frontend - the is a triples of the instances that the add button of a repeated input has added: each added i
+                nstance sends
+    \-- calculator_removed_links
+        \-- frontend - the is a triples of the instances of the database that the remove button has taken from the page:
+                 each sends the
+    \-- calculator_saved_new_text
+        \-- frontend - the confirmation of one added number as html,
+                 because the number links to the default view of the new value
+    \-- calculator_removed_text
+        \-- frontend - @param array $url_array the submitted calculator form with the label of each removed instance
     \-- url_to_back_url
         \-- frontend - the previous page of a url built from its '9'-prefixed back targets, ready to be used directly as
     \-- url_with_selected_phrase
