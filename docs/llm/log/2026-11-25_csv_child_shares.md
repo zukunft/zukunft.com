@@ -601,6 +601,19 @@ Planned before the first edit:
 - not in this change: the results of a saved new instance (6b), a new case with an added child, and the values of a
   removed child, which stay in the database without an instance
 
+### Follow-up request of 2026-11-27
+
+"try to fix" findings 3, 4, 5 and 7 of the review of 2026-11-27:
+3. no test of the save vars that the script draws: the headless browser test of the portfolio split cases checks the
+   hidden inputs in the html of the generated page after a case: `pt` and `pl` of the added child of `add_child`,
+   `t` of a removed child of the database of the new case `remove_saved_child` (only "Remove the second child"), and
+   as the negative test neither `t` nor `pt` after `remove_child`, which removes the added child again. The new case
+   is not in `files::PORTFOLIO_CASES`, so it gets no case report
+4. a failed write hides the confirmations of the writes that have succeeded: they are shown also next to the error
+5. an added instance whose number is empty is saved silently: its `is a` triple gets the confirmation
+   `calculator_added_saved` "<label> added without a number"; the script sends the label for it also without an entry
+7. a new number field without its number is an internal inconsistency: `log_err_msg_ui` instead of `log_warning`
+
 ### Expected changes
 
 | file | old lines | new lines | target / reason |
@@ -643,6 +656,40 @@ what checks them so far.
 | `docs/code_object_name_exceptions.md` | — | `$add_act_msg` in the list of `user_message` | the var of the new test of the save with an added instance is not a known name of a message |
 | `src/main/php/cfg/log/change_log_list.php` (new `change_class` and `group_size`, used by `load_sql_obj_fld` and `load_sql_obj_last`), `src/test/php/utils/test_base.php` (`delete_change_log_of_obj`), `src/test/php/unit/change_log_tests.php`; generated: `$log_named` no longer in `docs/code_object_name_exceptions.md`, `change_class` in `docs/code_functions_all.md` | the cleanup deletes the loaded change log entries from the table of the class of each entry | the cleanup deletes them from the table that they are loaded from | not by this change: `test/test.php` of 2026-11-27 failed "view component name change" in `change_log_read_tests.php`. Since e8f5b7ba1, the value cleanup of `value_write_url_tests` deleted the ids of the value changes from the `changes` table, because the list loads every entry as a `change`, and with them e.g. the name change of component 1. A bug fix; the deleted rows come back only with `test/reset_db.php` |
 
+Follow-up of 2026-11-27 (findings 3, 4, 5 and 7 of the review), after the run above:
+
+| file | old | new | reason |
+|---|---|---|---|
+| `src/test/js/portfolio_split_calculator_cases.js`, `src/test/php/const/files.php` (`PORTFOLIO_CASE_REMOVE_SAVED_CHILD`), `src/test/php/unit_read/system_views_read_tests.php` (`run_portfolio_split_calculator_cases`, new `assert_calculator_save_vars` and `hidden_vars`) | the save vars only checked by a scratch simulation | the hidden inputs `pt`, `pl` and `t` in the html of the generated page after `add_child` and after the new case `remove_saved_child`, and none of `t` and `pt` after `remove_child` | finding 3; expected after the run: no new case report, because the new case is not in `files::PORTFOLIO_CASES` |
+| `src/main/php/web/frontend.php` (`action_calculator_save`, `user_msg_html`) | the confirmations only if every write has succeeded, and the notification shows the html info only without a message | the confirmations of the writes that have succeeded also next to the error of a failed one, and the notification shows an html info below the message | finding 4; found while fixing it: `user_msg_html` shows only one text, so a confirmation next to an error would not have been shown. This applies to every page with an html info and a message, also the missing suggestions of the add word view (`web/word/word.php` `add_missing_suggestions`); expected after the run: a snapshot of the add word view with a message, if there is one, gets the missing suggestions below it |
+| `src/main/php/web/frontend.php` (`action_calculator_save`, new `calculator_added_text`), `src/main/php/shared/enum/messages.php`, `en.yaml`, `de.yaml` (`calculator_added_saved`), `src/main/resources/script/calculator_json.js` (`numberField`), `src/test/php/unit_ui/use_case_ui_tests.php` | an added instance without a number saved without a confirmation | "<label> added without a number"; the script sends the label `k` of an added instance also without an entry | finding 5; the new unit tests also call `calculator_saved_new_text`, which had none, and `calculator_removed_text` got the description line that the function report has missed; expected after the run: the snapshots unchanged, because the text is a server text and the label a drawn hidden input. The read-only scratch simulation `sim_save_vars.js` gives `pt-4700=-4542` and `pl-4700=231,-4637,-4700,-4466` for `add_child`, `t-4636=4704` for `remove_saved_child` and neither `t` nor `pt` for `remove_child` |
+| `src/main/php/web/frontend.php` (`calculator_new_values`) | `log_warning` for a new field without its number | `log_err_msg_ui` | finding 7: an internal inconsistency that the user cannot fix |
+
+The run of 2026-11-27 of the follow-up failed the test "... and an issue of the request is shown instead of the html
+info" of `system_view_ui_tests.php`: the fix of finding 4 showed every html info below an issue, but that test pins
+the rule that an issue is shown instead of the html info, e.g. instead of the missing suggestions of the add word
+view. So the rule stays, and the confirmation of the writes that have succeeded is an info of its own:
+
+| file | old | new | reason |
+|---|---|---|---|
+| `src/main/php/web/user/user_message.php` (new `done_html`, `add_done_html`, `get_last_done_html`, `has_info`, `reset`), `src/main/php/web/frontend.php` (`user_msg_html`, `action_calculator_save`) | every html info below an issue (fix of finding 4) | the html info only without an issue as before; the confirmation of the writes that have succeeded (`add_done_html`, added only after the write) also below an issue | the failed test; explicit is better than implicit: only a caller that has written adds a done confirmation |
+| `src/test/php/unit_ui/system_view_ui_tests.php`, `src/test/php/unit_write_workflow/value_write_url_tests.php` | — | a done confirmation is shown below an issue (positive), and the html info is not (the existing negative test); the calculator write test reads the done confirmation | the tests of the new info |
+
+The run of 2026-11-27 that started at 08:06 (`test/test_part.php`, with `files::AUTO_UPDATE_TEST_FILES` set to
+`true`) covered the follow-up rows above together with section 9 and the follow-up of section 2 of
+`docs/llm/log/2026-11-26_csv_format_phrases.md`; the pasted output of that run names no failure of these rows, so
+whether the save var asserts of the browser test have passed is in the rest of its output. As the rows expect:
+- `calculator_saved_new_text` and `calculator_added_text` have one unit test call each, and `calculator_removed_text`
+  has its description line in `docs/code_functions_all.md`.
+- No snapshot of a calculator page changed by the new texts or the save var of the label.
+
+| file | old | new | reason |
+|---|---|---|---|
+| `docs/code_functions_all.md` | — | `calculator_added_text` "in a section not yet defined" (the report suggests `execute`), `add_done_html` (suggested `add`) and `get_last_done_html` ("expected to be set and get") | the report has no section rule for the new functions yet; not changed, a generated report is a signal |
+| `docs/code_object_name_exceptions.md` | — | `$new_val` in the list of `value` | the var of the new test of `calculator_saved_new_text` in `use_case_ui_tests.php` is not a known name of a value |
+| `src/test/resources/web/html/views_by_object/ref/ref_default_ref_29.html` | the history row "added Q167" of 26-12-2022 by zukunft.com system | without it | not by this change: one of the rows of the `changes` table that the value cleanup has deleted by the ids of value changes before the fix of section 8 (`change_log_list::change_class`); the run wrote the snapshot without the row because of the auto update, so it needs a restore by the developer, and the row comes back only with `test/reset_db.php` |
+| `src/test/resources/import/wikidata/cache/Q72.json` | the label "Tsúri (engumba)" of 2026-11-24 | "Tsúri" of 2026-11-27 | not by this change: a run that reaches wikidata updates its cache like the live caches of the memory |
+
 ### Lessons learned by llm (2026-11-27)
 
 - A test that `a_selected_test.php` switches on needs its include and its use there too, because `php -l` does not
@@ -651,3 +698,103 @@ what checks them so far.
   test; a function that only the save with `$do_it` calls needs a unit test call of its own.
 - A cleanup that deletes by ids takes the table from the query that has loaded the ids, never from the class of the
   loaded object, because an id is unique only within its table.
+
+## 9. the results of a saved child
+
+Part of #247, step 3, change 6b of 6: a child that the save has added (change 6a) is an instance of the database
+without stored results, because nothing calculates the results of a new instance in the backend; so its column
+has no positions on the server page and in the pdf report, and after a reload also on the javascript page.
+
+### Request
+
+"do the next open task in pending.md 'portfolio split'": change 6b, next by the decision of 2026-11-27 (section 8).
+
+Decision of the developer (2026-11-27): all three pages, also the javascript page, whose script copies the results
+of the first instance only for "Add child" (`copyResults`).
+
+Planned before the first edit:
+- the script (`calculator_json.js`) at the load: for each repeated input, each instance without any result gets the
+  results of the first instance with results, like an added one (`copyResults`: the instance in the phrases and the
+  context instead of the first one, without a result whose formula names the first one); if it has copied any, the
+  page calculates all results again, like after "Add child" (`recalculate`), so that the sums over the children
+  include the saved child. A page without such an instance is drawn as today, so its case reports do not change
+- the server (`ui_list::calculator_numbers`, which the page without javascript and the pdf report use) does the same
+  after `check_results`: the copies are calculated in passes by `formula_calc::result`, a copy only once its
+  operands are numbers of the page, e.g. the walk row after the row before it; a copy whose operands never come is
+  left out with a warning; then `check_results` again, so that a result over all children includes the copies. A
+  copy has no database id and is added as a duplicate of the list
+- the tests: `phrase_data_ui_tests` with `phrase_data_portfolio_split.json` without the results of the second child,
+  whose copies must have the stored numbers of the second child, the walk of the second child too (positive), and
+  the full fixture without any copy (negative); the headless browser test with a copy of the generated javascript
+  page without the results of the second child in its seed, which must show the same page as the full one
+- not in this change: an instance with some results but not all (it is not copied), and a backend job that stores
+  the results of a new instance
+
+### Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/resources/script/calculator_json.js` (new `addMissingInstanceResults` and `hasResults`, the start of the page) | the results of an instance are copied only by "Add child" | at the load also for an instance of the database without results, and then all results calculated again | decision of 2026-11-27 |
+| `src/main/php/web/component/execute/ui_list.php` (`calculator_numbers`, new `add_instance_results`, `has_results`, `instance_results`, `formula_names`, `replaced_group`, `calculate_copies`, `chain_depth`, `rows_before`), `src/main/php/web/component/execute/calculator.php` (new `repeated_phrases`, used by `is_repeated`), `src/main/php/shared/enum/messages.php` (`CALCULATOR_INSTANCE_RESULTS_MISSING`) | the page without javascript and the report show the stored results only | the copied results of an instance without results, calculated with the numbers of the page; the copies are sorted by the position of their row in the follower chain, so that one pass mostly calculates a whole walk, because each operand scans the list | change 6b |
+| `src/test/php/unit_ui/phrase_data_ui_tests.php` (and the seed of `portfolio_split_calculator_js.html` instead of the old `phrase_data_portfolio_split.json` of 2026-11-16, which still has the formula "walk count of the second child"), `src/test/php/unit_read/system_views_read_tests.php` (new `assert_instance_results`, `differing_items`), `src/test/php/utils/test_base.php` (new `page_seed`, `with_page_seed`), `src/test/php/const/triple_names.php` (`PORTFOLIO_SECOND_CHILD`), `docs/json_structure.md` (the repeat row), `docs/llm/pending.md` | — | the tests above; change 6b done and waiting for the run | the tests and the task list. The read-only scratch simulation `sim_missing.js` draws the same result tables from the seed without the 217 results of the second child as from the full seed |
+
+### Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| the snapshots and the case reports | — | unchanged | every instance of the test data has its stored results, so nothing is copied |
+| `docs/code_test_coverage.md`, `docs/code_functions_all.md`, `docs/code_object_name_exceptions.md` | — | the new functions, and maybe the vars `$rep`, `$ins` and `$copy` | generated reports |
+| the ids | — | unchanged | no import file changes, so `test/test_part.php` without `test/reset_db.php` |
+| the time of the unit ui tests | — | a few seconds more | the new test calculates the numbers of the portfolio split page twice |
+
+### Unexpected changes
+
+| file | old | new | reason |
+|---|---|---|---|
+| `src/main/resources/translations/de.yaml` | — | the German text of `CALCULATOR_INSTANCE_RESULTS_MISSING` by its English text as the key, next to `CALCULATOR_CELL_AMBIGUOUS` | the run of 2026-11-27 failed "the translation of de has a text for every message": a message whose id is its English text needs its German text in `de.yaml`, which the plan missed |
+| `src/main/php/web/formula/formula_calc.php` (`value_of`) | the result that is calculated is excluded as its own operand by its id | by the object, and by the id only for a database id | the run of 2026-11-27 failed "a child without stored results gets the results of the first child" with 45 of 217: every copy has the id 0, so each copy excluded all the other copies as its operands, and only the copies whose operands are stored numbers got a number (e.g. the target quantity of the first row, but not its rounded count) |
+| `src/main/php/web/component/execute/ui_list.php` (`calculate_copies`, new `calculated_open`) | passes over all copies, sorted by the row | row by row from the first one: the copies of a row in passes until none more, e.g. the target quantity, the rounded count, the split count and the deviation of a row, then the next row with the copies left open | the same failed test took 64 seconds: a walk row depends on the copies of its own row in an order that the sort by the row does not give, so each pass over all copies would advance one step of one row |
+| `src/main/php/web/component/execute/ui_list.php` (`calculate_copies`, `calculated_open`), `src/main/php/web/formula/formula_calc.php` (`with_numbers`) | a copy is added to the numbers of the page once it is calculated | all copies are added first, and a result without a number is a missing operand and never the number 0 | the next run of 2026-11-27 had a number for every copy, but 81 of 217 differed from the stored ones from SCHP on (split count 420 / 421): an operand selects the number with the fewest foreign phrases, so while the copy of the rounded count of a child was not in the list yet, the split count of the child took the stored "child", "rounded count" of all children instead and was never calculated again; the script has its copies in the list from the start and calculates an operand first (`calculated`). So a copy that stays without a number is in the list without a number, an empty cell next to the warning, and no longer left out as planned |
+| `src/test/php/utils/test_base.php` (`write_value_cleanup`, `cleanup_change_log_value`) | each step of the value cleanup and then the cleanup of the change log use the same group object | each step of the value cleanup gets its own copy of the group, and a test value whose group has no id is reported instead of skipped silently | not by this change: the run of 2026-11-27, the first one with the write workflow tests since the fatal of section 8, failed "the value of System Test Word, System Test Word To has no change log of an earlier run" (3, 2 and 2 entries) and, with `files::AUTO_UPDATE_TEST_FILES` set to `true`, wrote the history of the earlier run ("added 123.456", "changed to 123456", "deleted") into five snapshots of `workflow_write`. `load_by_grp` gives the value the group of the cleanup (`set_grp`), and the id hook of `sandbox_multi` sets the group id with the value id, so the `reset` and the `del` of the value cleanup have set the id of that group to 0, and `cleanup_change_log_value` skipped the change log of the value; since 12592d34f the check no longer repairs it. The five snapshots are written again by the next run with the auto update, or restored by the developer |
+| `src/main/php/cfg/db/sql.php` (`NAME_EXT_NO_VALUE`), `src/main/php/cfg/sandbox/sandbox_value.php` (`sql_delete`), `src/test/php/unit/value_tests.php` | the logged delete of a value without a number has the same function name as the one of a value with a number | the name gets `_no_value`, e.g. `value_prime_p3_delete_log_no_value_user` | not by this change: the next run had 18 internal errors "function value_prime_p3_delete_log_user(...) does not exist" and the same for `value_delete_log_user`, in the cleanup of the test values for the users 3, 4 and 6. With its own copy of the group (row above), `write_value_cleanup_force` finds the value and removes the user row of each test user, also of a user without a number; such a delete logs no old value (`sql_creator::sql_func_log_value`), so its function has a parameter less, but a connection creates a function only once by its name (`sql_db::has_query`), so the call found only the function of a delete with a number. In production each request has its own connection, where `CREATE OR REPLACE FUNCTION` adds the other variant as an overload; no sql test file has a delete without a number, so no expected file changes |
+| `src/main/php/web/formula/formula_calc.php` (`with_numbers`, new `is_open_copy`) | every result without a number is a missing operand | only a result without a number and without a database id, which is a copy that is not calculated yet | the next run failed "show formula view" of `views_by_id/formula` 8, 28, 36 and 44: the results of the potential loss of the global problems lost the tooltip with their numbers ("5.5" = 110.05 * 5 %) and got the mark of an assumption, because one of their operands matches a stored result without a number, which counted as 0 before; the rule of the copies reached every server page. With the auto update the run wrote the four snapshots without the tooltip, so they need a restore by the developer or the next run. The same run, which started at about 16:53 with the code before this fix of 17:12, also failed "api-> view Calculator" of the PV lifetime balance without javascript after 343 seconds with a page without its main part, and so `pv_lifetime_balance_no_js.html` and `pv_lifetime_balance_diff.md` (65 missing); the page has no repeated input, so only this rule of `formula_calc` can have changed it, most likely by the missing operands that `check_results` then loads one by one |
+| `src/main/php/web/component/execute/ui_list.php` (`calculate_copies`, new `fresh_operands`, `calculated_in_rows`, `with_stored_numbers`) | the copies are calculated with the stored numbers of the page | with the fresh numbers of the stored results, in a list of their own for the copies, so that the page shows the stored numbers | the next run had 27 of 217 different from SCHP on (420 / 421). The read-only scratch scripts `walk_php.php` and `walk_js.js` give the same walk of the second child in php and in javascript with the stored numbers (SCHP target quantity 420.49999999999977, 2.3e-13 below the tie, so 421), so the engines are equal; the script of the page and the backend calculate with the fresh numbers of the stored results, e.g. the holding value of GBP cash 225999.99999999997 instead of 226000, whose float noise brings the tie 7e-13 below 420.5, which rounds down as the sample and decision 1 of 2026-11-25 keep it. Decision of the developer (2026-11-27): fresh operands. A stored result that the page cannot calculate keeps its stored number, like in the script. With only the three fresh holding values of GBP cash, DKK cash and ConfedBond30, `walk_php_fresh.php` gives the numbers of the script and of the stored second child (SCHP 420, SIKA 456). The fresh calculation runs only for a page with copies, but there it calculates every stored result again, so the page without javascript and the pdf of such a page take longer |
+| `src/main/php/web/component/execute/ui_list.php` (`calculated_in_rows`) | the results without a row only after the last row | the results without a row also before the first row | the next run took 513 seconds for "a child without stored results gets the results of the first child": with the fresh operands the count of the children ("child", "count") is a result without a number and without a row, so it was calculated only after the last row, and every split count, which uses it, and with it the whole walk stayed open and was tried again in each of the 42 rows, each time with a scan of the whole list per operand. Decision of the developer (2026-11-27): calculate the results without a row once at the start too; the numbers do not change, only the order |
+| `src/test/resources/web/html/workflow_write/` (`wf4_edit_back`, `wf4_edit_back_edit_save_cancel`, `wf6_show_edit_back`) | the tooltips of the potential loss of the global problems | without them | not by a change of its own: the run that started at about 16:53 still had the rule of every result without a number (row of `is_open_copy` above) and wrote these three pages between 17:49 and 17:50 with the auto update; they need a restore or the next run |
+| 34 snapshots of `src/test/resources/web/html/workflow_write/` (wf1, wf2, wf3, wf4, wf5, wf6, wf17, wf18, wf42, wf44, wf45, wf47) and `object_pages/triple.html` | — | five more suggestions "Hanseatic city", "big city", "college town", "urban district of Bremen" and "urban municipality in Germany" | not by this change: `object_pages/triple.html` has them since the run of 14:22, before the changes of the calculation, and no code of this section creates a suggestion, so most likely a newer answer of wikidata (the cache of `Q72.json` changed too); to check by the developer whether the snapshots should keep them |
+| `src/main/php/web/component/execute/ui_list.php` (`calculator_numbers`, new `STEP_CALC_CHECK` and `STEP_CALC_COPIES`, `check_results`, `calculate_copies`) | the calculation of the results of a page is part of the section of the caller, e.g. "not_specified" with 513 seconds | the two steps "calculator result check" and "calculator copies" in the url to html time of a page (`ui_list::html_step`, like `STEP_TABLE_CHECK`), a debug entry of `calculate_copies` with the number of the copies, the fresh results, the rounds and the open copies, and one of `check_results` with the size of the table | request of 2026-11-27: more entries, so that a delay can be checked in detail. First planned as two sections of `system_time_type` with `$sys->times`, but the coding rule test "web/ must declare only $ui_sys and $mtr as globals" failed for `ui_list.php`, so the steps use the frontend cache like the other steps of the page; the two sections and their rows in `system_time_types.csv` are removed again |
+
+The runs of 2026-11-27 since the fixes of the copies:
+- the run that started at about 16:53 (with the code before 17:12): the formula pages, the PV page without javascript
+  and the three workflow pages of the rows above, and the 18 internal errors of the delete without a number
+- the run that started at about 17:53 (with the code of 17:12): `views_by_id/formula` 8, 28, 36 and 44 (17:58) and
+  `pv_lifetime_balance_no_js.html` and `pv_lifetime_balance_diff.md` (18:12) are written like the commit again, so
+  the narrowed rule of `is_open_copy` is confirmed; "a child without stored results gets the results of the first
+  child" took 513 seconds, and the copies differed from SCHP on in 27 numbers. The fresh operands and the results
+  without a row before the first row wait for the next run
+| file | old | new | reason |
+|---|---|---|---|
+| `docs/code_test_coverage.md` | the new functions | `repeated_phrases` with 0 unit test calls; the private functions of `ui_list` are not listed | `repeated_phrases` is called only by `ui_list::add_instance_results` and `calculator::is_repeated`, which the unit tests reach through the page, but not directly |
+| `docs/code_functions_all.md` | the new functions | `repeated_phrases` "in a section not yet defined" (the report suggests `texts and flags`) | the report has no section rule for the new function yet; not changed, a generated report is a signal |
+
+The runs of 2026-11-27 covered this change in three steps, and each failure above is the reason of its row:
+- the run that started at about 07:25 (the `docs/code_*` reports of 07:25): the missing German text, and 45 of 217
+  copies calculated in 64 seconds; it ran with the code before the fix of the html info of section 8, so its failure
+  of that test is not a failure of the fix
+- the run that started at 08:06: every copy calculated, but 81 of 217 different from SCHP on, the history of the
+  test values and the five `workflow_write` snapshots, and the ref snapshot of section 8
+- the fixes of the copies added first (08:59) and of the copy of the group in the value cleanup (09:05) wait for the
+  next run, which should also remove the history of the earlier runs at its start; the `phrase_data_ui_tests`
+  results, the browser test of the javascript page and the case reports are in its output
+
+### Lessons learned by llm (2026-11-27)
+
+- A calculation that adds a result to its numbers only once it is calculated lets an operand take another number
+  in the meantime, e.g. a sum that names the same phrases; every result that is still to be calculated belongs in
+  the list from the start, as a missing operand while it has no number.
+- A result that is excluded as its own operand by its id excludes every other object without an id too; a copy
+  without a database id is compared as the object.
+- An object that a load hands to another object (`load_by_grp` and `set_grp`) is changed by the reset and the
+  delete of that object; a cleanup that needs the object afterwards passes a copy.
+- A pasted failure can come from a run that has started before the fix; the write time of the `docs/code_*` reports
+  tells when the run started.

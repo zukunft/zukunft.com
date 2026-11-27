@@ -72,8 +72,11 @@ use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\pdf_writer;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -616,6 +619,32 @@ class phrase_data_ui_tests
         $test_name = '... and no editor field';
         $t->assert_text_not_contains($test_name, $no_calc_pdf, $this->pdf_string($field_name));
 
+        // a child that the save has added has no stored results, so the page copies those of the first child; the
+        // seed of the current snapshot without the results of the second child must give the numbers of the full one
+        $t->subheader($ts . 'results of an instance without stored results');
+        $seed = $t->page_seed($t->path_file(test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES
+            . test_files::PORTFOLIO_SPLIT_CALCULATOR_JS . test_files::HTML));
+        $full_msg = new user_message();
+        $full_lst = $this->portfolio_numbers($seed, $full_msg);
+        $part_seed = $seed;
+        $part_seed[json_fields::RESULTS] = array_values(array_filter($seed[json_fields::RESULTS] ?? [],
+            fn(array $res) => !in_array(triple_names::PORTFOLIO_SECOND_CHILD, $res[json_fields::WORDS] ?? [])));
+        $part_msg = new user_message();
+        $part_lst = $this->portfolio_numbers($part_seed, $part_msg);
+        $full_nums = $this->instance_numbers($full_lst, triple_names::PORTFOLIO_SECOND_CHILD);
+        $part_nums = $this->instance_numbers($part_lst, triple_names::PORTFOLIO_SECOND_CHILD);
+        $test_name = 'a child without stored results gets the results of the first child';
+        $t->assert($test_name, count($part_nums), count($full_nums));
+        $test_name = '... with the numbers of the stored results';
+        $t->assert($test_name, $this->differing_numbers($full_nums, $part_nums), []);
+        $test_name = '... and each of them calculated';
+        $part_missing = $part_msg->has_msg_id(msg_id::CALCULATOR_INSTANCE_RESULTS_MISSING);
+        $t->assert($test_name, $part_missing, false);
+        // negative: a page whose instances all have their stored results copies none
+        $test_name = 'a page whose children all have stored results copies none';
+        $full_copies = array_filter($full_lst->lst(), fn($val) => $val instanceof result_ui and $val->id() == 0);
+        $t->assert($test_name, count($full_copies), 0);
+
         $t->subheader($ts . 'calculator report');
         $msg = new user_message();
         $json = json_decode(file_get_contents(test_files::PHRASE_DATA_PORTFOLIO_SPLIT), true);
@@ -861,6 +890,54 @@ class phrase_data_ui_tests
     private function pdf_string_end(string $text): string
     {
         return substr($this->pdf_string($text), 1);
+    }
+
+    /**
+     * @param array $seed the data of the portfolio split page e.g. of the javascript snapshot
+     * @param user_message $msg to collect the messages of the calculation
+     * @return value_list_ui the values and the results of the page as the page without javascript and the report use them
+     */
+    private function portfolio_numbers(array $seed, user_message $msg): value_list_ui
+    {
+        $dto = $this->complete_page_cache($seed, $msg);
+        $trp = $dto->phr_lst->get_by_name(triple_names::EXAMPLE_PORTFOLIO_SPLIT, $msg)?->obj();
+        return new ui_list()->calculator_numbers($trp, $dto, $msg);
+    }
+
+    /**
+     * @param value_list_ui $lst the values and the results of a page
+     * @param string $name the name of an instance e.g. second child portfolio
+     * @return array per result of the instance its sorted phrase names as the key and its number
+     */
+    private function instance_numbers(value_list_ui $lst, string $name): array
+    {
+        $result = [];
+        foreach ($lst->lst() as $val) {
+            $names = $val->phr_lst()->names();
+            if ($val instanceof result_ui and in_array($name, $names)) {
+                sort($names);
+                $result[implode(', ', $names)] = $val->number();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $expected the numbers by their phrase names e.g. of the stored results
+     * @param array $actual the numbers by their phrase names e.g. of the copied results
+     * @return array the phrase names whose number differs or is missing, with both numbers
+     */
+    private function differing_numbers(array $expected, array $actual): array
+    {
+        $result = [];
+        foreach ($expected as $names => $num) {
+            $act = $actual[$names] ?? null;
+            $is_same = ($num !== null and $act !== null and !formula_calc::differs($num, $act));
+            if (!$is_same and $num !== $act) {
+                $result[] = $names . ': ' . $num . ' / ' . $act;
+            }
+        }
+        return $result;
     }
 
     /**

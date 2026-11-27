@@ -33,7 +33,7 @@ The remaining tasks in the suggested order:
    - "import", the TODO of the developer in `convert_portfolio_csv.php`: "should be based on phrases without specific
      code", so the columns of the bank, the asset classes with their kind, the assumed lot sizes and the phrases of
      the values come from the data instead of the consts of the class (the task "csv import defined by phrases",
-     change 2 of 3 done, waiting for the run)
+     change 2 of 3 done, change 3 next)
    - stop for a run: `/test/test_part.php` with the tests that are likely to break by these changes, and before
      the commit an error free full `/test/test.php`
 2. phase 2, in parallel: part 5 of step 9 with the number fields of the holdings (step 5 (6)) and step 3 (add child
@@ -47,11 +47,11 @@ if there are more than two children the pdf report should also contain all child
 
 The report takes every child of the database already; a child added in the browser is missing, because the save
 did not keep it (decisions of 2026-11-27, section 8 of `docs/llm/log/2026-11-25_csv_child_shares.md`):
-- 6a, the logged save of an added child and the delete of the `is a` triple of a removed child (done, waiting for a
-  `/test/test_part.php` run)
-- 6b, next: the server page and the report calculate the results of an instance without stored results, like the
-  browser for a new instance, because `ui_list::check_results` checks only stored results and nothing writes the
-  results of a new instance; without it the pdf shows the column of a saved third child without positions
+- 6a, the logged save of an added child and the delete of the `is a` triple of a removed child (done; the run of
+  2026-11-27 stopped before the write workflow tests, so its save waits for a `/test/test_part.php` run)
+- 6b, the results of an instance without stored results, copied from the first instance and calculated again on the
+  javascript page, the page without javascript and in the pdf report (done, waiting for a `/test/test_part.php`
+  run, section 9 of `docs/llm/log/2026-11-25_csv_child_shares.md`)
 
 #### first page of PDF report
 
@@ -67,8 +67,8 @@ The rows of the walk are stored results of the formulas, and the browser calcula
 
 - part 1, the previous row in the backend (`docs/llm/log/2026-11-24_operand_groups.md`): a figure selects its number by the exact phrase group of the context and the operand, so check with a calculation job that the context of a walk formula is the phrases of the row, e.g. `LISN` and `first child portfolio`, and not the context of the calc-validation, which has more phrases
 - part 3, the formulas in `portfolio_split_calculator.json`: every formula is by the instances now (change 1 to 3 of
-  step 3), and the page calculates the results of a new instance (change 4 of step 3); still open: the save of a new
-  instance (change 6 of step 3)
+  step 3), the page calculates the results of a new instance (change 4 of step 3), and the save keeps a new instance
+  whose results every page calculates (change 6 of step 3, waiting for the run)
 - part 5, the number fields of the holdings and the add child task (the realised rows of this part are done, `docs/llm/log/2026-11-24_sum_over_results.md`)
 
 #### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
@@ -86,8 +86,8 @@ change 4, the button "Add child", and change 5, the button "Remove the ..." in t
 in the sample, so a remove moves the numbers behind it up by one and takes the last child from the page):
 6. the logged save of the changed instances, split by the decision of 2026-11-27 (see "report with three and more
    children" above): 6a, the save of an added child with its `is a child portfolio` triple and its numbers and the
-   logged delete of the `is a` triple of a removed child, is done and waits for the run; 6b, the results of a saved
-   new instance, is next. Still open after 6b:
+   logged delete of the `is a` triple of a removed child, and 6b, the results of a saved new instance, are done and
+   wait for the run. Still open:
    - a number of the database that a remove has taken from a field (`calculator_moved_not_saved`): the save does
      not exclude the value yet
    - a new case leaves out an added child
@@ -203,15 +203,15 @@ next one:
    *csv format*; decisions of the developer (2026-11-26): the keywords are a system file with code ids, the
    definition is a test resource until change 3, a cell text is the description of a triple, and a written triple
    gets its name only by `csv name`
-2. `convert_csv` (done, waiting for a `/test/test_part.php` run, section 2 of
+2. `convert_csv` (done, the run of 2026-11-27 has written both reports as planned, section 2 of
    `docs/llm/log/2026-11-26_csv_format_phrases.md`): reads the decoded definition json and the name of the format
    phrase; the reports `bank_positions_sample_diff.md` and `bank_positions_portfolio_split_diff.md` list its
    differences to `convert_portfolio_csv`, which are the decisions of 2026-11-26: no walk, the bond fund as a bond
 3. remove `convert_portfolio_csv.php` and its tests, and the definition json as a production import file, from
    which `convert_csv` gets the definition by the export of the format phrase (decision 3 of change 2); until then
-   `convert_csv::header` repeats `convert_portfolio_csv::header`. The messages `import_csv_unknown_kind` and
-   `import_csv_rate_not_positive` still name the asset class and the exchange rate of the bank csv, which a second
-   format needs in general words.
+   `convert_csv::header` repeats `convert_portfolio_csv::header`. The message `import_csv_unknown_kind` still names
+   the asset class of the bank csv, which a second format needs in general words; `import_csv_rate_not_positive`
+   goes with `convert_portfolio_csv`, because `convert_csv` uses `import_csv_cell_not_positive`.
 
 What the phrases cannot define, because it is a calculation and not a fact of the csv, each a task of its own by
 the decisions of 2026-11-26:

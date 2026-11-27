@@ -6249,7 +6249,7 @@
     \-- nodes
         \-- config_tree - the nodes of the given part of config.yaml in the order of the file, without the keys
     \-- convert
-        \-- convert_csv - @param string $csv the text of the csv
+        \-- convert_csv - convert the rows of a csv to the import json by the format of set_format
         \-- convert_portfolio_csv - @param string $csv the text of the csv of a bank statement of the positions
         \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
                  json
@@ -6826,6 +6826,8 @@
             alculator.php
     \-- row_phrases - section for function row_phrases not yet defined that it should be texts and flags in /component/e
             xecute/calculator.php
+    \-- repeated_phrases - section for function repeated_phrases not yet defined that it should be texts and flags in /c
+            omponent/execute/calculator.php
     \-- kinds - section for function kinds not yet defined that it should be texts and flags in /component/execute/calcu
             lator.php
     \-- used - section for function used not yet defined that it should be texts and flags in /component/execute/calcula
@@ -7551,6 +7553,8 @@
             te in /frontend.php
     \-- calculator_saved_new_text - section for function calculator_saved_new_text not yet defined that it should be exe
             cute in /frontend.php
+    \-- calculator_added_text - section for function calculator_added_text not yet defined that it should be execute in 
+            /frontend.php
     \-- calculator_removed_text - section for function calculator_removed_text not yet defined that it should be execute
              in /frontend.php
     \-- url_to_back_url - section for function url_to_back_url not yet defined that it should be execute in /frontend.ph
@@ -8955,6 +8959,10 @@
     \-- add_info_html - section for function add_info_html not yet defined that it should be add in /user/user_message.p
             hp
     \-- get_last_info_html - section for function get_last_info_html is expected to be set and get in /user/user_message
+            .php
+    \-- add_done_html - section for function add_done_html not yet defined that it should be add in /user/user_message.p
+            hp
+    \-- get_last_done_html - section for function get_last_done_html is expected to be set and get in /user/user_message
             .php
     \-- has_msg_id - section for function has_msg_id not yet defined that it should be add in /user/user_message.php
     \-- has_info - section for function has_info not yet defined that it should be add in /user/user_message.php
@@ -10666,6 +10674,9 @@
         \-- calculator - the columns of a table, where the column of a repeated input is shown once per instance
     \-- row_phrases
         \-- calculator - the rows of a detail table: the phrases at the end of the is a and is part of levels below
+    \-- repeated_phrases
+        \-- calculator - @return phrase[] the phrases that an input item of the page repeats e.g. child portfolio,
+                 each once
     \-- kinds
         \-- calculator - @param phrase $phr e.g. month or replacement mix
     \-- used
@@ -11258,8 +11269,11 @@
     \-- calculator_saved_new_text
         \-- frontend - the confirmation of one added number as html,
                  because the number links to the default view of the new value
+    \-- calculator_added_text
+        \-- frontend - the confirmation of an instance that the add button has added and whose number the save has not a
+                dded, e.g.
     \-- calculator_removed_text
-        \-- frontend - @param array $url_array the submitted calculator form with the label of each removed instance
+        \-- frontend - the confirmation of an instance of the database whose is a triple the save has deleted
     \-- url_to_back_url
         \-- frontend - the previous page of a url built from its '9'-prefixed back targets, ready to be used directly as
     \-- url_with_selected_phrase

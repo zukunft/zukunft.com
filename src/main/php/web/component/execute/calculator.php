@@ -662,14 +662,23 @@ class calculator
      */
     private function is_repeated(?phrase $phr): bool
     {
-        $result = false;
+        $ids = array_map(fn(phrase $rep) => $rep->id(), $this->repeated_phrases());
+        return $phr != null and in_array($phr->id(), $ids);
+    }
+
+    /**
+     * @return phrase[] the phrases that an input item of the page repeats e.g. child portfolio, each once
+     */
+    function repeated_phrases(): array
+    {
+        $result = [];
         foreach ($this->items(triples::CALCULATOR_INPUT) as $item) {
-            $same = ($phr != null and $this->item_phrase($item)?->id() == $phr->id());
-            if ($same and $this->has_flag($item, triples::CALCULATOR_REPEAT)) {
-                $result = true;
+            $phr = $this->item_phrase($item);
+            if ($phr != null and $this->has_flag($item, triples::CALCULATOR_REPEAT)) {
+                $result[$phr->id()] = $phr;
             }
         }
-        return $result;
+        return array_values($result);
     }
 
     /**

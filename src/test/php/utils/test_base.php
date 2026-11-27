@@ -4962,6 +4962,10 @@ class test_base
                 $this->delete_value_change_log($grp->id());
                 $this->delete_value_link_change_log($grp->id());
                 $this->delete_value_time_series_change_log($grp);
+            } else {
+                // e.g. a group whose id a value cleanup has reset, so the history would stay for the next run
+                log_err('the change log of the test value of ' . implode(', ', $phr_lst->names())
+                    . ' is not removed, because its group has no id');
             }
         }
     }
@@ -5531,10 +5535,13 @@ class test_base
      */
     function write_value_cleanup(value_base|sandbox_multi $sbx, group $grp, bool $check = false): void
     {
-        $this->write_value_cleanup_one($sbx, $this->usr1, $grp, $check);
-        $this->write_value_cleanup_one($sbx, $this->usr2, $grp, $check);
+        // each step gets its own copy of the group, because the loaded value takes the group (load_by_grp) and its
+        // reset and its delete set the group id with the value id to 0 (sandbox_multi::$id), which would make the
+        // next step and the cleanup of the change log of the value miss it
+        $this->write_value_cleanup_one($sbx, $this->usr1, clone $grp, $check);
+        $this->write_value_cleanup_one($sbx, $this->usr2, clone $grp, $check);
         // remove a value that resists the single user cleanups above
-        $this->write_value_cleanup_force($sbx, $grp);
+        $this->write_value_cleanup_force($sbx, clone $grp);
     }
 
     /**
@@ -7310,6 +7317,49 @@ class test_base
             }
         } else {
             log_err('file ' . $file_path . ' does not exist');
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $html a snapshot of a calculator page, whose script gets the data of the page as its seed
+     * @return array the seed as the decoded phrase data, a long id as a text like the page script reads it,
+     *               empty if the page has no seed
+     */
+    function page_seed(string $html): array
+    {
+        [$start, $end] = $this->page_seed_range($html);
+        $tag = 'id="' . system_page::CALC_EDITOR_SEED_ID . '">';
+        $json = $start == $end ? '' : substr($html, $start, $end - $start);
+        $json = substr($json, (int)strpos($json, $tag) + strlen($tag), -strlen('</script>'));
+        return json_decode($json, true, 512, JSON_BIGINT_AS_STRING) ?? [];
+    }
+
+    /**
+     * @param string $html a snapshot of a calculator page with its seed
+     * @param array $seed the data of the page e.g. without the results of an instance
+     * @return string the page with the given seed, written like the page writes it (html_base::script_data)
+     */
+    function with_page_seed(string $html, array $seed): string
+    {
+        [$start, $end] = $this->page_seed_range($html);
+        $script = new html_base()->script_data(system_page::CALC_EDITOR_SEED_ID, $seed);
+        return $start == $end ? $html : substr($html, 0, $start) . $script . substr($html, $end);
+    }
+
+    /**
+     * @param string $html a snapshot of a calculator page
+     * @return array the start and the end of the script element of the seed, both 0 if the page has none
+     */
+    private function page_seed_range(string $html): array
+    {
+        $tag = 'id="' . system_page::CALC_EDITOR_SEED_ID . '">';
+        $tag_pos = strpos($html, $tag);
+        $start = $tag_pos === false ? false : strrpos(substr($html, 0, $tag_pos), '<script');
+        $end = $start === false ? false : strpos($html, '</script>', $tag_pos);
+        $result = [0, 0];
+        if ($start !== false and $end !== false) {
+            $result = [$start, $end + strlen('</script>')];
         }
         return $result;
     }

@@ -307,6 +307,12 @@ class formula_calc
                     $missing = ($missing or !$this->pri->is_first($names, $ctx));
                     return '0';
                 }
+                // the copy of a result for an instance without results that is not calculated yet
+                // (ui_list::calculate_copies) is missing and never the number 0
+                if (array_any($vals, fn($val) => $this->is_open_copy($val))) {
+                    $missing = true;
+                    return '0';
+                }
                 $nums = array_map($number_text, $vals);
                 return implode(chars::FUNC_ARG_SEPARATOR, $nums);
             }, $exp, -1, $count, PREG_OFFSET_CAPTURE);
@@ -511,12 +517,38 @@ class formula_calc
             $phr_names = $this->phrase_names($val);
             $matches = (array_diff($names, $phr_names) == [] and array_diff($phr_names, $ctx) == []);
             $foreign = count(array_diff($phr_names, $names, $res_names));
-            if ($val->id() != $res->id() and $matches and $foreign < $fewest_foreign) {
+            if (!$this->is_same_result($val, $res) and $matches and $foreign < $fewest_foreign) {
                 $result = $val;
                 $fewest_foreign = $foreign;
             }
         }
         return $result;
+    }
+
+    /**
+     * @param value|result $val a number of the page
+     * @param result $res the result that is calculated
+     * @return bool true if the number is the result itself: the same object, or the same database id e.g. the stored
+     *              result in another list; a result without a database id, e.g. the copy of a result for an instance
+     *              without results (ui_list::add_instance_results), is only itself, so the copies are operands of
+     *              each other
+     */
+    private function is_same_result(value|result $val, result $res): bool
+    {
+        $has_db_id = ($res->id() != 0 and $res->id() !== '');
+        return $val === $res or ($has_db_id and $val->id() == $res->id());
+    }
+
+    /**
+     * @param value|result $val a number of the page
+     * @return bool true for a result without a number and without a database id, which is a copy of a result for an
+     *              instance without results that is not calculated yet (ui_list::calculate_copies); a stored result
+     *              without a number keeps the number 0 as an operand, as before the copies
+     */
+    private function is_open_copy(value|result $val): bool
+    {
+        $has_db_id = ($val->id() != 0 and $val->id() !== '');
+        return $val instanceof result and $val->number() === null and !$has_db_id;
     }
 
     /**

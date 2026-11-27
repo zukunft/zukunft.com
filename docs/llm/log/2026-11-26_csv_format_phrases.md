@@ -172,6 +172,17 @@ Planned before the first edit:
   test csv a report of the difference to the json of `convert_portfolio_csv`, compared as sets per section, so that
   each difference is a decision of the developer
 
+### Follow-up request of 2026-11-27
+
+"try to fix" findings 6 and 8 of the review of 2026-11-27:
+6. a cell with the flag `csv positive` below zero is reported with the text of the exchange rate: `convert_csv` gets
+   the new message `import_csv_cell_not_positive`, which names the cell but no column; `convert_portfolio_csv` keeps
+   its message until change 3. This changes the plan above, which kept the texts about the exchange rate
+8. the number of a value is cut to 14 significant digits by the php setting `precision`, and not "never rounded":
+   the 14 digits stay, because `round()` of php 8.4 leaves the noise of the float in the 16th digit (e.g.
+   `451509.3745520001`), but explicitly by `number_text` with at most 10 decimals, so that the json is the same as
+   that of `convert_portfolio_csv` and does not depend on the php setting
+
 ### Expected changes
 
 | file | old lines | new lines | target / reason |
@@ -214,6 +225,23 @@ As planned:
 |---|---|---|---|
 | `docs/code_objects_all.md` | — | the line of `convert_csv` with its var `$fmt_conv` | the generated object report lists every class; the plan named only the two function reports |
 | `docs/code_functions_all.md` | the functions of `convert_csv` | `convert` "in a section not yet defined" (the report suggests `convert`), and as the description of `convert` its first `@param` line | the docblock of `convert` starts with `@param`, so the report has no description line for it; the report has no section rule for the new function yet. Not changed: a generated report is a signal |
+
+Follow-up of 2026-11-27 (findings 6 and 8 of the review), after the run above:
+
+| file | old | new | reason |
+|---|---|---|---|
+| `src/main/php/cfg/import/convert_csv.php` (`row_is_valid`), `src/main/php/shared/enum/messages.php`, `src/main/resources/translations/en.yaml`, `de.yaml` (`import_csv_cell_not_positive`), `src/test/php/unit/import_tests.php` | a positive cell below zero reported as an exchange rate | the new message names the cell and that it must be above zero | finding 6; the bad row test of the exchange rate keeps its text part, and a new assert checks that the text names no exchange rate |
+| `src/main/php/cfg/import/convert_csv.php` (`written_value`, new `number_text`, new `SIGNIFICANT_DIGITS`) | `(string)round($number, 10)` with the comment "never rounded" | 14 significant digits with at most 10 decimals explicitly, without the php setting and without an exponent | finding 8; `sprintf` and not `number_format`, because `number_format` rounds about one of 200 half digits differently. The read-only scratch check `number_text_check.php` gives the same text as `(string)round()` for 309'930 numbers (random ones of every size and the products of the cells of both test csv), apart from the 2'074 that the cast writes with an exponent; the scratch conversion of both test csv gives the same json as before. Expected after the run: the two difference reports unchanged. Also `convert` got the description line that the function report has missed |
+
+The run of 2026-11-27 that started at 08:06 (`test/test_part.php`, with `files::AUTO_UPDATE_TEST_FILES` set to
+`true`) covered the follow-up together with sections 8 and 9 of `docs/llm/log/2026-11-25_csv_child_shares.md`. As
+the rows expect:
+- `bank_positions_sample_diff.md` and `bank_positions_portfolio_split_diff.md` did not change, so the explicit 14
+  significant digits write the same numbers as the cast before.
+- `convert` has its description line in `docs/code_functions_all.md`.
+
+The pasted output of the run names no failure of the import tests, so whether the new assert of the positive cell
+has passed is in the rest of its output. No further unexpected change.
 
 ### Lessons learned by llm (2026-11-26)
 

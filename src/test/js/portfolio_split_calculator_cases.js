@@ -37,5 +37,10 @@ const CASES = {
     /* a third child and then the second one removed, so the first and the former third child remain */
     remove_child: {
         "press": ["Add child", "Remove the second child"]
+    },
+    /* the second child of the database removed, whose is a triple the save deletes; only for the save vars of the
+       generated page (system_views_read_tests::assert_calculator_save_vars), so without a case report */
+    remove_saved_child: {
+        "press": ["Remove the second child"]
     }
 };

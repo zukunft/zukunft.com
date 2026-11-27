@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
@@ -2356,6 +2357,15 @@ class use_case_ui_tests
         $test_name = '... and names the instance in the confirmation';
         $del_txt = $lib->msg_var_text([$ui->calculator_removed_text($removed_form, $removed)]);
         $t->assert($test_name, $del_txt, word_names::INHABITANTS . ' removed');
+        // the confirmations of an added instance: with its new number, or by its triple if the save has no number
+        $test_name = 'the calculator save confirms the number of an added instance with its label and the number';
+        $new_val = new value_ui();
+        $new_val->set_id(1);
+        $new_txt = $lib->msg_var_text([$ui->calculator_saved_new_text($added_form, $added, $new_val)]);
+        $t->assert_text_contains($test_name, $new_txt, triple_names::CALC_INHABITANTS_LABEL_COM . ' saved as ');
+        $test_name = '... and an added instance without a number by its label';
+        $add_txt = $lib->msg_var_text([$ui->calculator_added_text($added_form, $added)]);
+        $t->assert($test_name, $add_txt, triple_names::CALC_INHABITANTS_LABEL_COM . ' added without a number');
         // negative: a triple id that is no number is reported and deletes nothing
         $test_name = '... but a triple id that is no number deletes nothing';
         $bad_del_form = array_merge($form, [url_var::TRIPLE . $removed => word_names::INHABITANTS]);

@@ -2044,6 +2044,12 @@ class frontend
                     $result = $html->dsp_notification($msg_txt, $is_success);
                 }
             }
+            // the confirmation of the writes that have succeeded is shown also below the message of an issue, e.g. of
+            // another write of a calculator save, so that the user sees what has been saved; an html info is not
+            $done_html = $msg_ui->get_last_done_html();
+            if ($done_html !== '') {
+                $result .= $html->dsp_notification_html($done_html, true);
+            }
         }
         return $result;
     }
@@ -3084,14 +3090,22 @@ class frontend
                 $msg_ui->merge($link_msg);
                 $link_ok[$field] = $link_msg->is_ok();
             }
+            $saved_new = [];
             foreach ($new_values as $field => $val) {
                 if ($link_ok[$field] ?? true) {
                     $result_msg = $val->add_via_api($msg_ui);
                     if ($result_msg->is_ok()) {
                         $saved[] = $this->calculator_saved_new_text($url_array, (string)$field, $val);
+                        $saved_new[] = (string)$field;
                     } else {
                         $msg_ui->merge($result_msg);
                     }
+                }
+            }
+            // an added instance without a saved number would be saved silently, so its triple is confirmed
+            foreach ($link_ok as $field => $is_ok) {
+                if ($is_ok and !in_array((string)$field, $saved_new, true)) {
+                    $saved[] = $this->calculator_added_text($url_array, (string)$field);
                 }
             }
             foreach ($changes as $field => $val) {
@@ -3122,10 +3136,12 @@ class frontend
             $url = array_merge($this->calculator_numbers($url_array), $url);
         } elseif (!$has_writes) {
             $msg_ui->add_info($mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
-        } elseif ($saved != []) {
+        }
+        // also below the error of a failed write, so that the user sees which writes have succeeded
+        if ($saved != []) {
             $lib = new library();
             // the texts are translated and escaped already
-            $msg_ui->add_info_html($lib->msg_var_text($saved));
+            $msg_ui->add_done_html($lib->msg_var_text($saved));
         }
         return $url;
     }
@@ -3208,7 +3224,7 @@ class frontend
             if (!$ids_ok) {
                 $msg_ui->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $id_txt]);
             } elseif ($number === null) {
-                log_warning('the new calculator field ' . $field . ' has been sent without its number');
+                log_err_msg_ui('the new calculator field ' . $field . ' has been sent without its number', $msg_ui);
             } elseif ($number !== '' and !is_numeric($number)) {
                 $msg_ui->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $number]);
             } elseif ($number !== '') {
@@ -3332,6 +3348,25 @@ class frontend
     }
 
     /**
+     * the confirmation of an instance that the add button has added and whose number the save has not added, e.g.
+     * because the user has emptied it, so that the save of its is a triple is not silent
+     *
+     * @param array $url_array the submitted calculator form with the label of each added instance
+     * @param string $field the phrase id of the added instance
+     * @return array the escaped translated message and its html vars e.g. for "Target weight third child added without
+     *               a number"
+     */
+    function calculator_added_text(array $url_array, string $field): array
+    {
+        global $mtr;
+        $html = new html_base();
+        $vars = [msg_id::VAR_NAME => $html->esc((string)($url_array[url_var::NAME . $field] ?? ''))];
+        return [$html->esc($mtr->txt(msg_id::CALCULATOR_ADDED_SAVED)), $vars];
+    }
+
+    /**
+     * the confirmation of an instance of the database whose is a triple the save has deleted
+     *
      * @param array $url_array the submitted calculator form with the label of each removed instance
      * @param string $field the phrase id of the removed instance
      * @return array the escaped translated message and its html vars e.g. for "second child removed"

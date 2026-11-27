@@ -1350,6 +1350,7 @@ class import_tests
         // position and the reason: an asset class without a kind, a cell that is not a number, an empty cell, an
         // exchange rate of zero and a line with another number of cells than the header e.g. by a comma in a name
         $at_line = ' in line 5 of the csv "' . $csv_src . '"';
+        $rate_row = 'Cash and short-term investments , test cash,TST0001,10,,EUR,1,EUR,,,0,10,CHF' . $csv_tail;
         $bad_rows = [
             'Derivatives , Call option,DER0001,10,,CHF,5,CHF,,,1,50,CHF' . $csv_tail
             => 'DER0001' . $at_line . ' has the asset class "Derivatives"',
@@ -1357,7 +1358,7 @@ class import_tests
             => '"' . convert_portfolio_csv::COL_QUANTITY . '" of the position TST0001' . $at_line . ' is "ten", which is not a number',
             'Cash and short-term investments , test cash,TST0001,10,,,1,CHF,,,1,10,CHF' . $csv_tail
             => '"' . convert_portfolio_csv::COL_CURRENCY . '" of the position TST0001' . $at_line . ' is empty',
-            'Cash and short-term investments , test cash,TST0001,10,,EUR,1,EUR,,,0,10,CHF' . $csv_tail
+            $rate_row
             => '"' . convert_portfolio_csv::COL_EXCHANGE_RATE . '" of the position TST0001' . $at_line . ' is 0, but',
             'Cash and short-term investments , test, cash,TST0001,10,,CHF,1,CHF,,,1,10,CHF' . $csv_tail
             => 'Line 5 of the csv "' . $csv_src . '" has 24 cells, but its header row has 23',
@@ -1464,6 +1465,15 @@ class import_tests
             $t->assert_text_contains($test_name, $csv_msg->text(), $bad_txt);
             $csv_msg->reset();
         }
+        // a cell with the flag csv positive can be any column of any format, so the message names no exchange rate
+        $test_name = 'convert_csv says that a positive cell must be above zero';
+        $fmt_conv->convert($csv_head . "\n" . $rate_row . "\n", ['portfolio 040270501213'], $csv_src, $csv_msg,
+            test_base::TEST_TIMESTAMP);
+        $rate_txt = $csv_msg->text();
+        $t->assert_text_contains($test_name, $rate_txt, 'is 0, but it must be above zero');
+        $test_name = '... without the exchange rate of the bank csv';
+        $t->assert_text_not_contains($test_name, $rate_txt, 'exchange rate must');
+        $csv_msg->reset();
         // negative: a csv without the header row of its format has no row, which the message says
         $test_name = 'convert_csv reports a csv without the header row of its format';
         $fmt_conv->convert("Asset,Name\nstock,ABB\n", ['portfolio 040270501213'], $csv_src, $csv_msg, test_base::TEST_TIMESTAMP);

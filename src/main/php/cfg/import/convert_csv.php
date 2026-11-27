@@ -65,8 +65,11 @@ class convert_csv
     // a cell in a description or a csv name: the header text of its column between the two
     const string CELL_START = '{';
     const string CELL_END = '}';
-    // the decimals of a number of the json, more than a csv writes, so that a number is never rounded
+    // the decimals and the significant digits of a number of the json: more than a csv writes for a position, but
+    // fewer digits than a float has, because the last digits of a product of two cells are the noise of the float
+    // e.g. 451509.3745520001 for 484296.24 times 0.9323, which round() of php 8.4 keeps
     const int DECIMALS = 10;
+    const int SIGNIFICANT_DIGITS = 14;
     // the separator of the from, the verb and the to of a triple as a key
     const string KEY_SEP = '|';
 
@@ -221,6 +224,8 @@ class convert_csv
      */
 
     /**
+     * convert the rows of a csv to the import json by the format of set_format
+     *
      * @param string $csv the text of the csv
      * @param array $context the names of the phrases of the conversion e.g. "example portfolio split"; the first one
      *                       is the phrase that csv context stands for
@@ -364,11 +369,34 @@ class convert_csv
         if ($number !== null and $this->is_for_kind($phr_names, $this->row_kind($cells))) {
             $words = $this->value_words($phr_names, $cells, $written);
             if ($words !== null) {
-                $result = [json_fields::WORDS => $words, json_fields::NUMBER => (string)round($number, self::DECIMALS)];
+                $result = [json_fields::WORDS => $words, json_fields::NUMBER => $this->number_text($number)];
                 if (!in_array(words::ASSUMED, $phr_names)) {
                     $result[json_fields::SOURCE_NAME] = $source;
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * the number of a value as the text of the import json, independent of the php setting precision
+     *
+     * @param float $number the number of the template times the cell of its number column
+     * @return string the number with at most SIGNIFICANT_DIGITS digits and at most DECIMALS decimals, without the
+     *                zeros at the end and without an exponent e.g. "451509.374552"
+     */
+    private function number_text(float $number): string
+    {
+        $rounded = round($number, self::DECIMALS);
+        $result = '0';
+        if ($rounded != 0) {
+            $int_digits = max(1, (int)floor(log10(abs($rounded))) + 1);
+            $decimals = max(0, min(self::DECIMALS, self::SIGNIFICANT_DIGITS - $int_digits));
+            // sprintf and not number_format, because number_format rounds a half digit of the float differently
+            $result = sprintf('%.' . $decimals . 'F', $rounded);
+        }
+        if (str_contains($result, '.')) {
+            $result = rtrim(rtrim($result, '0'), '.');
         }
         return $result;
     }
@@ -512,7 +540,7 @@ class convert_csv
                 $msg->add(msg_id::IMPORT_CSV_CELL_NOT_NUMBER, $cell_vars);
                 $result = false;
             } elseif ($cell != '' and $this->has_flag($item, triples::CSV_POSITIVE) and (float)$cell <= 0) {
-                $msg->add(msg_id::IMPORT_CSV_RATE_NOT_POSITIVE, $cell_vars);
+                $msg->add(msg_id::IMPORT_CSV_CELL_NOT_POSITIVE, $cell_vars);
                 $result = false;
             }
         }

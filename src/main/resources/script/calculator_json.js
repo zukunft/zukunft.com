@@ -1780,8 +1780,12 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         } else if (entry !== null) {
             input += saveVars(key, entry, lbl, unit);
         }
+        // the label also without a number, because the save confirms the added instance with it
         if (addedInstances.has(instance)) {
             input += hidden(PHRASE_TO_VAR + key, idOf(name));
+            if (entry === null) {
+                input += hidden(NAME_VAR + key, lbl);
+            }
         }
         if (entry !== null) {
             inputEntries.set(field, entry);
@@ -2226,6 +2230,33 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             if (pageResults.indexOf(e) >= 0) {
                 pageResults.push(copy);
             }
+        });
+    }
+
+    /* the results of each instance of the database without any, e.g. a child that the save has added, which nothing
+       calculates in the backend: those of the first instance with results, like for an added instance (copyResults);
+       true if it has copied any, because then the page calculates all results again (ui_list::add_instance_results) */
+    function addMissingInstanceResults() {
+        let copied = false;
+        items(KW.input).filter(function (item) {
+            return hasFlag(item, KW.repeat);
+        }).forEach(function (item) {
+            const list = kinds(item.to);
+            const template = list.find(hasResults);
+            list.filter(function (instance) {
+                return template !== undefined && !hasResults(instance);
+            }).forEach(function (instance) {
+                copyResults(template, instance);
+                copied = true;
+            });
+        });
+        return copied;
+    }
+
+    /* true if a number of the page is a result of the instance */
+    function hasResults(instance) {
+        return pool.some(function (e) {
+            return e.result && e.words.indexOf(instance) >= 0;
         });
     }
 
@@ -3065,7 +3096,10 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
 
     // the stored results are checked once, after an input change the page shows the numbers that it calculates
     checkResults();
-    if (recalculateAll) {
+    // an instance without stored results gets those of the first instance, and then the sums over all instances
+    // include it, like after "Add child"
+    const copied = addMissingInstanceResults();
+    if (recalculateAll || copied) {
         recalculate();
     }
     pageOperands = new Set(operandValues());

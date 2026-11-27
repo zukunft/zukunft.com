@@ -148,6 +148,8 @@ class files
     // the cases that press the button "Add child" and then the remove button of the second child (step 2 and 3)
     CONST string PORTFOLIO_CASE_ADD_CHILD = 'add_child';
     CONST string PORTFOLIO_CASE_REMOVE_CHILD = 'remove_child';
+    // the second child of the database removed, only for the save vars of the generated page, so not in PORTFOLIO_CASES
+    CONST string PORTFOLIO_CASE_REMOVE_SAVED_CHILD = 'remove_saved_child';
     CONST array PORTFOLIO_CASES = [self::PORTFOLIO_CASE_STANDARD, self::PORTFOLIO_CASE_HIGH, self::PORTFOLIO_CASE_LOW,
         self::PORTFOLIO_CASE_OVER, self::PORTFOLIO_CASE_DIFFER, self::PORTFOLIO_CASE_ADD_CHILD,
         self::PORTFOLIO_CASE_REMOVE_CHILD];
