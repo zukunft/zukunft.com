@@ -278,11 +278,20 @@ class phrase_data_read_tests
         $t->assert_contains($test_name, $fmt_val_keys, $this->value_keys($fmt_file[json_fields::VALUES]));
         $test_name = 'convert_csv converts the sample csv with the exported definition to the values of the import file';
         $csv_txt = file_get_contents(test_files::IMPORT_PORTFOLIO_CSV_SAMPLE);
-        $db_csv_vals = $this->csv_values($fmt_vars, $fmt_name, $csv_txt, $msg);
-        $file_csv_vals = $this->csv_values($fmt_file, $fmt_name, $csv_txt, $msg);
+        $db_csv_json = $this->csv_json($fmt_vars, $fmt_name, $csv_txt, $msg);
+        $file_csv_json = $this->csv_json($fmt_file, $fmt_name, $csv_txt, $msg);
+        $db_csv_vals = $this->csv_values($db_csv_json);
+        $file_csv_vals = $this->csv_values($file_csv_json);
         $t->assert($test_name, $db_csv_vals, $file_csv_vals, $t::TIMEOUT_LIMIT_FILE);
         $t->assert_msg($test_name, $msg);
         $msg->reset();
+        // the triples too, because e.g. a missing "is part of" of each position changes no value; at least those of the
+        // file, because the exported definition has also the is a links of other pages between its phrases e.g. stock
+        // price is a price, which the conversion writes as a declared triple between two used phrases
+        $test_name = '... and to at least the triples of the import file';
+        $db_csv_trp_keys = $this->triple_keys($db_csv_json[json_fields::TRIPLES] ?? []);
+        $file_csv_trp_keys = $this->triple_keys($file_csv_json[json_fields::TRIPLES] ?? []);
+        $t->assert_contains($test_name, $db_csv_trp_keys, $file_csv_trp_keys);
         // negative: the export of a page that is no csv format has no triple to the keywords of a format
         $test_name = '... but the export of a page is no csv format';
         $no_fmt_ok = new convert_csv()->set_format($split_vars, triple_names::EXAMPLE_PORTFOLIO_SPLIT, $msg);
@@ -495,20 +504,28 @@ class phrase_data_read_tests
     }
 
     /**
-     * the values of the import json that convert_csv writes from a csv by a definition, compared as text, because the
-     * definition exported from the database has the database id of each declaration, which the json copies
-     *
      * @param array $fmt the definition of the csv format e.g. the import file or its export from the database
      * @param string $format the name of the phrase of the format e.g. bank position csv
      * @param string $csv the text of the csv
      * @param user_message $msg to collect the messages of the conversion
-     * @return array per value its sorted phrase names and its number, sorted
+     * @return array the import json that convert_csv writes from the csv by the definition
      */
-    private function csv_values(array $fmt, string $format, string $csv, user_message $msg): array
+    private function csv_json(array $fmt, string $format, string $csv, user_message $msg): array
     {
         $conv = new convert_csv();
         $conv->set_format($fmt, $format, $msg);
-        $json = json_decode($conv->convert($csv, [self::CSV_CONTEXT], self::CSV_SOURCE, $msg), true);
+        return json_decode($conv->convert($csv, [self::CSV_CONTEXT], self::CSV_SOURCE, $msg), true) ?? [];
+    }
+
+    /**
+     * the values of a converted csv compared as text, because the definition exported from the database has the
+     * database id of each declaration, which the json copies
+     *
+     * @param array $json the import json that convert_csv has written (csv_json)
+     * @return array per value its sorted phrase names and its number, sorted
+     */
+    private function csv_values(array $json): array
+    {
         $result = [];
         foreach ($json[json_fields::VALUES] ?? [] as $val) {
             $phr_names = $val[json_fields::WORDS] ?? [];

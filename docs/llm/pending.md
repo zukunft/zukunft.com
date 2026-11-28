@@ -1,22 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## review findings of 2026-11-28
-
-The review of the uncommitted changes of #247 (no re-pin, no import file changes):
-1. `src/main/php/cfg/export/phrase_data.php` (`phrase_vars`, the docblock of `parent_triple_ids`): the comments say
-   that an `is a` link "has no name and is so no phrase of a value", but named links e.g. "alternative investment
-   stock" or "SK-811 01 (postal code)" are added too; the reason is that no value names the link
-2. `phrase_data::parent_triple_ids`: `in_array($trp->to_id(), $data_ids)` and `in_array($trp->phrase()->id(),
-   $data_ids)` search the whole id list per link; one `array_flip` of the ids with `isset` makes each check constant,
-   e.g. for the 60 postal code links of the PV page
-3. `src/test/php/unit_read/phrase_data_read_tests.php` (the conversion with the exported definition): only the values
-   are compared, so a missing triple of the conversion e.g. the "is part of" of each position is found only by the
-   triple test of the export; also compare the triples of the two conversions
-4. `phrase_data::keyword_ids`: the docblock line "@return array the phrase ids of ... and of csv context by their
-   code id e.g." is about 128 chars, longer than the other lines of the file
-5. "the description of a pinned view" below: it is planned "before the re-pin run of change 1 of 'range of FX
-   rates'", which has run; move it to the next task with a re-pin
-
 ## Calculator editor
 
 ### portfolio split page compared with its sample
@@ -73,34 +56,28 @@ did not keep it (decisions of 2026-11-27, section 8 of `docs/llm/log/2026-11-25_
 Done, waiting for a `/test/test_part.php` run: the first portfolio follows the title on the first page
 (section 10 of `docs/llm/log/2026-11-25_csv_child_shares.md`).
 
+#### add child
+
+if a child is added the weight parent should stay as it ist and but the weight of the children should be reduce to the increase number of children using a 'high round' (config.yaml value), which means that it should be rounded to 0 decimal. So if there has been two children with each 35% the parent has 30%. If a thrid child is added the parent stays at 30% and each child gets 23.3333 the rounding rules says 0 so the number for each child gets 23%. 3 x 23 is 69 and the rest goes to the parent which gets 31%.
+
 #### range of FX rates
 
 remove the limits on FX rates so that all FX rates could be save and add a separate button to save FX rates.
 
-Three changes by the decisions of 2026-11-27 (sections 11 to 13 of `docs/llm/log/2026-11-25_csv_child_shares.md`),
-each with a run before the next:
-1. the limits of the input item before the limits of the phrase, and the ABB use case moves its exchange rate limits
-   to its item (done; the run after `test/reset_db.php` of 2026-11-28 draws the rate of the portfolio split page
-   without limits)
-2. next: one field per exchange rate, named by its unit e.g. "CHF per EUR", like the box of the sample
+The open changes by the decisions of 2026-11-27 (sections 12 and 13 of
+`docs/llm/log/2026-11-25_csv_child_shares.md`), each with a run before the next:
+2. an input per exchange rate, since section 15 in a box labelled by the currency like the sample (done, waiting
+   for the run of section 15)
 3. a button "Save FX rates" below the rates that saves only the rates, and the main "Save" without them
+4. the field "Portfolio currency" at the start of the exchange rates like the sample, with the options in alphabetic
+   order (done, waiting for `test/reset_db.php`, `test/test_re_pin.php` and `test/test_part.php`, section 15 of the
+   log); the order by the value of each currency in the portfolio is in `docs/llm/pending_prio_2.md`
 
 #### the description of a pinned view
 
-Before the re-pin run of change 1 of "range of FX rates" above, because it needs a re-pin anyway: the key
-`description` of the pinned view "problems" in `src/main/resources/config.yaml` (zukunft.com > system configuration
-> system > view > startup > pinned views), with the text that the developer had added on 2026-11-28 and taken back
-to avoid a re-pin of its own: "this is a priority list of the biggest global issues to solve. You can adjust the
-underlying assumptions if you think, this list is not correct by digging into the calculations and change the
-numbers. At the moment you first need to login so that your assumption can be saved without direct influencing the
-list for other users. if you think, the list is fine, the suggestion is to help solving the issues with the suggested
-solutions."
-- `words::DESCRIPTION` = 'description' in `src/main/php/shared/const/words.php`, because the coding rule test
-  `config_yaml_word_triple_tests` needs a const for every key of `config.yaml`
-- the re-pin: the config import makes the key the word "description" before `csv_keywords.json` declares it, so every
-  later word id moves by one and the config has one text value more (`test/reset_db.php`, `test/test_re_pin.php`, a
-  run with `files::AUTO_UPDATE_TEST_FILES` for the list files and the snapshots with an id)
-- check first that a text value takes a text of about 450 characters (the column of the text values)
+The key `description` of the pinned view "problems" in `src/main/resources/config.yaml` with `words::DESCRIPTION`
+is done in the re-pin of section 15 of `docs/llm/log/2026-11-25_csv_child_shares.md`, waiting for `test/reset_db.php`,
+`test/test_re_pin.php` and `test/test_part.php`. Still open:
 - not yet shown: the start page uses only the url, the view name, the name and the tooltip of a pinned view
   (`html_base::start_page`); showing the description is a task of its own
 
@@ -140,8 +117,15 @@ in the sample, so a remove moves the numbers behind it up by one and takes the l
 
 #### step 7: the buttons (13)
 
-- the buttons "Download", "Import", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
+- the buttons "Download", "Import", "Import FX rates" and "Copy as zukunft.com JSON" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
+- "Copy as CSV" is a collapsed box with the walk as csv, which the javascript page copies to the clipboard when it is
+  opened (done, waiting for a `/test/test_part.php` run, section 14 of `docs/llm/log/2026-11-25_csv_child_shares.md`)
 
+#### PDF report
+
+in the PDF report switch the format for 'Formulas used' from portrait to landscape (done, waiting for a
+`/test/test_part.php` run: `calculator_report::add_formulas` starts a landscape page, tested in
+`phrase_data_ui_tests` "calculator report")
 
 ### Swiss NPP
 
@@ -154,13 +138,17 @@ because the ahv vat use case gets new data). One phase, four agents in parallel:
 - agent pure html: "pure HTML and JavaScript views", the url parameter with its `*_HUMAN` twin and the JavaScript
   version of the formula editor
 
-### add scenario test files
+#### add scenario test files
 
 add in src/test/resources/web/html/use_cases compare test case filed that report the difference between the results of the generated npp_ch_vote calculator and src/test/resources/web/html/use_cases/npp_ch_vote_sample.html for the four scenarios 'Optimistic ..', 'BAK base case', 'Recent projects ... ', 'Academies pessimistic'.
 
 If possible add a tooltip for the four scenario buttons with an explaining text and a source
 
-### add costs of CO2-eq reduction to the npp
+#### add costs of CO2-eq reduction to the npp
+
+#### scenario 'Recent Project'
+
+in the scenario 'Recent Project' and 'Optimistic' the 'new Annual production' is sometimes 0 instead of e.g. 12.14 TWh, which seems to be wrong
 
 ### add to the calculator a 'Share assumptions and vote' button
 

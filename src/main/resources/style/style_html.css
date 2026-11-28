@@ -1070,6 +1070,15 @@ a:hover {
     width: 100%;
     margin-left: 0;
 }
+/* the values of a field that differ only by their unit e.g. the exchange rates: a label and an input per line */
+.use-case .fx {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px 10px;
+    align-items: center;
+    font-size: .85rem;
+    margin-bottom: 16px;
+}
 /* the last step of the report below the buttons, so that the page stays while the report is created */
 .use-case .report-frame {
     display: block;

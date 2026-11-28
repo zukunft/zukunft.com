@@ -211,6 +211,12 @@ class styles
     const string CALC_NUM = 'num';
     const string CALC_REF = 'ref';
     const string CALC_REPORT_FRAME = 'report-frame';
+    // the box with a label and an input per value of a field phrase that differ only by their unit e.g. the exchange rates
+    const string CALC_RATE_BOX = 'fx';
+    // the collapsed box with a table as csv, without a css rule of its own, which the pdf report leaves out
+    const string CALC_COPY = 'copy';
+    // the bootstrap class of an element over the full width of its parent e.g. the text area of the csv box
+    const string FULL_WIDTH = 'w-100';
     const string CALC_VERDICT = 'verdict';
     const string CALC_HEADLINE = 'headline';
     const string CALC_METER = 'meter';

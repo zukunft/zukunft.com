@@ -280,6 +280,7 @@ zukunft.com:
               phrase name: ""
               name: "Global problems"
               tooltip: "the global issues that are expected to cause the damage with the suggested solution to solve the problem"
+              description: "this is a priority list of the biggest global issues to solve. You can adjust the underlying assumptions if you think, this list is not correct by digging into the calculations and change the numbers. At the moment you first need to login so that your assumption can be saved without direct influencing the list for other users. if you think, the list is fine, the suggestion is to help solving the issues with the suggested solutions."
             pv:
               url: ""
               view name: "Calculator"

@@ -122,15 +122,18 @@ class html_page_diff
         $xpath = $this->xpath($html);
         if ($xpath != null) {
             $this->add_header_items($xpath, $result);
-            $this->add_text_items($xpath, '//main//h2 | //main//summary', self::KIND_HEADING, $result);
+            $button_style = $this->has_class(self::CLASS_BUTTON);
+            $this->add_text_items($xpath, '//main//h2 | //main//summary[not(' . $button_style . ')]', self::KIND_HEADING, $result);
             $this->add_field_items($xpath, $result);
             // only a warning that the reader sees, because the sample hides the others
             $warnings = '//main//div[' . $this->has_class(self::CLASS_WARNING) . '][not(@hidden)]';
             $this->add_text_items($xpath, $warnings, self::KIND_WARNING, $result);
             $this->add_verdict_items($xpath, $result);
             $this->add_table_items($xpath, $result);
-            // a link that looks like a button is a button for the reader e.g. the pdf report
-            $this->add_text_items($xpath, '//main//button | //main//a[' . $this->has_class(self::CLASS_BUTTON) . ']', self::KIND_BUTTON, $result);
+            // a link or the toggle of a collapsed box that looks like a button is a button for the reader e.g. the pdf
+            // report or copy as csv
+            $buttons = '//main//button | //main//a[' . $button_style . '] | //main//summary[' . $button_style . ']';
+            $this->add_text_items($xpath, $buttons, self::KIND_BUTTON, $result);
             $this->add_text_items($xpath, '//main//li', self::KIND_LIST_ITEM, $result);
         }
         return $result;

@@ -91,11 +91,16 @@ editor shows the name of the phrase.
   - phrases that `is a` heating system, with an optional order
   - an option without a value only selects its phrase and has no number, so the
     results keep their numbers while it is selected
+  - the number of an option is the value of the field phrase and the option; only an option that `is a` field phrase
+    falls back to its own value, e.g. `residual mix`, but not a listed option e.g. JPY of `portfolio currency`, whose
+    own value e.g. the cash in JPY is no number of the option
   - with `can be` · `field phrase selector value based`: the phrases of the values
     of the field, if no option is listed
 - **the selected option**: the page phrase `uses` it, e.g. `sample house` · `uses` · `heat pump`
 - **value phrases**: a field shows only the value that also has these phrases, e.g.
   `heated area` · `has a` · `living space`, and that triple `can be` · `field value phrases`
+- **a box per unit**: values of the field phrase that rank the same and differ only by their unit get one box with an
+  input per value, labelled by the to of its unit e.g. EUR of `exchange rate` · `CHF per EUR`, else by the unit
 
 ### Numbers
 

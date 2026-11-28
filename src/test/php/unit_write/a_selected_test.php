@@ -712,7 +712,8 @@ class a_selected_test extends all_unit_tests
             //new process_catch_ui_tests()->run($this);
             // the operands of the frontend calculation found by the index of formula_calc
             new use_case_ui_tests()->run($this);
-            //new phrase_data_ui_tests()->run($this);
+            // a field per unit e.g. per exchange rate of the portfolio split page
+            new phrase_data_ui_tests()->run($this);
             //new language_ui_tests()->run($this);
             //new change_log_ui_tests()->run($this);
             //new sys_log_ui_tests()->run($this);

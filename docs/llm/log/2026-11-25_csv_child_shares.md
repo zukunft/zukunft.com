@@ -927,8 +927,216 @@ Planned before the first edit:
 
 ## 12. one field per exchange rate
 
-Planned for after the run of section 11, decision 2.
+Part of #247, decision 2 of section 11 of the task "range of FX rates" of `docs/llm/pending.md`.
+
+### Request
+
+The next open task of `docs/llm/pending.md`, after the run of section 11 of 2026-11-28.
+
+Checked before the first edit:
+- the item "portfolio split assumption exchange rate" shows one field `n-<phrase id of exchange rate>` with the DKK
+  rate, because the six values `[exchange rate, CHF per EUR]` ... `[exchange rate, CHF per SEK]` rank the same in
+  `ui_list::calculator_value` and `calculator_json.js fieldEntry`, and the preferred order picks CHF per DKK
+- the save reads every field by its key (`frontend::calculator_changes`), so a field keyed by the value id needs no
+  change of the save; the assumption fields of other pages are keyed by the value id already
+  (`ui_list::assumption_field`)
+
+Decisions of the developer (2026-11-28):
+1. all exchange rates are shown, without a new keyword: the values of a field phrase that rank the same and differ
+   only by their unit get one field each, keyed by the value id
+2. the label stays "Exchange rate" and the unit e.g. "CHF per EUR" follows each input, like the current field once per
+   rate
+
+Planned before the first edit:
+- `ui_list`: the new `calculator_unit_values` (the best values of `calculator_value`, moved to the new
+  `calculator_best_values`, if they are more than one and differ only by their unit, else none) and
+  `calculator_number_fields` (one `calculator_number` per unit value, else the one field); `calculator_number` gets
+  the unit value as an optional parameter and keys the field by its id; the same in `calculator_field_plan` and
+  `calculator_source_ids`, so the page of calculator.js and the source numbers follow the fields
+- `calculator_json.js`: the same by `bestEntries`, `unitEntries` and `numberFields`; `numberField` takes the unit
+  entry; a unit field is no field of a preset (`inputPhrases`), because a preset selects by the field phrase only
+- tests in `phrase_data_ui_tests.php` with the seed of the javascript snapshot: a field per exchange rate (positive)
+  and one field if a value of the same rank differs by another phrase e.g. `[exchange rate, million]` (negative)
+- not in this change: the button "Save FX rates" (section 13)
+
+### Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/php/web/component/execute/ui_list.php` (`calculator_fields`, `calculator_number`, `calculator_value`, `calculator_field_plan`, `calculator_source_ids`, new `calculator_best_values`, `calculator_unit_values`, `differ_only_by_unit`, `calculator_number_fields`) | one field per item | one field per value that differs only by its unit | decision 1 and 2 |
+| `src/main/resources/script/calculator_json.js` (`fields`, `numberField`, `fieldEntry`, `sourceNames`, new `bestEntries`, `unitEntries`, `numberFields`) | one field per item | the same as the page without javascript | decision 1 and 2 |
+| `src/test/php/unit_ui/phrase_data_ui_tests.php`, `docs/json_structure.md` (the fields of a calculator), `docs/llm/pending.md` | — | the tests; the rule; change 2 done, waiting for the run | the tests and the task list |
+
+### Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| `portfolio_split_calculator_no_js.html`, `portfolio_split_calculator_js.html` | one field `n-392` "Exchange rate" with CHF per DKK | six fields `n-<group id>` "Exchange rate" in the preferred order of `sandbox_value::sorted` (CHF per DKK first, as today), each with its tag and hint | decision 1 and 2 |
+| the case reports of the portfolio split page | 0 differences | 0 differences, or the fields of the sample box as a difference | the sample has the one field and a box with the currencies |
+| the snapshots of the other calculator pages | — | unchanged | no other item has values of the same rank that differ only by their unit; a changed page shows such an item |
+| the ids | — | unchanged | no import file changes, so no re-pin |
+
+### Unexpected changes
+
+### Lessons learned by llm (2026-11-28)
 
 ## 13. the button "Save FX rates"
 
 Planned for after the run of section 12, decision 3.
+
+## 14. the button "Copy as CSV"
+
+Part of #247, step 7 of `docs/llm/pending.md` (portfolio split page compared with its sample): "the buttons
+'Download', 'Import', 'Import FX rates', 'Copy as zukunft.com JSON' and 'Copy as CSV' have no function: each function
+is a task of its own".
+
+### Request
+
+The next open task of `docs/llm/pending.md` that does not wait for a run (2026-11-28).
+
+Checked before the first edit:
+- the triple from the detail table "split walk" to `calculator copy` shows the two plain buttons "Copy as zukunft.com
+  JSON" and "Copy as CSV" below the walk, without a function, on the page without javascript
+  (`ui_list::calculator_buttons`) and on the javascript page (`calculator_json.js buttons`)
+- the sample copies the walk to the clipboard and shows the text selected in a text box if copying is blocked; its
+  csv has `;` between the cells and the numbers without format
+
+Decisions of the developer (2026-11-28):
+1. the button "Copy as CSV" first; "Copy as zukunft.com JSON" stays without a function
+2. the csv is the table as the page shows it, with the numbers without format e.g. 8999999.9 and `;` between the
+   cells; without javascript the button opens a collapsed box with the csv text to select
+
+Planned before the first edit:
+- `ui_list`: the new `calculation_detail_csv` (the head and the rows of `calculation_detail_table` as csv, the rows by
+  the new `calculator_detail_rows`, which `calculation_detail_table` uses too), `calculator_csv_line` (one line, a
+  cell with `;`, `"` or a line break quoted with doubled `"`) and `calculator_copy_box`; `calculator_buttons` takes
+  the csv and shows the box instead of the plain button; a number is written by `html_base::number_value` (at most
+  12 decimals, the noise limit of the calculator), a share as its stored ratio e.g. 0.35
+- `html_base`: the new `text_area_read_only` with the new const `TEXTAREA`, which escapes its text once
+- `styles::CALC_COPY` as the marker of the box, which `calculator_report::SKIPPED_CLASSES` leaves out of the pdf;
+  the width by bootstrap `w-100`, so no new css rule
+- `calculator_json.js`: the same box by `detailCsv` and `csvLine` from the numbers that the page shows after an input
+  change; opening the box selects the text and copies it to the clipboard (`toggleCopy`), so a blocked copy leaves the
+  selected text to copy by hand
+- tests in `phrase_data_ui_tests.php`: the csv line of plain cells and of a cell with `;` and `"` (positive and
+  negative), the box below the walk with its head line and a number without format (positive) and no box below a
+  table without `calculator copy` e.g. the holdings (negative)
+- not in this change: "Copy as zukunft.com JSON"; the summary of the box looks like a link and not like a button
+
+### Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/php/web/component/execute/ui_list.php` (`calculation_detail_tables`, `calculation_detail_table`, `calculator_buttons`, new `calculator_detail_rows`, `calculation_detail_csv`, `calculator_csv_line`, `calculator_csv_number`, `calculator_copy_box`), `src/main/php/web/html/html_base.php` (new `TEXTAREA`, `text_area_read_only`), `src/main/php/web/html/styles.php` (new `CALC_COPY`), `src/main/php/web/component/execute/calculator_report.php` (`SKIPPED_CLASSES`) | a plain button "Copy as CSV" | a box with the csv of the table | decision 1 and 2 |
+| `src/main/resources/script/calculator_json.js` (`detailTables`, `buttons`, new `detailCsv`, `csvLine`, `csvNumber`, `copyBox`, `toggleCopy`) | a plain button | the same box, copied to the clipboard on opening | decision 1 and 2 |
+| `src/test/php/unit_ui/phrase_data_ui_tests.php`, `docs/llm/pending.md` | — | the tests; "Copy as CSV" done, waiting for the run | the tests and the task list |
+
+### Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| `portfolio_split_calculator_no_js.html`, `portfolio_split_calculator_js.html` | the button "Copy as CSV" | the box with the csv of the walk | decision 2 |
+| the case reports of the portfolio split page | 0 differences | "Copy as CSV" as a difference, or none | the sample has a button and a hidden text box |
+| the pdf report | — | unchanged | the box is skipped like the buttons |
+| the ids | — | unchanged | no import file changes, so no re-pin |
+
+### Unexpected changes
+
+| file | old | new | reason |
+|---|---|---|---|
+| `src/main/php/web/html/html_base.php` (`details`), `src/main/php/web/component/execute/ui_list.php` (`calculator_copy_box`), `src/main/resources/script/calculator_json.js` (`copyBox`), `src/test/php/utils/html_page_diff.php` (`page_items`), `src/test/php/unit_read/system_views_read_tests.php` | the toggle of the csv box as a plain summary | the summary with the button style, which the compare reads as a button | the run of 2026-11-28 reported in every case report of the portfolio split page "Missing in the generated page: button: Copy as CSV" and "Only in the generated page: heading: Copy as CSV", because the compare reads every summary as a heading; a summary with the button style is a button for the reader like the link of the report, which also closes the open point that the toggle looked like a link. The same reports list "Only in the generated page: field: Exchange rate (2)" to "(6)", the consequence of decision 2 of section 12: the sample has the other rates in a box without the class field, which the compare does not read |
+
+### Lessons learned by llm (2026-11-28)
+
+- A planned row "a difference, or none" for a case report needs a look at how the compare reads the new element
+  (`html_page_diff::page_items`), before the run shows it (2026-11-28).
+
+## 15. the portfolio currency and the box of the exchange rates
+
+Part of #247, the task "range of FX rates" of `docs/llm/pending.md`, item 4: "now adjust the generated page so that it
+matches the sample" (2026-11-28), after the developer has changed the exchange rates of
+`portfolio_split_calculator_sample.html`.
+
+### Request
+
+Checked before the first edit:
+- the sample starts the exchange rates with the field "Portfolio currency": a selector with CHF selected and the
+  currencies of the portfolio as options, by their value in the portfolio, and the hint "per unit of currency, bank
+  report [1]"; then the box `fx` with an input per rate labelled by its currency (EUR, USD, GBP, JPY, DKK, SEK), 16px
+  below it the button "Import FX rates"; the sample has no field "Exchange rate" any more
+- the generated page shows the six fields "Exchange rate" of section 12 and no portfolio currency
+- a selector is defined by data like "walk order": `walk order` · `can be` · `phrase selector`, `has a` options, the
+  page phrase `uses` the selected option; the options without a follower chain are sorted by their label
+- `ui_list::calculator_option_value` falls back to the own value of an option, which is right for an option that is a
+  field phrase e.g. residual mix is a replacement mix, but would give a `has a` option e.g. JPY the number of
+  `[JPY cash, JPY, original]`; the walk order gets none only because its options have many numbers
+- `ui_list::calculator_selector` shows its hint without the `{source:...}` placeholder, unlike the number field and
+  the selector of `calculator_json.js`
+
+Decisions of the developer (2026-11-28):
+1. a new phrase "portfolio currency" (currency of portfolio) with its own selector field type, so that no other page
+   with "currency" changes; a re-pin follows
+2. the options in alphabetic order for now; the order by the value of each currency in the portfolio is a task of its
+   own (`docs/llm/pending_prio_2.md`)
+3. one change for the selector and the box
+
+Planned before the first edit:
+- `portfolio_split_calculator.json`, after the triple "portfolio split assumptions label": the triple "portfolio
+  currency", its field type, the 7 options `portfolio currency` · `has a` · CHF ... USD, `example portfolio split` ·
+  `uses` · CHF, the item "portfolio split assumption portfolio currency" with the hint "per unit of currency, bank
+  report {source:bank reporting bank leu client xy}" and the follower triple that puts the exchange rate item behind
+  it; the hint "CHF per unit of currency, bank report" of the exchange rate item goes, because its text is now the
+  hint of the portfolio currency
+- `ui_list`: the values of section 12 are one box `styles::CALC_RATE_BOX` (`fx`) with a label and a number input per
+  value instead of a field each (new `calculator_unit_box`, `calculator_unit_box_label`: the to of a unit triple e.g.
+  EUR of CHF per EUR, else the unit), the limits of a number input by the new `calculator_number_input` for both,
+  and the unit parameter of `calculator_number` goes; `calculator_option_value` takes the own value of an option
+  only for the options that are field phrases (new `calculator::options_are_kinds`); the hint of a selector by the
+  new `calculator_field_hint`, which the number field uses too
+- `calculator_json.js`: the same by `unitBox`, `unitBoxLabel`, `limitAttrs`, `optionsAreKinds` and the parameter of
+  `optionEntry`, and `numberField` without its unit entry
+- `style_html.css`: the rule `.use-case .fx` of the sample, because no rule shows labels and inputs in two columns
+- tests in `phrase_data_ui_tests.php`: the box with a rate labelled by its currency (positive) and one field for
+  values that differ by another phrase (negative); the selector with CHF selected (positive) and an option without
+  the number of its cash e.g. JPY (negative)
+- not in this change: the order of the options by their value; the function of the selector; the step of a number
+  input without a step (`html_base::input_number` writes none, so the browser refuses e.g. 0.13 for a field that
+  shows 0.1304)
+
+#### Follow-up request of 2026-11-28
+
+"add the pinned view description to this re-pin": the task "the description of a pinned view" of
+`docs/llm/pending.md`, which waits for the next re-pin. Checked before the edit: a text value is a `text` column in
+postgres and mysql, so the 450 chars fit; the yaml import makes the key "description" a word with a text value like
+"tooltip", only `tooltip-comment` is a description of the phrase before it. The start page still shows only the url,
+the view name, the name and the tooltip of a pinned view (`html_base::start_page`); showing the description is a task
+of its own.
+
+### Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/resources/messages/use_cases/portfolio_split_calculator.json` | no portfolio currency; the hint of the exchange rate item | the portfolio currency with its selector, options, item and hint | decision 1 and 2 |
+| `src/main/php/web/component/execute/ui_list.php`, `src/main/php/web/component/execute/calculator.php`, `src/main/php/web/html/styles.php`, `src/main/resources/script/calculator_json.js`, `src/main/resources/style/style_html.css` | six fields "Exchange rate"; the own value of every option; a selector hint without placeholder | the box of the rates; the own value only of an option that is a field phrase; the placeholder in the selector hint | the sample |
+| `src/test/php/unit_ui/phrase_data_ui_tests.php`, `docs/json_structure.md`, `docs/llm/pending.md`, `docs/llm/pending_prio_2.md`; for the follow-up `src/main/resources/config.yaml` (the key `description` of the pinned view "problems") and `src/main/php/shared/const/words.php` (`DESCRIPTION`) | — | the tests; the rules; item 4 done, waiting for the run; the order by value; the description of the pinned view | the tests and the task lists; the follow-up request |
+
+### Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| the ids of every word after the config import, the `list.csv` files of the words, triples and values, and the snapshots with such an id | — | shifted by one word: the config import makes the key "description" a word before `csv_keywords.json` declares it; the config has one text value more | the follow-up; the same re-pin |
+| the ids of every seed object after "portfolio split assumptions label" of `portfolio_split_calculator.json`, the `list.csv` files and the snapshots with an id | — | shifted by the new triples and the removed hint | `test/reset_db.php` and `test/test_re_pin.php` before `test/test_part.php` |
+| `portfolio_split_calculator_no_js.html`, `portfolio_split_calculator_js.html` | six fields "Exchange rate" | the field "Portfolio currency" and the box of the rates | the sample |
+| the case reports of the portfolio split page | five "Exchange rate" fields only in the generated page | 0 differences | the compare reads the selected option and the hint, not the order of the options and not the box |
+| the snapshots of the PV pages with the selectors yield factor and replacement mix | — | unchanged | their options keep their numbers: by the value of field and option, or as kinds by their own value |
+
+### Unexpected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/php/web/component/execute/calculator_report.php` (new `add_rate_box`, `add_node`), `src/test/php/unit_ui/phrase_data_ui_tests.php` (the report and the definition report tests) | — | a line per rate of the box e.g. "EUR 0.98 CHF per EUR" in the definition pdf of the calculator editor; the page report without it | named in neither table; the run of 2026-11-28 reported "... each rate of the box of the exchange rates" as failed, because the test read the report of the page, which shows the results without the assumption fields (`calculator_report::pdf`); only the definition pdf renders them (`calculator_definition_report::pdf` by `system_page::calculator_input`), so the positive test reads that one and the page report keeps the negative |
+
+### Lessons learned by llm (2026-11-28)
+
+- Before a test of a pdf part, follow which html the pdf renders: the page report and the definition report share the
+  html reader (`calculator_report::add_html`), but not the parts of the page that they hand to it.

@@ -54,7 +54,7 @@
 .wrap details[open] summary{margin-bottom:12px}
 /* the opened walk keeps the spacing of the panel between the table and the copy buttons */
 .wrap details .more{display:grid;gap:18px}
-.fx{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 10px;align-items:center;font-size:.85rem}
+.fx{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 10px;align-items:center;font-size:.85rem;margin-bottom:16px}
 .tag{font-size:.68rem;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted);margin-left:6px;font-weight:400;white-space:nowrap}
 .tag.m{color:var(--accent);border-color:var(--accent)}
 .tag.a{color:var(--sun);border-color:var(--sun)}
@@ -177,14 +177,23 @@
 
       <details>
         <summary>Exchange rates</summary>
+        <!-- placement test only: the selection changes nothing yet; the options are the currencies of the portfolio
+             by their value in the portfolio currency, the biggest first, and alphabetic for the same value -->
         <div class="field">
-          <label for="fxRate">Exchange rate <span class="tag m">measured</span></label>
-          <div class="row"><input id="fxRate" type="number" value="0.1304"><span class="unit">CHF per DKK</span></div>
-          <span class="hint">CHF per unit of currency, bank report [1]</span>
+          <label for="portfolioCcy">Portfolio currency</label>
+          <select id="portfolioCcy">
+            <option value="CHF" selected>CHF</option>
+            <option value="EUR">EUR</option>
+            <option value="USD">USD</option>
+            <option value="GBP">GBP</option>
+            <option value="JPY">JPY</option>
+            <option value="DKK">DKK</option>
+            <option value="SEK">SEK</option>
+          </select>
+          <span class="hint">per unit of currency, bank report [1]</span>
         </div>
         <div class="fx" id="fxBox"></div>
         <button class="btn btn-outline-primary" type="button"><i class="fas fa-file-import"></i> Import FX rates</button>
-        <p class="hint" style="font-size:.76rem;color:var(--muted);margin:8px 0 0">CHF per unit of currency, bank report <span class="tag m">measured</span></p>
       </details>
     </aside>
 

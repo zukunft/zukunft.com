@@ -30508,9 +30508,9 @@
             {
                 "id": 3046,
                 "name": "9 780674 000780 is symbol for A Theory of Justice, revised edition",
-                "from_id": 2116,
+                "from_id": 2117,
                 "from_phrase": {
-                    "id": 2116,
+                    "id": 2117,
                     "name": "9 780674 000780",
                     "description": null,
                     "type_id": 1,
@@ -30545,9 +30545,9 @@
             {
                 "id": 3045,
                 "name": "978-0-674-00078-0 is symbol for A Theory of Justice, revised edition",
-                "from_id": 2115,
+                "from_id": 2116,
                 "from_phrase": {
-                    "id": 2115,
+                    "id": 2116,
                     "name": "978-0-674-00078-0",
                     "description": null,
                     "type_id": 1,
@@ -30582,47 +30582,10 @@
             {
                 "id": 3035,
                 "name": "978-0-679-73373-7 is symbol for The Myth of Sisyphus",
-                "from_id": 2113,
-                "from_phrase": {
-                    "id": 2113,
-                    "name": "978-0-679-73373-7",
-                    "description": null,
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": 2119,
-                "to_phrase": {
-                    "id": 2119,
-                    "name": "The Myth of Sisyphus",
-                    "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "class": "triple"
-            },
-            {
-                "id": 3037,
-                "name": "978-0-8021-3098-3 is symbol for Rhinoceros and Other Plays",
                 "from_id": 2114,
                 "from_phrase": {
                     "id": 2114,
-                    "name": "978-0-8021-3098-3",
+                    "name": "978-0-679-73373-7",
                     "description": null,
                     "type_id": 1,
                     "plural": null,
@@ -30644,6 +30607,43 @@
                 "to_id": 2120,
                 "to_phrase": {
                     "id": 2120,
+                    "name": "The Myth of Sisyphus",
+                    "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "class": "triple"
+            },
+            {
+                "id": 3037,
+                "name": "978-0-8021-3098-3 is symbol for Rhinoceros and Other Plays",
+                "from_id": 2115,
+                "from_phrase": {
+                    "id": 2115,
+                    "name": "978-0-8021-3098-3",
+                    "description": null,
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": 2121,
+                "to_phrase": {
+                    "id": 2121,
                     "name": "Rhinoceros and Other Plays",
                     "description": "the book of Grove Press with the play Rhinoceros by Eug\u00e8ne Ionesco in the English translation of Derek Prouse",
                     "type_id": 1,
@@ -30691,7 +30691,7 @@
                 "class": "triple"
             },
             {
-                "id": 5290,
+                "id": 5302,
                 "name": "ABBN (ticker)",
                 "description": "the ticker symbol under which the ABB share is traded on SIX",
                 "from_id": 2650,
@@ -30898,7 +30898,7 @@
                 "class": "triple"
             },
             {
-                "id": 2116,
+                "id": 2117,
                 "name": "9 780674 000780",
                 "type_id": 1,
                 "class": "word"
@@ -30910,32 +30910,32 @@
                 "class": "triple"
             },
             {
-                "id": 2115,
+                "id": 2116,
                 "name": "978-0-674-00078-0",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2113,
+                "id": 2114,
                 "name": "978-0-679-73373-7",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2119,
+                "id": 2120,
                 "name": "The Myth of Sisyphus",
                 "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2114,
+                "id": 2115,
                 "name": "978-0-8021-3098-3",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 2120,
+                "id": 2121,
                 "name": "Rhinoceros and Other Plays",
                 "description": "the book of Grove Press with the play Rhinoceros by Eug\u00e8ne Ionesco in the English translation of Derek Prouse",
                 "type_id": 1,
@@ -31045,9 +31045,9 @@
             {
                 "id": 3899,
                 "name": "a is symbol for year (duration unit)",
-                "from_id": 1260,
+                "from_id": 1261,
                 "from_phrase": {
-                    "id": 1260,
+                    "id": 1261,
                     "name": "a",
                     "description": null,
                     "type_id": 1,
@@ -31532,9 +31532,9 @@
             {
                 "id": 3047,
                 "name": "CH0038863350 is symbol for Nestl\u00e9 registered share",
-                "from_id": 2118,
+                "from_id": 2119,
                 "from_phrase": {
-                    "id": 2118,
+                    "id": 2119,
                     "name": "CH0038863350",
                     "description": null,
                     "type_id": 1,
@@ -31743,7 +31743,7 @@
                 "class": "triple"
             },
             {
-                "id": 1260,
+                "id": 1261,
                 "name": "a",
                 "type_id": 1,
                 "class": "word"
@@ -31896,7 +31896,7 @@
                 "class": "word"
             },
             {
-                "id": 2118,
+                "id": 2119,
                 "name": "CH0038863350",
                 "type_id": 1,
                 "class": "word"
@@ -32107,9 +32107,9 @@
             {
                 "id": 3044,
                 "name": "DE0007100000 is symbol for Mercedes-Benz Group share",
-                "from_id": 2117,
+                "from_id": 2118,
                 "from_phrase": {
-                    "id": 2117,
+                    "id": 2118,
                     "name": "DE0007100000",
                     "description": null,
                     "type_id": 1,
@@ -32756,7 +32756,7 @@
                 "class": "triple"
             },
             {
-                "id": 2117,
+                "id": 2118,
                 "name": "DE0007100000",
                 "type_id": 1,
                 "class": "word"
@@ -38244,7 +38244,7 @@
                 "class": "word"
             },
             {
-                "id": 2131,
+                "id": 2132,
                 "name": "kWp",
                 "description": "kilowatt peak, the nominal power of photovoltaic panels under the standard test conditions of 1000 W per m2 at 25 degree Celsius",
                 "type_id": 2,
@@ -38843,7 +38843,7 @@
                 "description": "the conversion of an initial effort in billion USD into person years, calibrated on the carbon border tariff, whose effort in person years is the initial effort of the solution public CBAM calculation in problem_global_warming.json and whose effort in billion USD is the middle of its range in this file",
                 "type_id": 1,
                 "user_text": "\"person year per billion USD\",\"factor\" = \"initial effort\",\"person year\" \/ ( ( \"initial effort\",\"minimum\" + \"initial effort\",\"maximum\" ) \/ 2 )",
-                "ref_text": "{t1307},{w234}={t237},{t239}\/(({t237},{w1323}+{t237},{w1320})\/2)",
+                "ref_text": "{t1307},{w234}={t237},{t239}\/(({t237},{w1324}+{t237},{w1321})\/2)",
                 "latex": "\\text{person year per billion USD},\\text{factor} = \\text{initial effort},\\text{person year} \/ ( ( \\text{initial effort},\\text{minimum} + \\text{initial effort},\\text{maximum} ) \/ 2 )"
             }
         ]

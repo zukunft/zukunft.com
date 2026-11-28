@@ -165,6 +165,8 @@ class words
     const string DEFAULT_COM = 'the one used if nothing else is selected';
     const string DELAY = 'delay';
     const string DELETE = 'delete';
+    // the text of a pinned view of the start page that explains the view (config.yaml startup > pinned views)
+    const string DESCRIPTION = 'description';
     const string DETAIL = 'detail';
     // config key: the number of digits shown of a number (config.yaml number format > digits)
     const string DIGITS = 'digits';
@@ -331,7 +333,7 @@ class words
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 907;
+    const int VERBS_ID = 908;
     const string VERSION = 'version';
     const string VERY = 'very';
     const string VIEW = 'view';

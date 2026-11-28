@@ -179,6 +179,9 @@ class ui_list extends ui_base
     const string CALC_OPTION_SEP = ' — ';
     // the header of the row number of a detail table
     const string CALC_ROW_NUMBER_HEAD = '#';
+    // the separator of the cells of a table as csv and the chars that put a cell in quotes, the same as calculator_json.js
+    const string CSV_SEPARATOR = ';';
+    const string CSV_QUOTE_CHARS = ";\"\r\n";
     // the icon of the button to remove an instance of a repeated field and the instances that a field keeps
     const string CALC_REMOVE_ICON = 'fas fa-times';
     const int CALC_MIN_INSTANCES = 1;
@@ -2946,11 +2949,11 @@ class ui_list extends ui_base
     }
 
     /**
-     * @param value $val a value of the page
+     * @param sandbox_value $val a value of the page
      * @param user_message $msg to report a problem of the phrase types
      * @return array the phrase names of the value without its unit, because a confidence has its own unit e.g. percent for a value in kg per kWh
      */
-    private function names_without_unit(value $val, user_message $msg): array
+    private function names_without_unit(sandbox_value $val, user_message $msg): array
     {
         $result = [];
         foreach ($val->phr_lst()->lst() as $phr) {
@@ -3005,11 +3008,107 @@ class ui_list extends ui_base
                 } elseif ($type == triples::FIELD_PHRASE_SELECTOR_TYPE) {
                     $result .= $this->calculator_selector($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $src_ids, $msg);
                 } else {
-                    $result .= $this->calculator_number($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $assumption, $src_ids, $msg);
+                    $result .= $this->calculator_number_fields($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $assumption, $src_ids, $msg);
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * the number field of an item, or for values that differ only by their unit one box with an input per value e.g.
+     * per exchange rate
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. portfolio split assumption exchange rate
+     * @param phrase $phr the phrase of the item e.g. exchange rate
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param string $form_name the refresh form that the inputs join
+     * @param array $url_arr the url parameters with the entered numbers
+     * @param bool $assumption true to add the measured or assumed tag and the description of the value as the hint
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the fields
+     */
+    private function calculator_number_fields(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        word|triple  $dbo,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        bool         $assumption,
+        array        $src_ids,
+        user_message $msg
+    ): string
+    {
+        $unit_vals = $this->calculator_unit_values($phr, $dbo, $dto, $msg);
+        if ($unit_vals == []) {
+            $result = $this->calculator_number($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $assumption, $src_ids, $msg);
+        } else {
+            $result = $this->calculator_unit_box($calc, $item, $phr, $unit_vals, $dbo, $dto, $form_name, $url_arr, $src_ids, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the values of a field phrase that differ only by their unit as one box with a label and an input per value, e.g.
+     * EUR 0.98 and USD 0.9 of the exchange rates, keyed by the value id, because the field phrase is the same
+     * (calculator_json.js unitBox)
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. portfolio split assumption exchange rate
+     * @param phrase $phr the phrase of the item e.g. exchange rate
+     * @param sandbox_value[] $unit_vals the values of the box (calculator_unit_values)
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param string $form_name the refresh form that the inputs join
+     * @param array $url_arr the url parameters with the entered numbers
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the box and the hint of the item below it
+     */
+    private function calculator_unit_box(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        array        $unit_vals,
+        word|triple  $dbo,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        array        $src_ids,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $cells = '';
+        foreach ($unit_vals as $val) {
+            $field = (string)$val->id();
+            $name = url_var::NUMERIC_VALUE . $field;
+            $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $this->field_shown($val->number(), $val, $msg);
+            $input = $this->calculator_number_input($item, $phr, $name, $num, $val, $dto, $form_name, $msg);
+            $unit = $this->field_unit($val, $msg);
+            $input .= $this->calculator_save_vars($field, $val, $calc->label($item), $unit, $form_name);
+            $cells .= $html->label($html->esc($this->calculator_unit_box_label($calc, $val, $msg)), $name) . $input;
+        }
+        $hint_html = $this->calculator_field_hint($calc->hint($item), '', $dbo, $dto, $src_ids, $msg);
+        return $html->div($cells, styles::CALC_RATE_BOX) . $hint_html;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param sandbox_value $val a value of the box of a field phrase (calculator_unit_box)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the phrase that tells the value apart: the to of its unit triple e.g. EUR of CHF per EUR, because
+     *                the from is the same for each value, else the unit e.g. kWh (calculator_json.js unitBoxLabel)
+     */
+    private function calculator_unit_box_label(calculator $calc, sandbox_value $val, user_message $msg): string
+    {
+        $to = $this->unit_phrase($val, $msg)?->get_to();
+        return $to == null ? $this->field_unit($val, $msg) : $calc->phrase_label($to);
     }
 
     /**
@@ -3044,10 +3143,11 @@ class ui_list extends ui_base
     {
         $html = new html_base();
         $field_phr = $instance ?? $phr;
-        $name = url_var::NUMERIC_VALUE . $field_phr->id();
+        $field = (string)$field_phr->id();
         $val = $instance == null
             ? $this->calculator_value($phr, $dbo, $dto, $msg)
             : $this->calculator_repeat_value($calc, $phr, $instance, $dbo, $dto, $msg);
+        $name = url_var::NUMERIC_VALUE . $field;
         $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $this->field_shown($val?->number(), $val, $msg);
         $label = $calc->label($item);
         if ($instance != null) {
@@ -3063,23 +3163,74 @@ class ui_list extends ui_base
                 $hint = $val->get_description();
             }
         }
-        $input = $html->input_number($name, $num,
-            $this->field_shown($this->item_property($item, $phr, triples::FIELD_LIMIT_DOWN, $dto), $val, $msg),
-            $this->field_shown($this->item_property($item, $phr, triples::FIELD_LIMIT_UP, $dto), $val, $msg),
-            $this->field_shown($this->item_property($item, $phr, triples::FIELD_STEP, $dto), $val, $msg), $form_name);
+        $input = $this->calculator_number_input($item, $phr, $name, $num, $val, $dto, $form_name, $msg);
         $unit = $val == null ? '' : $this->field_unit($val, $msg);
         if ($val != null) {
-            $input .= $this->calculator_save_vars((string)$field_phr->id(), $val, $label, $unit, $form_name);
+            $input .= $this->calculator_save_vars($field, $val, $label, $unit, $form_name);
         }
         if ($unit != '') {
             $input .= $html->span($unit, styles::INPUT_UNIT);
         }
         $input .= $this->calculator_remove_button($calc, $phr, $instance);
-        // a text that names its sources by a placeholder gets no generated source number
-        $hint_html = preg_match(self::CALC_TEXT_PATTERN, $hint)
-            ? $html->span($this->calculator_text($hint, $dbo, $dto, $dto->val_lst, $src_ids, $msg), styles::INPUT_HINT)
-            : $this->calculator_hint($hint, $this->field_source_refs($phr, $val, $dto, $src_ids, $msg));
+        $refs = $this->field_source_refs($phr, $val, $dto, $src_ids, $msg);
+        $hint_html = $this->calculator_field_hint($hint, $refs, $dbo, $dto, $src_ids, $msg);
         return $html->div($html->label($text, $name) . $html->div($input, styles::INPUT_ROW) . $hint_html, styles::INPUT_FIELD);
+    }
+
+    /**
+     * @param phrase $item the item of the field e.g. PV installation input PV capacity
+     * @param phrase $phr the phrase of the item e.g. PV capacity
+     * @param string $name the url var of the number e.g. "n2757"
+     * @param float|null $num the number shown, null for an empty input
+     * @param sandbox_value|null $val the value of the input, whose unit decides the shown limits e.g. a share in percent
+     * @param data_object $dto the request cache with the limits
+     * @param string $form_name the refresh form that the input joins
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the number input with the limits of the item, else of its phrase (item_property)
+     */
+    private function calculator_number_input(
+        phrase         $item,
+        phrase         $phr,
+        string         $name,
+        ?float         $num,
+        ?sandbox_value $val,
+        data_object    $dto,
+        string         $form_name,
+        user_message   $msg
+    ): string
+    {
+        $html = new html_base();
+        $min = $this->field_shown($this->item_property($item, $phr, triples::FIELD_LIMIT_DOWN, $dto), $val, $msg);
+        $max = $this->field_shown($this->item_property($item, $phr, triples::FIELD_LIMIT_UP, $dto), $val, $msg);
+        $step = $this->field_shown($this->item_property($item, $phr, triples::FIELD_STEP, $dto), $val, $msg);
+        return $html->input_number($name, $num, $min, $max, $step, $form_name);
+    }
+
+    /**
+     * @param string $hint the hint of the item e.g. "per unit of currency, bank report {source:bank report}"
+     * @param string $refs the numbers of the sources of the shown value e.g. "[1]", '' for a field without them
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the hint below a field, a text that names its sources by a placeholder without
+     *                the generated source numbers (calculator_json.js hintHtml)
+     */
+    private function calculator_field_hint(
+        string       $hint,
+        string       $refs,
+        word|triple  $dbo,
+        data_object  $dto,
+        array        $src_ids,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $result = $this->calculator_hint($hint, $refs);
+        if (preg_match(self::CALC_TEXT_PATTERN, $hint)) {
+            $result = $html->span($this->calculator_text($hint, $dbo, $dto, $dto->val_lst, $src_ids, $msg), styles::INPUT_HINT);
+        }
+        return $result;
     }
 
     /**
@@ -3965,6 +4116,7 @@ class ui_list extends ui_base
         $html = new html_base();
         $opts = $calc->options($phr);
         $used = $calc->used(array_column($opts, 0));
+        $own_value = $calc->options_are_kinds($phr);
         $sel = new html_selector();
         $sel->name = url_var::NUMERIC_VALUE . $phr->id();
         $sel->form = $form_name;
@@ -3973,7 +4125,7 @@ class ui_list extends ui_base
         $sel->with_group = false;
         $sel->lst = [];
         foreach ($opts as [$opt, $opt_label]) {
-            $val = $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
+            $val = $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg, $own_value);
             // an option without a number selects only the phrase e.g. the walk order bank statement
             $key = self::CALC_OPTION_PHRASE . $opt->id();
             $opt_text = $opt_label;
@@ -3989,8 +4141,10 @@ class ui_list extends ui_base
         $sel->selected = $url_arr[$sel->name] ?? $sel->selected;
         // the label points to the id that the selector builds from its name and its label message
         $dom_id = $sel->name . '_' . strtolower($sel->label_id->name);
-        return $html->div($html->label($html->esc($calc->label($item)), $dom_id) . $sel->display()
-            . $this->calculator_hint($calc->hint($item)), styles::INPUT_FIELD);
+        // a selector names no source by itself, because an option is chosen and not measured on the page
+        $hint_html = $this->calculator_field_hint($calc->hint($item), '', $dbo, $dto, $src_ids, $msg);
+        return $html->div($html->label($html->esc($calc->label($item)), $dom_id) . $sel->display() . $hint_html,
+            styles::INPUT_FIELD);
     }
 
     /**
@@ -3999,6 +4153,9 @@ class ui_list extends ui_base
      * @param word|triple $dbo the phrase of the page
      * @param data_object $dto the request cache with the values of the options
      * @param user_message $msg to report a problem of the cache
+     * @param bool $own_value true to fall back to the value of the option itself, which only an option that is a field
+     *                        phrase has (calculator::options_are_kinds), false e.g. for JPY of the portfolio currency,
+     *                        whose own value e.g. the cash in JPY is no number of the option
      * @return sandbox_value|null the value of the field phrase for the option e.g. (yield factor,
      *                            south) = 1.00, else the value of the option itself e.g. (residual mix) = 523
      */
@@ -4007,7 +4164,8 @@ class ui_list extends ui_base
         phrase       $opt,
         word|triple  $dbo,
         data_object  $dto,
-        user_message $msg
+        user_message $msg,
+        bool         $own_value = true
     ): ?sandbox_value
     {
         $names = [$phr->name(), $opt->name()];
@@ -4015,7 +4173,10 @@ class ui_list extends ui_base
         // in the preferred order of numbers, because the backend returns the values in any order
         $result = sandbox_value::sorted($matches, $msg)[0] ?? null;
         // several numbers of the option phrase are numbers of other phrases e.g. the lot value per holding, so none is the number of the option
-        return $result ?? $this->calculator_value($opt, $dbo, $dto, $msg, true);
+        if ($result == null and $own_value) {
+            $result = $this->calculator_value($opt, $dbo, $dto, $msg, true);
+        }
+        return $result;
     }
 
     /**
@@ -4047,8 +4208,9 @@ class ui_list extends ui_base
     private function calculator_option_values(calculator $calc, phrase $phr, word|triple $dbo, data_object $dto, user_message $msg): array
     {
         $result = [];
+        $own_value = $calc->options_are_kinds($phr);
         foreach (array_column($calc->options($phr), 0) as $opt) {
-            $val = $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
+            $val = $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg, $own_value);
             if ($val != null and $this->unit_phrase($val, $msg) != null) {
                 $result[] = $val;
             }
@@ -4083,7 +4245,8 @@ class ui_list extends ui_base
                 $this->add_field_values($phr, $dto, $msg);
                 if ($this->field_type($phr, $dto, $msg) != triples::FIELD_PHRASE_SELECTOR_TYPE) {
                     $val = $this->calculator_value($phr, $dbo, $dto, $msg);
-                    $vals = [...$vals, $val, ...$this->calculator_basis_values($phr, $val, $dto, $msg)];
+                    $unit_vals = $this->calculator_unit_values($phr, $dbo, $dto, $msg);
+                    $vals = [...$vals, $val, ...$unit_vals, ...$this->calculator_basis_values($phr, $val, $dto, $msg)];
                 } else {
                     $vals = [...$vals, ...$this->calculator_option_values($calc, $phr, $dbo, $dto, $msg)];
                 }
@@ -4139,6 +4302,66 @@ class ui_list extends ui_base
      */
     private function calculator_value(phrase $phr, word|triple $dbo, data_object $dto, user_message $msg, bool $only_one = false): ?sandbox_value
     {
+        $best_vals = $this->calculator_best_values($phr, $dbo, $dto, $msg);
+        $result = $best_vals[0] ?? null;
+        if ($only_one and $best_vals != [] and !$this->is_one_number($best_vals)) {
+            $result = null;
+        }
+        return $result;
+    }
+
+    /**
+     * the values of a field phrase that differ only by their unit e.g. the six exchange rates, so that each gets a
+     * field of its own (calculator_json.js unitEntries)
+     *
+     * @param phrase $phr the phrase of the field e.g. exchange rate
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param user_message $msg to report a problem of the cache
+     * @return sandbox_value[] the values that rank the same in the preferred order, none for a single value, for values
+     *                         that differ also by another phrase and for a phrase selector
+     */
+    private function calculator_unit_values(phrase $phr, word|triple $dbo, data_object $dto, user_message $msg): array
+    {
+        $result = [];
+        // a selector shows its options in one field; checked here, because the field plan asks for every item
+        if ($this->field_type($phr, $dto, $msg) != triples::FIELD_PHRASE_SELECTOR_TYPE) {
+            $best_vals = $this->calculator_best_values($phr, $dbo, $dto, $msg);
+            if (count($best_vals) > 1 and $this->differ_only_by_unit($best_vals, $msg)) {
+                $result = $best_vals;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value[] $vals the values of a field phrase that rank the same
+     * @param user_message $msg to report a problem of the phrase types
+     * @return bool true if the values have the same phrases apart from their unit, so that the unit tells them apart
+     */
+    private function differ_only_by_unit(array $vals, user_message $msg): bool
+    {
+        $keys = [];
+        foreach ($vals as $val) {
+            $names = $this->names_without_unit($val, $msg);
+            sort($names, SORT_STRING);
+            // json and not imploded, because a phrase name may contain any separator
+            $keys[json_encode($names)] = true;
+        }
+        return count($keys) == 1;
+    }
+
+    /**
+     * the values of calculator_value that rank the same, in the preferred order
+     *
+     * @param phrase $phr the phrase of the field e.g. PV capacity
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param user_message $msg to report a problem of the cache
+     * @return sandbox_value[] the values of the best rank, none if the cache has no value of the field
+     */
+    private function calculator_best_values(phrase $phr, word|triple $dbo, data_object $dto, user_message $msg): array
+    {
         $properties = self::CALC_FIELD_PROPERTIES;
         $page_phr = $dbo->phrase();
         $page_parts = array_filter([$page_phr->get_from(), $page_phr->get_to()]);
@@ -4171,11 +4394,7 @@ class ui_list extends ui_base
         }
         // values that rank the same are picked by the preferred order of numbers and not by the
         // order of the list, which the backend returns in any order (docs/llm/frontend.md)
-        $result = sandbox_value::sorted($best_vals, $msg)[0] ?? null;
-        if ($only_one and $best_vals != [] and !$this->is_one_number($best_vals)) {
-            $result = null;
-        }
-        return $result;
+        return sandbox_value::sorted($best_vals, $msg);
     }
 
     /**
@@ -4661,9 +4880,14 @@ class ui_list extends ui_base
         foreach ($calc->items(triples::CALCULATOR_DETAIL_TABLE) as $tbl) {
             $tbl_phr = $calc->item_phrase($tbl);
             if ($tbl_phr != null and $calc->has_flag($tbl, triples::CALCULATOR_SECTION) == $sections) {
+                // the csv only for a table that the user can copy, because it reads every cell again
+                $csv = '';
+                if ($calc->has_flag($tbl, triples::CALCULATOR_COPY)) {
+                    $csv = $this->calculation_detail_csv($calc, $dbo, $tbl, $tbl_phr, $lst, $msg);
+                }
                 $table = $this->calculation_detail_table($calc, $dbo, $tbl, $tbl_phr, $lst, $msg)
                     . $this->calculator_table_hint($calc, $tbl)
-                    . $this->calculator_buttons($calc, $tbl);
+                    . $this->calculator_buttons($calc, $tbl, '', $csv);
                 $label = $html->esc($calc->label($tbl));
                 $result .= $sections ? $html->details($label, $table) : $html->block(html_base::H2, $label) . $table;
             }
@@ -4709,15 +4933,7 @@ class ui_list extends ui_base
         foreach ($cols as [$col_label, , , $col_colour]) {
             $head .= $html->block(html_base::TH, $html->esc($col_label), trim(styles::CALC_NUMBER . ' ' . $col_colour));
         }
-        // per row the label, the phrases of its cells and if it is a key row
-        $rows = [];
-        foreach ($this->ranked_rows($calc, $tbl, $tbl_phr, $lst, $msg) as $row_phr) {
-            $rows[] = [$calc->phrase_label($row_phr), [$dbo->phrase(), $row_phr], false];
-        }
-        foreach ($calc->sub_items($tbl, verbs::WITH_ID) as $extra) {
-            $rows[] = [$calc->label($extra), [$dbo->phrase(), $calc->item_phrase($extra)],
-                $calc->has_flag($extra, triples::CALCULATOR_HIGHLIGHT)];
-        }
+        $rows = $this->calculator_detail_rows($calc, $dbo, $tbl, $tbl_phr, $lst, $msg);
         $vals = [];
         foreach ($rows as $row) {
             $vals[] = $this->calculator_detail_values($calc, $row[1], $cols, $lst, $msg, $calc->has_flag($tbl, triples::CALCULATOR_PAGE_INDEPENDENT));
@@ -4742,21 +4958,135 @@ class ui_list extends ui_base
     }
 
     /**
-     * the buttons of a list or a detail table at their place: the report is a link to the pdf, which also
-     * works without javascript, and the others have no function so far (docs/llm/pending.md)
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param phrase $tbl the item of the table
+     * @param phrase $tbl_phr the phrase of the table e.g. split walk
+     * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per row of the detail table its label, the phrases of its cells and if it is a key row
+     */
+    private function calculator_detail_rows(
+        calculator   $calc,
+        word|triple  $dbo,
+        phrase       $tbl,
+        phrase       $tbl_phr,
+        value_list   $lst,
+        user_message $msg
+    ): array
+    {
+        $result = [];
+        foreach ($this->ranked_rows($calc, $tbl, $tbl_phr, $lst, $msg) as $row_phr) {
+            $result[] = [$calc->phrase_label($row_phr), [$dbo->phrase(), $row_phr], false];
+        }
+        foreach ($calc->sub_items($tbl, verbs::WITH_ID) as $extra) {
+            $result[] = [$calc->label($extra), [$dbo->phrase(), $calc->item_phrase($extra)],
+                $calc->has_flag($extra, triples::CALCULATOR_HIGHLIGHT)];
+        }
+        return $result;
+    }
+
+    /**
+     * a detail table as csv for a spreadsheet (calculator_json.js detailCsv): the head and the rows of the table as
+     * the page shows them, with the numbers without format, so that a spreadsheet reads them as numbers
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param phrase $tbl the item of the table
+     * @param phrase $tbl_phr the phrase of the table e.g. split walk
+     * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the csv lines of the table
+     */
+    private function calculation_detail_csv(
+        calculator   $calc,
+        word|triple  $dbo,
+        phrase       $tbl,
+        phrase       $tbl_phr,
+        value_list   $lst,
+        user_message $msg
+    ): string
+    {
+        $cols = $calc->columns($calc->sub_items($tbl, verbs::HAS_ID));
+        $numbered = $calc->has_flag($tbl, triples::CALCULATOR_ROW_NUMBER);
+        $page_independent = $calc->has_flag($tbl, triples::CALCULATOR_PAGE_INDEPENDENT);
+        $head = [$calc->phrase_label($tbl_phr), ...array_column($cols, 0)];
+        $lines = [$this->calculator_csv_line($numbered ? [self::CALC_ROW_NUMBER_HEAD, ...$head] : $head)];
+        foreach ($this->calculator_detail_rows($calc, $dbo, $tbl, $tbl_phr, $lst, $msg) as $i => $row) {
+            $vals = $this->calculator_detail_values($calc, $row[1], $cols, $lst, $msg, $page_independent);
+            $texts = $this->calculator_phrase_cells($calc, $row[1][1], $cols, $lst, $msg);
+            $cells = [$row[0]];
+            foreach ($vals as $c => $val) {
+                $cells[] = array_key_exists($c, $texts) ? $texts[$c] : $this->calculator_csv_number($val);
+            }
+            $lines[] = $this->calculator_csv_line($numbered ? [(string)($i + 1), ...$cells] : $cells);
+        }
+        return implode("\n", $lines);
+    }
+
+    /**
+     * @param array $cells the texts of the cells of a csv line
+     * @return string the cells separated by ";", a cell with ";", '"' or a line break in quotes with each '"' doubled,
+     *                so that it stays one cell (calculator_json.js csvLine)
+     */
+    function calculator_csv_line(array $cells): string
+    {
+        $quoted = [];
+        foreach ($cells as $cell) {
+            $needs_quotes = strpbrk($cell, self::CSV_QUOTE_CHARS) !== false;
+            $quoted[] = $needs_quotes ? '"' . str_replace('"', '""', $cell) . '"' : $cell;
+        }
+        return implode(self::CSV_SEPARATOR, $quoted);
+    }
+
+    /**
+     * @param sandbox_value|null $val the number of a cell or null for an empty cell
+     * @return string the number without format and with at most the decimals of the calculation noise limit e.g.
+     *                8999999.9, a share as its ratio e.g. 0.35, '' for an empty cell (calculator_json.js csvNumber)
+     */
+    private function calculator_csv_number(?sandbox_value $val): string
+    {
+        $html = new html_base();
+        $num = $val?->number();
+        return $num === null ? '' : $html->number_value($num);
+    }
+
+    /**
+     * the button of a table as csv: a collapsed box with the text to select and copy, which works without javascript
+     * and which calculator_json.js copies to the clipboard when it is opened
+     *
+     * @param string $label the text of the button e.g. "Copy as CSV"
+     * @param string $csv the table as csv (calculation_detail_csv)
+     * @return string the html code of the box
+     */
+    private function calculator_copy_box(string $label, string $csv): string
+    {
+        $html = new html_base();
+        $area = $html->text_area_read_only($csv, $label, styles::FULL_WIDTH);
+        // the toggle in the style of the buttons next to it, because it is the button to copy for the reader
+        return $html->details($html->esc($label), $area, styles::CALC_COPY, '', '', styles::CALC_BUTTON_LINK);
+    }
+
+    /**
+     * the buttons of a list or a detail table at their place: the report is a link to the pdf and the copy as csv a
+     * box with the table as csv, which both also work without javascript, and the others have no function so far
+     * (docs/llm/pending.md)
      *
      * @param calculator $calc the calculator reader of the page
      * @param phrase|null $item the list or the detail table e.g. portfolio split inputs
      * @param string $save the html code of the save button of the input list between the import and the download, which then shows two buttons per line, '' for a list without it
+     * @param string $csv the table as csv for the box of the copy as csv button (calculation_detail_csv)
      * @return string the html code of the buttons or an empty string if the item has none
      */
-    function calculator_buttons(calculator $calc, ?phrase $item, string $save = ''): string
+    function calculator_buttons(calculator $calc, ?phrase $item, string $save = '', string $csv = ''): string
     {
         global $mtr;
         $html = new html_base();
         $copy = [];
+        $copy_box = '';
         if ($item != null and $calc->has_flag($item, triples::CALCULATOR_COPY)) {
-            $copy = [$mtr->txt(msg_id::CALCULATOR_COPY_JSON), $mtr->txt(msg_id::CALCULATOR_COPY_CSV)];
+            $copy = [$mtr->txt(msg_id::CALCULATOR_COPY_JSON)];
+            $copy_box = $this->calculator_copy_box($mtr->txt(msg_id::CALCULATOR_COPY_CSV), $csv);
         }
         $result = $this->calculator_keyword_button($calc, $item, triples::CALCULATOR_FILE_IMPORT, icons::CALC_IMPORT)
             . $save
@@ -4767,7 +5097,7 @@ class ui_list extends ui_base
             $title = $calc->button_hint($item, triples::CALCULATOR_REPORT);
             $result .= $html->ref_to_frame($url, $report, styles::CALC_REPORT_FRAME, styles::CALC_BUTTON_LINK, icons::CALC_REPORT, $title);
         }
-        $result .= $this->calculator_plain_buttons($copy);
+        $result .= $this->calculator_plain_buttons($copy) . $copy_box;
         if ($report != '') {
             $result .= $html->frame(styles::CALC_REPORT_FRAME, $report);
         }
@@ -5987,11 +6317,19 @@ class ui_list extends ui_base
         foreach ([...$calc->items(triples::CALCULATOR_INPUT), ...$calc->items(triples::CALCULATOR_ASSUMPTION)] as $item) {
             $phr = $calc->item_phrase($item);
             $val = null;
+            $unit_vals = [];
             if ($phr != null) {
                 $val = $this->calculator_field_value($calc, $phr, $dbo, $dto, $msg);
+                $unit_vals = $this->calculator_unit_values($phr, $dbo, $dto, $msg);
             }
-            if ($val != null) {
-                $result[url_var::NUMERIC_VALUE . $phr->id()] = $this->calculator_field_format($calc, $item, $phr, $val, $dto, $msg);
+            // keyed like the fields of calculator_number
+            foreach ($unit_vals as $unit_val) {
+                $field = (string)$unit_val->id();
+                $result[url_var::NUMERIC_VALUE . $field] = $this->calculator_field_format($calc, $item, $phr, $unit_val, $field, $dto, $msg);
+            }
+            if ($val != null and $unit_vals == []) {
+                $field = (string)$phr->id();
+                $result[url_var::NUMERIC_VALUE . $field] = $this->calculator_field_format($calc, $item, $phr, $val, $field, $dto, $msg);
             }
         }
         return $result;
@@ -6002,6 +6340,7 @@ class ui_list extends ui_base
      * @param phrase $item the item of the field e.g. PV installation input PV capacity
      * @param phrase $phr the phrase of the item e.g. PV capacity
      * @param sandbox_value $val the value that the field sets (see calculator_field_value)
+     * @param string $field the url key of the field behind the number var e.g. "-2757" for "n-2757"
      * @param data_object $dto the request cache with the field triples
      * @param user_message $msg to report a problem of the phrase types
      * @return array the html id of the number and its decimals, and of a number field also the unit and the save vars
@@ -6011,6 +6350,7 @@ class ui_list extends ui_base
         phrase        $item,
         phrase        $phr,
         sandbox_value $val,
+        string        $field,
         data_object   $dto,
         user_message  $msg
     ): array
@@ -6023,7 +6363,7 @@ class ui_list extends ui_base
         if ($this->field_type($phr, $dto, $msg) != triples::FIELD_PHRASE_SELECTOR_TYPE) {
             $unit = $this->field_unit($val, $msg);
             $result[self::CALC_CELL_UNIT] = $unit;
-            $result[self::CALC_FIELD_SAVE] = $this->calculator_save_map((string)$phr->id(), $val, $calc->label($item), $unit);
+            $result[self::CALC_FIELD_SAVE] = $this->calculator_save_map($field, $val, $calc->label($item), $unit);
         }
         return $result;
     }
@@ -6042,11 +6382,12 @@ class ui_list extends ui_base
         $result = null;
         if ($this->field_type($phr, $dto, $msg) == triples::FIELD_PHRASE_SELECTOR_TYPE) {
             $used = $calc->used(array_column($calc->options($phr), 0));
+            $own_value = $calc->options_are_kinds($phr);
             if ($used != null) {
-                $result = $this->calculator_option_value($phr, $used, $dbo, $dto, $msg);
+                $result = $this->calculator_option_value($phr, $used, $dbo, $dto, $msg, $own_value);
                 // a used option without a number: the first option with a number takes the number of the selected option
                 foreach (array_column($calc->options($phr), 0) as $opt) {
-                    $result ??= $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
+                    $result ??= $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg, $own_value);
                 }
             }
         } else {

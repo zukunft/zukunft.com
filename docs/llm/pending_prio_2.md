@@ -3494,3 +3494,35 @@ the portfolio split (`docs/llm/pending.md`) says a number that rounds to zero is
 of the sign already follows the rounded number (`ui_list::calculator_cell_shown`), but the text of the cell does not.
 `val_formatted` is used on many pages, so the fix needs its own change: a test with such a share in
 `unit_ui/use_case_ui_tests.php`, positive (`0 %`) and negative (-0.0006 is `-0.1 %`), and a check of the snapshots.
+
+## array_explain_missing never reports a different value at the same key
+
+Added on 2026-11-28: `library::array_explain_missing` (`src/main/php/shared/library.php`) checks a key that both
+arrays have with `if (!$result[$key] == $value)`, which compares `!$result[$key]` (a bool) with the value, because `!`
+binds tighter than `==`; so a value that differs at the same key is never named, and for two lists, which are compared
+by their index, the message names only the indexes beyond the shorter list, e.g. "225//-stock price|is a|price//" for
+a list with 5 more entries, which need not be the extra ones (the run of "... and to the triples of the import file"
+of `phrase_data_read_tests`). No test passes wrongly, because `diff_msg` runs `array_diff_msg` after an empty
+explanation, but the message misleads. The fix `if ($result[$key] != $value)` changes the message of every failing
+array assert, so it needs its own change: a unit test of `diff_msg` with a different value at the same key (positive:
+the key and both values are named) and two equal arrays (negative: empty message), and a check whether a list should
+be explained by its values instead of its index, e.g. by `array_diff` of the values.
+
+## the options of the portfolio currency by their value in the portfolio
+
+Added on 2026-11-28: the sample `portfolio_split_calculator_sample.html` orders the currencies of the selector
+"Portfolio currency" by their value in the portfolio currency, the biggest first (CHF, EUR, USD, GBP, JPY, DKK, SEK),
+and alphabetic for the same value; the generated page shows them alphabetic, because the options without a follower
+chain are sorted by their label (section 15 of `docs/llm/log/2026-11-25_csv_child_shares.md`). The order by value
+needs the sum of the holding values per currency, e.g. a formula with a result per currency, and a rule of the
+selector that orders its options by such a result, in `ui_list` and in `calculator_json.js`, with a positive and a
+negative test; the case reports do not show the difference, because the compare reads only the selected option.
+
+## a number input without a step accepts only the steps of 1 from its value
+
+Added on 2026-11-28: `html_base::input_number` writes no `step` if the step is null, although its docblock says "null
+for any number"; a browser then uses the step 1 counted from the shown value, so a field that shows 0.1304 refuses
+0.13 and the whole form is not sent, e.g. an exchange rate of the portfolio split page since its limits moved to the
+ABB item (section 11 of `docs/llm/log/2026-11-25_csv_child_shares.md`). The fix writes `step="any"` for null in
+`input_number` and in `calculator_json.js limitAttrs`, which changes the snapshots of every page with a number field
+without a step, so it needs its own change with a positive and a negative test.

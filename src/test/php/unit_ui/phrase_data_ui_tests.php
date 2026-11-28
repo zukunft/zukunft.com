@@ -145,6 +145,27 @@ class phrase_data_ui_tests
     const string LIMIT_ITEM_ID = 'system_test_limit_of_the_item';
     // the form of the fields of the test of the field limits
     const string LIMIT_FORM = 'calculator';
+    // two units of the exchange rates of the portfolio split page, each the generated name of its triple
+    const string RATE_UNIT_EUR = 'CHF per EUR';
+    const string RATE_UNIT_SEK = 'CHF per SEK';
+    // the label of an input of the box of the rates, the label of the former field per rate, the currency that the
+    // portfolio split page uses and a currency whose cash has one number, as the use case names them
+    const string RATE_CURRENCY_EUR = 'EUR';
+    const string RATE_FIELD_LABEL = '>Exchange rate';
+    const string PORTFOLIO_CURRENCY = 'CHF';
+    const string RATE_CURRENCY_JPY = 'JPY';
+    // the line of the EUR rate of the box of the exchange rates in the definition pdf of the calculator editor
+    const string REPORT_RATE_LINE = 'EUR 0.98 CHF per EUR';
+    // the id of the scaled exchange rate that the test of the fields per unit adds to the seed
+    const string RATE_MIO_ID = 'system_test_scaled_exchange_rate';
+    // the cells of a csv line and the line, plain and with the chars that a cell is quoted for
+    const array CSV_PLAIN_CELLS = ['LISP', '10', '117000'];
+    const string CSV_PLAIN_LINE = 'LISP;10;117000';
+    const array CSV_QUOTED_CELLS = ['Lindt; Sprüngli', 'the "PS"', "two\nlines"];
+    const string CSV_QUOTED_LINE = "\"Lindt; Sprüngli\";\"the \"\"PS\"\"\";\"two\nlines\"";
+    // the head line of the csv of the splitting walk and the start of its first row, as the snapshot of the page shows them
+    const string CSV_WALK_HEAD = '#;Position;Original;Lot value CHF;Target first;First;Second;Parent;Cum. dev. first CHF';
+    const string CSV_WALK_FIRST_ROW = '1;LISP;10;117000;';
     // a kind of stock of bank_position_csv.json that no holding of the portfolio split page is, so a class without numbers
     const string CLASS_WITHOUT_NUMBERS = 'alternative investment';
     // the format of a page of a pdf with the content that follows it and the number of pages
@@ -556,6 +577,11 @@ class phrase_data_ui_tests
         $t->assert_text_contains($test_name, $def_pdf, $this->pdf_string(self::PV_PAGE_TITLE));
         $test_name = '... the number of an input field with its unit';
         $t->assert_text_contains($test_name, $def_pdf, $this->pdf_string(self::PV_FIELD_NUMBER));
+        // the box of the rates as a line per rate, because the pdf shows the numbers and no input
+        $test_name = '... each rate of the box of the exchange rates';
+        $ps_json = json_decode(file_get_contents(test_files::PHRASE_DATA_PORTFOLIO_SPLIT), true);
+        $ps_pdf = new calculator_definition_report()->pdf($ps_json, new DateTime(self::PDF_TIME), $msg);
+        $t->assert_text_contains($test_name, $ps_pdf, $this->pdf_string(self::REPORT_RATE_LINE));
         $test_name = '... the sources numbered like the references of the page';
         $source_start = calculator_report::NUMBER_START . '1' . calculator_report::NUMBER_END . self::PV_SOURCE_START;
         $t->assert_text_contains($test_name, $def_pdf, $this->pdf_string_start($source_start));
@@ -675,6 +701,38 @@ class phrase_data_ui_tests
         $test_name = '... so the field has not the limit of the phrase';
         $t->assert_text_not_contains($test_name, $item_html, 'min="0.6"');
 
+        // the exchange rates rank the same and differ only by their unit, so each gets an input in the box of the rates
+        $t->subheader($ts . 'a box per unit');
+        $unit_msg = new user_message();
+        $test_name = 'the exchange rate has an input per rate';
+        $unit_html = $this->assumption_fields($seed, $unit_msg);
+        $eur_id = $this->value_id_by_words($seed, [triple_names::EXCHANGE_RATE, self::RATE_UNIT_EUR]);
+        $eur_label = '<label for="' . url_var::NUMERIC_VALUE . $eur_id . '">' . self::RATE_CURRENCY_EUR . '</label>';
+        $t->assert_text_contains($test_name, $unit_html, $eur_label);
+        $test_name = '... also of the rate that is not the first';
+        $t->assert_text_contains($test_name, $unit_html, self::RATE_UNIT_SEK);
+        $test_name = '... keyed by the value, because the field phrase is the same';
+        $t->assert_text_contains($test_name, $unit_html, 'name="' . url_var::NUMERIC_VALUE . $eur_id . '"');
+        // negative: the box replaces the fields, so the label of the item is not repeated per rate
+        $test_name = '... in one box without a field per rate';
+        $t->assert_text_not_contains($test_name, $unit_html, self::RATE_FIELD_LABEL);
+        // negative: without results no rate is an operand, so a value with a scaling ranks the same as the rates
+        $test_name = 'values that differ by another phrase than the unit keep one field';
+        $mio_seed = $seed;
+        $mio_seed[json_fields::RESULTS] = [];
+        $mio_seed[json_fields::VALUES][] = [json_fields::ID => self::RATE_MIO_ID, json_fields::NUMBER => 0.5,
+            json_fields::WORDS => [triple_names::EXCHANGE_RATE, word_names::MIO]];
+        $mio_html = $this->assumption_fields($mio_seed, $unit_msg);
+        $t->assert_text_not_contains($test_name, $mio_html, self::RATE_UNIT_SEK);
+
+        // the currency of the portfolio is a selector of the currencies, which only select their phrase
+        $t->subheader($ts . 'portfolio currency');
+        $test_name = 'the portfolio currency is a selector with the currency of the page selected';
+        $t->assert_text_contains($test_name, $unit_html, ' selected >' . self::PORTFOLIO_CURRENCY . '</option>');
+        // negative: an option of a has a list takes no own number e.g. not the cash in JPY
+        $test_name = '... and an option without the number of its cash';
+        $t->assert_text_contains($test_name, $unit_html, ' >' . self::RATE_CURRENCY_JPY . '</option>');
+
         // a leaf of the is a tree without any number of the page is a class that nothing is yet, e.g. alternative
         // investment, which bank_position_csv.json declares as a kind of stock, and so no row of a table
         $t->subheader($ts . 'table rows with numbers');
@@ -698,6 +756,23 @@ class phrase_data_ui_tests
         $t->assert_contains_not($test_name, $row_names, self::CLASS_WITHOUT_NUMBERS);
         $test_name = '... which keeps the holdings with their numbers';
         $t->assert_contains($test_name, $row_names, word_names::LISP);
+
+        // the walk as csv for a spreadsheet: the cells as the page shows them, the numbers without format
+        $t->subheader($ts . 'copy as csv');
+        $test_name = 'a csv line has the cells separated by a semicolon';
+        $t->assert($test_name, new ui_list()->calculator_csv_line(self::CSV_PLAIN_CELLS), self::CSV_PLAIN_LINE);
+        // negative: a cell with the separator, a quote or a line break is quoted, so that it stays one cell
+        $test_name = '... and a cell with a separator or a quote in quotes';
+        $t->assert($test_name, new ui_list()->calculator_csv_line(self::CSV_QUOTED_CELLS), self::CSV_QUOTED_LINE);
+        $test_name = 'the walk has a box with its csv';
+        $csv_html = new ui_list()->calculation_detail_tables($row_calc, $row_trp, $full_lst, $row_msg, true);
+        $t->assert_text_contains($test_name, $csv_html, self::CSV_WALK_HEAD);
+        $test_name = '... with the numbers without format';
+        $t->assert_text_contains($test_name, $csv_html, self::CSV_WALK_FIRST_ROW);
+        // negative: e.g. the holdings have no triple to calculator copy
+        $test_name = '... but no other table has one';
+        $box_count = substr_count($csv_html, '<' . html_base::TEXTAREA);
+        $t->assert($test_name, $box_count, 1);
 
         $t->subheader($ts . 'calculator report');
         $msg = new user_message();
@@ -752,12 +827,23 @@ class phrase_data_ui_tests
         $t->assert_text_contains($test_name, $report, $this->pdf_string('0.9000'));
         $test_name = '... but not the dated exchange rate';
         $t->assert_text_not_contains($test_name, $report, $this->pdf_string('0.8300'));
+        // negative: the report of the page shows the results without the assumption fields, so also without the rates
+        $test_name = '... but not the box of the exchange rates';
+        $t->assert_text_not_contains($test_name, $report, $this->pdf_string(self::REPORT_RATE_LINE));
         $test_name = '... the logo';
         $t->assert_text_contains($test_name, $report, '/DCTDecode');
         $test_name = '... the other results of the page';
         $t->assert_text_contains($test_name, $report, $this->pdf_string(self::REPORT_WALK));
         $test_name = '... and the formulas used';
         $t->assert_text_contains($test_name, $report, $this->pdf_string('walk target of a child'));
+        // the formula expressions are long lines, which a landscape page shows with fewer line breaks
+        $test_name = '... on a landscape page';
+        [$frm_box] = $this->pdf_page_with($report, $this->pdf_string(msg_id::CALCULATOR_REPORT_FORMULAS->text()));
+        $t->assert($test_name, $frm_box, self::PDF_LANDSCAPE_BOX);
+        // negative: the sources before the formulas stay on a portrait page
+        $test_name = '... but the sources before them on a portrait page';
+        [$src_box] = $this->pdf_page_with($report, $this->pdf_string(msg_id::CALCULATOR_SOURCES->text()));
+        $t->assert($test_name, $src_box, self::PDF_PORTRAIT_BOX);
         // negative: a phrase without calculator triples has no report, so the page is shown
         $test_name = 'a phrase without calculator triples has no report';
         $no_calc_dto = $this->complete_page_cache([
@@ -975,6 +1061,25 @@ class phrase_data_ui_tests
         $calc = new calculator($trp->phrase(), $dto->phr_lst);
         $items = $calc->items(triples::CALCULATOR_ASSUMPTION);
         return new ui_list()->calculator_fields($calc, $items, $trp, $msg, $dto, self::LIMIT_FORM, [], true);
+    }
+
+    /**
+     * @param array $seed the data of a page
+     * @param array $words the phrase names of the value e.g. exchange rate and CHF per EUR
+     * @return string the id of the value of the seed with exactly these phrases, empty if the seed has none
+     */
+    private function value_id_by_words(array $seed, array $words): string
+    {
+        sort($words);
+        $result = '';
+        foreach ($seed[json_fields::VALUES] ?? [] as $val) {
+            $val_words = $val[json_fields::WORDS] ?? [];
+            sort($val_words);
+            if ($val_words == $words) {
+                $result = (string)($val[json_fields::ID] ?? '');
+            }
+        }
+        return $result;
     }
 
     /**

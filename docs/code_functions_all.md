@@ -6807,6 +6807,8 @@
             /execute/calculator.php
     \-- options - section for function options not yet defined that it should be texts and flags in /component/execute/c
             alculator.php
+    \-- options_are_kinds - section for function options_are_kinds not yet defined that it should be texts and flags in 
+            /component/execute/calculator.php
     \-- warnings - section for function warnings not yet defined that it should be texts and flags in /component/execute
             /calculator.php
     \-- columns - section for function columns not yet defined that it should be texts and flags in /component/execute/c
@@ -7287,6 +7289,7 @@
             hp
     \-- calculation_detail_tables - section for function calculation_detail_tables missing in /component/execute/ui_list
             .php
+    \-- calculator_csv_line - section for function calculator_csv_line missing in /component/execute/ui_list.php
     \-- calculator_buttons - section for function calculator_buttons missing in /component/execute/ui_list.php
     \-- calculator_case_field - section for function calculator_case_field missing in /component/execute/ui_list.php
     \-- calculator_report_url - section for function calculator_report_url missing in /component/execute/ui_list.php
@@ -8047,6 +8050,8 @@
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
     \-- details - section for function details not yet defined that it should be internal in /html/html_base.php
+    \-- text_area_read_only - section for function text_area_read_only not yet defined that it should be internal in /ht
+            ml/html_base.php
     \-- definition - section for function definition not yet defined that it should be internal in /html/html_base.php
     \-- mark - section for function mark not yet defined that it should be internal in /html/html_base.php
     \-- search_input - section for function search_input not yet defined that it should be internal in /html/html_base.p
@@ -10286,9 +10291,11 @@
         \-- ui_list - @param calculator $calc the calculator reader of the page
     \-- calculation_detail_tables
         \-- ui_list - the detail tables of a calculation result: per table its label as the heading, the table
+    \-- calculator_csv_line
+        \-- ui_list - @param array $cells the texts of the cells of a csv line
     \-- calculator_buttons
-        \-- ui_list - the buttons of a list or a detail table at their place: the report is a link to the pdf,
-                 which also
+        \-- ui_list - the buttons of a list or a detail table at their place: the report is a link to the pdf and the co
+                py as csv a
     \-- calculator_case_field
         \-- ui_list - the field of the name of a case of the page of the server, which only shows the name, because
     \-- calculator_report_url
@@ -10654,6 +10661,8 @@
                 able
     \-- options
         \-- calculator - the options of a phrase selector (rule 6): the "has a" triples of the field phrase in their
+    \-- options_are_kinds
+        \-- calculator - @param phrase $phr the field phrase of a selector e.g. replacement mix
     \-- warnings
         \-- calculator - @return array per warning of the page its phrase e.g. target share excess and its text,
                  sorted by the text
@@ -10710,6 +10719,8 @@
         \-- html_base - html list item entry
     \-- details
         \-- html_base - a part that the user can open and close without javascript, e.g. a node of a tree
+    \-- text_area_read_only
+        \-- html_base - a text that the user can select and copy but not change, e.g. a table as csv
     \-- definition
         \-- html_base - one row of a description list, e.g. a setting and its value
     \-- mark

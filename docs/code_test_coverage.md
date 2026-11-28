@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1772 of 6571 public functions have at least 2 unit test calls; the 4589 functions below do not; the 210 functions of the last section are called nowhere
+1773 of 6574 public functions have at least 2 unit test calls; the 4591 functions below do not; the 210 functions of the last section are called nowhere
 
 ## 1826 functions of main backend have no test at all
 
@@ -2101,7 +2101,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 893 functions of frontend have no test at all
+## 894 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2129,6 +2129,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- more - 0 unit test calls
     \-- number_note - 0 unit test calls
     \-- options - 0 unit test calls
+    \-- options_are_kinds - 0 unit test calls
     \-- own_hint - 0 unit test calls
     \-- own_label - 0 unit test calls
     \-- own_text - 0 unit test calls
@@ -2421,6 +2422,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- tbl_start_half - 0 unit test calls
     \-- tbl_start_hist - 0 unit test calls
     \-- tbl_start_pur - 0 unit test calls
+    \-- text_area_read_only - 0 unit test calls
     \-- text_h1 - 0 unit test calls
     \-- text_h3 - 0 unit test calls
     \-- th - 0 unit test calls shared by 4 classes
@@ -2921,7 +2923,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- ui_list
     \-- add_start_page_data - 0 unit test calls
     \-- assumption_fields - 0 unit test calls
-    \-- calculation_detail_tables - 0 unit test calls
     \-- calculator_fields - 0 unit test calls
     \-- calculator_more - 0 unit test calls
     \-- calculator_number_format - 0 unit test calls
@@ -4524,7 +4525,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 559 functions of frontend have incomplete tests
+## 560 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -5045,6 +5046,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- phrase_name - 2 unit test calls shared by 4 classes
     \-- table - 4 unit test calls shared by 5 classes
 \-- ui_list
+    \-- calculation_detail_tables - 1 unit test calls
     \-- calculation_row_context - 1 unit test calls
     \-- calculation_side_context - 1 unit test calls
     \-- calculator_arguments - 1 unit test calls

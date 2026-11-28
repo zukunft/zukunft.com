@@ -226,6 +226,10 @@ class html_base
     const string SMALL = 'small';
     const string SCOPE = 'scope';
     const string DETAILS = 'details';
+    const string TEXTAREA = 'textarea';
+    // the text lines that a text area shows without scrolling
+    const int TEXTAREA_ROWS = 8;
+    const string ROWS = 'rows';
     // only for the calculator pages if config.yaml allows javascript for them (docs/llm/frontend.md)
     const string SCRIPT = 'script';
     const string JSON_TYPE = 'application/json';
@@ -4180,9 +4184,17 @@ class html_base
      * @param string $style the css class of the part
      * @param string $id the html id e.g. the anchor of a tree node
      * @param string $title the mouseover text of the summary line
+     * @param string $summary_style the css class of the summary line e.g. the button style of a box to copy
      * @return string the html code of the details element
      */
-    function details(string $summary, string $body, string $style = '', string $id = '', string $title = ''): string
+    function details(
+        string $summary,
+        string $body,
+        string $style = '',
+        string $id = '',
+        string $title = '',
+        string $summary_style = ''
+    ): string
     {
         $attr = '';
         if ($style != '') {
@@ -4191,9 +4203,31 @@ class html_base
         if ($id != '') {
             $attr .= ' ' . self::ID . '="' . htmlspecialchars($id, ENT_QUOTES) . '"';
         }
+        $summary_attr = $this->title_attr($title);
+        if ($summary_style != '') {
+            $summary_attr .= ' ' . self::CLASS_HTML . '="' . $summary_style . '"';
+        }
         $result = '<' . self::DETAILS . $attr . '>';
-        $result .= '<' . self::SUMMARY . $this->title_attr($title) . '>' . $summary . '</' . self::SUMMARY . '>';
+        $result .= '<' . self::SUMMARY . $summary_attr . '>' . $summary . '</' . self::SUMMARY . '>';
         return $result . $body . '</' . self::DETAILS . '>';
+    }
+
+    /**
+     * a text that the user can select and copy but not change, e.g. a table as csv
+     *
+     * @param string $txt the raw text, which is escaped here
+     * @param string $label the accessible name of the text area e.g. "Copy as CSV"
+     * @param string $style the css class of the text area e.g. w-100 for the full width
+     * @return string the html code of the text area
+     */
+    function text_area_read_only(string $txt, string $label, string $style = ''): string
+    {
+        $attr = ' ' . self::READONLY . ' ' . self::ROWS . '="' . self::TEXTAREA_ROWS . '"';
+        $attr .= ' ' . self::ARIA_LABEL . '="' . htmlspecialchars($label, ENT_QUOTES) . '"';
+        if ($style != '') {
+            $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
+        }
+        return '<' . self::TEXTAREA . $attr . '>' . $this->esc($txt) . '</' . self::TEXTAREA . '>';
     }
 
     /**

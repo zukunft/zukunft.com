@@ -59,6 +59,13 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     const OPTION_PHRASE = 'phrase';
     // the header of the row number of a detail table, the same as ui_list CALC_ROW_NUMBER_HEAD
     const ROW_NUMBER_HEAD = '#';
+    // the separator of the cells of a table as csv and the chars that put a cell in quotes, the same as ui_list
+    // CSV_SEPARATOR and CSV_QUOTE_CHARS, and the decimals of a number of the csv, the same as html_base::number_value
+    const CSV_SEPARATOR = ';';
+    const CSV_QUOTE = /[;"\r\n]/;
+    const CSV_DECIMALS = 12;
+    // the text lines of the csv box, the same as html_base TEXTAREA_ROWS
+    const TEXTAREA_ROWS = 8;
     // the icon of the button to remove an instance and the instances that a field keeps, the same as ui_list CALC_REMOVE_ICON and CALC_MIN_INSTANCES
     const REMOVE_ICON = 'fas fa-times';
     const MIN_INSTANCES = 1;
@@ -93,6 +100,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         notes: 'notes', sources: 'src', select: 'form-control', check: 'check', readOnly: 'ro',
         addButton: 'btn btn-outline-primary btn-sm', removeButton: 'btn btn-outline-secondary btn-sm', imports: 'imports',
         warnings: 'warnings', warning: 'warn', actions: 'input-actions', reportFrame: 'report-frame',
+        copy: 'copy', fullWidth: 'w-100', rateBox: 'fx',
         button: 'btn btn-outline-primary', chart: 'chart', legend: 'legend', statusOk: 'pill ok', statusFail: 'pill fail',
         // the colours of the flagged columns, the first for a single column, the others cycling for the instances (styles::CALC_COLUMN_COLOURS)
         colours: ['col-first', 'col-1', 'col-2', 'col-3', 'col-4']
@@ -595,6 +603,27 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
        before a part of the page triple, then with the fewest other phrases (ui_list::calculator_value);
        onlyOneNumber true for no value if the values that rank the same have different numbers, else the first in the preferred order */
     function fieldEntry(name, onlyOneNumber) {
+        const sorted = bestEntries(name);
+        const result = onlyOneNumber ? onlyOne(sorted, name) : (sorted[0] || null);
+        return result;
+    }
+
+    /* the values of a field that differ only by their unit e.g. the six exchange rates, each with a field of its own;
+       none for a single value and for values that differ also by another phrase (ui_list::calculator_unit_values) */
+    function unitEntries(name) {
+        const best = bestEntries(name);
+        const keys = new Set(best.map(function (e) {
+            // the names without the unit as json, because a phrase name may contain any separator (ui_list::names_without_unit)
+            return JSON.stringify(e.words.filter(function (w) {
+                return !isMeasure(w) && !isRatioUnit(w) && !isPercent(w);
+            }).sort());
+        }));
+        const result = best.length > 1 && keys.size === 1 ? best : [];
+        return result;
+    }
+
+    /* the values of fieldEntry that rank the same, in the preferred order (ui_list::calculator_best_values) */
+    function bestEntries(name) {
         const props = FIELD_PROPERTIES;
         const parts = [page.from, page.to].filter(function (p) {
             return p;
@@ -624,9 +653,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
                 }
             }
         });
-        // e.g. the six exchange rates of the same rank, of which the page without javascript shows CHF per DKK
-        const sorted = sortedEntries(best);
-        const result = onlyOneNumber ? onlyOne(sorted, name) : (sorted[0] || null);
+        // e.g. the six exchange rates of the same rank, each in a field of its own (unitEntries)
+        const result = sortedEntries(best);
         return result;
     }
 
@@ -794,12 +822,13 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         let fieldValues = [];
         items(KW.input).concat(items(KW.assumption)).forEach(function (item) {
             if (fieldType(item.to) === KW.selector) {
+                const withoutOwn = !optionsAreKinds(item.to);
                 fieldValues = fieldValues.concat(options(item.to).map(function (o) {
-                    return optionEntry(item.to, o[0]);
+                    return optionEntry(item.to, o[0], withoutOwn);
                 }).filter(hasUnit));
             } else {
                 const entry = fieldEntry(item.to);
-                fieldValues = fieldValues.concat([entry], basisEntries(item.to, entry));
+                fieldValues = fieldValues.concat([entry], unitEntries(item.to), basisEntries(item.to, entry));
             }
         });
         const result = textSources();
@@ -1751,6 +1780,47 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
+    /* the number field of an item, or for values that differ only by their unit one box with an input per value e.g. per
+       exchange rate (ui_list::calculator_number_fields) */
+    function numberFields(item, name, assumption) {
+        const units = unitEntries(name);
+        const result = units.length === 0 ? numberField(item, name, assumption) : unitBox(item, name, units);
+        return result;
+    }
+
+    /* the values that differ only by their unit as one box with a label and an input per value e.g. EUR 0.98, keyed by
+       the value id, because the field phrase is the same (ui_list::calculator_unit_box) */
+    function unitBox(item, name, units) {
+        const cells = units.map(function (e) {
+            const field = NUMBER_VAR + e.id;
+            inputEntries.set(field, e);
+            const input = '<input type="number" name="' + field + '" id="' + field + '" value="' + esc(fieldShown(e.number, e)) + '"'
+                + limitAttrs(item, name, e) + ' form="' + esc(FORM) + '">';
+            return '<label for="' + field + '">' + esc(unitBoxLabel(e)) + '</label>' + input + saveVars(e.id, e, label(item), fieldUnit(e));
+        }).join('');
+        const result = block('div', cells, STYLE.rateBox, item.name) + hintHtml(hint(item), '');
+        return result;
+    }
+
+    /* the phrase that tells a value of the box apart: the to of its unit triple e.g. EUR of CHF per EUR, else the unit
+       (ui_list::calculator_unit_box_label) */
+    function unitBoxLabel(entry) {
+        const unit = entry.words.find(isMeasure);
+        const to = unit === undefined ? undefined : (phrases.get(unit) || {}).to;
+        const result = to === undefined ? fieldUnit(entry) : phraseLabel(to);
+        return result;
+    }
+
+    /* the limits and the step of the input of an item, else of its phrase, in the unit that the field shows (ui_list::calculator_number_input) */
+    function limitAttrs(item, name, entry) {
+        const result = [['min', KW.limit_down], ['max', KW.limit_up], ['step', KW.step]].map(function (l) {
+            const num = itemProperty(item, name, l[1]);
+            const limit = num === null || entry === null ? num : fieldShown(num, entry);
+            return num === null ? '' : ' ' + l[0] + '="' + esc(limit) + '"';
+        }).join('');
+        return result;
+    }
+
     /* instance and its entry only for a repeated field, which gets its own number and name behind the label */
     function numberField(item, name, assumption, instance, instanceEntry) {
         const entry = instance === undefined ? fieldEntry(name) : instanceEntry;
@@ -1764,11 +1834,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             text += ' ' + block('span', esc(tagOwn || tagText(entry)), entry.source ? STYLE.tagMeasured : STYLE.tagAssumed);
             hintText = hintText || entry.description;
         }
-        const limits = [['min', KW.limit_down], ['max', KW.limit_up], ['step', KW.step]].map(function (l) {
-            const num = itemProperty(item, name, l[1]);
-            const limit = num === null || entry === null ? num : fieldShown(num, entry);
-            return num === null ? '' : ' ' + l[0] + '="' + esc(limit) + '"';
-        }).join('');
+        const limits = limitAttrs(item, name, entry);
         const shown = entry === null ? '' : fieldShown(entry.number, entry);
         let input = '<input type="number" name="' + field + '" id="' + field + '" value="' + esc(shown) + '"' + limits + ' form="' + esc(FORM) + '">';
         if (hasFlag(item, KW.slider)) {
@@ -1859,9 +1925,16 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     }
 
     /* several numbers of the option phrase are numbers of other phrases e.g. the lot value per holding, so none is the
-       number of the option (ui_list::calculator_option_value) */
-    function optionEntry(name, option) {
-        return cellEntry([name, option]) || fieldEntry(option, true);
+       number of the option; withoutOwn true for an option of a has a list e.g. JPY of the portfolio currency, whose own
+       value e.g. the cash in JPY is no number of the option (ui_list::calculator_option_value) */
+    function optionEntry(name, option, withoutOwn) {
+        return cellEntry([name, option]) || (withoutOwn ? null : fieldEntry(option, true));
+    }
+
+    /* true if the options are the phrases that are a field phrase e.g. residual mix is a replacement mix, so that an
+       option is a number of the field itself (calculator::options_are_kinds) */
+    function optionsAreKinds(name) {
+        return subItems(name, VERB.has).length === 0;
     }
 
     /* true for a number with a unit, which a selector option names with its source (ui_list::calculator_option_text) */
@@ -1903,8 +1976,9 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             return o[0];
         }));
         addOrderSelector(field, name, opts, usedOpt);
+        const withoutOwn = !optionsAreKinds(name);
         const html = opts.map(function (o) {
-            const entry = optionEntry(name, o[0]);
+            const entry = optionEntry(name, o[0], withoutOwn);
             const sel = o[0] === usedOpt ? ' selected' : '';
             // the selector sets the number of the option that the page uses, which the results read
             if (entry !== null && o[0] === usedOpt) {
@@ -1917,7 +1991,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         }).join('');
         // a used option without a number: the first option with a number takes the number of the selected option (ui_list::calculator_field_value)
         const first = opts.map(function (o) {
-            return optionEntry(name, o[0]);
+            return optionEntry(name, o[0], withoutOwn);
         }).find(function (e) {
             return e !== null;
         });
@@ -2314,7 +2388,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             } else if (fieldType(item.to) === KW.selector) {
                 html = selectorField(item, item.to);
             } else {
-                html = numberField(item, item.to, assumption);
+                html = numberFields(item, item.to, assumption);
             }
             return html;
         }).join('');
@@ -2720,20 +2794,22 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* the buttons of a list or a detail table at their place: the report is a link to the pdf and the others have no function so far; save: the html of the save button of the input list between the import and the download, which then shows two buttons per line (ui_list::calculator_buttons) */
-    function buttons(item, save) {
+    /* the buttons of a list or a detail table at their place: the report is a link to the pdf, the copy as csv a box with the table as csv and the others have no function so far; save: the html of the save button of the input list between the import and the download, which then shows two buttons per line; csv: the table as csv for the box (ui_list::calculator_buttons) */
+    function buttons(item, save, csv) {
         let report = null;
         let copy = [];
+        let box = '';
         if (item !== null && item !== undefined) {
             report = buttonLabel(item, KW.report);
             if (hasFlag(item, KW.copy)) {
-                copy = [TEXTS[TXT.copy_json], TEXTS[TXT.copy_csv]];
+                copy = [TEXTS[TXT.copy_json]];
+                box = copyBox(TEXTS[TXT.copy_csv], csv || '');
             }
         }
         const title = report ? titleAttr(buttonHint(item, KW.report)) : '';
         const link = report ? '<a href="' + esc(settings.report) + '" target="' + STYLE.reportFrame + '" class="' + STYLE.button + '"' + title + '>' + iconText(ICON.report, report) + '</a>' : '';
         const frame = report ? '<iframe name="' + STYLE.reportFrame + '" class="' + STYLE.reportFrame + '" title="' + esc(report) + '"></iframe>' : '';
-        const result = keywordButton(item, KW.file_import, ICON.fileImport) + (save || '') + keywordButton(item, KW.download, ICON.download) + link + plainButtons(copy) + frame;
+        const result = keywordButton(item, KW.file_import, ICON.fileImport) + (save || '') + keywordButton(item, KW.download, ICON.download) + link + plainButtons(copy) + box + frame;
         return save ? block('div', result, STYLE.actions) : result;
     }
 
@@ -2970,11 +3046,55 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
                 const sub = numbered ? ownText(r[1][1], KW.hint) : '';
                 return block('tr', number + block('td', esc(r[0]) + (sub ? block('span', esc(sub), STYLE.sub) : '')) + tds, r[2] ? STYLE.key : '', r[3]);
             }).join('');
-            const tableHtml = table(head, body) + tableHint(tbl.name) + buttons(tbl);
+            const csv = hasFlag(tbl, KW.copy) ? detailCsv(tbl, rows, cells, cols, numbered) : '';
+            const tableHtml = table(head, body) + tableHint(tbl.name) + buttons(tbl, '', csv);
             result += sections
                 ? block('details', block('summary', esc(label(tbl))) + tableHtml, '', tbl.name)
                 : block('h2', esc(label(tbl)), '', tbl.name) + tableHtml;
         });
+        return result;
+    }
+
+    /* a detail table as csv for a spreadsheet: the head and the rows as the page shows them, with the numbers without
+       format, so that a spreadsheet reads them as numbers (ui_list::calculation_detail_csv) */
+    function detailCsv(tbl, rows, cells, cols, numbered) {
+        const head = [phraseLabel(tbl.to)].concat(cols.map(function (c) {
+            return c.text;
+        }));
+        const lines = [csvLine(numbered ? [ROW_NUMBER_HEAD].concat(head) : head)];
+        rows.forEach(function (r, j) {
+            const line = [r[0]].concat(cells[j].map(function (e, i) {
+                return cols[i].isPhrase ? phraseCell(r[1][1], cols[i]) : csvNumber(e);
+            }));
+            lines.push(csvLine(numbered ? [String(j + 1)].concat(line) : line));
+        });
+        const result = lines.join('\n');
+        return result;
+    }
+
+    /* the cells separated by ";", a cell with ";", '"' or a line break in quotes with each '"' doubled, so that it stays
+       one cell (ui_list::calculator_csv_line) */
+    function csvLine(cells) {
+        const result = cells.map(function (cell) {
+            const text = String(cell);
+            return CSV_QUOTE.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+        }).join(CSV_SEPARATOR);
+        return result;
+    }
+
+    /* the number of a cell without format and with at most the decimals of the noise limit, without trailing zeros like
+       html_base::number_value, e.g. 8999999.9; '' for an empty cell (ui_list::calculator_csv_number) */
+    function csvNumber(entry) {
+        const hasNumber = entry !== null && entry !== undefined && entry.number !== null && entry.number !== undefined;
+        const result = hasNumber ? Number(entry.number).toFixed(CSV_DECIMALS).replace(/\.?0+$/, '') : '';
+        return result;
+    }
+
+    /* the button of a table as csv: a collapsed box with the text, which toggleCopy copies when it is opened (ui_list::calculator_copy_box) */
+    function copyBox(text, csv) {
+        const area = '<textarea readonly rows="' + TEXTAREA_ROWS + '" aria-label="' + esc(text) + '" class="' + STYLE.fullWidth + '">' + esc(csv) + '</textarea>';
+        // the toggle in the style of the buttons next to it, because it is the button to copy for the reader
+        const result = block('details', block('summary', esc(text), STYLE.button) + area, STYLE.copy);
         return result;
     }
 
@@ -3108,6 +3228,22 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         }
     }
 
+    /* an opened csv box selects its text and copies it to the clipboard; if the browser blocks the copy, the selected
+       text stays to copy by hand; the toggle event does not bubble */
+    function toggleCopy(event) {
+        const box = event.target;
+        const area = box.classList.contains(STYLE.copy) && box.open ? box.querySelector('textarea') : null;
+        if (area !== null) {
+            area.focus();
+            area.select();
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(area.value).catch(function () {
+                    // the text stays selected for a copy by hand
+                });
+            }
+        }
+    }
+
     // the stored results are checked once, after an input change the page shows the numbers that it calculates
     checkResults();
     // an instance without stored results gets those of the first instance, and then the sums over all instances
@@ -3127,6 +3263,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     host.addEventListener('click', addInstance);
     host.addEventListener('click', removeInstance);
     host.addEventListener('toggle', toggleSensitivity, true);
+    host.addEventListener('toggle', toggleCopy, true);
 
 }
 

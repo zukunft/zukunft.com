@@ -559,15 +559,27 @@ class calculator
     function options(phrase $phr): array
     {
         $result = [];
-        foreach ($this->sub_items($phr, verbs::HAS_ID) as $opt) {
-            $result[] = [$this->item_phrase($opt), $this->label($opt)];
-        }
-        if ($result == []) {
+        if ($this->options_are_kinds($phr)) {
             foreach ($this->kinds($phr) as $opt) {
                 $result[] = [$opt, $this->phrase_label($opt)];
             }
+        } else {
+            foreach ($this->sub_items($phr, verbs::HAS_ID) as $opt) {
+                $result[] = [$this->item_phrase($opt), $this->label($opt)];
+            }
         }
         return $result;
+    }
+
+    /**
+     * @param phrase $phr the field phrase of a selector e.g. replacement mix
+     * @return bool true if the options are the phrases that are a field phrase e.g. residual mix is a replacement mix,
+     *              so that an option is a number of the field itself, false for the "has a" options e.g. the
+     *              currencies of the portfolio currency, which only select their phrase
+     */
+    function options_are_kinds(phrase $phr): bool
+    {
+        return $this->sub_items($phr, verbs::HAS_ID) == [];
     }
 
     /**

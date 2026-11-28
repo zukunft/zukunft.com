@@ -1,6 +1,6 @@
 [
     {
-        "id": 1058,
+        "id": 1059,
         "name": "agglomeration",
         "description": "urban core plus surrounding built\u2011up areas",
         "type_id": 1,
@@ -152,7 +152,7 @@
         "class": "triple"
     },
     {
-        "id": 2109,
+        "id": 2110,
         "name": "EAN",
         "description": "European Article Number: the 13 digit barcode number of a retail product, today named International Article Number (IAN)",
         "type_id": 23,
@@ -258,14 +258,14 @@
         "class": "word"
     },
     {
-        "id": 2107,
+        "id": 2108,
         "name": "ISBN",
         "description": "International Standard Book Number: identifies one edition of a book; since 2007 it has 13 digits and equals the EAN of the book with the prefix 978 or 979",
         "type_id": 23,
         "class": "word"
     },
     {
-        "id": 2108,
+        "id": 2109,
         "name": "ISIN",
         "description": "International Securities Identification Number (ISO 6166): identifies one security with 12 characters, the country code, the nine character national number and a check digit",
         "type_id": 23,
@@ -394,7 +394,7 @@
         "class": "word"
     },
     {
-        "id": 1075,
+        "id": 1076,
         "name": "region",
         "description": "an area of land larger than a city and its surroundings",
         "type_id": 1,
@@ -436,7 +436,7 @@
         "class": "word"
     },
     {
-        "id": 5698,
+        "id": 5710,
         "name": "sector of revenue",
         "description": "a part of the revenue of a company split by its business area, the rows of the table of this use case",
         "class": "triple"
@@ -456,7 +456,7 @@
         "class": "word"
     },
     {
-        "id": 1802,
+        "id": 1803,
         "name": "stock",
         "type_id": 1,
         "class": "word"

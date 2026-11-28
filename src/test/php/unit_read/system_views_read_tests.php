@@ -130,6 +130,8 @@ class system_views_read_tests
     const string PV_PRODUCTION_ROW = html_page_diff::KIND_ROW . ': Electricity / PV production';
     // the element of calculator_editor.js that holds the page preview
     const string EDITOR_PREVIEW_ID = 'pane';
+    // the text of the toggle of the csv box of a detail table, which the compare reads as a button
+    const string COPY_CSV = 'Copy as CSV';
 
     /**
      * render every system view with the data read from the database and compare it with the snapshot
@@ -777,6 +779,17 @@ class system_views_read_tests
         // negative: other decimals stay a difference, also of a number input
         $test_name = '... but other decimals are a difference';
         $t->assert_false($test_name, $input_row == $hpd->page_items(sprintf($num_html, "30'000'000")));
+        // a collapsed box whose toggle looks like a button is a button for the reader e.g. copy as csv
+        $test_name = 'the compare reads a summary with the button style as a button';
+        $box_html = '<main><details><summary%s>' . self::COPY_CSV . '</summary><textarea>a;b</textarea></details></main>';
+        $box_items = $hpd->page_items(sprintf($box_html, ' class="' . html_page_diff::CLASS_BUTTON . '"'));
+        $t->assert_key_exists($test_name, html_page_diff::KIND_BUTTON . ': ' . self::COPY_CSV, $box_items);
+        // negative: so not as a heading, which only a summary without the button style is
+        $test_name = '... and not as a heading';
+        $t->assert_key_not_exists($test_name, html_page_diff::KIND_HEADING . ': ' . self::COPY_CSV, $box_items);
+        $test_name = '... which a summary without the button style is';
+        $heading_items = $hpd->page_items(sprintf($box_html, ''));
+        $t->assert_key_exists($test_name, html_page_diff::KIND_HEADING . ': ' . self::COPY_CSV, $heading_items);
 
         $test_name = 'the sample ' . $sample_file . ' has items to compare';
         $t->assert_true($test_name, count($sample) > 0);

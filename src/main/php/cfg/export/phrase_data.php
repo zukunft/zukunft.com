@@ -209,11 +209,10 @@ class phrase_data
             $this->value_phrase_ids($val_lst, $msg),
             $this->result_phrase_ids($res_lst));
         $phr_lst = $this->complete_phrases($ids, $msg);
-        // the "is a" links between two phrases of the data e.g. stock is a holding, because such a link has no name
-        // and is so no phrase of a value
+        // the "is a" links between two phrases of the data e.g. stock is a holding, because no value names such a link
         $lnk_ids = $this->parent_triple_ids($phr_lst, $msg);
         if ($lnk_ids != []) {
-            // not added to the ids of the formulas below, because a link without a name has no formula
+            // not added to the ids of the formulas below, because no value of the data names the link
             $phr_lst = $this->complete_phrases(array_merge($phr_lst->id_lst(), $lnk_ids), $msg);
         }
         // the formulas of the phrases of the data, but not of the sides that only name a triple, because a
@@ -302,8 +301,8 @@ class phrase_data
      * (docs/llm/pending_prio_2.md "code id of a triple"), and mapped to their code id
      *
      * @param user_message $msg with the requesting user
-     * @return array the phrase ids of the calculator, the field and the table keywords and of csv context by their code id e.g.
-     *               system_calculator_label => -2727; these phrases are never walked
+     * @return array the phrase ids of the calculator, the field and the table keywords and of csv context by their
+     *               code id e.g. system_calculator_label => -2727; these phrases are never walked
      */
     private function keyword_ids(user_message $msg): array
     {
@@ -843,8 +842,8 @@ class phrase_data
     }
 
     /**
-     * the "is a" triples between two phrases of the data, because such a link has no name and is so no phrase of a
-     * value, e.g. stock is a holding or alternative investment is a stock, which the kinds of the templates of a csv
+     * the "is a" triples between two phrases of the data, because no value names such a link, also not a named one,
+     * e.g. stock is a holding or alternative investment is a stock, which the kinds of the templates of a csv
      * format need; only links between two phrases of the data, so that a page does not get new phrases by them
      *
      * @param phrase_list $phr_lst the completed phrases of the data
@@ -855,12 +854,13 @@ class phrase_data
     {
         global $sys;
         $result = [];
-        $data_ids = $phr_lst->id_lst();
+        // by the id as key, so that each check of a link is one lookup
+        $data_ids = array_flip($phr_lst->id_lst());
         if (!$phr_lst->is_empty()) {
             $lnk_lst = new triple_list($msg->usr);
             $lnk_lst->load_by_phr_lst($phr_lst, $msg, $sys->verb(verbs::IS), foaf_direction::UP);
             foreach ($lnk_lst->lst() as $trp) {
-                if (in_array($trp->to_id(), $data_ids) and !in_array($trp->phrase()->id(), $data_ids)) {
+                if (isset($data_ids[$trp->to_id()]) and !isset($data_ids[$trp->phrase()->id()])) {
                     $result[] = $trp->phrase()->id();
                 }
             }

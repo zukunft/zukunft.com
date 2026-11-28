@@ -8,10 +8,10 @@
     the suggested var name is $rpt
     the top of the report are the target positions per portfolio, read from the columns of a
     detail table that are filtered by the split count; everything below comes from the html
-    tables of the page, so that the report shows the same numbers as the page; each portfolio, each
-    main part of the page and the formulas start on a new portrait page, except a main part with a table
-    that is too wide for a portrait page with the normal text size e.g. the splitting walk, which is on
-    landscape pages
+    tables of the page, so that the report shows the same numbers as the page; each portfolio and each
+    main part of the page start on a new portrait page, except a main part with a table that is too
+    wide for a portrait page with the normal text size e.g. the splitting walk, which is on landscape
+    pages; the formulas start on a new landscape page
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -61,6 +61,7 @@ include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Closure;
 use DateTime;
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\number_format;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -112,8 +114,8 @@ class calculator_report
     // the html tags of the page that are a heading, a text or that the report does not show
     const array HEADING_TAGS = ['h1', 'h2', 'h3', 'summary'];
     const array SKIPPED_TAGS = ['svg', 'button', 'input', 'script', 'style', 'form'];
-    // the parts of the page that only a screen can show e.g. the meter of the verdict and its scale
-    const array SKIPPED_CLASSES = [styles::CALC_METER, styles::CALC_NEEDLE, styles::CALC_SCALE];
+    // the parts of the page that only a screen can show e.g. the meter of the verdict and its scale or the box to copy
+    const array SKIPPED_CLASSES = [styles::CALC_METER, styles::CALC_NEEDLE, styles::CALC_SCALE, styles::CALC_COPY];
     // the toggle of a collapsed part, which the report skips if it is the "... more" of the hidden rest
     const string SUMMARY_TAG = 'summary';
     // the attributes of an input field of the page that the report shows
@@ -399,7 +401,7 @@ class calculator_report
     }
 
     /**
-     * add the formulas of the results of the page sorted by their name
+     * add the formulas of the results of the page sorted by their name on landscape pages
      *
      * @param pdf_writer $pdf the report
      * @param value_list $lst the values and the results of the page
@@ -418,7 +420,8 @@ class calculator_report
         }
         ksort($rows);
         if ($rows != []) {
-            $pdf->page_break(true);
+            // landscape, because an expression is a long line that a portrait page breaks often
+            $pdf->page_break(false);
             $pdf->heading($mtr->txt(msg_id::CALCULATOR_REPORT_FORMULAS));
             $pdf->table([], array_values($rows), []);
         }
@@ -562,6 +565,8 @@ class calculator_report
                     $this->add_table($pdf, $node);
                 } elseif ($this->has_class($node, [styles::INPUT_FIELD])) {
                     $this->add_field($pdf, $node);
+                } elseif ($this->has_class($node, [styles::CALC_RATE_BOX])) {
+                    $this->add_rate_box($pdf, $node);
                 } elseif ($this->has_element($node)) {
                     $this->add_block($pdf, $node);
                 } else {
@@ -624,6 +629,30 @@ class calculator_report
             if ($part != '') {
                 $pdf->text($part);
             }
+        }
+        $pdf->space();
+    }
+
+    /**
+     * the box of the values that differ only by their unit as one line per value e.g. "EUR 0.98 CHF per EUR", because
+     * the definition pdf of the calculator editor shows the numbers that the page uses and not the inputs to change
+     * them (calculator_definition_report::pdf, ui_list::calculator_unit_box)
+     *
+     * @param pdf_writer $pdf the report
+     * @param DOMElement $box the html element of the box with a label, a number input and its save vars per value
+     */
+    private function add_rate_box(pdf_writer $pdf, DOMElement $box): void
+    {
+        $inputs = [];
+        foreach ($box->getElementsByTagName(html_base::INPUT) as $input) {
+            $inputs[$input->getAttribute(html_base::NAME)] = $input->getAttribute(html_base::VALUE);
+        }
+        foreach ($box->getElementsByTagName(html_base::LABEL) as $lbl) {
+            $name = $lbl->getAttribute(html_base::FOR);
+            // the unit is the save var of the field behind the number var e.g. "p2173207029" for "n2173207029"
+            $unit_var = url_var::PHRASE . substr($name, strlen(url_var::NUMERIC_VALUE));
+            $line = [$this->plain($lbl->textContent), $inputs[$name] ?? '', $inputs[$unit_var] ?? ''];
+            $pdf->text(trim(implode(' ', $line)));
         }
         $pdf->space();
     }
