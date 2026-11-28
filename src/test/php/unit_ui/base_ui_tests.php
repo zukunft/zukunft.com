@@ -1065,6 +1065,27 @@ class base_ui_tests
         $tag_link = $html->ref_view(views::WORD_ID, word_names::MATH_ID, '<b>' . word_names::MATH . '</b>');
         $t->assert_text_not_contains($test_name, $tag_link, '<b>');
 
+        // the link to a frame e.g. the pdf report of a calculator page has the icon of its kind in front of its text
+        $test_name = 'the link to a frame shows the icon in front of its text';
+        $frame_link = $html->ref_to_frame(api::MAIN_SCRIPT, word_names::MATH, styles::CALC_REPORT_FRAME, styles::CALC_BUTTON_LINK, icons::CALC_REPORT, word_names::MATH);
+        $frame_text = icons::CALC_REPORT . '"></' . html_base::I . '> ' . word_names::MATH . '</' . html_base::A . '>';
+        $t->assert_text_contains($test_name, $frame_link, $frame_text);
+        $test_name = '... with its tooltip';
+        $t->assert_text_contains($test_name, $frame_link, html_base::TITLE_HTML . '="' . word_names::MATH . '"');
+        $test_name = '... and a text with a tag is shown as text, not as html';
+        $tag_frame = $html->ref_to_frame(api::MAIN_SCRIPT, '<b>' . word_names::MATH . '</b>', styles::CALC_REPORT_FRAME, styles::CALC_BUTTON_LINK, icons::CALC_REPORT, '');
+        $t->assert_text_not_contains($test_name, $tag_frame, '<b>');
+        $test_name = '... and without a tooltip it has no title';
+        $t->assert_text_not_contains($test_name, $tag_frame, html_base::TITLE_HTML . '="');
+
+        // the tooltip of a button is an attribute value, so its quotes are escaped too
+        $test_name = 'a button shows its tooltip with the quotes escaped';
+        $title_btn = $html->button(word_names::MATH, html_base::BUTTON, '', '', '"' . word_names::MATH . '"');
+        $t->assert_text_contains($test_name, $title_btn, html_base::TITLE_HTML . '="&quot;' . word_names::MATH . '&quot;"');
+        $test_name = '... and a button without a tooltip has no title';
+        $plain_title_btn = $html->button(word_names::MATH, html_base::BUTTON);
+        $t->assert_text_not_contains($test_name, $plain_title_btn, html_base::TITLE_HTML . '="');
+
         // a heading shows the title and gets a style class only if a style is given
         $test_name = 'a heading shows the title';
         $t->assert_text_contains($test_name, $html->text_h2('names'), '>names</');
@@ -2228,6 +2249,12 @@ class base_ui_tests
             . '<button class="btn btn-outline-secondary" type="button">outline secondary</button>' . "\n"
             . '<button class="btn btn-outline-success" type="button">outline success</button>' . "\n"
             . '<button class="btn btn-outline-primary" type="button">outline primary</button>' . "\n"
+            . '</p>' . "\n";
+        // the buttons of a calculator page with the icon of their kind and their hint as tooltip, as html_base builds them
+        $page .= '<h4>calculator button and report link (html_base::button, ref_to_frame, icon_and_text)</h4>' . "\n"
+            . '<p>' . "\n"
+            . $html->button($html->icon_and_text(icons::CALC_DOWNLOAD, triple_names::CALC_BUTTON_COM), html_base::BUTTON, styles::CALC_BUTTON, '', triple_names::CALC_BUTTON_HINT_COM) . "\n"
+            . $html->ref_to_frame(api::MAIN_SCRIPT, triple_names::CALC_BUTTON_COM, styles::CALC_REPORT_FRAME, styles::CALC_BUTTON_LINK, icons::CALC_REPORT, triple_names::CALC_BUTTON_HINT_COM) . "\n"
             . '</p>' . "\n";
         // the editor css also sets its page e.g. the background and the fonts, so the editor sets are in a frame
         $editor = $html->theme_style($msg)

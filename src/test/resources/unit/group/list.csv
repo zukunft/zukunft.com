@@ -240,46 +240,40 @@ group_id,user_id,group_name,description
 3p+9v+Fr+Fu+,1,,3051.1e9 USD at the ECB 2023 average of 1.0813 USD per EUR
 5h-46-4N+9u+,1,,"rounded average rate of 2025; the social cost of carbon is in 2020 dollars, so the conversion ignores five years of inflation on purpose and errs low"
 5l-46-1u+9t+eG+fV+,1,,"0.827 on 15 October 2026, rounded; converts the USD figures of the company into the CHF of the share"
-/5m-/3e-2v+d.+,1,,"LISP share, parent portfolio"
-/5m-/3e-2v+d/+,1,,"LISN share, parent portfolio"
-/6O-/5m-2v+d.+,1,,"LISP share, first child portfolio"
-/6O-/5m-2v+d/+,1,,"LISN share, first child portfolio"
-/6P-/5m-2v+d.+,1,,"LISP share, second child portfolio"
-/6P-/5m-2v+d/+,1,,"LISN share, second child portfolio"
-/6Q-/3k-2v+6f+cO+,1,,Portfolio value original
-/6Q-/3l-1b+cO+,1,,the whole portfolio is split
-/A1-1b+1u+2Y+9t+eE+eY+eZ+,1,,60 percent against in the Leewas survey cited by cash.ch
-/A1-VI-2Y+3t+,1,,the increase the Federal Council proposed in its message of 16 October 2024
-/A/-1Z+2Y+9t+Do+Fj+,1,,the people who receive an AHV pension
-/A2-1b+2Y+9r+dz+,1,,the normal VAT rate from 2028 if the decree is accepted
-/A2-1b+2Y+9t+dz+,1,,the normal VAT rate since 2024
+/5n-/3f-2v+d.+,1,,"LISP share, parent portfolio"
+/5n-/3f-2v+d/+,1,,"LISN share, parent portfolio"
+/6P-/5n-2v+d.+,1,,"LISP share, first child portfolio"
+/6P-/5n-2v+d/+,1,,"LISN share, first child portfolio"
+/6Q-/5n-2v+d.+,1,,"LISP share, second child portfolio"
+/6Q-/5n-2v+d/+,1,,"LISN share, second child portfolio"
+/6R-/3l-2v+6f+cO+,1,,Portfolio value original
+/6R-/3m-1b+cO+,1,,the whole portfolio is split
 a2-1T-1J-3l+3p+4N+5H+,1,,"the potential loss of the GDP mismeasurement is the steering error of the understated GDP that a revision of the national accounts corrects (problem_gdp_mismeasurement.json), so this reason causes the whole loss: 0.22718 percent of the world GDP of 110.047 trillion EUR"
-/A3-1b+2Y+dz+,1,,unchanged by the decree
+/A3-1Z+2Y+9t+Do+Fj+,1,,the people who receive an AHV pension
+/A5-1b+1u+2Y+9t+eE+eY+eZ+,1,,60 percent against in the Leewas survey cited by cash.ch
+/A5-VI-2Y+3t+,1,,the increase the Federal Council proposed in its message of 16 October 2024
+/A6-1b+2Y+9r+dz+,1,,the normal VAT rate from 2028 if the decree is accepted
+/A6-1b+2Y+9t+dz+,1,,the normal VAT rate since 2024
 A6-1Z+5R+6f+8u+90+,1,,"the sales of the category prepared dishes and cooking aids (note 3.2); the former 6512 was only the frozen and chilled part of it (Nestlé Annual Review 2016, page 48)"
-/A9-/A7-1a+2Y+,1,,the revenue of one point of the normal rate for the AHV: 1.4 billion CHF for 0.4 points from 2029
-/AA-1b+4F+9u+dy+,1,,the share of the contributions of the insured and the employers in the AHV income of 2025
-/AA-/W+1b+dy+,1,,"the AHV contribution rate on wages, 8.7 percent shared by employee and employer"
-/AB-1b+2Y+dy+,1,,the share of the AHV expenditure the Confederation pays by law; the proposed cut to 19.5 percent was rejected
-/Ab-/AD-1b+2Y+e6+,1,,the fund level below which the FDP's mechanism raises the VAT by 0.5 points and the reference age by six months
-/AC-1a+2Y+6f+9t+,1,,the Confederation's expenditure the FDP says must suffice
-/Ac-/A1-1a+2Y+6f+eF+,1,,the loss of output after ten years according to the BAK Economics study for the FDP
-/AD-1a+2Y+6f+9u+,1,,"the AHV's share of the compenswiss assets at the end of 2025, including the 10.3 billion owed by the IV"
-/AD-1a+2Y+6f+e5+,1,,the record fortune the VPOD names
-/Ad-/A6-1a+2Y+,1,,more than 10 billion CHF a year
-/AE-1a+2Y+6f+9p+dy+,1,,the reference scenario without extra financing at prices of 2025
-/Ae-/AM-/A5-2Y+2n+e1+,1,,households with an income up to 4'600 CHF
-/Ae-/AM-/A5-2Y+2o+e1+,1,,households with an income above 13'400 CHF
-/Ae-/AM-/A5-2Y+e1+em+,1,,"the middle class, 6'700 to 9'400 CHF"
-/AF-1b+4N+4Q+N/+,1,,"the ESTV gives the total income, the wage part is a guess"
-/AF-/A5-4N+N/+,1,,the second input of the page: the gross wages of all earners of the household; the ESTV average household has 9'900 CHF of income including pensions
-/AG-/A5-2Y+4D+e1+,1,,the income of the ESTV average household
-/AG-/A6-/A1-2Y+4O+eF+,1,,"the cost per household and year the FDP cites from the BAK study, including the direct VAT"
-/AI-/AD-1b+2Y+e0+eH+,1,,"the fund at the end of 2035 with the VAT increase, just under 70 percent"
+/A7-1b+2Y+dz+,1,,unchanged by the decree
+/Ac-/A5-2Y+Do+bm+e/+,1,,the final vote of 19 June 2026
+/AD-/AB-1a+2Y+,1,,the revenue of one point of the normal rate for the AHV: 1.4 billion CHF for 0.4 points from 2029
+/AE-1b+4F+9u+dy+,1,,the share of the contributions of the insured and the employers in the AHV income of 2025
+/AE-/W+1b+dy+,1,,"the AHV contribution rate on wages, 8.7 percent shared by employee and employer"
+/AF-1b+2Y+dy+,1,,the share of the AHV expenditure the Confederation pays by law; the proposed cut to 19.5 percent was rejected
+/Af-/AH-1b+2Y+e6+,1,,the fund level below which the FDP's mechanism raises the VAT by 0.5 points and the reference age by six months
+/AG-1a+2Y+6f+9t+,1,,the Confederation's expenditure the FDP says must suffice
+/Ag-/A5-1a+2Y+6f+eF+,1,,the loss of output after ten years according to the BAK Economics study for the FDP
+/AH-1a+2Y+6f+9u+,1,,"the AHV's share of the compenswiss assets at the end of 2025, including the 10.3 billion owed by the IV"
+/AH-1a+2Y+6f+e5+,1,,the record fortune the VPOD names
+/Ah-/AA-1a+2Y+,1,,more than 10 billion CHF a year
+/AI-1a+2Y+6f+9p+dy+,1,,the reference scenario without extra financing at prices of 2025
 aI-aD-a5-1b+2d+,1,,"the change of the value of the global marine fish stocks; attributed by the source to the poor management and the overfishing, not to the GDP mismeasurement"
-/AI-/AE-1a+2Y+6f+9p+dy+e0+,1,,"the BSV figure with 0.4 points of VAT from 2028, the check of the deficit yes formula"
-/AI-/AE-1a+2Y+6f+dy+e0+eH+,1,,about 3 instead of 5 billion CHF with the VAT increase
-/Aj-/A1-1b+2Y+eD+eY+,1,,the share that finds the VAT fair because all generations contribute
-/AJ-/AD-1b+2Y+e0+eH+,1,,"the fund at the end of 2035 without extra financing as a share of a year's expenditure, about 50 percent"
+/Ai-/AQ-/A9-2Y+2n+e1+,1,,households with an income up to 4'600 CHF
+/Ai-/AQ-/A9-2Y+2o+e1+,1,,households with an income above 13'400 CHF
+/Ai-/AQ-/A9-2Y+e1+em+,1,,"the middle class, 6'700 to 9'400 CHF"
+/AJ-1b+4N+4Q+N/+,1,,"the ESTV gives the total income, the wage part is a guess"
+/AJ-/A9-4N+N/+,1,,the second input of the page: the gross wages of all earners of the household; the ESTV average household has 9'900 CHF of income including pensions
 aJ-aF-aD-1b+EK+,1,,"the change of the forest wealth per capita of the low- and middle-income countries; attributed by the source to the deforestation, not to the GDP mismeasurement"
 aK-a0-1a+3p+5R+LL+,1,,1.24 trillion GBP of unpaid household service work at the ECB 2023 average of 0.86979 GBP per EUR
 aK-a0-1a+3p+5S+Fr+,1,,"4516.1 billion USD, the difference of the GDP with and without the household production, at the ECB 2023 average of 1.0813 USD per EUR"
@@ -289,17 +283,21 @@ aK-a0-1b+3r+Fr+Rr+,1,,the increase of the nominal GDP if the household productio
 aK-a/-1b+2b+2d+,1,,the share of the women in the total hours of the unpaid care work
 aK-a/-1b+2d+3r+,1,,the unpaid care work valued at an hourly minimum wage
 aK-a/-2d+3l+3p+,1,,"11 trillion USD at the purchasing power parity of 2011, at the ECB 2023 average of 1.0813 USD per EUR"
+/AK-/A9-2Y+4D+e1+,1,,the income of the ESTV average household
+/AK-/AA-/A5-2Y+4O+eF+,1,,"the cost per household and year the FDP cites from the BAK study, including the direct VAT"
 aL-aC-1b+2d+3r+,1,,the average size of the shadow economy of 158 countries
 aL-aC-1b+2Y+3r+,1,,the smallest shadow economy of the 158 countries
 aL-aC-1b+3r+Rn+,1,,the largest shadow economy of the 158 countries
 aM-1b+3r+5O+K6+,1,,the nominal GDP of 2013 (forecast) rises from 42.4 to 80.2 trillion naira by the rebasing from 1990 to 2010
 aM-1b+3r+NY+Rm+,1,,some 60 percent by the rebasing of November 2010; the NBS presentation of Nigeria lists 62.8 percent for Ghana
-/AM-/AF-/A5-e1+,1,,the ESTV estimate for the average household
+/AM-/AH-1b+2Y+e0+eH+,1,,"the fund at the end of 2035 with the VAT increase, just under 70 percent"
+/AM-/AI-1a+2Y+6f+9p+dy+e0+,1,,"the BSV figure with 0.4 points of VAT from 2028, the check of the deficit yes formula"
+/AM-/AI-1a+2Y+6f+dy+e0+eH+,1,,about 3 instead of 5 billion CHF with the VAT increase
 aN-1a+3p+Eg+Fr+,1,,32 billion USD of gross external damages at the ECB 2023 average of 1.0813 USD per EUR
-/AN-/AF-1b+4N+4Q+,1,,the BAK study for the FDP sees about 90 CHF per household and year of lost output after ten years
-/AN-/AF-/A6-4N+,1,,the indirect economic cost per household and year; 0 counts only the direct VAT
+/An-/A5-1b+2Y+eD+eY+,1,,the share that finds the VAT fair because all generations contribute
 aN-aG-Zy-0n-1b+Fr+,1,,the gross external damages are 5.6 times the value added under the high assumptions of the social cost of carbon and the health impacts
 aN-aG-Zy-0o-1b+Fr+,1,,the gross external damages are 0.8 times the value added under the low assumptions of the social cost of carbon and the health impacts
+/AN-/AH-1b+2Y+e0+eH+,1,,"the fund at the end of 2035 without extra financing as a share of a year's expenditure, about 50 percent"
 aN-Zy-1b+Eg+Fr+,1,,the ratio of the gross external damages to the value added
 aO-a9-J7-3p+3q+,1,,"the median compensation of 3'648 USD to go without digital maps for a year, at the ECB 2023 average of 1.0813 USD per EUR"
 aO-J7-3p+3q+C.+,1,,"the median compensation of 8'414 USD to lose access to email for a year, at the ECB 2023 average of 1.0813 USD per EUR"
@@ -308,42 +306,42 @@ Ap-0f-I+2e+AW+Ar+As+,1,,initial delay in seconds for the first connection retry
 aP-aB-CD-2d+3p+CH+,1,,"the GDP per capita of around 7000 USD beyond which the GPI per capita does not increase, at the ECB 2023 average of 1.0813 USD per EUR; the global GPI per capita peaked in 1978"
 Aq-0f-I+2e+Aj+As+,1,,an open job that has waited longer than this number of seconds is shown as critical on the admin dashboard
 Aq-0f-I+2e+AW+Ar+As+,1,,the give up time for database connection retries
-/AU-/AH-1b+2Y+4N+,1,,the share of the normal-rate consumption of Switzerland that pensioner households make
-/AU-/AH-1b+2Y+4N+4Q+,1,,"the ESTV gives the burden per pensioner household, not the share of all consumption"
+/AQ-/AJ-/A9-e1+,1,,the ESTV estimate for the average household
+/AR-/AJ-1b+4N+4Q+,1,,the BAK study for the FDP sees about 90 CHF per household and year of lost output after ten years
+/AR-/AJ-/AA-4N+,1,,the indirect economic cost per household and year; 0 counts only the direct VAT
 Av-0f-I+2V+2e+AM+B.+B9+C2+,1,,if false no session is written to the user log for a user without login (an ip user)
 Av-Ao-0f-I+2V+2e+AM+Bz+,1,,if false a user without login (an ip user) cannot change any data in the database; if true an ip user can change data up to the max change daily limit of the ip user
 Av-Au-0f-2e+2g+6.+AO+B.+,1,,maximal number of changes that an user without login can do per day
-/Aw-1a+2Y+4O+6f+9p+,1,,the cost in the model year 2030
-/Aw-1a+2Y+4O+6f+9t+,1,,the cost of the first payment in December 2026
-/Aw-1b+2Y+3t+Jc+PX+,1,,the share of yes votes for the initiative for a 13th AHV pension on 3 March 2024
-/Aw-2E+2Y+3t+Do+Jc+,1,,"the cantons that accepted the initiative, of 26"
-/Ax-1b+4N+4Q+eQ+,1,,"the 2024 increase was passed on almost fully, retailers under price pressure may absorb part"
-/Ax-1b+4N+eQ+,1,,the seventh input of the page: the ESTV assumes that firms pass the increase on in full
-/Ax-/AJ-wD-4N+AX+,1,,the years after 2028 without a replacement financing if the decree is rejected
-/Ax-/AP-1b+4N+,1,,the share of a payroll contribution that the employee bears in the end
-/Ax-/AP-1b+4N+4Q+,1,,"formally half, the shifting of the employer's half to wages is a matter of years"
-/Ax-/AS-4d+eU+,1,,"1 if the replacement financing of the no path is in force in 2030, 0 if not: with the start year 2028 plus a delay of 4 years the replacement starts in 2032, so 0; the comparison needs a condition that the formulas do not have, so the flag is stored as a modelled value"
 Ax-Aw-0f-I+M+2e+AR+,1,,the average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block
-/Ax-/AW-/A6-4N+,1,,below this cost difference the cost argument is called undecided
-/AY-/A1-2Y+Do+bm+e/+,1,,the final vote of 19 June 2026
-/Az-/Ax-/A7-1a+4N+,1,,"the revenue of one point of payroll contributions as the page uses it, rounded from the 2025 figures"
+/AY-/AL-1b+2Y+4N+,1,,the share of the normal-rate consumption of Switzerland that pensioner households make
+/AY-/AL-1b+2Y+4N+4Q+,1,,"the ESTV gives the burden per pensioner household, not the share of all consumption"
 B0-0f-/X+2e+2g+Ad+B.+,1,,"maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the last 10 years"
-/B0-/Ax-1b+4N+,1,,the fifth input of the page: the share of the extra VAT revenue that federal savings replace on the no path
 B.-0f-I+/d+2e+,1,,the number of futures years automatically created by the system
 B/-0f-/X+2e+2g+Ad+B.+,1,,minimum number of same time type word to display in a table e.g. if at least 3 years exist use a table to display
 B1-0f-/X+2e+2g+Ad+B.+,1,,the default number of future outlook e.g. if there are 10 years of hist and 3 years of outlook display 8 years of hist and 2 years outlook
-/B1-/Ax-1b+4N+,1,,"the sixth input of the page: a franc missing in the fund counts in full, because the next reform has to raise it"
-/B1-/Ax-1b+4N+4Q+,1,,whether and when the gap is closed depends on the reform AHV 2030
+/B.-1a+2Y+4O+6f+9p+,1,,the cost in the model year 2030
+/B.-1a+2Y+4O+6f+9t+,1,,the cost of the first payment in December 2026
+/B.-1b+2Y+3t+Jc+PX+,1,,the share of yes votes for the initiative for a 13th AHV pension on 3 March 2024
+/B/-1b+4N+4Q+eQ+,1,,"the 2024 increase was passed on almost fully, retailers under price pressure may absorb part"
+/B/-1b+4N+eQ+,1,,the seventh input of the page: the ESTV assumes that firms pass the increase on in full
+/B1-/B/-/AB-1a+4N+,1,,"the revenue of one point of payroll contributions as the page uses it, rounded from the 2025 figures"
+/B2-/AA-1a+2Y+9q+,1,,"from 2029, the figure of the BSV"
+/B2-/AA-1a+2Y+9r+,1,,the first year of the increase
 B2-At-As-0f-I+2e+AW+,1,,maximal number of phrases that can be included in the table name for a separate value table e.g. if the system detects that a separate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names
+/B.-2E+2Y+3t+Do+Jc+,1,,"the cantons that accepted the initiative, of 26"
+/B3-/B/-1b+4N+,1,,the fourth input of the page: the share of the extra VAT revenue that payroll contributions replace on the no path
+/B3-/B/-1b+4N+4Q+,1,,"the Council of States wanted a mix, the National Council none; the shape of a no is open"
+/B4-/B/-1b+4N+,1,,the fifth input of the page: the share of the extra VAT revenue that federal savings replace on the no path
 B5-0f-I+2e+AM+AQ+AT+AW+,1,,if false the frontend part of the user configuration is not cached in the database (db_cache type user_ui_config)
-/B5-/AZ-VI-2Y+9u+,1,,the payroll contribution increase the Council of States wanted next to 0.4 points of VAT
+/B5-/B/-1b+4N+,1,,"the sixth input of the page: a franc missing in the fund counts in full, because the next reform has to raise it"
+/B5-/B/-1b+4N+4Q+,1,,whether and when the gap is closed depends on the reform AHV 2030
 b6-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the data collection and the staff of about 190 statistical offices for the asset accounts
-/B6-/AF-/A5-4N+,1,,"the first input of the page: the spending of the ESTV average household at the normal rate, derived from its 15 CHF a month of extra VAT: 15 times 108.1 divided by 0.4 divided by 12 equals about 4'050"
 b6-Gq-1b+4N+,1,,"the share of the loss of GDP mismeasurement that the solution avoids if it is fully in place: the biggest share, because the depletion of the natural capital is the largest item that the GDP counts as income instead of as a loss of wealth"
 B7-0f-I+2e+AQ+AW+Am+B7+BB+,1,,if the total size of the cached html pages reaches this limit the oldest pages are removed
 B7-0f-I+2e+AW+B7+B8+B9+BB+,1,,if this storage size limit is reached a warning message to the admin user is created to remove the old log
 b7-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the mapping of the ecosystems, mostly with existing earth observation data"
 b7-Gq-1b+4N+,1,,"the share of the loss of GDP mismeasurement that the solution avoids if it is fully in place: a medium share, because the services of the ecosystems such as pollination and flood protection are free and so missing in the GDP"
+/B9-/Ad-VI-2Y+9u+,1,,the payroll contribution increase the Council of States wanted next to 0.4 points of VAT
 Ba-0f-2e+2g+5o+Ad+B.+Da+,1,,seconds after the user should see a screen update e.g. during long calculations every 2 sec the user should seen the screen updated
 Ba-0f-2e+2g+9o+Ad+B.+Da+,1,,the maximal time in seconds after the last screen update to indicate that the program is still running
 Ba-0f-2e+2g+Ad+Ak+B.+Da+,1,,the minimal time in seconds between a screen updates to avoid flickering e.g. during long calculations every 2 sec the user should seen the screen updated
@@ -352,23 +350,20 @@ Ba-0f-2e+2g+Ad+B.+Bx+Da+,1,,"if the creation of an api message takes more second
 Ba-0f-2e+2g+Ad+B.+Da+Db+,1,,if a user response takes more seconds a log of the single execution steps is written to the system time log
 Ba-0f-I+/a+2V+2e+4M+CC+CL+,1,,the admin dashboard shows the slow requests of the system times of this number of last days
 bA-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the regular choice experiments with a large sample of users in every country
-/BA-1Z+2Y+9p+,1,,"the private households of Switzerland around 2030, between the 4.0 million of 2025 and the 4.5 million of 2035"
-/B.-/A6-1a+2Y+9q+,1,,"from 2029, the figure of the BSV"
-/B.-/A6-1a+2Y+9r+,1,,the first year of the increase
+/B/-/Aa-/AA-4N+,1,,below this cost difference the cost argument is called undecided
+/BA-/AJ-/A9-4N+,1,,"the first input of the page: the spending of the ESTV average household at the normal rate, derived from its 15 CHF a month of extra VAT: 15 times 108.1 divided by 0.4 divided by 12 equals about 4'050"
 bA-Gq-1b+4N+,1,,"the share of the loss of GDP mismeasurement that the solution avoids if it is fully in place: a medium share, because one single free service alone adds 0.05 to 0.11 percentage points of growth per year (Brynjolfsson et al. 2019)"
-/B/-/Ax-1b+4N+,1,,the fourth input of the page: the share of the extra VAT revenue that payroll contributions replace on the no path
-/B/-/Ax-1b+4N+4Q+,1,,"the Council of States wanted a mix, the National Council none; the shape of a no is open"
+/B/-/AN-wE-4N+AX+,1,,the years after 2028 without a replacement financing if the decree is rejected
+/B/-/AT-1b+4N+,1,,the share of a payroll contribution that the employee bears in the end
+/B/-/AT-1b+4N+4Q+,1,,"formally half, the shifting of the employer's half to wages is a matter of years"
+/B/-/AW-4d+eU+,1,,"1 if the replacement financing of the no path is in force in 2030, 0 if not: with the start year 2028 plus a delay of 4 years the replacement starts in 2032, so 0; the comparison needs a condition that the formulas do not have, so the flag is stored as a modelled value"
 Bb-0f-08+2e+2g+B.+CW+CX+,1,,wrong prediction are scaled with this factor e.g. 2 to force users to make only few but good predictions
 Bb-0f-08+2e+2g+B.+CY+CZ+,1,,wrong values or formulas are scaled with this factor e.g. 2 to force users to make only few but good contributions
 bB-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: small, because online surveys are cheap"
-/BB-/AF-1b+4N+4Q+,1,,a cut of subsidies or a higher federal tax hits households very differently
-/BB-/Ay-/AF-4N+,1,,"an equal split of one billion CHF of federal savings over 4.1 million households, rounded"
 bB-Gq-1b+4N+,1,,"the share of the loss of GDP mismeasurement that the solution avoids if it is fully in place: a medium share, because the median user would give up a search engine only for thousands of USD per year (Brynjolfsson, Collis & Eggers 2019)"
 Bc-0f-2e+2g+Ad+B.+,1,,"if true the html frontend may add javascript to a page; false for pure html pages, which work in every browser and are tested by their html snapshot"
 bc-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: small, because the account mainly combines existing time use data and wage statistics"
 bC-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the extension of the existing labour force surveys
-/BC-/Aw-/A6-2Y+4i+,1,,"the maximum 13th pension of a single pensioner, one monthly maximum pension"
-/BC-/Aw-/A6-2Y+eP+,1,,"the maximum 13th pension of a couple, one monthly maximum couple pension"
 BC-B3-0f-I+2e+5W+AW+Ag+,1,,the estimated MB per second that can be processed when importing a json; measured 0.02 to 0.03 for the solution priority import files
 BC-B3-0f-I+2e+AW+Ag+BE+,1,,the estimated MB per second for decoding the import json file
 BC-B4-B3-0f-I+2e+AW+Ag+,1,,the estimated MB per second for pure reading the import file
@@ -424,13 +419,18 @@ Be-0f-2e+2g+5o+Ad+B.+Cg+,1,,starting number of selection items show to the user 
 BE-0f-I+2e+AW+Ag+,1,,the number of errors that the message of a failed import names; the other errors are counted as '... and n more'
 be-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the new business and household surveys of the countries with an outdated base year
 bE-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the change of the compilation systems of all national accounts
+/BE-1Z+2Y+9p+,1,,"the private households of Switzerland around 2030, between the 4.0 million of 2025 and the 4.5 million of 2035"
 be-Gq-1b+4N+,1,,"the share of the loss of GDP mismeasurement that the solution avoids if it is fully in place: a small share, because a late rebasing can change the GDP level by more than half (World Bank 2012) but mostly in a few countries"
 bE-Gq-1b+4N+,1,,"the share of the loss of GDP mismeasurement that the solution avoids if it is fully in place: a medium share, because the new standard closes some gaps, but keeps the market production as the core"
 Bf-0f-2e+2g+5o+Ad+B.+Cg+,1,,list of items that is show if the user presses e.g. 3 time more 5 items are shown
 bf-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: very small, because it is calculated from existing data"
+/BF-/AJ-1b+4N+4Q+,1,,a cut of subsidies or a higher federal tax hits households very differently
+/BF-/B0-/AJ-4N+,1,,"an equal split of one billion CHF of federal savings over 4.1 million households, rounded"
 bf-Gq-1b+4N+,1,,"the share of the loss of GDP mismeasurement that the solution avoids if it is fully in place: a medium share, because it shows when a growth eats the wealth, but it is only one number"
 Bg-0f-2e+2g+5o+Ad+B.+Cg+,1,,if a user is offline for these number of days the number of selection items is decrease by one step to make the reentry easier
 bg-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the wealth accounts build on the natural capital accounts and add the human capital, as the World Bank already does for 146 countries (World Bank 2021)"
+/BG-/B.-/AA-2Y+4i+,1,,"the maximum 13th pension of a single pensioner, one monthly maximum pension"
+/BG-/B.-/AA-2Y+eP+,1,,"the maximum 13th pension of a couple, one monthly maximum couple pension"
 BG-BF-B2-0f-I+2e+AW+,1,,the minimal number of values before considering a separate table where the table name includes the source id so that the table can be a pure key value tables
 bg-Gq-1b+4N+,1,,"the share of the loss of GDP mismeasurement that the solution avoids if it is fully in place: a large share, because it is the measure of sustainability that the Dasgupta Review recommends instead of the GDP (Dasgupta 2021)"
 Bh-0f-2e+2g+Ad+B.+B5+B7+,1,,number of object names that should at least be shown
@@ -497,75 +497,75 @@ Bv-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,the text of the live page in the dark mode
 Bv-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,"the text of the live page of the calculator editor, which looks like the page in the light mode"
 Bw-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,the label e.g. of a field of the live page in the dark mode
 Bw-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,the label e.g. of a field or a link of the live page
-/Bw-1a+2Y+6f+9p+e/+,1,,over 900 million CHF the Confederation pays of the 13th pension in 2030
 Bx-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,the grey text of the live page in the dark mode
 Bx-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,the grey text e.g. of a header or a hint of the live page
 BX-0f-I+2V+2e+B.+C2+,1,,the max number of years that a personal user account is expected to be active
 bX-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the models and the training, because the images are already available"
-/Bx-/Ax-/A5-4N+aA+,1,,the normal-rate spending of this row of the grid
 bX-Gq-1b+4N+,1,,"the share of the loss of GDP mismeasurement that the solution avoids if it is fully in place: a small share, because it fills the data gaps of the informal production and the forests, but only roughly"
 By-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,the background of a panel of the live page in the dark mode
 By-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,the background of a panel of the live page
 BY-0f-I+/c+2V+2e+Bu+C2+,1,,the number of month that the admin user has time to confirm an api account
-/By-/Ax-/A5-4N+aA+,1,,the normal-rate spending of this row of the grid
 Bz-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,the lines of a panel of the live page in the dark mode
 Bz-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,the lines e.g. of a panel of the live page
-/Bz-/Ax-/A5-4N+aA+,1,,the normal-rate spending of this row of the grid
 BZ-BY-0f-I+/c+2V+2e+C2+,1,,the number of month after that an api user should to be confirmed by an admin user
 C0-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,the background of a section row of the live page in the dark mode
 C0-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,the background of a section row of the live page
-/C0-/Ax-1b+4N+aA+,1,,the payroll share of this column of the grid
-/C0-/Bx-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
-/C0-/Bx-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C0-/By-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
-/C0-/By-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C0-/Bz-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
-/C0-/Bz-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C0-/C.-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
-/C0-/C/-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT dearer"
-/C0-/C.-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C0-/C/-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C0-/B/-/A9-4N+aA+,1,,the normal-rate spending of this row of the grid
 C.-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,the background of an input of the live page in the dark mode
 C/-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,the lines between the rows of a table of the live page in the dark mode
 C.-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,the background of an input of the live page
 C/-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,the lines between the rows of a table of the live page
 C1-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,an assumed value of the live page in the dark mode
 C1-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,an assumed value of the live page
-/C1-/Ax-1b+4N+aA+,1,,the payroll share of this column of the grid
-/C1-/Bx-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
-/C1-/Bx-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C1-/By-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
-/C1-/By-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C1-/Bz-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
-/C1-/Bz-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C1-/C.-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; within the threshold"
-/C1-/C/-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT dearer"
-/C1-/C.-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C1-/C/-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C.-1a+2Y+6f+9p+e/+,1,,over 900 million CHF the Confederation pays of the 13th pension in 2030
+/C1-/B/-/A9-4N+aA+,1,,the normal-rate spending of this row of the grid
 C2-0f-2e+2g+Ad+B.+Cs+D0+DI+DJ+,1,,a negative number of the live page in the dark mode
 C2-0f-2e+2g+Ad+B.+Cs+D0+DJ+,1,,a negative number of the live page
-/C2-/Ax-1b+4N+aA+,1,,the payroll share of this column of the grid
-/C2-/Bx-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
-/C2-/Bx-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C2-/By-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
-/C2-/By-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C2-/Bz-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; within the threshold"
-/C2-/Bz-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C2-/C.-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; within the threshold"
-/C2-/C/-/Ax-/A6-z5-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT dearer"
-/C2-/C.-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
-/C2-/C/-/Ax-/AM-/A6-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C2-/B/-/A9-4N+aA+,1,,the normal-rate spending of this row of the grid
 C3-B6-0f-2e+2g+Ad+B.+,1,,number of change rows to show in the changes tab
+/C3-/B/-/A9-4N+aA+,1,,the normal-rate spending of this row of the grid
+/C4-/B/-1b+4N+aA+,1,,the payroll share of this column of the grid
 C4-B6-0f-2e+2g+Ad+B.+,1,,the maximum number of change rows shown in the change log table pure
+/C4-/C0-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
+/C4-/C0-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C4-/C1-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
+/C4-/C1-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C4-/C2-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
+/C4-/C2-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C4-/C3-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT dearer"
+/C4-/C3-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C4-/C/-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
+/C4-/C/-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C5-/B/-1b+4N+aA+,1,,the payroll share of this column of the grid
+/C5-/C0-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
+/C5-/C0-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C5-/C1-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
+/C5-/C1-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C5-/C2-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; within the threshold"
+/C5-/C2-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C5-/C3-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT dearer"
+/C5-/C3-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
 C5-C4-0f-2e+2g+Ad+B.+,1,,the maximum number of characters shown per entry in the what column of the change log table pure
+/C5-/C/-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
+/C5-/C/-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
 C6-0f-2e+2g+2h+2i+Ad+B.+,1,,"the number of digits for views, values or results that need more precision"
 C6-0f-2e+2g+2h+2j+Ad+B.+,1,,"the number of digits for views, values or results that are used only as an indication"
 C6-0f-2e+2g+2h+Ad+B.+,1,,the number of digits shown of a number by default
 C6-0l-0f-2e+2g+2h+Ad+B.+,1,,"the number of digits for views, values or results that need even more precision"
 C6-0m-0f-2e+2g+2h+Ad+B.+,1,,"the number of digits for views, values or results that are used just as a rough indication"
+/C6-/B/-1b+4N+aA+,1,,the payroll share of this column of the grid
+/C6-/C0-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
+/C6-/C0-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C6-/C1-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; within the threshold"
+/C6-/C1-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C6-/C2-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; within the threshold"
+/C6-/C2-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C6-/C3-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT dearer"
+/C6-/C3-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
+/C6-/C/-/B/-/AA-z6-4d+aA+,1,,"the cost difference of the cell: the extra VAT of the row minus the no cost with the payroll share of the column, the federal share of 25 % (cut to the remainder in the 100 % column) and the rest unfunded; VAT cheaper"
+/C6-/C/-/B/-/AQ-/AA-4d+aA+,1,,the extra VAT of the cell by the extra VAT formula with the spending of the row
 C7-C6-0f-2e+2g+Ad+B.+,1,,the default number of decimal places of a percent value
 c8-1b+2d+3q+3r+,1,,poor health reduces the global GDP by 15 percent each year
-/C8-/AF-/A6-4N+,1,,the household of the page is a working household without a 13th pension
 c8-c5-c0-2d+3l+3p+,1,,16.3 trillion USD of 2010 at the ECB 2023 average of 1.0813 USD per EUR; part of the loss of the non-communicable diseases
 c8-c5-c/-1b+2d+3q+3r+,1,,the cumulative output loss divided by the 20 years is about 5 percent of the global GDP of 2010
 c8-c5-c/-2d+3l+3p+,1,,"cumulative output loss of the cardiovascular diseases, the chronic respiratory diseases, the cancers, diabetes and the mental disorders; 46.7 trillion USD of 2010 at the ECB 2023 average of 1.0813 USD per EUR"
@@ -580,13 +580,13 @@ cA-c0-1b+3r+5N+5Q+,1,,146'536 million EUR
 cA-c0-1b+3r+5Q+Gk+,1,,the 28 EU countries
 cA-c0-1b+3r+5Q+LL+,1,,106'024 million EUR
 cA-c0-1b+3r+5Q+ST+,1,,81'345 million EUR
-/C.-/Ax-/A5-4N+aA+,1,,the normal-rate spending of this row of the grid
-/C/-/Ax-/A5-4N+aA+,1,,the normal-rate spending of this row of the grid
 cB-/a+1Z+3t+5N+,1,,"days of incapacity for work certified by a doctor, 20.8 days per employee"
+/C/-/B/-/A9-4N+aA+,1,,the normal-rate spending of this row of the grid
 cB-c1-1a+3p+3t+5N+,1,,valued with the labour cost
 cB-c1-c0-1a+3p+3t+5N+,1,,mental and behavioural disorders (ICD-10 F00-F99)
 cC-1a+2d+3p+3q+SN+SO+,1,,1 trillion USD per year in lost productivity at the ECB 2023 average of 1.0813 USD per EUR
 cC-/a+1a+2d+3q+SN+SO+,1,,working days lost every year to depression and anxiety
+/CC-/AJ-/AA-4N+,1,,the household of the page is a working household without a 13th pension
 cC-c2-1a+3p+3t+5N+,1,,the lost gross value added of the days of incapacity for work
 cC-c2-1b+3t+5N+Ra+,1,,the lost gross value added of the days of incapacity for work
 cD-05+1a+2T+2d+,1,,people with catastrophic or impoverishing out-of-pocket health spending or both
@@ -780,42 +780,42 @@ fY-N4-0n-1b+3q+CY+Gk+,1,,"the additional GDP per year if the open-source contrib
 fY-N4-0o-1b+3q+CY+Gk+,1,,"the additional GDP per year if the open-source contributions increase by 10 percent; a benefit of open-source software, not a cost of proprietary software"
 ga-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the calculation methods and the training
 ga-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because the hidden later costs become visible at the time of the decision"
-/Gb-1b+1u+9t+fU+gF+,1,,the discount of the price to the fair value of the discounted cash flow model of Simply Wall St
-/Gb-1e+9u+fy+,1,,the price-earnings ratio on the 2025 earnings as shown by finanzen.ch
-/Gb-1u+5w+6f+9t+fY+,1,,"the closing price on SIX of 28 October 2026, the first input of the page"
-/Gb-3t+6f+IK+,1,,the dividend per share paid for 2024
-/Gb-6f+9u+IK+,1,,the dividend per share paid for 2025
 gd-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of fixing the build tools and running the verification servers
 gd-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a very small share, because it adds verifiability to software that is already open"
 ge-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the tools and the processes at the vendors
 ge-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a very small share, because it shows what is inside, but not how it works"
+/Gf-1b+1u+9t+fU+gF+,1,,the discount of the price to the fair value of the discounted cash flow model of Simply Wall St
+/Gf-1e+9u+fy+,1,,the price-earnings ratio on the 2025 earnings as shown by finanzen.ch
 gf-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the regulation and its market surveillance
+/Gf-1u+5w+6f+9t+fY+,1,,"the closing price on SIX of 28 October 2026, the first input of the page"
+/Gf-3t+6f+IK+,1,,the dividend per share paid for 2024
+/Gf-6f+9u+IK+,1,,the dividend per share paid for 2025
 gf-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a medium-small share, because it avoids the forced replacement of hardware that still works"
 gg-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of the laws, the spare part rules and the unlocked boot loaders"
-/Gg-6R+8s+9u+fZ+,1,,basic earnings per share of the full year 2025
 gg-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because it extends the life of the hardware against the planned obsolescence"
 gh-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the regulation and of the migration interfaces at the providers
-/Gh-6R+8s+9t+fZ+,1,,basic earnings per share of the first nine months of 2026
-/Gh-6R+8s+9u+fZ+,1,,basic earnings per share of the first nine months of 2025
 gh-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a medium-small share, because the lock-in moves from the licence to the cloud subscription"
-/Gi-1a+31+6R+8s+9t+g4+,1,,the non-cash unrealised loss of the deal-contingent FX hedge for the Rotork acquisition
-/Gi-1a+6R+8s+9t+g0+,1,,"record orders of Q3 2026, up 40 %"
-/Gi-1a+6R+8s+9t+JV+,1,,"revenues of Q3 2026, up 14 %"
-/Gi-1e+8s+9t+g3+,1,,orders divided by revenues in Q3 2026
 gi-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of stronger competition authorities with software expertise
-/Gi-6R+8s+9t+fZ+,1,,"basic EPS of Q3 2026, down 2 %"
 gi-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a medium-small share, because it limits the monopoly prices of the dominant vendors"
-/Gj-1a+6R+8s+9t+fr+,1,,"the free cash flow the CFO expects for 2026, 'near 5 billion', the fourth input of the page"
 gj-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the legal procedures
-/Gj-/Gh-1a+6R+8s+9t+,1,,up 22 %
 gj-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because the customer pays only for the parts he uses and can replace the others"
 gk-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of a publication register
+/Gk-6R+8s+9u+fZ+,1,,basic earnings per share of the full year 2025
 gk-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because published prices weaken the secret discounts that keep the customers apart"
 gl-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the platforms and the first rewards
+/Gl-6R+8s+9t+fZ+,1,,basic earnings per share of the first nine months of 2026
+/Gl-6R+8s+9u+fZ+,1,,basic earnings per share of the first nine months of 2025
 gl-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a very small share, because it only reduces the security incidents"
+/Gm-1a+31+6R+8s+9t+g4+,1,,the non-cash unrealised loss of the deal-contingent FX hedge for the Rotork acquisition
+/Gm-1a+6R+8s+9t+g0+,1,,"record orders of Q3 2026, up 40 %"
+/Gm-1a+6R+8s+9t+JV+,1,,"revenues of Q3 2026, up 14 %"
+/Gm-1e+8s+9t+g3+,1,,orders divided by revenues in Q3 2026
 gm-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: a few days of training for the millions of public employees who work at a computer
+/Gm-6R+8s+9t+fZ+,1,,"basic EPS of Q3 2026, down 2 %"
 gm-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a medium-small share, because the trained staff is a big part of the switching cost"
+/Gn-1a+6R+8s+9t+fr+,1,,"the free cash flow the CFO expects for 2026, 'near 5 billion', the fourth input of the page"
 gn-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of hiring and building up teams in the national governments
+/Gn-/Gl-1a+6R+8s+9t+,1,,up 22 %
 gn-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a medium-small share, because the administration keeps the know-how and the control over its core systems"
 Go-0n-1a+3P+3S+3k+,1,,"the centre times 1.5, the range factor of a structural number"
 Go-0n-1a+3Q+3R+3k+,1,,"the centre times 1.5, the range factor of a structural number"
@@ -944,10 +944,8 @@ gq-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of data c
 gQ-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of the standard catalogues, the conformance tests and the conversion of the existing documents"
 gq-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a medium-small share, because it avoids the new lock-in into the hyperscaler subscriptions"
 gQ-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a big share, because open formats and protocols make the data independent of the vendor and so cut the base of every lock-in"
-/Gr-1a+1t+6R+8s+9t+,1,,"the net debt at 30 September 2026, excluding net pension assets of 619 million USD"
 gr-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of adding and documenting the interfaces of the old systems
 gr-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because it allows the step by step replacement of single parts"
-/Gs-1a+1t+8s+9t+,1,,"1'808 million shares outstanding at 30 September 2026, 1'823'154'373 issued including treasury shares"
 gs-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the assessment guidelines and the governance bodies
 gS-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of drafting model clauses and training the procurement lawyers
 gs-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because it stops new closed systems at the decision"
@@ -956,16 +954,18 @@ gt-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the ce
 gT-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of export interfaces and of the legal rules
 gt-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a very small share, because it removes the argument that only the vendor guarantees the security"
 gT-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a medium-small share, because the data is the biggest part of the switching cost"
-/Gu-1a+4N+6R+8s+9t+,1,,6.0 billion USD over nine months plus a Q4 slightly below Q3's 2.0 billion plus the 240 million CHF property gain; 6.3 billion in 2025
-/Gu-1b+4N+4Q+8s+9t+,1,,"three quarters are reported, only the fourth is an estimate"
 gU-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of changing the procurement law and guidelines
 Gu-1j-1h-4N+,1,,"coal still supplies about a third of global electricity; the phase-out is the single largest hardware lever and overlaps with solar and wind, which replace it"
 gU-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: the biggest share of the compared solutions, because it shifts every new purchase away from the licence model"
+/Gv-1a+1t+6R+8s+9t+,1,,"the net debt at 30 September 2026, excluding net pension assets of 619 million USD"
 Gv-1j-1h-4N+,1,,"oil and gas leak repair, coal mine methane, landfill gas and manure management; the fastest lever on near-term warming"
+/Gw-1a+1t+8s+9t+,1,,"1'808 million shares outstanding at 30 September 2026, 1'823'154'373 issued including treasury shares"
 gw-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of converting the templates and adapting the document workflows
 gw-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because it frees the office documents, but not the other applications"
 gx-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the German fund started with 3.5 million EUR per year and grew to 17 million EUR (Open Source Observatory 2025), so a few hundred million for the funds of all countries"
 gx-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because it makes the open alternatives reliable with a return of the open-source investment above four to one (Blind et al. 2021), but does not replace a single licence on its own"
+/Gy-1a+4N+6R+8s+9t+,1,,6.0 billion USD over nine months plus a Q4 slightly below Q3's 2.0 billion plus the 240 million CHF property gain; 6.3 billion in 2025
+/Gy-1b+4N+4Q+8s+9t+,1,,"three quarters are reported, only the fourth is an estimate"
 gy-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of a small team in each national and regional government
 gY-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of catalogues, documentation and adapting the shared software to local needs"
 gy-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because it lowers the barrier of the missing know-how in the administrations"
@@ -976,9 +976,18 @@ gz-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution
 gZ-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a medium-small share, because a single big buyer can resist the price increases that a small one must accept"
 h.-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the trustees and the contract clauses
 h/-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of building audit teams and secure inspection labs
-/H3-/H/-/Gb-1u+6f+9t+,1,,"the average of the nine analyst targets, the eighth input of the page; the median is 80 CHF"
+/H3-/Gf-4Y+6f+9s+,1,,the one-year target estimate shown by Yahoo Finance
+/H3-/Gf-6f+9t+fL+,1,,"Neutral, 13 October 2026"
+/H3-/Gf-6f+9t+fM+,1,,"Sector Perform, 9 October 2026"
+/H3-/Gf-6f+9t+fN+,1,,"Hold, 22 October 2026"
+/H3-/Gf-6f+9t+fO+,1,,"Market-Perform, 21 October 2026"
+/H3-/Gf-6f+9t+fP+,1,,"Neutral, 9 July 2026"
+/H3-/Gf-6f+9t+fQ+,1,,"Hold, 21 October 2026"
+/H3-/Gf-6f+9t+fR+,1,,"Equal Weight, 29 June 2026"
+/H3-/Gf-6f+9t+fS+,1,,"Neutral, 8 July 2026"
+/H3-/Gf-6f+9t+fT+,1,,"Hold, 7 May 2026"
 H7-1j-1h-4N+,1,,cap-and-trade; the potential is a share of the IMF full price reform effect and competes with the carbon tax
-/H7-/Gb-1a+1u+6f+9t+,1,,the market capitalisation shown by finanzen.ch on 28 October 2026; 72.88 CHF times 1.808 billion shares gives 131.8
+/H7-/H3-/Gf-1u+6f+9t+,1,,"the average of the nine analyst targets, the eighth input of the page; the median is 80 CHF"
 ha-1b+2d+3q+,1,,"0.5 percentage points less growth per year, from 5 to 4.5 percent, for an increase of the net Gini from 37 to 42 in the cross-country panel"
 ha-1b+3r+KW+PW+,1,,"the cumulated loss of the GDP after 25 years of 0.35 percentage point less growth per year caused by a rise of the income inequality by 3 Gini points, the average increase in the OECD over the past two decades"
 ha-hO-CD-0n-1b+Fr+,1,,between 6 and 7 percentage points of the cumulative growth of the GDP per capita lost by the rise of the income inequality 1985-2005
@@ -987,67 +996,55 @@ ha-hO-CD-0o-1b+UV+,1,,more than 10 percentage points of the cumulative growth of
 ha-hO-CD-1b+LL+,1,,nearly 9 percentage points of the cumulative growth of the GDP per capita lost by the rise of the income inequality 1985-2005
 hB-1b+2d+3q+UN+,1,,"the average annual growth of the wealth of the global billionaires since 1995 net of inflation; context, not attributed as a cost by the source"
 hB-2d+3l+3p+3t+UN+,1,,"2 trillion USD at the ECB 2023 average of 1.0813 USD per EUR, to 15 trillion USD; an advocacy source, the amount as reported by Al Jazeera; context, not attributed as a cost by the source"
+/HB-/Gf-1a+1u+6f+9t+,1,,the market capitalisation shown by finanzen.ch on 28 October 2026; 72.88 CHF times 1.808 billion shares gives 131.8
 hb-hW-0n-1b+2d+UN+,1,,"the personal taxes of the global billionaires as share of their wealth, between 0 and 0.5 percent"
 hb-hW-0o-1b+2d+UN+,1,,"the personal taxes of the global billionaires as share of their wealth, between 0 and 0.5 percent"
 hb-hW-1b+Fr+UN+,1,,"the personal taxes of the billionaires as share of their wealth, closer to 0.5 percent in the United States"
-/HC-1a+1t+6R+8s+9t+,1,,"up 35 %, 37 % comparable"
 hC-1O-1J-3l+3p+4N+5H+,1,,"the potential loss of the wealth concentration is the capital misallocation and the lost demand, the growth that is lost (problem_wealth_concentration.json), so this reason causes the whole loss: 1.2722 percent of the world GDP of 110.047 trillion EUR"
 hc-hI-FJ+Fr+,1,,"the logit coefficient of the preferences of the economic elites on the policy change in the multivariate model of 1'779 policy issues, as reprinted by Bashir (2015)"
-/HD-/Gi-1b+8s+9t+,1,,down 0.6 points from 41.2 %
 hd-hZ-2W+PW+,1,,"the lower numeracy of the individuals with a low parental education background for a 6 points higher income inequality, the US-Canada difference in 2010; nearly 40 percent of the gap to the medium background"
 Hf-Gq-4N+If+,1,,"the largest reduction of all climate solutions, because a publicly calculated tariff extends the carbon price to the emissions of all imports and exports and thereby also to the countries without a carbon price of their own"
-/H/-/Gb-4Y+6f+9s+,1,,the one-year target estimate shown by Yahoo Finance
-/H/-/Gb-6f+9t+fL+,1,,"Neutral, 13 October 2026"
-/H/-/Gb-6f+9t+fM+,1,,"Sector Perform, 9 October 2026"
-/H/-/Gb-6f+9t+fN+,1,,"Hold, 22 October 2026"
-/H/-/Gb-6f+9t+fO+,1,,"Market-Perform, 21 October 2026"
-/H/-/Gb-6f+9t+fP+,1,,"Neutral, 9 July 2026"
-/H/-/Gb-6f+9t+fQ+,1,,"Hold, 21 October 2026"
-/H/-/Gb-6f+9t+fR+,1,,"Equal Weight, 29 June 2026"
-/H/-/Gb-6f+9t+fS+,1,,"Neutral, 8 July 2026"
-/H/-/Gb-6f+9t+fT+,1,,"Hold, 7 May 2026"
+/HG-1a+1t+6R+8s+9t+,1,,"up 35 %, 37 % comparable"
 h.-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a very small share, because it only helps in the rare case that the vendor drops the product"
 h/-Gq-1b+4N+,1,,"the share of the loss of proprietary software that the solution avoids if it is fully in place: a small share, because it addresses the missing verifiability and the security failures that only the vendor can see (CSRB 2024)"
-/HH-1a+6R+8s+9t+,1,,the programme launched on 9 February 2026 running until 27 January 2027
-/HH-/Gi-1a+6R+8s+9t+,1,,5'726'505 shares repurchased in Q3 2026
-/HI-1a+3t+6R+JV+,1,,about 7 % of the group revenue
-/HI-/Gt-1a+6R+fH+,1,,the price of the Robotics division
-/HJ-/HI-1a+6R+9t+,1,,"expected in Q4 2026, excluded from the guidance"
-/Hk-/Gk-wD-4N+,1,,the years of explicit cash flow growth before the terminal value
-/Hk-/Gl-1b+4N+,1,,"the perpetual growth after the explicit stage, the long-run nominal growth of the world economy"
-/Hk-/Gm-1b+4N+,1,,the perpetual growth of the dividend in the Gordon model; 0.82 to 0.94 CHF from 2021 to 2025 is about 3.5 % a year
-/Hk-/Gn-1b+4N+,1,,"the cost of equity, the sixth input of the page"
-/Hk-/Gn-1b+4N+4Q+,1,,"the risk-free rate of the Swiss franc is low, the equity premium of 5 to 6 % is a convention"
-/Hk-/Gp-wD-4N+,1,,the years over which the price is expected to reach the target; only used for the expected annual return
-/Hk-/Gq-/Gk-1e+4d+,1,,"the sum over the years t = 1 to 10 of ((1 + 0.08) / (1 + 0.08)) to the power of t: with a growth equal to the required return every year's cash flow has the present value of the first year's, so the factor is the number of years; needs a power, so stored as a modelled value"
-/Hk-/Gq-/Gl-1e+4d+,1,,"(1 + 0.08) to the power of 10 times (1 + 0.025) divided by (0.08 - 0.025), divided by (1 + 0.08) to the power of 10, so 1.025 / 0.055; the present value of the terminal value per CHF of first-year cash flow; needs a power, so stored as a modelled value"
-/Hk-/Gx-1b+4N+4Q+,1,,a quality industrial with 10 % growth trades between 18 and 26 times; the middle is a judgement
-/Hk-/Gx-1e+4N+,1,,"the price-earnings ratio the reader considers fair on the 2027 earnings, the third input of the page"
-/Hk-/H0-1b+4N+J0+,1,,the weight of the earnings multiple in the weighted target price
-/Hk-/H1-1b+4N+J0+,1,,the weight of the discounted cash flow in the weighted target price
-/Hk-/H2-1b+4N+J0+,1,,the weight of the dividend discount in the weighted target price
-/Hk-/H4-1b+4N+,1,,"the ninth input of the page: buy only above, sell only below this difference between target and price"
-/Hk-/HP-/H3-/H/-4N+6f+,1,,the UBS target
-/Hk-/HQ-/H3-/H/-4N+6f+,1,,the Jefferies target
+/HH-/Gm-1b+8s+9t+,1,,down 0.6 points from 41.2 %
+/HL-1a+6R+8s+9t+,1,,the programme launched on 9 February 2026 running until 27 January 2027
+/HL-/Gm-1a+6R+8s+9t+,1,,5'726'505 shares repurchased in Q3 2026
+/HM-1a+3t+6R+JV+,1,,about 7 % of the group revenue
+/HM-/Gx-1a+6R+fH+,1,,the price of the Robotics division
 hm-ha-1b+2d+,1,,"the expected length of a growth spell is about 7 percent shorter per Gini point of more inequality, i.e. a 6 percentage point higher risk that the spell ends the next year"
-/HO-/Gi-4Y+6R+8s+9t+,1,,the consensus the adjusted EPS missed by 12.6 %
-/HO-/Gi-6R+8s+9t+,1,,the adjusted EPS reported against the consensus
+/HN-/HM-1a+6R+9t+,1,,"expected in Q4 2026, excluded from the guidance"
+/Ho-/Go-wE-4N+,1,,the years of explicit cash flow growth before the terminal value
+/Ho-/Gp-1b+4N+,1,,"the perpetual growth after the explicit stage, the long-run nominal growth of the world economy"
+/Ho-/Gq-1b+4N+,1,,the perpetual growth of the dividend in the Gordon model; 0.82 to 0.94 CHF from 2021 to 2025 is about 3.5 % a year
+/Ho-/Gr-1b+4N+,1,,"the cost of equity, the sixth input of the page"
+/Ho-/Gr-1b+4N+4Q+,1,,"the risk-free rate of the Swiss franc is low, the equity premium of 5 to 6 % is a convention"
+/Ho-/Gt-wE-4N+,1,,the years over which the price is expected to reach the target; only used for the expected annual return
+/Ho-/Gu-/Go-1e+4d+,1,,"the sum over the years t = 1 to 10 of ((1 + 0.08) / (1 + 0.08)) to the power of t: with a growth equal to the required return every year's cash flow has the present value of the first year's, so the factor is the number of years; needs a power, so stored as a modelled value"
+/Ho-/Gu-/Gp-1e+4d+,1,,"(1 + 0.08) to the power of 10 times (1 + 0.025) divided by (0.08 - 0.025), divided by (1 + 0.08) to the power of 10, so 1.025 / 0.055; the present value of the terminal value per CHF of first-year cash flow; needs a power, so stored as a modelled value"
+/Ho-/H/-1b+4N+4Q+,1,,a quality industrial with 10 % growth trades between 18 and 26 times; the middle is a judgement
+/Ho-/H/-1e+4N+,1,,"the price-earnings ratio the reader considers fair on the 2027 earnings, the third input of the page"
+/Ho-/H4-1b+4N+J0+,1,,the weight of the earnings multiple in the weighted target price
+/Ho-/H5-1b+4N+J0+,1,,the weight of the discounted cash flow in the weighted target price
+/Ho-/H6-1b+4N+J0+,1,,the weight of the dividend discount in the weighted target price
+/Ho-/H8-1b+4N+,1,,"the ninth input of the page: buy only above, sell only below this difference between target and price"
+/Ho-/HT-/H7-/H3-4N+6f+,1,,the UBS target
+/Ho-/HU-/H7-/H3-4N+6f+,1,,the Jefferies target
 hP-hG-1b+2d+,1,,"the share of the global financial wealth of the households held in tax havens, three-quarters of it unrecorded"
 hP-hG-1b+2d+3r+6P+,1,,the offshore financial wealth of the households as share of the world GDP
 hP-hG-2d+3l+3p+6P+,1,,"12 trillion USD at the ECB 2023 average of 1.0813 USD per EUR; financial assets only, reported and unreported"
-/Hp-/Hk-/Gk-1b+4N+,1,,"the annual growth of the free cash flow per share over the explicit stage, the fifth input of the page"
-/Hp-/Hk-/Gk-1b+4N+4Q+,1,,"the backlog and the guidance support a high growth in the near years, the ten-year average is a guess"
 hQ-0o-1Z+2T+Ma+PW+UT+,1,,"upwards of 1.5 million deaths in 30 OECD countries that could be averted by levelling the Gini coefficient of the income below 0.3, if the relation is causal"
 hQ-1b+Ma+PW+UT+,1,,"the share of the adult mortality in 30 OECD countries that could be averted by levelling the Gini coefficient of the income below 0.3, if the relation is causal"
-/Hq-/Hk-1b+4d+,1,,"(66.87 / 72.88) to the power of one third minus one: the price return per year if the price reaches the weighted target in three years; needs a power, so stored as a modelled value"
 HR-1J-14-3l+3p+5H+,1,,"the monetised value of the heat-related deaths of people over 65 in 2023 in the world, the 222 billion EUR of problem_global_warming.json in trillion EUR; 240 billion USD at the ECB 2023 average of 1.0813 USD per EUR"
 hS-Fx-1b+2d+,1,,"the share of all wealth owned by the richest 10 percent of the global population; the concentration itself, so no due to triple"
+/HS-/Gm-4Y+6R+8s+9t+,1,,the consensus the adjusted EPS missed by 12.6 %
+/HS-/Gm-6R+8s+9t+,1,,the adjusted EPS reported against the consensus
 HT-1J-3T+3l+3p+4N+5H+,1,,"the potential loss of the lack of education is the lifetime earnings lost by the learning poor (problem_education.json), so this reason causes the whole loss: 0.4998 percent of the world GDP of 110.047 trillion EUR"
 hT-Fx-1b+2d+,1,,"the share of all wealth owned by the poorest half of the global population; the concentration itself, so no due to triple"
-/Ht-/Hk-1b+4N+4Q+,1,,between the 11 times ABB paid for the Mitsubishi business and the 19 times the market pays for ABB
-/Ht-/Hk-1e+4N+,1,,"the multiple the reader considers fair for the whole business, the seventh input of the page"
+/Ht-/Ho-/Go-1b+4N+,1,,"the annual growth of the free cash flow per share over the explicit stage, the fifth input of the page"
+/Ht-/Ho-/Go-1b+4N+4Q+,1,,"the backlog and the guidance support a high growth in the near years, the ten-year average is a guess"
 HU-1J-14-3l+3p+5H+,1,,"the annual cost 2000-2019 of the extreme weather attributable to climate change in the world, the 132.2 billion EUR of problem_global_warming.json in trillion EUR; 143 billion USD at the ECB 2023 average of 1.0813 USD per EUR"
-/Hu-/Hk-1b+4N+J0+,1,,the weight of the enterprise value multiple in the weighted target price
+/Hu-/Ho-1b+4d+,1,,"(66.87 / 72.88) to the power of one third minus one: the price return per year if the price reaches the weighted target in three years; needs a power, so stored as a modelled value"
 hU-hP-1b+UU+,1,,"the share of their taxes that the 0.01 percent richest households of Norway, Sweden and Denmark evade, compared to less than 5 percent detected in random tax audits throughout the distribution"
 HW-Go-0n-39+,1,,"the loss is stated as a negative share, so the smaller share is the numerically higher bound"
 HW-Go-0n-3P+,1,,"the loss is stated as a negative share, so the smaller share is the numerically higher bound"
@@ -1075,8 +1072,8 @@ HW-Go-1U-0n-,1,,"the loss is stated as a negative share, so the smaller share is
 HW-Go-1U-0o-,1,,"the loss is stated as a negative share, so the bigger share is the numerically lower bound"
 HW-Go-2J-0n-,1,,"the loss is stated as a negative share, so the smaller share is the numerically higher bound"
 HW-Go-2J-0o-,1,,"the loss is stated as a negative share, so the bigger share is the numerically lower bound"
-/Hx-/Gi-1b+8s+9t+,1,,"a record Q3 margin, up 1.6 points"
-/Hx-/Gi-1b+8s+9t+gG+,1,,"the margin of the Motion business area, diluted by about 40 basis points by Gamesa Electric"
+/Hx-/Ho-1b+4N+4Q+,1,,between the 11 times ABB paid for the Mitsubishi business and the 19 times the market pays for ABB
+/Hx-/Ho-1e+4N+,1,,"the multiple the reader considers fair for the whole business, the seventh input of the page"
 hX-hP-1b+2d+,1,,"the share of the global offshore financial wealth that still evades taxation in the central scenario of the report of October 2023, down by a factor of about three in less than 10 years"
 HY-14-1e+4N+,1,,"how much bigger the loss in happy time points is than the loss in GDP, because htp counts the healthy life years that a warming costs and the GDP does not (concept paper: htp extends the lower two levels of Maslow by the DALY index); tuned so that the calculated share matches the number that the start page has used until now"
 HY-1e+39+4N+,1,,how much the loss in happy time points differs from the loss in GDP; tuned so that the calculated share matches the number that the start page has used until now
@@ -1091,6 +1088,7 @@ HY-1S-1e+4N+,1,,"how much bigger the loss in happy time points is than the loss 
 HY-1T-1e+4N+,1,,"the loss in happy time points equals the loss in GDP, because the steering error costs welfare in the same proportion as money; tuned so that the calculated share matches the number that the start page has used until now"
 HY-1U-1e+4N+,1,,"the loss in happy time points equals the loss in GDP, because the lock-in cost welfare in the same proportion as money; tuned so that the calculated share matches the number that the start page has used until now"
 HY-2J-1e+4N+,1,,how much bigger the loss in happy time points is than the loss in GDP; tuned so that the calculated share matches the number that the start page has used until now
+/Hy-/Ho-1b+4N+J0+,1,,the weight of the enterprise value multiple in the weighted target price
 HZ-1g-14-1b+4N+,1,,"the share of the potential loss of 2.2 trillion EUR that the public CBAM calculation avoids, so that its gain is 1.6 trillion EUR; assumed, because a public calculation of the embedded emissions lets a carbon price reach most of the 72 percent of the global emissions that no direct carbon price covers yet (carbon price coverage of 28 percent), which is far more than the 8 percent leakage that the carbon tariff alone avoids (Branger & Quirion (2014b): 14 percent leakage without and 6 percent with a carbon tariff)"
 HZ-2K-1K-14-1a+3k+4N+5H+,1,,"the gain of the public CBAM calculation on the loss of 2.2 trillion EUR that the climate gas emissions cause (solution_prio.json), calculated like the avoided welfare loss of problem_global_warming.json: the loss as a share of the world GDP of 110.047 trillion EUR, times the long run factor 16, the htp factor 1.15625 and the 1189.19 billion world htp, times the assumed loss reduction of 72.73 percent of the public CBAM calculation"
 HZ-2K-1K-14-3l+3p+4N+5H+,1,,"the gain of the public CBAM calculation in the unit of the loss, calculated like the avoided loss in trillion EUR of problem_global_warming.json: the loss of 2.2 trillion EUR that the climate gas emissions cause times the assumed loss reduction of 72.73 percent of the public CBAM calculation"
@@ -1100,20 +1098,21 @@ HZ-Go-14-0o-1a+3k+,1,,"the centre divided by 1.5, the range factor of a structur
 HZ-Go-14-0o-1b+,1,,the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
 HZ-Go-1j-14-0n-,1,,the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
 HZ-Go-1j-14-0o-,1,,the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
-/I0-1e+1t+8s+9t+,1,,the leverage the CFO named at the end of Q3
-/I/-1a+6R+9u+JV+,1,,about 102 billion JPY in fiscal 2025
-/I3-/Hk-1e+4N+aA+,1,,the fair P/E of this row of the grid
-/I4-/Hk-1e+4N+aA+,1,,the fair P/E of this row of the grid
-/I5-/Hk-1e+4N+aA+,1,,the fair P/E of this row of the grid
-/I6-/Hk-1e+4N+aA+,1,,the fair P/E of this row of the grid
-/I7-/Hk-1e+4N+aA+,1,,the fair P/E of this row of the grid
-/I8-/Hk-1b+4N+,1,,the weight of the analyst consensus in the weighted target price
+/I2-/Gm-1a+6R+8s+9t+,1,,including about 115 million USD of a non-cash revaluation of the deal-contingent FX hedge linked to Rotork
+/I3-1a+6R+9u+JV+,1,,about 102 billion JPY in fiscal 2025
+/I4-1e+1t+8s+9t+,1,,the leverage the CFO named at the end of Q3
+/I7-/Ho-1e+4N+aA+,1,,the fair P/E of this row of the grid
+/I8-/Ho-1e+4N+aA+,1,,the fair P/E of this row of the grid
+/I9-/Ho-1e+4N+aA+,1,,the fair P/E of this row of the grid
 ia-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the payment system
 ia-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium-small share, because the dividend is small next to the concentration"
+/IA-/Ho-1e+4N+aA+,1,,the fair P/E of this row of the grid
 ib-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the agencies and the cases
 ib-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium share, because the largest fortunes come from monopoly rents; a model for OECD countries finds that market power raises the wealth of the richest 10 percent and lowers the income of the poorest 20 percent (Ennis et al. 2019)"
+/IB-/Ho-1e+4N+aA+,1,,the fair P/E of this row of the grid
 ic-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the legal work
 ic-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a small share, because patents are one rent among several"
+/IC-/Ho-1b+4N+,1,,the weight of the analyst consensus in the weighted target price
 ie-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the valuation and collection
 ie-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a bigger share, because it is the only tax that reaches the stock, not the flow"
 If-1a+3p+4O+9v+K1+,1,,"1.45 percent of the GDP of China, in 2020 USD; 229.8 billion USD at the ECB 2023 average of 1.0813 USD per EUR"
@@ -1135,7 +1134,8 @@ Ig-Go-0o-1b+39+,1,,the centre divided by 2.5 for the 80 percent probability rang
 Ig-Go-1j-0n-39+,1,,the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
 Ig-Go-1j-0o-39+,1,,the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
 ig-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a small share, because it is temporary and rare"
-/I.-/Gi-1a+6R+8s+9t+,1,,including about 115 million USD of a non-cash revaluation of the deal-contingent FX hedge linked to Rotork
+/I/-/Gm-1b+8s+9t+,1,,"a record Q3 margin, up 1.6 points"
+/I/-/Gm-1b+8s+9t+gG+,1,,"the margin of the Motion business area, diluted by about 40 basis points by Gamesa Electric"
 Ih-1d-1U-1e+4N+,1,,"the share of the world htp that the proprietary software gain uses, because the world htp is tuned to global warming and would give 11.9 billion htp here; tuned so that the calculated gain matches the number that the start page has used until now, to be removed once the horizon of the ranking is stated"
 Ih-1e-1S-1e+4N+,1,,"the share of the world htp that the citizen participation gain uses, because the world htp is tuned to global warming and would give 23.8 billion htp here; tuned so that the calculated gain matches the number that the start page has used until now, to be removed once the horizon of the ranking is stated"
 Ih-1e+39+4N+,1,,"the share of the world htp that the populism gain uses, because the world htp is tuned to global warming and would give 333 billion htp here; tuned so that the calculated gain matches the number that the start page has used until now, to be removed once the horizon of the ranking is stated; shared by the solution and its parts, so it does not name the solution"
@@ -1202,25 +1202,13 @@ ir-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution
 IS-1a+2d+3p+4O+9v+,1,,the monetised value of the heat-related deaths of people over 65 in 2023; 240 billion USD at the ECB 2023 average of 1.0813 USD per EUR
 is-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the rule change
 is-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a small share, because it closes one loophole of one country group"
-/Is-/Hk-4N+6R+aA+,1,,the EPS 2027 of this column of the grid
-/Is-/I3-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 43.82 CHF times 0.3 plus the other four targets of the page times their weights; upside -18 %
-/Is-/I4-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 52.04 CHF times 0.3 plus the other four targets of the page times their weights; upside -15 %
-/Is-/I5-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 60.26 CHF times 0.3 plus the other four targets of the page times their weights; upside -12 %
-/Is-/I6-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 68.47 CHF times 0.3 plus the other four targets of the page times their weights; upside -8 %
-/Is-/I7-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 76.69 CHF times 0.3 plus the other four targets of the page times their weights; upside -5 %
 it-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the rule change
 iT-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of public and subsidised building in the expensive cities
 it-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium share, because the lower rate on gains is the main reason the rich pay less; in the US a capital gains rate of 38 to 47 percent would still raise the most revenue, so gains can be taxed at income tax rates (Agersnap and Zidar 2021)"
 iT-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium-small share, because housing is the largest asset of the middle and its price the largest transfer to owners; countries with more home owners have less wealth inequality, because housing is the most important and most widely owned asset of the households (Causa et al. 2019)"
-/It-/Hk-4N+6R+aA+,1,,the EPS 2027 of this column of the grid
 IT-HV-0n-1a+2d+3p+3q+4O+,1,,228 billion USD at the ECB 2023 average of 1.0813 USD per EUR
 IT-HV-0o-1a+2d+3p+3q+4O+,1,,58 billion USD at the ECB 2023 average of 1.0813 USD per EUR
 IT-HV-1a+2d+3p+3q+4O+,1,,143 billion USD at the ECB 2023 average of 1.0813 USD per EUR
-/It-/I3-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 49.80 CHF times 0.3 plus the other four targets of the page times their weights; upside -16 %
-/It-/I4-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 59.14 CHF times 0.3 plus the other four targets of the page times their weights; upside -12 %
-/It-/I5-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 68.47 CHF times 0.3 plus the other four targets of the page times their weights; upside -8 %
-/It-/I6-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 77.81 CHF times 0.3 plus the other four targets of the page times their weights; upside -4 %
-/It-/I7-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 87.15 CHF times 0.3 plus the other four targets of the page times their weights; upside -1 %
 IU-14-1b+31+4N+,1,,"how many times bigger the loss at the end of the warming is than the loss already realised per year; tuned so that the calculated long run share matches the number that the start page has used until now, to be replaced by a damage function of the expected warming"
 IU-1b+31+39+4N+,1,,how many times bigger the long run loss is than the loss per year; tuned so that the calculated long run share matches the number that the start page has used until now
 IU-1b+31+3P+4N+,1,,how many times bigger the long run loss is than the loss per year; tuned so that the calculated long run share matches the number that the start page has used until now
@@ -1239,12 +1227,6 @@ IU-2J-1b+31+4N+,1,,"how many times bigger the long run loss is than the loss per
 iu-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium share, because it reaches the fortunes that pay almost nothing today; billionaires pay an effective tax of only about 0.3 percent of their wealth and a minimum tax of 2 percent would raise 200 to 250 billion USD a year from about 3000 people (Zucman 2024)"
 iU-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium-small share, because it moves part of the profit to wages"
 iU-Gq-1b+5N+,1,,"the share of the loss of wealth concentration that the solution avoids, as measured for the workers on the boards of German companies: none, because the board seats did not raise the wages or the labour share; contradicts the assumed share, which expects part of the profit to move to wages (Jäger, Schoefer & Heining 2021)"
-/Iu-/Hk-4N+6R+aA+,1,,the EPS 2027 of this column of the grid
-/Iu-/I3-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 55.78 CHF times 0.3 plus the other four targets of the page times their weights; upside -13 %
-/Iu-/I4-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 66.23 CHF times 0.3 plus the other four targets of the page times their weights; upside -9 %
-/Iu-/I5-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 76.69 CHF times 0.3 plus the other four targets of the page times their weights; upside -5 %
-/Iu-/I6-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 87.15 CHF times 0.3 plus the other four targets of the page times their weights; upside -1 %
-/Iu-/I7-/Hv-/Hk-4d+6f+aA+,1,,the earnings multiple target of the cell 97.61 CHF times 0.3 plus the other four targets of the page times their weights; upside +4 %
 iv-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the land valuation
 iV-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the institutions
 iv-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium share, because land is a large and lightly taxed part of the wealth; rising land prices explain about 80 percent of the rise of the house prices in 14 rich countries since World War II (Knoll et al. 2017)"
@@ -1254,12 +1236,30 @@ iW-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the en
 Iw-1Z-1b+3u+4N+,1,,"the share by which the platform regulation reduces the disinformation in the public discourse; the phrase public discourse keeps this value out of the probability range of the ranking cells, which name the platform regulation and disinformation as well"
 iw-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium-small share, because property is visible but only part of the large fortunes"
 iW-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium-small share, because it lifts the bottom but does not touch the top; in Brazil the rise of the real minimum wage by 128 percent from 1996 to 2018 explains 45 percent of the fall of the earnings inequality (Engbom and Moser 2022)"
+/Iw-/Ho-4N+6R+aA+,1,,the EPS 2027 of this column of the grid
+/Iw-/I7-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 43.82 CHF times 0.3 plus the other four targets of the page times their weights; upside -18 %
+/Iw-/I8-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 52.04 CHF times 0.3 plus the other four targets of the page times their weights; upside -15 %
+/Iw-/I9-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 60.26 CHF times 0.3 plus the other four targets of the page times their weights; upside -12 %
+/Iw-/IA-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 68.47 CHF times 0.3 plus the other four targets of the page times their weights; upside -8 %
+/Iw-/IB-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 76.69 CHF times 0.3 plus the other four targets of the page times their weights; upside -5 %
 ix-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of extending it to early childhood and higher education worldwide; the gap to reach the national education targets in 79 low and lower-middle income countries alone is about 97 billion USD a year until 2030 (UNESCO 2023)
 iX-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the tax support
 ix-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium share, because education is the main way up that concentration blocks; countries with more inequality have less mobility between the generations, in the Nordic countries less than a fifth of the advantage of a father passes to his son, in the US about half (Corak 2013)"
 iX-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium share, because it spreads the capital income that concentrates"
+/Ix-/Ho-4N+6R+aA+,1,,the EPS 2027 of this column of the grid
+/Ix-/I7-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 49.80 CHF times 0.3 plus the other four targets of the page times their weights; upside -16 %
+/Ix-/I8-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 59.14 CHF times 0.3 plus the other four targets of the page times their weights; upside -12 %
+/Ix-/I9-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 68.47 CHF times 0.3 plus the other four targets of the page times their weights; upside -8 %
+/Ix-/IA-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 77.81 CHF times 0.3 plus the other four targets of the page times their weights; upside -4 %
+/Ix-/IB-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 87.15 CHF times 0.3 plus the other four targets of the page times their weights; upside -1 %
 iy-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the grants
 iy-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium share, because it gives the bottom half a capital stock; a simulation of baby bonds for every newborn in the US cuts the median wealth gap between young white and black adults from a factor of 16 to 1.4 and raises the wealth of all young adults (Zewde 2020)"
+/Iy-/Ho-4N+6R+aA+,1,,the EPS 2027 of this column of the grid
+/Iy-/I7-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 55.78 CHF times 0.3 plus the other four targets of the page times their weights; upside -13 %
+/Iy-/I8-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 66.23 CHF times 0.3 plus the other four targets of the page times their weights; upside -9 %
+/Iy-/I9-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 76.69 CHF times 0.3 plus the other four targets of the page times their weights; upside -5 %
+/Iy-/IA-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 87.15 CHF times 0.3 plus the other four targets of the page times their weights; upside -1 %
+/Iy-/IB-/Hz-/Ho-4d+6f+aA+,1,,the earnings multiple target of the cell 97.61 CHF times 0.3 plus the other four targets of the page times their weights; upside +4 %
 iz-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the seed capital and the management
 iz-Gq-1b+4N+,1,,"the share of the loss of wealth concentration that the solution avoids if it is fully in place: a medium share, because public ownership of capital spreads its return"
 j0-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the collection system
@@ -1449,7 +1449,6 @@ l.-jr-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 43.211 N 27.9163 E, 39
 l.-js-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 43.211 N 27.9163 E, 39 m, slope 35 degree, azimuth 0 degree from south"
 LY-1j-1h-4N+,1,,removal of explicit fossil fuel subsidies; the potential is a share of the IMF full price reform effect
 LY-Kq-1b+4N+,1,,"share of the full price reform effect from removing the explicit subsidies alone, without efficient taxation"
-//M-2T+Ji+bf+,1,,filed on 6 October 2026; 50000 were needed
 M9-2d+9v+Fy+Fz+IR+,1,,"fossil CO2 emissions excluding the cement carbonation sink, 10314 MtC times 3.664"
 M9-9v+Fy+Fz+IH+,1,,4203 MtC times 3.664
 M9-Gq-4N+Ey+,1,,"enhanced recycling of metals, plastics and paper; IPCC about 0.4 gigatonnes for 2030"
@@ -1561,8 +1560,6 @@ mx-js-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 48.1359 N 11.5731 E, 5
 my-ji-jg-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 37.9748 N 23.7339 E, 106 m, crystalline silicon, 14 percent system loss, free-standing at the optimal slope of 32 degree and azimuth -1 degree from south"
 my-jr-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 37.9748 N 23.7339 E, 106 m"
 my-js-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 37.9748 N 23.7339 E, 106 m, slope 32 degree, azimuth -1 degree from south"
-//M-yV-4N+CH+,1,,below this difference of the average cost the cost argument is called undecided; about 11 CHF per year for an H4 household
-/.M-z9-0L+2Y+KJ+,1,,with one EPR
 mz-ji-jg-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 40.6345 N 22.9403 E, 16 m, crystalline silicon, 14 percent system loss, free-standing at the optimal slope of 35 degree and azimuth 2 degree from south"
 mz-jr-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 40.6345 N 22.9403 E, 16 m"
 mz-js-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 40.6345 N 22.9403 E, 16 m, slope 35 degree, azimuth 2 degree from south"
@@ -1575,6 +1572,7 @@ n1-js-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 45.4716 N 9.1889 E, 13
 n2-ji-jg-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 56.9476 N 24.1154 E, 11 m, crystalline silicon, 14 percent system loss, free-standing at the optimal slope of 42 degree and azimuth -2 degree from south"
 n2-jr-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 56.9476 N 24.1154 E, 11 m"
 n2-js-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 56.9476 N 24.1154 E, 11 m, slope 42 degree, azimuth -2 degree from south"
+//N-2T+Ji+bf+,1,,filed on 6 October 2026; 50000 were needed
 n3-ji-jg-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 55.888 N 26.5066 E, 94 m, crystalline silicon, 14 percent system loss, free-standing at the optimal slope of 41 degree and azimuth -2 degree from south"
 n3-jr-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 55.888 N 26.5066 E, 94 m"
 n3-js-jh-3q+,1,,"PVGIS 5.3 with PVGIS-SARAH3 2005-2023 at 55.888 N 26.5066 E, 94 m, slope 41 degree, azimuth -2 degree from south"
@@ -1657,7 +1655,8 @@ NR-NB-1b+3J+L9+LL+,1,,"a forecast assumption, not a measured loss"
 NR-NN-1a+3p+5T+Fr+,1,,7.2 billion USD at the ECB 2023 average of 1.0813 USD per EUR
 NS-NE-ND-1b+2u+,1,,46 populist leaders in democracies 1990-2018
 NT-06+1b+LJ+,1,,"8 percentage points more excess mortality than in the non-populist countries, i.e. 98 percent more"
-/.n-zS-0L+4N+,1,,without the new plant it produces nothing
+//N-yW-4N+CH+,1,,below this difference of the average cost the cost argument is called undecided; about 11 CHF per year for an H4 household
+/.N-zA-0L+2Y+KJ+,1,,with one EPR
 Oa-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the registers and their enforcement
 Oa-Gq-1b+4N+,1,,"the share of the loss of populism that the solution avoids if it is fully in place: a small share, because a register alone changes little"
 Od-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of protection schemes and independent regulators
@@ -1710,6 +1709,7 @@ Oz-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of stock
 OZ-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of independent agencies and courts in many countries
 Oz-Gq-1b+4N+,1,,"the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because economic and health shocks are followed by populist gains; in 20 rich countries since 1870 the far right gained about 30 percent more votes after a financial crisis (Funke et al. 2016)"
 OZ-Gq-1b+4N+,1,,"the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because corruption is the strongest fuel of the anti-elite message; in Europe, exposure to corruption lowers political trust, which in turn raises the chance to vote for a radical right party (Ziller & Schübel 2015)"
+/.o-zT-0L+4N+,1,,without the new plant it produces nothing
 P0-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost is small, the agreement itself"
 P0-Gq-1b+4N+,1,,"the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because it keeps the populist party out of office but can strengthen its protest appeal"
 P.-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the transfers and the rule changes
@@ -2028,16 +2028,16 @@ Um-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the co
 UM-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the legal design and the courts
 Um-Gq-1b+4N+,1,,"the share of the loss of black-box AI that the solution avoids if it is fully in place: a medium share, because a public model can be inspected and corrected"
 UM-Gq-1b+4N+,1,,"the share of the loss of black-box AI that the solution avoids if it is fully in place: a medium share, because liability makes the provider care about the errors"
-um-jH-/K-2Y+5T+Ev+Ur+,1,,the electricity of the Swiss storage hydropower plants including the whole production chain; run-of-river plants emit 3.8 g CO2-eq per kWh
 Un-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of training and maintaining them
 UN-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the register
 Un-Gq-1b+4N+,1,,"the share of the loss of black-box AI that the solution avoids if it is fully in place: a bigger share, because an open model is the opposite of a black box; models with open weights offer more transparency, competition and spread of decision power, though their benefits and risks still need empirical checks (Kapoor et al. 2024)"
 UN-Gq-1b+4N+,1,,"the share of the loss of black-box AI that the solution avoids if it is fully in place: a small share, because a register informs but does not prevent; the AI Incident Database counts 362 reported incidents in 2025 compared to 233 in 2024, so the register grows but the incidents do not fall (Stanford HAI 2026)"
-un-jH-/K-Ev+Qx+Ur+,1,,"the European residual mix that Swissolar uses as the replacement mix for the CO2 saving of PV; the European production mix 2022 of treeze is lower, 350 to 440 g per month"
+un-jH-/K-2Y+5T+Ev+Ur+,1,,the electricity of the Swiss storage hydropower plants including the whole production chain; run-of-river plants emit 3.8 g CO2-eq per kWh
 Uo-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of teaching material and courses
 UO-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the monitoring
 Uo-Gq-1b+4N+,1,,"the share of the loss of black-box AI that the solution avoids if it is fully in place: a medium-small share, because a reader who knows the limits checks the vote; in a survey in 47 countries 66 percent of the employees have relied on AI output without checking it and 56 percent made mistakes in their work due to AI (Gillespie et al. 2025)"
 UO-Gq-1b+4N+,1,,"the share of the loss of black-box AI that the solution avoids if it is fully in place: a small share, because it reaches only the frontier models"
+uo-jH-/K-Ev+Qx+Ur+,1,,"the European residual mix that Swissolar uses as the replacement mix for the CO2 saving of PV; the European production mix 2022 of treeze is lower, 350 to 440 g per month"
 UP-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the enforcement
 UP-Gq-1b+4N+,1,,"the share of the loss of black-box AI that the solution avoids if it is fully in place: a small share, because it shifts who has the black box, not whether it is one"
 Ur-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost is small, the coordination"
@@ -2071,44 +2071,44 @@ UZ-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the si
 Uz-Gq-1b+4N+,1,,"the share of the loss of black-box AI that the solution avoids if it is fully in place: a small share, because job loss is a different harm than the wrong answer"
 UZ-Gq-1b+4N+,1,,"the share of the loss of black-box AI that the solution avoids if it is fully in place: a small share, because it marks the origin, not the truth; an independent security analysis finds that the current C2PA standard does not yet reach its own security goals and should not yet be relied on for high stakes uses (Golaszewski et al. 2026)"
 V.-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the negotiations
-v5-1b+4N+4Q+aK+,1,,"the published figures span a factor of five, so the middle is a guess"
-v5-uu-4N+aK+,1,,"the middle of the literature: cells alone 37 to 92 kg per kWh, a complete home storage system in the HTW study 212 kg per kWh"
-v5-uu-uj-9u+aK+,1,,"the upper end of the cradle-to-gate production of lithium-ion cells, 58 to 92 kg per kWh of cell capacity; optimised LFP cells about 37 kg"
+v6-1b+4N+4Q+aK+,1,,"the published figures span a factor of five, so the middle is a guess"
+v6-uv-4N+aK+,1,,"the middle of the literature: cells alone 37 to 92 kg per kWh, a complete home storage system in the HTW study 212 kg per kWh"
+v6-uv-uk-9u+aK+,1,,"the upper end of the cradle-to-gate production of lithium-ion cells, 58 to 92 kg per kWh of cell capacity; optimised LFP cells about 37 kg"
 V7-1b+9v+Pi+,1,,the share with high or moderately high trust in the national government; not attributed to the lack of citizen participation by the source
 V7-1b+9v+PW+,1,,"the share with high or moderately high trust in the national government, average of 30 OECD countries; not attributed to the lack of citizen participation by the source"
 V8-1b+9v+Pi+,1,,the share of the Italians who believe that the political system allows people like them to have a say in what the government does; not attributed to the lack of citizen participation by the source
 V8-1b+9v+PW+,1,,"the share of the people who believe that the political system allows people like them to have a say in what the government does, average of 30 OECD countries; not attributed to the lack of citizen participation by the source"
 V9-1b+2d+9v+,1,,"the global average percentage of the voting age population who vote, 10 percentage points less than in 2008; not attributed to the lack of citizen participation by the source"
 V9-1b+2d+NZ+,1,,the global average percentage of the voting age population who vote; not attributed to the lack of citizen participation by the source
-vB-uz-1b+2Y+4N+4Q+,1,,"the seasonal shape is well known from PVGIS, the exact shares depend on the place and the year"
-vC-jE-/K-1l+2Y+Ev+Kd+Ur+,1,,"monthly mean of the five years 2018 to 2022 at low voltage, table 5.1; the twelve values are the base of the PV-weighted consumption mix"
+vC-v.-1b+2Y+4N+4Q+,1,,"the seasonal shape is well known from PVGIS, the exact shares depend on the place and the year"
 Vc-V8-1b+9v+Pi+,1,,45 percentage points
 Vc-V8-1b+9v+PW+,1,,"the people who feel that they have no say trust the national government 47 percentage points less than those who feel they have political voice, average of 30 OECD countries"
+vD-jE-/K-1l+2Y+Ev+Kd+Ur+,1,,"monthly mean of the five years 2018 to 2022 at low voltage, table 5.1; the twelve values are the base of the PV-weighted consumption mix"
 Vd-Ny-1b+2K+Pj+Pm+,1,,the residents of Geneva (index 1.75) have an 11 percentage points lower probability to be completely satisfied with their life than the residents of Basel-Landschaft (index 5.69)
 Vd-VR-Ny-2Y+Pm+,1,,one point less on the index of the direct democratic rights of a canton (1 to 6) lowers the share of the persons with a very high satisfaction with life by 2.8 percentage points
 VE-1S-1J-3l+3p+4N+5H+,1,,"the potential loss of the missing citizen participation is the public money spent against the preferences of the citizens (problem_citizen_participation.json), so this reason causes the whole loss: 0.16357 percent of the world GDP of 110.047 trillion EUR"
 V.-Gq-1b+4N+,1,,"the share of the loss of black-box AI that the solution avoids if it is fully in place: a medium-small share, because a treaty sets the floor for the national rules"
 VO-1b+2d+FN+,1,,roughly one in five elections in which at least one losing candidate or party rejected the result; not attributed to the lack of citizen participation by the source
-vO-jg-3q+9v+,1,,"the lifetime average annual yield of the reference system, a pitched roof facing south in Switzerland, including the linear degradation of 0.7 percent per year"
-vQ-v1-4N+4Q+aK+,1,,"manufacturers state 90 to 95 percent for the cells, measured systems reach 80 to 92 percent"
-vQ-v1-4N+aK+,1,,the usual system efficiency of a lithium-ion home storage incl. the inverter losses
+vP-jg-3q+9v+,1,,"the lifetime average annual yield of the reference system, a pitched roof facing south in Switzerland, including the linear degradation of 0.7 percent per year"
+vR-v2-4N+4Q+aK+,1,,"manufacturers state 90 to 95 percent for the cells, measured systems reach 80 to 92 percent"
+vR-v2-4N+aK+,1,,the usual system efficiency of a lithium-ion home storage incl. the inverter losses
 VS-VP-VK-VD-1b+,1,,the median canton with a mandatory referendum on new spending above 2.5 million Swiss francs spends 19 percent less than a canton without it
 VT-VL-VF-O/-0n-1b+3P+K4+Mm+,1,,"3 percentage points, 20 to 30 percent of the sample mean of this budget share in 1990"
 VT-VL-VF-O/-0o-1b+3P+K4+Mm+,1,,"participatory budgeting raises the share of the municipal budget spent on health and sanitation by 2 to 3 percentage points, i.e. this share is lower without it"
-vU-v5-uu-05+aK+,1,,"the production of a complete lithium home storage system with housing, inverter and control, the upper end of the literature"
 VU-VL-O/-0n-1b+K4+,1,,the drop of the infant mortality with participatory budgeting is about 5 to 10 percent of the infant mortality rate in 1990
 VU-VL-O/-0o-1b+K4+,1,,the drop of the infant mortality with participatory budgeting is about 5 to 10 percent of the infant mortality rate in 1990
 VU-VL-O/-Df-0n-K4+,1,,the municipalities that adopted participatory budgeting registered a drop of 1 to 2 infant deaths for every 1000 infants
 VU-VL-O/-Df-0o-K4+,1,,the municipalities that adopted participatory budgeting registered a drop of 1 to 2 infant deaths for every 1000 infants
-vV-uy-4N+VH+,1,,"the system size, the first input of the page; 10 kWp is a typical single family roof"
-vV-v3-1l+4N+,1,,"the monthly dispatch of the page assumes at most one full battery cycle per day, so the full cycles of a month are its days in a year without leap day"
-vV-vB-uz-1b+1l+2Y+4N+,1,,"the share of the annual PV production that falls into the month, a typical profile for the Swiss plateau with winter fog; the twelve shares sum to 1"
-vV-vB-v6-1b+1l+2Y+4N+,1,,"the share of the annual household consumption that falls into the month, more in winter for light and heating pumps; the twelve shares sum to 1"
+vV-v6-uv-05+aK+,1,,"the production of a complete lithium home storage system with housing, inverter and control, the upper end of the literature"
 VV-VD-Ny-1b+,1,,"the tax cheating in the Swiss cantons with direct democracy is 8 percent lower than in the cantons with a more traditional representative democracy; a secondary report, the peer-reviewed Feld & Frey (2002) state 1500 Swiss francs per taxpayer less tax evasion in the direct democratic cantons"
-vV-vN-v6-3q+4N+,1,,"the local electricity consumption, the fourth input of the page; 4500 kWh is a typical Swiss family household without heat pump or electric car"
-vV-vQ-vA-v6-4N+,1,,"the share of the household consumption that falls into the hours with PV production; a household where nobody is at home during the day, higher with home office or a heat pump running at noon"
-vV-vQ-vA-v6-4N+4Q+,1,,"a rough split, the hourly profile of a household is well known but varies a lot between households"
-vV-v.-/u+4N+,1,,"the usable battery capacity, the third input of the page; set it to 0 for an installation without battery"
+vW-uz-4N+VH+,1,,"the system size, the first input of the page; 10 kWp is a typical single family roof"
+vW-v4-1l+4N+,1,,"the monthly dispatch of the page assumes at most one full battery cycle per day, so the full cycles of a month are its days in a year without leap day"
+vW-vC-v.-1b+1l+2Y+4N+,1,,"the share of the annual PV production that falls into the month, a typical profile for the Swiss plateau with winter fog; the twelve shares sum to 1"
+vW-vC-v7-1b+1l+2Y+4N+,1,,"the share of the annual household consumption that falls into the month, more in winter for light and heating pumps; the twelve shares sum to 1"
+vW-vO-v7-3q+4N+,1,,"the local electricity consumption, the fourth input of the page; 4500 kWh is a typical Swiss family household without heat pump or electric car"
+vW-vR-vB-v7-4N+,1,,"the share of the household consumption that falls into the hours with PV production; a household where nobody is at home during the day, higher with home office or a heat pump running at noon"
+vW-vR-vB-v7-4N+4Q+,1,,"a rough split, the hourly profile of a household is well known but varies a lot between households"
+vW-v/-/u+4N+,1,,"the usable battery capacity, the third input of the page; set it to 0 for an installation without battery"
 W1-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of the process, the facilitators and the online voting in many municipalities"
 W1-Gq-1b+4N+,1,,"the share of the loss of citizen participation that the solution avoids if it is fully in place: one of the bigger shares, because the Brazilian municipalities with it spent more on health and sanitation and had lower infant mortality (Gonçalves 2014), which is the budget misallocation reason itself"
 W2-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the extra votes and the voting booklets in many countries
@@ -2135,9 +2135,9 @@ WC-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the re
 WC-Gq-1b+4N+,1,,"the share of the loss of citizen participation that the solution avoids if it is fully in place: a small share, because community monitoring improved the use of health clinics and lowered child mortality in Uganda (Björkman & Svensson 2009), but similar programmes for schools in India had no effect (Banerjee et al. 2010)"
 WD-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the consultation portals and the staff who answer
 WD-Gq-1b+4N+,1,,"the share of the loss of citizen participation that the solution avoids if it is fully in place: a small share, because the comments are mostly made by organised interests and are not binding"
-wD-v4-4N+aK+,1,,a lithium-ion home storage with one cycle a day lasts 10 to 20 years
 WE-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the petition portals
 WE-Gq-1b+4N+,1,,"the share of the loss of citizen participation that the solution avoids if it is fully in place: a very small share, because a petition puts a topic on the agenda but decides nothing"
+wE-v5-4N+aK+,1,,a lithium-ion home storage with one cycle a day lasts 10 to 20 years
 WF-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of a digital identity and a verifiable voting system; an e-vote cost about half of a vote on election day in Estonia (Krimmer et al. 2018), but the setup is expensive"
 WF-Gq-1b+4N+,1,,"the share of the loss of citizen participation that the solution avoids if it is fully in place: a small share, because it makes more frequent votes cheap and easy"
 WH-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the enforcement and the voter information
@@ -2263,38 +2263,37 @@ Y5-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of rating
 Y5-Gq-1b+4N+,1,,"the share of the loss of disinformation that the solution avoids if it is fully in place: a small share, because the labels did not change the average news diet nor reduce misperceptions in a field experiment and helped only the heaviest consumers of low quality news (Aslett et al. 2022)"
 Y6-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the software and the first data
 Y6-Gq-1b+4N+,1,,"the share of the loss of disinformation that the solution avoids if it is fully in place: a small share, because a sourced fact is easy to find, but people must look for it"
-yd-yY-/d+b8+,1,,2040 to 2050 after 13 years of political process and licensing
+ya-1b+2Y+4F+Ev+,1,,share of the Swiss electricity production today
+ye-yZ-/d+b8+,1,,2040 to 2050 after 13 years of political process and licensing
 YP-YK-1b+9v+Gk+,1,,"persons aged 25 to 64 with a tertiary education, the comparison to the unemployment rate of the persons with at most a lower secondary education"
 YQ-1Z+2T+2d+9v+,1,,"the children, adolescents and youth of primary and secondary school age who are not in school; the size of the lack of education and not a cost that the source attributes to it, so no due to lack of education triple"
-yq-yY-yS-b8+,1,,"personnel, maintenance, retrofits, fuel, decommissioning and waste"
-yr-yS-37+KJ+,1,,"combined cycle, the reference of the CO2 abatement cost"
-yr-yS-KJ+bd+,1,,large hydro
-yr-yV-3t+bD+,1,,normalised production cost of the year 2024
-yr-yV-3t+If+Uo+,1,,"ground-mounted, Germany, EUR cent treated as Rp"
-yr-yV-9t+bC+,1,,production cost of the year 2025 incl. decommissioning and waste funds
-yr-yY-yS-If+KJ+,1,,range of the Axpo Energy Report 2026 and PSI 2017
-yr-yY-yV-3t+Ic+,1,,"EUR cent per kWh treated as Rp, Germany"
-yr-yY-yV-3t+If+,1,,"EUR cent per kWh treated as Rp, Germany"
-ys-yY-yS-Ev+KJ+,1,,"Axpo market simulation, real in prices of 2024"
-yu-yi-1b+4N+4Q+,1,,"order of magnitude only; the ETH/PSI models optimise storage endogenously, so the published results carry no separate number"
-yu-yi-yS-4N+,1,,"storage, backup and grid per renewable MWh; BAK states that no Swiss figure exists"
+yr-yZ-yT-b8+,1,,"personnel, maintenance, retrofits, fuel, decommissioning and waste"
+ys-yT-37+KJ+,1,,"combined cycle, the reference of the CO2 abatement cost"
+ys-yT-KJ+bd+,1,,large hydro
+ys-yW-3t+bD+,1,,normalised production cost of the year 2024
+ys-yW-3t+If+Uo+,1,,"ground-mounted, Germany, EUR cent treated as Rp"
+ys-yW-9t+bC+,1,,production cost of the year 2025 incl. decommissioning and waste funds
+ys-yZ-yT-If+KJ+,1,,range of the Axpo Energy Report 2026 and PSI 2017
+ys-yZ-yW-3t+Ic+,1,,"EUR cent per kWh treated as Rp, Germany"
+ys-yZ-yW-3t+If+,1,,"EUR cent per kWh treated as Rp, Germany"
+yt-yZ-yT-Ev+KJ+,1,,"Axpo market simulation, real in prices of 2024"
 YU-YK-1b+2Y+9v+,1,,"persons aged 25 to 64 with at most a lower secondary education; a statistic that the source does not attribute to the education as a cause, so no due to lack of education triple"
 YU-YK-1b+5N+9v+,1,,"persons aged 25 to 64 with at most a lower secondary education; a statistic that the source does not attribute to the education as a cause, so no due to lack of education triple"
 YU-YK-1b+9v+Gk+,1,,"persons aged 25 to 64 with at most a lower secondary education; a statistic that the source does not attribute to the education as a cause, so no due to lack of education triple"
 YV-0n-2d+3l+3p+Qt+,1,,the lifetime productivity and earnings lost because girls do not complete 12 years of education; 30 trillion USD at the ECB 2023 average of 1.0813 USD per EUR
 YV-0o-2d+3l+3p+Qt+,1,,the lifetime productivity and earnings lost because girls do not complete 12 years of education; 15 trillion USD at the ECB 2023 average of 1.0813 USD per EUR
-yV-2Y+4N+KJ+VS+bM+,1,,"grid 10.75, metering 1.65 and levies 3.76 of 2026 kept in real terms; the word levies stands for the whole non-energy part here"
-yV-2Y+9t+DX+VS+,1,,median grid tariff without metering; metering adds 1.65 Rp
-yV-2Y+9t+VS+bM+,1,,"grid surcharge 2.3, electricity reserve 0.41, solidarised costs 0.05, municipalities 1.0"
-yV-jt-2Y+9t+VS+,1,,median of all grid operators
 YV-YH-2d+3l+3p+6P+,1,,"the potential lifetime earnings that the current generation of students is at risk of losing, the update of the 2021 estimate; 21 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"
 YV-YH-2d+3l+3p+9w+,1,,the lifetime earnings that the current generation of students risks losing because of the learning losses of the COVID-19 school closures; 17 trillion USD at the ECB 2023 average of 1.0813 USD per EUR
 YV-YH-YG-1b+2d+6P+,1,,the lost lifetime earnings of the current generation of students as share of today's global GDP
 YV-YH-YG-1b+2d+9w+,1,,the lost lifetime earnings of the current generation of students as share of today's global GDP
+yv-yj-1b+4N+4Q+,1,,"order of magnitude only; the ETH/PSI models optimise storage endogenously, so the published results carry no separate number"
+yv-yj-yT-4N+,1,,"storage, backup and grid per renewable MWh; BAK states that no Swiss figure exists"
 YV-YN-YM-1b+2d+,1,,"the private average global return to a year of schooling, so the earnings that a person loses per missing year of schooling; average of 1120 estimates in 139 countries from 1950 to 2014"
-yv-yY-1b+b8+,1,,6.675 TWh of 12.137 TWh fall into the winter half-year
 YW-1b+2d+3r+KM+,1,,the world GDP in the year 2100 would be 56.0 percent higher if all children reached basic skills
-yW-N.+RV+b5+,1,,"54 times rooftop PV, 679 times onshore wind"
+yW-2Y+4N+KJ+VS+bM+,1,,"grid 10.75, metering 1.65 and levies 3.76 of 2026 kept in real terms; the word levies stands for the whole non-energy part here"
+yW-2Y+9t+DX+VS+,1,,median grid tariff without metering; metering adds 1.65 Rp
+yW-2Y+9t+VS+bM+,1,,"grid surcharge 2.3, electricity reserve 0.41, solidarised costs 0.05, municipalities 1.0"
+yW-jt-2Y+9t+VS+,1,,median of all grid operators
 YW-YH-1b+2d+3r+KM+,1,,the share of the discounted future world GDP until 2100 that is lost because not all children reach basic skills
 YW-YH-2d+3l+3p+KM+,1,,the discounted world GDP lost until 2100 because not all children reach basic skills; 732127 billion USD at the ECB 2023 average of 1.0813 USD per EUR
 YW-YH-YG-1b+2d+KM+,1,,the discounted GDP lost until 2100 as 543 percent of the current world GDP
@@ -2302,55 +2301,56 @@ YW-YH-YG-1b+KM+Qv+,1,,the discounted GDP lost until 2100 as 2844 percent of the 
 YW-YH-YG-1b+KM+Qw+,1,,the discounted GDP lost until 2100 as 2176 percent of the current GDP of the World Bank region
 YW-YH-YG-1b+KM+Qx+,1,,the discounted GDP lost until 2100 as 195 percent of the current GDP of the World Bank region
 YW-YH-YG-1b+KM+Qy+,1,,the discounted GDP lost until 2100 as 179 percent of the current GDP of the World Bank region
-yx-1b+2Y+4N+4Q+KJ+bG+,1,,depends on the decarbonisation and the price spreads of the neighbours
+yw-yZ-1b+b8+,1,,6.675 TWh of 12.137 TWh fall into the winter half-year
+yX-N.+RV+b5+,1,,"54 times rooftop PV, 679 times onshore wind"
 YX-YL-0o-1a+2R+3p+4O+Fr+Pl+,1,,the same savings with the estimates for violent and property crime instead of the single crimes; 782 million USD at the ECB 2023 average of 1.0813 USD per EUR
 YX-YL-1a+2R+3p+4O+Fr+Pl+,1,,"the social cost of the crimes that a one percentage point higher high school graduation rate of the men would have avoided in 1990, nearly 100,000 crimes including nearly 400 murders; 1.4 billion USD at the ECB 2023 average of 1.0813 USD per EUR"
 YX-YM-0n-1b+2R+Fr+,1,,the social savings from the crime reduction of a high school graduation of a man as share of his private return
 YX-YM-0o-1b+2R+Fr+,1,,the social savings from the crime reduction of a high school graduation of a man as share of his private return
-yx-yS-2Y+4N+KJ+bG+,1,,between the annual average of about 90 and the winter peak of 130 to 135 CHF per MWh of the BAK scenario without new NPP
-yy-yS-2Y+4N+KJ+bH+,1,,low because all neighbours export PV at noon
+yy-1b+2Y+4N+4Q+KJ+bG+,1,,depends on the decarbonisation and the price spreads of the neighbours
 YY-YS-YN-1b+2d+,1,,"the average reduction of the all-cause adult mortality risk per additional year of education, 95 percent uncertainty interval 1.8 to 2.0 percent"
 YY-YS-YO-1b+2d+,1,,"adults with 12 years of education compared to adults with no schooling, 95 percent uncertainty interval 23.0 to 26.1 percent"
-yZ-1b+2Y+4F+Ev+,1,,share of the Swiss electricity production today
+yy-yT-2Y+4N+KJ+bG+,1,,between the annual average of about 90 and the winter peak of 130 to 135 CHF per MWh of the BAK scenario without new NPP
+yz-yT-2Y+4N+KJ+bH+,1,,low because all neighbours export PV at noon
 YZ-YT-YN-1b+2d+Mj+,1,,"the average reduction of the under-5 mortality per additional year of schooling of the mother, 95 percent CI 2.82 to 3.23 percent"
 YZ-YT-YN-1b+2d+Qu+,1,,"the average reduction of the under-5 mortality per additional year of schooling of the father, 95 percent CI 1.35 to 1.72 percent"
 YZ-YT-YO-1b+2d+Mj+,1,,"children of mothers with 12 years of education compared to mothers with no education, 95 percent CI 29.0 to 32.6 percent"
 YZ-YT-YO-1b+2d+Qu+,1,,"children of fathers with 12 years of education compared to fathers with no education, 95 percent CI 15.0 to 18.8 percent"
-z/-0L+2Y+KJ+,1,,"Energy Perspectives 2050+, scenario ZERO basis"
-z1-yV-2Y+9t+VS+,1,,median
-z6-yY-0f+H3+If+,1,,built by the models with state support and a WACC of 5 percent
-z7-yY-0f+H3+,1,,in two of the four models; the other two build none
-z8-yY-0f+H3+,1,,in three of the four models even with support
-z9-ye-yY-1Z+6f+b8+,1,,S-curve of the capital outflow 2040 to 2050
-z9-yo-yY-b8+be+,1,,per year over 60 years of operation incl. the annualised construction
-z9-yr-yY-yS-b9+,1,,the low variant of the study: one unit
-z9-yt-yY-1Z+6f+b8+,1,,per year; the market pays 55 percent of the levelised cost
-z9-yY-Zy-1Z+6f+b8+,1,,per year incl. the state support of 625 million; 938 million net of it
+z0-0L+2Y+KJ+,1,,"Energy Perspectives 2050+, scenario ZERO basis"
+z2-yW-2Y+9t+VS+,1,,median
+z7-yZ-0f+H3+If+,1,,built by the models with state support and a WACC of 5 percent
+z8-yZ-0f+H3+,1,,in two of the four models; the other two build none
+z9-yZ-0f+H3+,1,,in three of the four models even with support
 Za-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of writing and printing the books
 Za-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because books help only if they match the level of the child and the teacher uses them"
+zA-yf-yZ-1Z+6f+b8+,1,,S-curve of the capital outflow 2040 to 2050
+zA-yp-yZ-b8+be+,1,,per year over 60 years of operation incl. the annualised construction
+zA-ys-yZ-yT-b9+,1,,the low variant of the study: one unit
+zA-yu-yZ-1Z+6f+b8+,1,,per year; the market pays 55 percent of the levelised cost
+zA-yZ-Zy-1Z+6f+b8+,1,,per year incl. the state support of 625 million; 938 million net of it
 Zb-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the books and the shelves
 Zb-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because children who practise reading read better, but books alone rarely change teaching"
 Zc-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the training of the committees and the school grants
 Zc-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because it improves the attendance and the use of the money more than the learning itself"
-zC-yg-yY-1b+4N+CA+,1,,"r / (1 - (1 + r)^-n) with r = 0.05 and n = 60 years; computed outside the engine, see the annuity factor formula; assumed, because no published table lists the factor for 60 years"
-zc-yY-yT-b8+,1,,Olkiluoto 3 inflated to prices of 2024 plus a Swiss surcharge of 11.3 percent
-zc-yY-yT-b9+,1,,MIT estimate for the next AP1000 plus 15 percent risk buffer
-zc-z8-yY-yT-,1,,the level of recent projects in Europe and the US
 Zd-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the classrooms that end the double shifts
 ZD-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of writing the lesson plans, printing the books and training the coaches, which is low for the gain, so the panel ranks it a great buy (Akyeampong et al. 2023)"
 Zd-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium-small share, because many schools lose a large part of the planned hours, but more time helps only with good teaching"
 ZD-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a big share, because a national programme raised reading by more than half a standard deviation (Piper et al. 2018) and the panel ranks it a great buy (Akyeampong et al. 2023)"
-zd-yY-1b+4N+,1,,S-curve: the full investment is on average financed over 40 percent of the construction time; reproduces the 2868 million CHF of interest of the BAK base case within 1 percent
-zd-yY-1b+4N+4Q+,1,,calibrated on one study
+zD-yh-yZ-1b+4N+CA+,1,,"r / (1 - (1 + r)^-n) with r = 0.05 and n = 60 years; computed outside the engine, see the annuity factor formula; assumed, because no published table lists the factor for 60 years"
+zd-yZ-yU-b8+,1,,Olkiluoto 3 inflated to prices of 2024 plus a Swiss surcharge of 11.3 percent
+zd-yZ-yU-b9+,1,,MIT estimate for the next AP1000 plus 15 percent risk buffer
+zd-z9-yZ-yU-,1,,the level of recent projects in Europe and the US
 Ze-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the toilets and the water points
 ZE-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of the level tests, the materials and the training of teachers or volunteers, which is low compared to the learning gain (Angrist et al. 2020)"
 Ze-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because missing toilets keep some girls at home during their period"
 ZE-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a big share, because it reaches the many children far behind the curriculum and worked in government schools at scale (Banerjee et al. 2017)"
-ze-yu-yS-KJ+,1,,default of the calculator: a level between the Swiss ranges of large rooftop PV (50 to 120) and small rooftop PV (60 to 130) and the German PV cost (41 to 50)
+ze-yZ-1b+4N+,1,,S-curve: the full investment is on average financed over 40 percent of the construction time; reproduces the 2868 million CHF of interest of the BAK base case within 1 percent
+ze-yZ-1b+4N+4Q+,1,,calibrated on one study
 Zf-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the selection and the first year of grants
 ZF-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the classrooms and the training of new pre-primary teachers
 Zf-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because it motivates the good students but not the many who are far behind"
 ZF-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium share, because children who start school ready learn more in every later grade"
+zf-yv-yT-KJ+,1,,default of the calculator: a level between the Swiss ranges of large rooftop PV (50 to 120) and small rooftop PV (60 to 130) and the German PV cost (41 to 50)
 Zg-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of the building changes, the devices and the special training"
 ZG-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of training the home visitors and the health workers
 Zg-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because children with disabilities are a large part of the out-of-school children"
@@ -2359,42 +2359,42 @@ Zh-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the ex
 ZH-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of selecting and training the coaches
 Zh-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because displaced children are a small but fast growing group that often loses years of school"
 ZH-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium share, because coaching raises achievement by about a fifth of a standard deviation, although less in big programmes (Kraft et al. 2018)"
-zh-z9-yY-1Z+6f+b8+,1,,"per year: avoided hedging cost 50, avoided outage damage 50, avoided shortage damage 420 million CHF, conservative"
-zi-1b+4N+4Q+,1,,"the share of PV in the alternative mix is the uncertainty, not the PV profile"
 ZI-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of reforming the curricula of the teacher colleges
 ZI-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium-small share, because general workshops change little unless they are linked to classroom practice"
+zi-zA-yZ-1Z+6f+b8+,1,,"per year: avoided hedging cost 50, avoided outage damage 50, avoided shortage damage 420 million CHF, conservative"
+zj-1b+4N+4Q+,1,,"the share of PV in the alternative mix is the uncertainty, not the PV profile"
 ZK-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the reading materials and a short training
 ZK-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium-small share, because decoding is the first step to reading a simple text"
 Zl-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of writing and printing books in many languages
 ZL-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of the kitchens, the supply chains and the first year of meals"
 Zl-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium share, because many children are taught in a language they do not understand"
 ZL-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium-small share, because a fed child comes to school and can concentrate"
-zl-z1-yV-2Y+4N+KJ+VS+,1,,"today's median energy tariff kept in real terms; shifts only the level of the household price, not the difference"
-zl-zg-0L+2Y+Ic+KJ+,1,,the highest of the four models
-zl-zg-0L+2Y+If+KJ+,1,,the lowest of the four models
-zl-zg-0L+2Y+KJ+,1,,balance model; peak 8.1 TWh in 2045
 Zm-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the independent tests and the payroll systems
 ZM-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of training the teachers to hand out the pills
 Zm-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium-small share, because a small bonus raised maths scores by more than a quarter standard deviation (Muralidharan & Sundararaman 2011)"
 ZM-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because it cut the absence from school by a quarter but did not raise the test scores (Miguel & Kremer 2004)"
-zm-yg-yY-1b+4N+CA+,1,,r / (1 - (1 + r)^-n) with r = 0.08 and n = 60 years; assumed like the factor for the de-risked WACC
+zm-z2-yW-2Y+4N+KJ+VS+,1,,"today's median energy tariff kept in real terms; shifts only the level of the household price, not the difference"
+zm-zh-0L+2Y+Ic+KJ+,1,,the highest of the four models
+zm-zh-0L+2Y+If+KJ+,1,,the lowest of the four models
+zm-zh-0L+2Y+KJ+,1,,balance model; peak 8.1 TWh in 2045
 Zn-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the devices and the reporting systems
 ZN-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the screening and the first glasses
 Zn-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium-small share, because daily checks cut teacher absence by a fifth and raised the test scores (Duflo et al. 2012)"
 ZN-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because only some children see badly, but for them one year with glasses adds a fifth of a standard deviation (Glewwe et al. 2016)"
+zn-yh-yZ-1b+4N+CA+,1,,r / (1 - (1 + r)^-n) with r = 0.08 and n = 60 years; assumed like the factor for the de-risked WACC
 Zo-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the community programmes and the enforcement
 ZO-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of the registries, the payment systems and the first year of transfers"
 Zo-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because a girl who marries early almost always leaves school"
 ZO-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium-small share, because the transfers raise enrolment and attendance but the test scores only a little (Baird et al. 2014)"
 ZP-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of replacing the fees in the first year and of the extra places
 ZP-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium share, because a free place added more than a year of secondary school and higher test scores (Duflo et al. 2021)"
-zp-/K-2Y+Ag+bG+,1,,"winter import mix 2022/23 from France, Germany, Austria and Italy"
 ZQ-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the classrooms missing in Sub-Saharan Africa and South Asia
 ZQ-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium share, because a large building programme raised schooling and wages (Duflo 2001), but most children already have a primary school nearby"
-zq-z9-yY-yS-b8+,1,,"7 to 9 CHF per MWh against the scenario without new NPP, derived from Schwarz et al. 2023"
+zq-/K-2Y+Ag+bG+,1,,"winter import mix 2022/23 from France, Germany, Austria and Italy"
 ZR-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the earnings surveys and the materials
 ZR-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because students who learned the real returns stayed a quarter year longer in school (Jensen 2010)"
-zr-zl-yS-2Y+KJ+,1,,130 to 135 CHF per MWh in the most expensive winter month
+zr-zA-yZ-yT-b8+,1,,"7 to 9 CHF per MWh against the scenario without new NPP, derived from Schwarz et al. 2023"
+zs-zm-yT-2Y+KJ+,1,,130 to 135 CHF per MWh in the most expensive winter month
 ZU-1h-1a+4N+6R+,1,,"the cost to set up the solution worldwide: the cost of the devices, the power and the software in local languages"
 ZU-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium share, because adaptive software raised maths scores by a third of a standard deviation in a few months (Muralidharan et al. 2019)"
 ZV-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the call centres and the training of the tutors
@@ -2405,7 +2405,7 @@ ZX-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the bi
 ZX-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a small share, because it raised the secondary enrolment of girls by a third, but only where school is far (Muralidharan & Prakash 2017)"
 ZY-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of the test design and the statistics units
 ZY-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium-small share, because a system that does not measure learning cannot target it"
-z.-yY-1b+4N+4Q+,1,,"a value judgement of the reader, not a measurement"
-z.-yY-yS-4N+,1,,default of the calculator: only the cost counts; the BAK value of 520 million CHF per year for about 4.3 TWh of avoided winter import is about 120 CHF per MWh
+z/-yZ-1b+4N+4Q+,1,,"a value judgement of the reader, not a measurement"
+z/-yZ-yT-4N+,1,,default of the calculator: only the cost counts; the BAK value of 520 million CHF per year for about 4.3 TWh of avoided winter import is about 120 CHF per MWh
 ZZ-1h-1a+4N+6R+,1,,the cost to set up the solution worldwide: the cost of training the millions of missing teachers
 ZZ-Gq-1b+4N+,1,,"the share of the loss of education that the solution avoids if it is fully in place: a medium share, because the first grades in many poor countries have classes of eighty and more"

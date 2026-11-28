@@ -591,6 +591,21 @@ class system_view_ui_tests
         $msg->add_id(msg_id::CONFIG_NOT_LOADED);
         $t->assert_text_not_contains($test_name, $ui->user_msg_html($msg), $info_html);
         $msg->reset();
+        // but the confirmation of a write that has succeeded is shown also below an issue of the same request, e.g.
+        // the saved numbers of a calculator save next to the error of another write
+        $test_name = 'the confirmation of a done write is shown below an issue of the request';
+        $msg->add_done_html($info_html);
+        $msg->add_id(msg_id::CONFIG_NOT_LOADED);
+        $done_html = $ui->user_msg_html($msg);
+        $issue_html = htmlspecialchars($mtr->txt(msg_id::CONFIG_NOT_LOADED));
+        $t->assert_text_order($test_name, $done_html, $issue_html, $info_html);
+        $test_name = '... in green';
+        $t->assert_text_contains($test_name, $done_html, html_base::CLASS_NOTIFICATION_SUCCESS);
+        $msg->reset();
+        $test_name = '... and alone without an issue';
+        $msg->add_done_html($info_html);
+        $t->assert_text_contains($test_name, $ui->user_msg_html($msg), $info_html);
+        $msg->reset();
         // e.g. the refused save of a setting of the pod, which the backend reports without vars
         $test_name = 'a message without vars of a write is kept when merged into the message of the request';
         $refused_msg = new user_message();

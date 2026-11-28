@@ -1,5 +1,22 @@
 # pending - list of planned llm prompts with prio 1
 
+## review findings of 2026-11-28
+
+The review of the uncommitted changes of #247 (no re-pin, no import file changes):
+1. `src/main/php/cfg/export/phrase_data.php` (`phrase_vars`, the docblock of `parent_triple_ids`): the comments say
+   that an `is a` link "has no name and is so no phrase of a value", but named links e.g. "alternative investment
+   stock" or "SK-811 01 (postal code)" are added too; the reason is that no value names the link
+2. `phrase_data::parent_triple_ids`: `in_array($trp->to_id(), $data_ids)` and `in_array($trp->phrase()->id(),
+   $data_ids)` search the whole id list per link; one `array_flip` of the ids with `isset` makes each check constant,
+   e.g. for the 60 postal code links of the PV page
+3. `src/test/php/unit_read/phrase_data_read_tests.php` (the conversion with the exported definition): only the values
+   are compared, so a missing triple of the conversion e.g. the "is part of" of each position is found only by the
+   triple test of the export; also compare the triples of the two conversions
+4. `phrase_data::keyword_ids`: the docblock line "@return array the phrase ids of ... and of csv context by their
+   code id e.g." is about 128 chars, longer than the other lines of the file
+5. "the description of a pinned view" below: it is planned "before the re-pin run of change 1 of 'range of FX
+   rates'", which has run; move it to the next task with a re-pin
+
 ## Calculator editor
 
 ### portfolio split page compared with its sample
@@ -22,24 +39,70 @@ src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html and the
 
 Status of 2026-11-26: all case reports list 0 differences (plain, differ, low, high, standard and over), also with
 the walk counts by the instances (change 3 of step 3, section 4 of `docs/llm/log/2026-11-25_csv_child_shares.md`);
-`_add_child.md` too after the run of 14:49 with the button "Add child" (change 4 of step 3); only `_remove_child.md`
-differs, until the run of change 5.
+`_add_child.md` too after the run of 14:49 with the button "Add child" (change 4 of step 3), and `_remove_child.md`
+after the run of the follow-up of change 5 (the children keep their place, section 7 of
+`docs/llm/log/2026-11-25_csv_child_shares.md`).
 
 The remaining tasks in the suggested order:
 1. phase 1, in parallel:
    - part 1 of step 9: the open check of the context of a walk formula with a calculation job (needs a run of the
      developer)
-   - "import", the TODO of the developer in `convert_portfolio_csv.php`: "should be based on phrases without specific
-     code", so the columns of the bank, the asset classes with their kind, the assumed lot sizes and the phrases of
-     the values come from the data instead of the consts of the class (the task "csv import defined by phrases",
-     change 1 of 3 done, waiting for the run)
-   - the look: step 5 (the colours of the walk cells and the hint), the font of the diagram scale ("check",
-     decision 3) and the icons of step 7
+   - "import": the csv of a bank statement converted by the phrases of its format (the task "csv import defined by
+     phrases", change 3 of 3 done, waiting for `test/reset_db.php` and `test/test_part.php`)
    - stop for a run: `/test/test_part.php` with the tests that are likely to break by these changes, and before
      the commit an error free full `/test/test.php`
 2. phase 2, in parallel: part 5 of step 9 with the number fields of the holdings (step 5 (6)) and step 3 (add child
    and remove, the results of a new instance, which also closes the instances of part 3)
 3. after step 9: the functions of the buttons of step 7, each a task of its own
+
+
+#### report with three and more children
+
+if there are more than two children the pdf report should also contain all children. At the moment it seems that the PDF shows only two.
+
+The report takes every child of the database already; a child added in the browser is missing, because the save
+did not keep it (decisions of 2026-11-27, section 8 of `docs/llm/log/2026-11-25_csv_child_shares.md`):
+- 6a, the logged save of an added child and the delete of the `is a` triple of a removed child (done; the run of
+  2026-11-27 stopped before the write workflow tests, so its save waits for a `/test/test_part.php` run)
+- 6b, the results of an instance without stored results, copied from the first instance and calculated again on the
+  javascript page, the page without javascript and in the pdf report (done, waiting for a `/test/test_part.php`
+  run, section 9 of `docs/llm/log/2026-11-25_csv_child_shares.md`)
+
+#### first page of PDF report
+
+Done, waiting for a `/test/test_part.php` run: the first portfolio follows the title on the first page
+(section 10 of `docs/llm/log/2026-11-25_csv_child_shares.md`).
+
+#### range of FX rates
+
+remove the limits on FX rates so that all FX rates could be save and add a separate button to save FX rates.
+
+Three changes by the decisions of 2026-11-27 (sections 11 to 13 of `docs/llm/log/2026-11-25_csv_child_shares.md`),
+each with a run before the next:
+1. the limits of the input item before the limits of the phrase, and the ABB use case moves its exchange rate limits
+   to its item (done; the run after `test/reset_db.php` of 2026-11-28 draws the rate of the portfolio split page
+   without limits)
+2. next: one field per exchange rate, named by its unit e.g. "CHF per EUR", like the box of the sample
+3. a button "Save FX rates" below the rates that saves only the rates, and the main "Save" without them
+
+#### the description of a pinned view
+
+Before the re-pin run of change 1 of "range of FX rates" above, because it needs a re-pin anyway: the key
+`description` of the pinned view "problems" in `src/main/resources/config.yaml` (zukunft.com > system configuration
+> system > view > startup > pinned views), with the text that the developer had added on 2026-11-28 and taken back
+to avoid a re-pin of its own: "this is a priority list of the biggest global issues to solve. You can adjust the
+underlying assumptions if you think, this list is not correct by digging into the calculations and change the
+numbers. At the moment you first need to login so that your assumption can be saved without direct influencing the
+list for other users. if you think, the list is fine, the suggestion is to help solving the issues with the suggested
+solutions."
+- `words::DESCRIPTION` = 'description' in `src/main/php/shared/const/words.php`, because the coding rule test
+  `config_yaml_word_triple_tests` needs a const for every key of `config.yaml`
+- the re-pin: the config import makes the key the word "description" before `csv_keywords.json` declares it, so every
+  later word id moves by one and the config has one text value more (`test/reset_db.php`, `test/test_re_pin.php`, a
+  run with `files::AUTO_UPDATE_TEST_FILES` for the list files and the snapshots with an id)
+- check first that a text value takes a text of about 450 characters (the column of the text values)
+- not yet shown: the start page uses only the url, the view name, the name and the tooltip of a pinned view
+  (`html_base::start_page`); showing the description is a task of its own
 
 #### step 9: calculate the split again in the browser (18)
 
@@ -47,18 +110,13 @@ The rows of the walk are stored results of the formulas, and the browser calcula
 
 - part 1, the previous row in the backend (`docs/llm/log/2026-11-24_operand_groups.md`): a figure selects its number by the exact phrase group of the context and the operand, so check with a calculation job that the context of a walk formula is the phrases of the row, e.g. `LISN` and `first child portfolio`, and not the context of the calc-validation, which has more phrases
 - part 3, the formulas in `portfolio_split_calculator.json`: every formula is by the instances now (change 1 to 3 of
-  step 3), and the page calculates the results of a new instance (change 4 of step 3); still open: the save of a new
-  instance (change 6 of step 3)
+  step 3), the page calculates the results of a new instance (change 4 of step 3), and the save keeps a new instance
+  whose results every page calculates (change 6 of step 3, waiting for the run)
 - part 5, the number fields of the holdings and the add child task (the realised rows of this part are done, `docs/llm/log/2026-11-24_sum_over_results.md`)
-
-#### check
-
-- Diagram scale font (decision 3): the sample uses a monospace font for it, the generated page the normal one, so use a monospace font for the scale; the Import position stays (decision 2)
 
 #### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
 
 - the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
-- the colours of the walk cells and the hint below the holdings
 
 #### step 3: the input fields (1), (2), (3), (4)
 
@@ -66,24 +124,24 @@ Decision of the developer (2026-11-25): the full step 3, so that the reports `_a
 reach 0 differences ("Missing in the generated page": the field of the third child, the warning "Weights differ", the
 result table and the walk with a third child column and a remove button per child). The changes, each with its own
 log and a run before the next one (change 1 to 3, every formula and warning by the instances of `child portfolio`,
-and change 4, the button "Add child" in the browser, are done, `docs/llm/log/2026-11-25_csv_child_shares.md`):
-5. "Remove the ..." in the browser (done, waiting for a `/test/test_part.php` run with `system_views_read_tests`,
-   section 7 of `docs/llm/log/2026-11-25_csv_child_shares.md`): the button takes the instance with its numbers and
-   results from the page. Decision of the developer (2026-11-26): a child keeps the name of its phrase, so after the
-   case `remove_child` the page shows the first and the third child, while the sample numbers them by position and
-   shows "second child"; these label differences and the check rows of the removed second child stay in
-   `_remove_child.md` on purpose, the numbers should equal the sample
-6. the logged save of the changed instances: a child that "Add child" has added with its `is a child portfolio`
-   triple and its target share, and a removed child of the database with the logged delete of its `is a` triple;
-   until then the save and a new case leave out an added child and keep a removed one, and the hints
-   `calculator_added_not_saved` (`addedHint`) and `calculator_removed_not_saved` (`removedHint` in
-   `calculator_json.js`) say so, which go with the save; a removed child of the database can be added again only by
-   a reload of the page, because the add button adds only the declared instances
+change 4, the button "Add child", and change 5, the button "Remove the ..." in the browser, are done,
+`docs/llm/log/2026-11-25_csv_child_shares.md`, with the follow-up of 2026-11-26: the children keep their place like
+in the sample, so a remove moves the numbers behind it up by one and takes the last child from the page):
+6. the logged save of the changed instances, split by the decision of 2026-11-27 (see "report with three and more
+   children" above): 6a, the save of an added child with its `is a child portfolio` triple and its numbers and the
+   logged delete of the `is a` triple of a removed child, and 6b, the results of a saved new instance, are done and
+   wait for the run. Still open:
+   - a number of the database that a remove has taken from a field (`calculator_moved_not_saved`): the save does
+     not exclude the value yet
+   - a new case leaves out an added child
+   - the values of a removed child stay in the database without an instance
+   - a removed child of the database can be added again only by a reload of the page, because the add button adds
+     only the declared instances
 
 #### step 7: the buttons (13)
 
 - the buttons "Download", "Import", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
-- the icons of the sample
+
 
 ### Swiss NPP
 
@@ -182,27 +240,31 @@ based on phrases without specific code" in `convert_portfolio_csv.php`; no re-pi
 import file, else re-pin for its new words and triples). Three changes, each with its own log and a run before the
 next one:
 
-1. the keywords and the definition json (done, waiting for `/test/reset_db.php`, `/test/test_re_pin.php` and a
-   `/test/test_part.php` run, `docs/llm/log/2026-11-26_csv_format_phrases.md`): `csv_keywords.json` with the code
-   ids in `triples::CSV_KEYWORDS`, the definition json `src/test/resources/import/portfolio_csv/bank_position_csv.json`
-   and the rules in `docs/json_structure.md` *csv format*; decisions of the developer (2026-11-26): the keywords are
-   a system file with code ids, the definition is a test resource until change 3, a cell text is the description
-   of a triple
-2. `convert_csv`: reads the definition from the phrases (by the database or by `import::get_data_object` of the
-   definition json for the unit test), finds the header row, maps each row by its kind and writes the values of the
-   templates, the defaults and the vocabulary; it has no name of a column, a kind or a phrase of its own. Tests:
-   the same positive and negative tests as `convert_portfolio_csv` in `import_tests.php`, and it writes the same two
-   json files of `src/test/resources/import/portfolio_csv/` as `convert_portfolio_csv` (the difference of the two
-   is reported, so that a change is a decision)
-3. remove `convert_portfolio_csv.php` and its tests, once `convert_csv` gives the same results
+1. the keywords and the definition json (done, with its follow-up, the keyword `csv name` instead of the name prefix
+   rule, `docs/llm/log/2026-11-26_csv_format_phrases.md`): `csv_keywords.json` with the code ids in `triples::CSV_KEYWORDS`, the definition
+   json `src/test/resources/import/portfolio_csv/bank_position_csv.json` and the rules in `docs/json_structure.md`
+   *csv format*; decisions of the developer (2026-11-26): the keywords are a system file with code ids, the
+   definition is a test resource until change 3, a cell text is the description of a triple, and a written triple
+   gets its name only by `csv name`
+2. `convert_csv` (done, the run of 2026-11-27 has written both reports as planned, section 2 of
+   `docs/llm/log/2026-11-26_csv_format_phrases.md`): reads the decoded definition json and the name of the format
+   phrase; the reports `bank_positions_sample_diff.md` and `bank_positions_portfolio_split_diff.md` list its
+   differences to `convert_portfolio_csv`, which are the decisions of 2026-11-26: no walk, the bond fund as a bond
+3. `convert_portfolio_csv.php` and its tests removed, and the definition json a use case file at the end of the
+   setup, from which a db read test converts the sample csv by the export of the format phrase (done, waiting for
+   `test/reset_db.php` and `test/test_part.php`, section 3 of `docs/llm/log/2026-11-26_csv_format_phrases.md`); the
+   next run writes the fixtures `bank_positions_sample.json` and `bank_positions_portfolio_split.json` as the json of
+   `convert_csv` with the auto update. Still open: the message `import_csv_unknown_kind` names the asset class of
+   the bank csv, which a second format needs in general words, and a page or an api that converts an uploaded csv
+   (the "Import" button of step 7).
 
-What the phrases cannot define, because it is a calculation and not a fact of the csv:
-- the walk by the lot value: the import writes the rows in the order of the csv, and the page ranks them with
-  `is ranked by lot value` like today; so the `is follower of` chain of the lot value order of
-  `convert_portfolio_csv` is left out or becomes the order of the csv
-- the bond fund that the bank lists with the bonds but prices per unit (`LU0854923223`), which
-  `convert_portfolio_csv` finds by its market value: either the asset class of the bank is kept, or a formula of the
-  page flags a holding whose holding value differs from its `holding value, expected`
+What the phrases cannot define, because it is a calculation and not a fact of the csv, each a task of its own by
+the decisions of 2026-11-26:
+- the walk by the lot value: `convert_csv` writes no `is follower of` chain, so the walk of an imported portfolio
+  needs the order by the lot value in the backend, e.g. by `is ranked by lot value`, which the page uses for its rows
+- the bond fund that the bank lists with the bonds but prices per unit (`LU0854923223`): `convert_csv` keeps the
+  asset class of the bank, so a formula of the page should flag a holding whose holding value differs from its
+  `holding value, expected`
 
 ## user menu
 

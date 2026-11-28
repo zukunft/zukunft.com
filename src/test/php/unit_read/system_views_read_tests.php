@@ -51,6 +51,7 @@ include_once html_paths::EXECUTE . 'calculator_definition_report.php';
 include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::PHRASE . 'phrase_data.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once test_paths::UTILS . 'headless_browser.php';
 include_once test_paths::UTILS . 'csv_table_diff.php';
 include_once test_paths::UTILS . 'html_page_diff.php';
@@ -67,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
@@ -1517,10 +1519,108 @@ class system_views_read_tests
                 $this->assert_sample_case($t, $brw, $sample, $page, test_files::PORTFOLIO_SPLIT_CALCULATOR_SAMPLE,
                     test_files::PORTFOLIO_SPLIT_CALCULATOR_JS, test_files::PORTFOLIO_CASE_DIFF_PREFIX, $case, true);
             }
+            $this->assert_calculator_save_vars($t, $brw, $page);
+            $this->assert_instance_results($t, $brw, $page_html, $page);
             unlink($sample);
             unlink($page);
         }
         $brw->stop();
+    }
+
+    /**
+     * the save vars that the script of the portfolio split page draws as hidden inputs, which no case report shows,
+     * because a report compares the texts of the page (frontend::action_calculator_save reads them)
+     *
+     * @param test_cleanup $t the test environment
+     * @param headless_browser $brw the started headless browser
+     * @param string $page the path of the copy of the generated page with the case script
+     * @return void
+     */
+    private function assert_calculator_save_vars(test_cleanup $t, headless_browser $brw, string $page): void
+    {
+        $added_html = $this->pv_case($brw, $page, test_files::PORTFOLIO_CASE_ADD_CHILD)[self::CASE_PAGE];
+        $added_to = $this->hidden_vars($added_html, url_var::PHRASE_TO);
+        $test_name = 'the added child sends the repeated phrase for its is a triple';
+        $t->assert($test_name, count($added_to), 1);
+        $added_key = (string)array_key_first($added_to);
+        $test_name = '... as a phrase id';
+        $to_id = (string)($added_to[$added_key] ?? '');
+        $is_phr_id = filter_var($to_id, FILTER_VALIDATE_INT) !== false;
+        $t->assert($test_name, $is_phr_id, true);
+        $test_name = '... and its number by the phrase ids of its value, which include the added child';
+        $added_ids = explode(',', $this->hidden_vars($added_html, url_var::PHRASE_LIST)[$added_key] ?? '');
+        $t->assert_contains($test_name, $added_ids, $added_key);
+        $removed_html = $this->pv_case($brw, $page, test_files::PORTFOLIO_CASE_REMOVE_SAVED_CHILD)[self::CASE_PAGE];
+        $removed_trp = $this->hidden_vars($removed_html, url_var::TRIPLE);
+        $test_name = 'a removed child of the database sends the id of its is a triple';
+        $t->assert($test_name, count($removed_trp), 1);
+        $test_name = '... as a triple id';
+        $trp_id = (string)($removed_trp[array_key_first($removed_trp)] ?? '');
+        // the id of the triple and not its phrase id, which is negative
+        $is_trp_id = filter_var($trp_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) !== false;
+        $t->assert($test_name, $is_trp_id, true);
+        // negative: a child that is added and removed again is in the database neither before nor after the save
+        $readded_html = $this->pv_case($brw, $page, test_files::PORTFOLIO_CASE_REMOVE_CHILD)[self::CASE_PAGE];
+        $test_name = 'a child that is added and removed again sends no triple to delete';
+        $t->assert($test_name, $this->hidden_vars($readded_html, url_var::TRIPLE), []);
+        $test_name = '... and none to add';
+        $t->assert($test_name, $this->hidden_vars($readded_html, url_var::PHRASE_TO), []);
+    }
+
+    /**
+     * a child that the save has added has no stored results, so the script copies those of the first child at the
+     * load (calculator_json.js addMissingInstanceResults): the generated page without the results of the second child
+     * in its seed must show what it shows with them
+     *
+     * @param test_cleanup $t the test environment
+     * @param headless_browser $brw the started headless browser
+     * @param string $page_html the generated javascript page
+     * @param string $page the path of the copy of the generated page with the case script
+     * @return void
+     */
+    private function assert_instance_results(test_cleanup $t, headless_browser $brw, string $page_html, string $page): void
+    {
+        $hpd = new html_page_diff();
+        $seed = $t->page_seed($page_html);
+        $part_seed = $seed;
+        $part_seed[json_fields::RESULTS] = array_values(array_filter($seed[json_fields::RESULTS] ?? [],
+            fn(array $res) => !in_array(triple_names::PORTFOLIO_SECOND_CHILD, $res[json_fields::WORDS] ?? [])));
+        $part = $brw->page_copy($t->with_page_seed($page_html, $part_seed),
+            test_files::PORTFOLIO_SPLIT_CALCULATOR_CASES, test_files::USE_CASE_CASES);
+        $full_items = $hpd->page_items($this->pv_case($brw, $page, self::CASE_UNCHANGED)[self::CASE_PAGE]);
+        $part_items = $hpd->page_items($this->pv_case($brw, $part, self::CASE_UNCHANGED)[self::CASE_PAGE]);
+        unlink($part);
+        $test_name = 'the seed of the test has fewer results than the page';
+        $t->assert($test_name, count($part_seed[json_fields::RESULTS]) < count($seed[json_fields::RESULTS] ?? []), true);
+        $test_name = 'the javascript page shows the results of a child without stored results like the stored ones';
+        $t->assert($test_name, $this->differing_items($full_items, $part_items), []);
+    }
+
+    /**
+     * @param array $expected the items of a page by their key (html_page_diff::page_items)
+     * @param array $actual the items of another page by their key
+     * @return array the keys of the items that only one of the two pages has or that differ
+     */
+    private function differing_items(array $expected, array $actual): array
+    {
+        $keys = array_unique([...array_keys($expected), ...array_keys($actual)]);
+        return array_values(array_filter($keys, fn($key) => ($expected[$key] ?? null) !== ($actual[$key] ?? null)));
+    }
+
+    /**
+     * @param string $html the html of a page after a case
+     * @param string $prefix the url var in front of the field key e.g. url_var::TRIPLE
+     * @return array per field key, which is a phrase id e.g. "-4812" of "t-4812", the value of the hidden input
+     */
+    private function hidden_vars(string $html, string $prefix): array
+    {
+        $result = [];
+        $pattern = '/<input type="hidden" name="' . preg_quote($prefix, '/') . '(-?\d+)" value="([^"]*)"/';
+        preg_match_all($pattern, $html, $matches, PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            $result[$match[1]] = $match[2];
+        }
+        return $result;
     }
 
     /**

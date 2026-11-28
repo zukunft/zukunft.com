@@ -1377,6 +1377,10 @@ enum messages: string
         . '" stays empty, because its phrases select the different numbers "'
         . self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
         . '" equally; add the phrase that selects one of them to the calculator triples of the cell';
+    // a saved instance without stored results gets the results of the first instance (ui_list::add_instance_results)
+    case CALCULATOR_INSTANCE_RESULTS_MISSING = 'the results "'
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END
+        . '" of an instance without stored results are not shown, because the page cannot calculate them from its numbers';
     case CHART_TYPE_UNKNOWN = 'the chart type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" has no code id of a known chart type, so the chart is not shown';
@@ -2505,6 +2509,11 @@ enum messages: string
     case CALCULATOR_SAVE = 'calculator_save';
     // the confirmation of one saved number with its label, the new and the old number, or that no number has been changed
     case CALCULATOR_SAVED = 'calculator_saved';
+    // the confirmation of a number without a database row, of an added instance without a number and of an instance
+    // whose is a triple the save has deleted
+    case CALCULATOR_SAVED_NEW = 'calculator_saved_new';
+    case CALCULATOR_ADDED_SAVED = 'calculator_added_saved';
+    case CALCULATOR_REMOVED_SAVED = 'calculator_removed_saved';
     case CALCULATOR_NOTHING_CHANGED = 'calculator_nothing_changed';
     // the first header of the result table, the default summary of the details and the sources heading
     case CALCULATOR_RESULT = 'calculator_result';
@@ -2714,6 +2723,8 @@ enum messages: string
     case CALCULATOR_ADDED_NO_NUMBER = 'calculator_added_no_number';
     // in front of the names of the instances that the remove button has taken from the page but not from the database
     case CALCULATOR_REMOVED_NOT_SAVED = 'calculator_removed_not_saved';
+    // the hint of an instance whose number the remove button has moved, but which has no number of the database behind it
+    case CALCULATOR_MOVED_NOT_SAVED = 'calculator_moved_not_saved';
     // the header and the status texts of the check table of a calculator page
     case CALCULATOR_CHECK_VALUE = 'calculator_check_value';
     case CALCULATOR_CHECK_EXPECTED = 'calculator_check_expected';
@@ -3163,14 +3174,18 @@ enum messages: string
     // always added with ok = true, because it explains a suppression instead of causing one
     case IMPORT_STEP_SKIPPED = 'import_step_skipped';
 
-    // the problems of the csv of a bank statement of the positions (convert_portfolio_csv), each naming the csv,
-    // the line and the position, because the position is left out of the import json
+    // the problems of the csv of a bank statement of the positions (convert_csv), each naming the csv, the line and
+    // the position, because the position is left out of the import json
     case IMPORT_CSV_NO_HEADER = 'import_csv_no_header';
     case IMPORT_CSV_LINE_CELLS = 'import_csv_line_cells';
     case IMPORT_CSV_UNKNOWN_KIND = 'import_csv_unknown_kind';
     case IMPORT_CSV_CELL_EMPTY = 'import_csv_cell_empty';
     case IMPORT_CSV_CELL_NOT_NUMBER = 'import_csv_cell_not_number';
-    case IMPORT_CSV_RATE_NOT_POSITIVE = 'import_csv_rate_not_positive';
+    // a cell with the flag csv positive of any csv format, so the text names no column
+    case IMPORT_CSV_CELL_NOT_POSITIVE = 'import_csv_cell_not_positive';
+    // the problems of the definition of a csv format (convert_csv), which the author of the definition can fix
+    case IMPORT_CSV_FORMAT_KEYWORD_MISSING = 'import_csv_format_keyword_missing';
+    case IMPORT_CSV_TEMPLATE_NUMBERS = 'import_csv_template_numbers';
 
     // if a delete has only excluded the object for the user, because it is still used
     // always added with ok = true, because the exclusion is the normal answer to the delete of a used object

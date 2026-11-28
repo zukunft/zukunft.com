@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::EXPORT . 'phrase_data.php';
+include_once paths::MODEL_IMPORT . 'convert_csv.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'phrase_data_walks.php';
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
+use Zukunft\ZukunftCom\main\php\cfg\import\convert_csv;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -78,6 +80,9 @@ class phrase_data_read_tests
 
     // the separator of the parts of a triple or value key e.g. "PV|is an acronym for|photovoltaic"
     const string KEY_SEP = '|';
+    // the context and the source of the conversion of the sample csv of a bank statement (import_tests)
+    const string CSV_CONTEXT = 'portfolio 040270501213';
+    const string CSV_SOURCE = 'bank statement 040270501213 of 06.02.26';
     // the json fields of the objects that the phrase data contains without the results
     const array OBJECT_FIELDS = [
         json_fields::WORDS,
@@ -251,6 +256,38 @@ class phrase_data_read_tests
         $test_name = '... and no formula of a word that only names a triple';
         $tbl_frm_names = $this->names($tbl_vars[json_fields::FORMULAS] ?? []);
         $t->assert_contains_not($test_name, $tbl_frm_names, [formula_names::DELIVERED_ELECTRICITY]);
+
+        // the format of a csv as phrases is a use case file, whose definition convert_csv reads from the database by
+        // the walk of the format phrase, so the import file is the expected minimum of the walk (docs/json_structure.md
+        // "csv format")
+        $t->subheader($ts . 'from walk of a csv format');
+        $test_name = 'the phrase data of a csv format contains every triple of its import file';
+        $fmt_file = json_decode(file_get_contents(files::BANK_POSITION_CSV_FILE), true);
+        $fmt_name = $fmt_file[json_fields::SELECTION][0] ?? '';
+        $phr_fmt = new phrase($t->usr1);
+        $phr_fmt->load_by_name($fmt_name, $msg);
+        $fmt_vars = $phd->export_json($phr_fmt->id(), phrase_data_walks::FROM, false, $msg);
+        $fmt_trp_keys = $this->triple_keys($fmt_vars[json_fields::TRIPLES] ?? []);
+        // the missing triples by name, because the diff of two long sorted lists shows only the end of the longer one
+        $missing_keys = array_values(array_diff($this->triple_keys($fmt_file[json_fields::TRIPLES]), $fmt_trp_keys));
+        $t->assert($test_name, $missing_keys, [], $t::TIMEOUT_LIMIT_IMPORT);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+        $test_name = '... and every value template';
+        $fmt_val_keys = $this->value_keys($fmt_vars[json_fields::VALUES] ?? []);
+        $t->assert_contains($test_name, $fmt_val_keys, $this->value_keys($fmt_file[json_fields::VALUES]));
+        $test_name = 'convert_csv converts the sample csv with the exported definition to the values of the import file';
+        $csv_txt = file_get_contents(test_files::IMPORT_PORTFOLIO_CSV_SAMPLE);
+        $db_csv_vals = $this->csv_values($fmt_vars, $fmt_name, $csv_txt, $msg);
+        $file_csv_vals = $this->csv_values($fmt_file, $fmt_name, $csv_txt, $msg);
+        $t->assert($test_name, $db_csv_vals, $file_csv_vals, $t::TIMEOUT_LIMIT_FILE);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+        // negative: the export of a page that is no csv format has no triple to the keywords of a format
+        $test_name = '... but the export of a page is no csv format';
+        $no_fmt_ok = new convert_csv()->set_format($split_vars, triple_names::EXAMPLE_PORTFOLIO_SPLIT, $msg);
+        $t->assert($test_name, $no_fmt_ok, false);
+        $msg->reset();
 
         $t->subheader($ts . 'value walk of the example PV installation');
         $test_name = 'the value walk contains every value of the sample that names the phrase';
@@ -452,6 +489,31 @@ class phrase_data_read_tests
                 $obj[json_fields::EX_VERB] ?? '',
                 $obj[json_fields::EX_TO] ?? ''
             ]);
+        }
+        sort($result);
+        return $result;
+    }
+
+    /**
+     * the values of the import json that convert_csv writes from a csv by a definition, compared as text, because the
+     * definition exported from the database has the database id of each declaration, which the json copies
+     *
+     * @param array $fmt the definition of the csv format e.g. the import file or its export from the database
+     * @param string $format the name of the phrase of the format e.g. bank position csv
+     * @param string $csv the text of the csv
+     * @param user_message $msg to collect the messages of the conversion
+     * @return array per value its sorted phrase names and its number, sorted
+     */
+    private function csv_values(array $fmt, string $format, string $csv, user_message $msg): array
+    {
+        $conv = new convert_csv();
+        $conv->set_format($fmt, $format, $msg);
+        $json = json_decode($conv->convert($csv, [self::CSV_CONTEXT], self::CSV_SOURCE, $msg), true);
+        $result = [];
+        foreach ($json[json_fields::VALUES] ?? [] as $val) {
+            $phr_names = $val[json_fields::WORDS] ?? [];
+            sort($phr_names);
+            $result[] = implode(self::KEY_SEP, $phr_names) . ' = ' . ($val[json_fields::NUMBER] ?? '');
         }
         sort($result);
         return $result;

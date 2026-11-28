@@ -18,6 +18,18 @@ A proper issue ticket should be created for these TODOs notes:
     TODO make it more clear that the pinned views are not the legal pages
     TODO limit the prime phrase id by the int number that can be processed in JavaScript
     TODO add a FAQ to the main page with 'Will this not be replaced by LLM AI'?
+    TODO add a short welcome text to the frontpage that explains the what it can be used for with a very few words;methon the difference to an internet search and KI
+    TODO allow to search for more than one word
+    TODO add an explaining text to the list of global issues
+    TODO in a value list by default the words and the number should be one link with one tooltip; for advanced user the link should be seperated
+    TODO in a value list e.g. http://localhost/http/view.php?m=3&id=3343&u=11 if the phrases are part of a 'is follower of' list use the list for sorting; if it is time use a decending list and seperate future from past dates
+    TODO for longer 'is follower of' chain list, use a named sort list with a description
+    TODO use a stundend project to improve the usability
+    TODO create a selector view for e.g. the travel destination and medias
+    TODO add a welcome text to the frontend like 'Welcome to zukunft.com. It could help to avoid wrong decitions based on structured data. This is open source version 0.0.3 contains already some samples: global problems -  a priority list of global issues to solve; ; Advanced users can use the platform to create there own diciion pages e.g. by using an LLM Chatbot and use this platform as a verification and data collection tool.'
+    TODO add to the 'global problems' an explain test on the top. use for that the 'description' text of 'pinned views', 'startup', 'view', 'system', 'system configuration' in config.yaml
+    TODO add '              description: "this is a priority list of the biggest global issues to solve. You can adjust the underlying assumptions if you think, this list is not correct by digging into the calculations and change the numbers. At the moment you first need to login so that your assumption can be saved without direct influencing the list for other users. if you think, the list is fine, the suggestion is to help solving the issues with the suggested solutions."' 
+    
 
     ->  launch
 

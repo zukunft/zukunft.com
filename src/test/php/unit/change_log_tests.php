@@ -90,6 +90,8 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -323,6 +325,32 @@ class change_log_tests
         // the changes of a user row e.g. of a signed up test user, which the test cleanup removes
         $test_name = 'get the changes of a user';
         $this->assert_sql_list_by_field(user::class, '', users::SYSTEM_TEST_ID, $log_lst, $db_con, $t, $test_name);
+
+        // the list loads every entry as a change, so the cleanup takes the table of the entries from
+        // change_class; a delete from the changes table by the ids of value changes has removed the
+        // name change of the component with the same id (change_log_read_tests 'view component name change')
+        $test_name = 'the changes of a component are in the changes table';
+        $t->assert($test_name, $log_lst->change_class(component::class, 1), change::class);
+        $test_name = 'the changes of a prime value are in its value change table';
+        $grp_id = $t_val->value($msg)->id();
+        $t->assert($test_name, $log_lst->change_class(value::class, $grp_id), change_values_prime::class);
+        $test_name = '... of a value with 16 phrases in the norm table';
+        $grp_id = $t_val->value_16()->id();
+        $t->assert($test_name, $log_lst->change_class(value::class, $grp_id), change_values_norm::class);
+        $test_name = '... of a value with more phrases in the big table';
+        $grp_id = $t_val->value_17_plus()->id();
+        $t->assert($test_name, $log_lst->change_class(value::class, $grp_id), change_values_big::class);
+        $test_name = '... and of a result like a value';
+        $t->assert($test_name, $log_lst->change_class(result::class, 1), change_values_prime::class);
+        $test_name = 'the changes of a prime group are in the changes table';
+        $grp_id = $t_grp->group()->id();
+        $t->assert($test_name, $log_lst->change_class(group::class, $grp_id), change::class);
+        $test_name = '... of a group with 16 phrases in the norm table';
+        $grp_id = $t_grp->group_16()->id();
+        $t->assert($test_name, $log_lst->change_class(group::class, $grp_id), changes_norm::class);
+        $test_name = '... of a group with more phrases in the big table';
+        $grp_id = $t_grp->group_17_plus()->id();
+        $t->assert($test_name, $log_lst->change_class(group::class, $grp_id), changes_big::class);
 
         // sql to load the link change history of an object (used by the default word/formula/view page)
         $t->subheader($ts . 'link change list by object');

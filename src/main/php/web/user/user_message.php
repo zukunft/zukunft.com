@@ -54,8 +54,11 @@ class user_message extends Message
     private array $txt;
     // array of informational messages shown even when is_ok() is true
     private array $info;
-    // array of informational messages as safe html e.g. with a link to the saved value
+    // array of informational messages as safe html e.g. the missing suggestions of the add word view
     private array $info_html;
+    // array of the confirmations of the writes that have succeeded as safe html e.g. with a link to the saved value,
+    // which are shown also below an issue of the same request, because the writes are done
+    private array $done_html;
     // the prime database row that has caused the user message
     private int|string $db_row_id;
 
@@ -75,6 +78,7 @@ class user_message extends Message
         $this->txt = [];
         $this->info = [];
         $this->info_html = [];
+        $this->done_html = [];
         if ($txt !== '') {
             $this->txt[] = $txt;
             $this->set_not_ok();
@@ -97,6 +101,7 @@ class user_message extends Message
         $this->txt = [];
         $this->info = [];
         $this->info_html = [];
+        $this->done_html = [];
         $this->db_row_id = 0;
     }
 
@@ -311,6 +316,25 @@ class user_message extends Message
     }
 
     /**
+     * the confirmation of the writes that have succeeded e.g. the saved numbers of a calculator save, which is shown
+     * also below an issue of the same request, e.g. the error of another write; so only a caller that has written adds it
+     *
+     * @param string $html the confirmation as html that the caller guarantees to be safe: every text in it escaped
+     * @return void
+     */
+    function add_done_html(string $html): void
+    {
+        if ($html !== '' and !in_array($html, $this->done_html)) {
+            $this->done_html[] = $html;
+        }
+    }
+
+    function get_last_done_html(): string
+    {
+        return !empty($this->done_html) ? end($this->done_html) : '';
+    }
+
+    /**
      * @param msg_id $search the message id to look for
      * @return bool true if the given message id is recorded in msg_var_lst or msg_id_lst
      */
@@ -338,7 +362,7 @@ class user_message extends Message
     {
         $has_error = !$this->is_ok();
         $has_var_msg = !empty($this->msg_var_lst);
-        $has_info_txt = (!empty($this->info) or !empty($this->info_html));
+        $has_info_txt = (!empty($this->info) or !empty($this->info_html) or !empty($this->done_html));
         return $has_error || $has_var_msg || $has_info_txt;
     }
 

@@ -108,8 +108,10 @@ out of `cfg/const/files.php`:
 4. `SYSTEM_DATA_APPENDED_FILES` — the system data added after the test ids have
    been pinned, e.g. `process_catch_fields` and `calculator_keywords`
 5. `USE_CASE_FILES_APPENDED` — the use cases that build on the appended system
-   data, e.g. `pv_lifetime_balance` with the calculator keywords; the last step
-   of the database setup
+   data, e.g. `pv_lifetime_balance` with the calculator keywords; then the XBRL
+   fileset of ABB, and as the last step of the database setup
+   `USE_CASE_FILES_AFTER_XBRL`, e.g. `bank_position_csv`, so that a new use case
+   file moves no id of the XBRL fileset
 6. `BASE_DATA_FILES` — `math`, `physics`, `chemistry`, `economics`, … which the
    const block itself labels *"loaded at the end not to change the id of objects
    used by the system tests"*
@@ -156,7 +158,7 @@ in a second and `gas of climate` in a third.
 
 ### Use case files never carry a `code_id` and import for a normal user
 
-A use case file (`files::USE_CASE_FILES` or `files::USE_CASE_FILES_APPENDED`, `src/main/resources/messages/use_cases/`,
+A use case file (`files::USE_CASE_FILES`, `files::USE_CASE_FILES_APPENDED` or `files::USE_CASE_FILES_AFTER_XBRL`, `src/main/resources/messages/use_cases/`,
 e.g. `pv_switzerland_co2.json`) answers a question with the data — the kind of file
 any user may add. So it is user data, not system data:
 
@@ -928,9 +930,10 @@ The keywords of the process catch pages, fields and buttons are in `process_catc
 triple without its `code_id` (see *Use case files never carry a `code_id`*).
 
 The keywords of a csv format are in `csv_keywords.json`: a cell text of the csv is the description of a triple,
-compared with the complete cell, and the description of a triple template may name a cell by `{<header text>}`,
-the only placeholder of a csv format, which the conversion replaces by the cell of that column of the same row;
-the rules of the templates are in `docs/json_structure.md` *csv format*.
+compared with the complete cell, and the description of a triple template or of its triple to `csv name` may name a
+cell by `{<header text>}`, the only placeholder of a csv format, which the conversion replaces by the cell of that
+column of the same row; a written triple gets a name only by `csv name`, never by a part of the template name; the
+rules of the templates are in `docs/json_structure.md` *csv format*.
 
 ## Formulas
 

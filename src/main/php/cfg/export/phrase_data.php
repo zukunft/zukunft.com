@@ -209,6 +209,13 @@ class phrase_data
             $this->value_phrase_ids($val_lst, $msg),
             $this->result_phrase_ids($res_lst));
         $phr_lst = $this->complete_phrases($ids, $msg);
+        // the "is a" links between two phrases of the data e.g. stock is a holding, because such a link has no name
+        // and is so no phrase of a value
+        $lnk_ids = $this->parent_triple_ids($phr_lst, $msg);
+        if ($lnk_ids != []) {
+            // not added to the ids of the formulas below, because a link without a name has no formula
+            $phr_lst = $this->complete_phrases(array_merge($phr_lst->id_lst(), $lnk_ids), $msg);
+        }
         // the formulas of the phrases of the data, but not of the sides that only name a triple, because a
         // formula that a page assigns to a shared word e.g. export would be added to every page that names it
         $data_phr_lst = $this->phrases_by_ids(array_values(array_unique($ids)), $msg);
@@ -295,12 +302,14 @@ class phrase_data
      * (docs/llm/pending_prio_2.md "code id of a triple"), and mapped to their code id
      *
      * @param user_message $msg with the requesting user
-     * @return array the phrase ids of the calculator, the field and the table keywords by their code id e.g.
+     * @return array the phrase ids of the calculator, the field and the table keywords and of csv context by their code id e.g.
      *               system_calculator_label => -2727; these phrases are never walked
      */
     private function keyword_ids(user_message $msg): array
     {
-        $keywords = array_merge(triples::CALCULATOR_KEYWORDS, triples::TABLE_KEYWORDS);
+        // with csv context, whose link is part of a csv format (is_context_link)
+        $keywords = array_merge(triples::CALCULATOR_KEYWORDS, triples::TABLE_KEYWORDS,
+            [triples::CSV_CONTEXT => triples::CSV_CONTEXT_CODE_ID]);
         $trp_lst = new triple_list($msg->usr);
         $trp_lst->load_by_names(array_keys($keywords), $msg);
         $result = [];
@@ -442,7 +451,7 @@ class phrase_data
             if (in_array($trp->to_id(), $col_kwd_ids)) {
                 $own_tbl_lst->add($trp->get_from(), false, $msg);
             }
-            if ($this->is_calculator_link($trp)) {
+            if ($this->is_calculator_link($trp) or $this->is_context_link($trp, $kwd_ids)) {
                 $this->add_new($next, $walked, $kwd_ids, $trp->phrase(), $msg);
             }
             if ($this->is_item_link($trp, $kwd_ids)) {
@@ -545,6 +554,18 @@ class phrase_data
     private function is_calculator_link(triple $trp): bool
     {
         return in_array($trp->get_verb_code_id(), verbs::CALCULATOR_VERBS);
+    }
+
+    /**
+     * @param triple $trp a triple whose from side has been walked
+     * @param array $kwd_ids the phrase ids of the keywords by their code id
+     * @return bool true if the triple links a column of a csv format to its context e.g. bank position csv instrument
+     *              is part of csv context, which is no calculator verb but a triple template of the format
+     */
+    private function is_context_link(triple $trp, array $kwd_ids): bool
+    {
+        $ctx_id = $kwd_ids[triples::CSV_CONTEXT_CODE_ID] ?? 0;
+        return ($ctx_id != 0 and $trp->to_id() == $ctx_id);
     }
 
     /**
@@ -818,6 +839,33 @@ class phrase_data
             $exp = new expression($frm);
             $result = array_merge($result, $exp->phr_id_lst($frm->ref_text ?? '')->lst);
         }
+        return $result;
+    }
+
+    /**
+     * the "is a" triples between two phrases of the data, because such a link has no name and is so no phrase of a
+     * value, e.g. stock is a holding or alternative investment is a stock, which the kinds of the templates of a csv
+     * format need; only links between two phrases of the data, so that a page does not get new phrases by them
+     *
+     * @param phrase_list $phr_lst the completed phrases of the data
+     * @param user_message $msg with the requesting user
+     * @return array the phrase ids of the "is a" triples from a phrase of the data to a phrase of the data
+     */
+    private function parent_triple_ids(phrase_list $phr_lst, user_message $msg): array
+    {
+        global $sys;
+        $result = [];
+        $data_ids = $phr_lst->id_lst();
+        if (!$phr_lst->is_empty()) {
+            $lnk_lst = new triple_list($msg->usr);
+            $lnk_lst->load_by_phr_lst($phr_lst, $msg, $sys->verb(verbs::IS), foaf_direction::UP);
+            foreach ($lnk_lst->lst() as $trp) {
+                if (in_array($trp->to_id(), $data_ids) and !in_array($trp->phrase()->id(), $data_ids)) {
+                    $result[] = $trp->phrase()->id();
+                }
+            }
+        }
+        $this->debug_step('is a links between phrases of the data', count($result));
         return $result;
     }
 

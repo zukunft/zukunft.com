@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
@@ -288,6 +290,19 @@ class use_case_ui_tests
         $test_name = '... but a value with more phrases of the result outside the context is no operand';
         $num_ctx = new formula_calc()->result($t_res->result_zh_sum_ui($sum), $t_val->value_list_operand_choice_ui(false), $frm_city_lst);
         $t->assert($test_name, $num_ctx, 10.0);
+        // the calculation finds the operands by an index of each list by phrase name, which is built again after a
+        // change of the list, e.g. after the missing operands of a table have been added to the page list
+        $test_name = 'a value added to the list after a calculation is an operand of the next one';
+        $calc_idx = new formula_calc();
+        $idx_lst = $t_val->value_list_operand_choice_ui(false);
+        $idx_before = clone $idx_lst;
+        $calc_idx->result($t_res->result_zh_sum_ui($sum), $idx_lst, $frm_city_lst);
+        $val_zh = $t_val->value_list_operand_choice_ui(true)->get_by_names([word_names::ZH, triple_names::CITY_ZH_NAME]);
+        $idx_lst->add($val_zh, $msg);
+        $t->assert($test_name, $calc_idx->result($t_res->result_zh_sum_ui($sum), $idx_lst, $frm_city_lst), 20.0);
+        // negative: the index belongs to one list, so a copy of the list made before the change keeps its operand
+        $test_name = '... but not of a copy of the list made before';
+        $t->assert($test_name, $calc_idx->result($t_res->result_zh_sum_ui($sum), $idx_before, $frm_city_lst), 10.0);
         // a calculator page repeats the calculation in the browser, so the expression is given as
         // tokens with the html id of each operand instead of the formula text, which the browser
         // never runs as code
@@ -1081,7 +1096,17 @@ class use_case_ui_tests
         $test_name = 'the buttons of a list show their label and only if the list has them';
         $btn_calc = new calculator($zh_city->phrase(), $t_phr->list_calculator_button_ui());
         $btn_html = $list->calculator_buttons($btn_calc, $btn_calc->group(triples::CALCULATOR_INPUT));
-        $t->assert_text_contains($test_name, $btn_html, '>' . triple_names::CALC_BUTTON_COM . '</button>');
+        $t->assert_text_contains($test_name, $btn_html, icons::CALC_DOWNLOAD . '"></i> ' . triple_names::CALC_BUTTON_COM . '</button>');
+        $test_name = '... with the hint of the button as its tooltip';
+        $t->assert_text_contains($test_name, $btn_html, html_base::TITLE_HTML . '="' . triple_names::CALC_BUTTON_HINT_COM . '"');
+        $test_name = 'the tooltip of a button is the hint of its triple';
+        $btn_inputs = $btn_calc->group(triples::CALCULATOR_INPUT);
+        $btn_hint = $btn_calc->button_hint($btn_inputs, triples::CALCULATOR_DOWNLOAD);
+        $t->assert($test_name, $btn_hint, triple_names::CALC_BUTTON_HINT_COM);
+        // negative: a button that the list does not have has no hint
+        $test_name = '... but a button that the list does not have has none';
+        $no_hint = $btn_calc->button_hint($btn_inputs, triples::CALCULATOR_REPORT);
+        $t->assert($test_name, $no_hint, '');
         // the input list shows two buttons per line with the save button in front of the download
         $test_name = 'the save button is part of the two buttons per line of the input list';
         $save_html = $list->calculator_buttons($btn_calc, $btn_calc->group(triples::CALCULATOR_INPUT), self::CALC_SAVE_HTML);
@@ -1295,7 +1320,7 @@ class use_case_ui_tests
         $test_name = 'the imports of a page are a section with a button per item';
         $imports_html = $list->calculator_imports($ins_calc);
         $t->assert_text_contains($test_name, $imports_html, triple_names::CALC_IMPORTS_LABEL);
-        $t->assert_text_contains($test_name, $imports_html, '>' . triple_names::CALC_IMPORT_LABEL . '</button>');
+        $t->assert_text_contains($test_name, $imports_html, icons::CALC_IMPORT . '"></i> ' . triple_names::CALC_IMPORT_LABEL . '</button>');
         // negative: a page without the list has no section
         $test_name = '... but a page without the list has none';
         $t->assert($test_name, $list->calculator_imports($one_calc), '');
@@ -1323,7 +1348,7 @@ class use_case_ui_tests
         $in_colours = array_filter(array_column($in_cols, 3));
         $t->assert($test_name, $in_colours, []);
         $test_name = '... and the button to add an instance';
-        $t->assert_text_contains($test_name, $fld_html, '>' . triple_names::CALC_ADD_LABEL . '</button>');
+        $t->assert_text_contains($test_name, $fld_html, icons::CALC_ADD . '"></i> ' . triple_names::CALC_ADD_LABEL . '</button>');
         // negative: without the triples of the field types the fields stay number fields and a selector
         $test_name = 'a field without a field type has no checkbox';
         $t->assert_text_not_contains($test_name, $in_html, 'type="checkbox"');
@@ -2282,6 +2307,93 @@ class use_case_ui_tests
         $t->assert($test_name, $txt_changes, []);
         $test_name = '... but reported';
         $t->assert_false($test_name, $txt_msg->is_ok());
+
+        // an instance that the add button has added sends the repeated phrase for its is a triple and its number by the
+        // phrase ids of the value, because neither has a database row yet
+        $added = (string)word_names::CITY_ID;
+        $added_form = array_merge($form, [
+            url_var::PHRASE_LIST . $added => word_names::INHABITANT_ID . ',' . $added,
+            url_var::NUMERIC_VALUE . $added => '30',
+            url_var::PHRASE . $added => sandbox_value::UNIT_PERCENT,
+            url_var::NAME . $added => triple_names::CALC_INHABITANTS_LABEL_COM,
+            url_var::PHRASE_TO . $added => (string)word_names::CANTON_ID,
+        ]);
+        $new_msg = new user_message();
+        $new_values = $ui->calculator_new_values($added_form, $new_msg);
+        $test_name = 'the calculator save adds the number of an added instance with the phrases of its value';
+        // sorted, because the group of a value has no order of its phrases
+        $new_ids = $new_values[$added]->phr_lst()->id_lst();
+        sort($new_ids);
+        $t->assert($test_name, $new_ids, [word_names::CITY_ID, word_names::INHABITANT_ID]);
+        $test_name = '... as the stored ratio of the entered percent';
+        $new_number = $new_values[$added]->number();
+        $t->assert($test_name, $new_number, 0.3);
+        $test_name = '... and only for the added field';
+        $new_count = count($new_values);
+        $t->assert($test_name, $new_count, 1);
+        // negative: a field that the user has emptied adds no value, which is no error
+        $test_name = '... but no value for an emptied field';
+        $empty_form = array_merge($added_form, [url_var::NUMERIC_VALUE . $added => '']);
+        $empty_values = $ui->calculator_new_values($empty_form, $new_msg);
+        $t->assert($test_name, $empty_values, []);
+        // negative: a phrase id that is no number would add a value with fewer phrases, so it is reported instead
+        $test_name = '... and a phrase list with a text is not saved';
+        $bad_ids_form = array_merge($added_form, [url_var::PHRASE_LIST . $added => word_names::INHABITANT_ID . ',']);
+        $bad_ids_values = $ui->calculator_new_values($bad_ids_form, $new_msg);
+        $t->assert($test_name, $bad_ids_values, []);
+        $test_name = '... but reported';
+        $t->assert_false($test_name, $new_msg->is_ok());
+        $test_name = 'the calculator save adds the is a triple of an added instance to the repeated phrase';
+        $link_msg = new user_message();
+        $links = $ui->calculator_new_links($added_form, $link_msg);
+        $link = $links[$added];
+        $link_ids = [$link->get_from()?->id(), $link->get_verb()->id(), $link->get_to()?->id()];
+        $t->assert($test_name, $link_ids, [word_names::CITY_ID, verbs::IS_ID, word_names::CANTON_ID]);
+        // negative: a repeated phrase that is no number is reported and adds no triple
+        $test_name = '... but not to a repeated phrase that is no number';
+        $bad_link_form = array_merge($added_form, [url_var::PHRASE_TO . $added => word_names::INHABITANTS]);
+        $bad_links = $ui->calculator_new_links($bad_link_form, $link_msg);
+        $t->assert($test_name, $bad_links, []);
+        $test_name = '... which is reported';
+        $t->assert_false($test_name, $link_msg->is_ok());
+        // an instance of the database that the remove button has taken from the page sends the id of its is a triple
+        $removed = (string)word_names::CANTON_ID;
+        $removed_form = array_merge($form, [
+            url_var::TRIPLE . $removed => (string)triple_names::CITY_ZH_ID,
+            url_var::NAME . $removed => word_names::INHABITANTS,
+        ]);
+        $del_msg = new user_message();
+        $del_links = $ui->calculator_removed_links($removed_form, $del_msg);
+        $test_name = 'the calculator save deletes the is a triple of a removed instance';
+        $del_id = $del_links[$removed]->id();
+        $t->assert($test_name, $del_id, triple_names::CITY_ZH_ID);
+        $test_name = '... and names the instance in the confirmation';
+        $del_txt = $lib->msg_var_text([$ui->calculator_removed_text($removed_form, $removed)]);
+        $t->assert($test_name, $del_txt, word_names::INHABITANTS . ' removed');
+        // the confirmations of an added instance: with its new number, or by its triple if the save has no number
+        $test_name = 'the calculator save confirms the number of an added instance with its label and the number';
+        $new_val = new value_ui();
+        $new_val->set_id(1);
+        $new_txt = $lib->msg_var_text([$ui->calculator_saved_new_text($added_form, $added, $new_val)]);
+        $t->assert_text_contains($test_name, $new_txt, triple_names::CALC_INHABITANTS_LABEL_COM . ' saved as ');
+        $test_name = '... and an added instance without a number by its label';
+        $add_txt = $lib->msg_var_text([$ui->calculator_added_text($added_form, $added)]);
+        $t->assert($test_name, $add_txt, triple_names::CALC_INHABITANTS_LABEL_COM . ' added without a number');
+        // negative: a triple id that is no number is reported and deletes nothing
+        $test_name = '... but a triple id that is no number deletes nothing';
+        $bad_del_form = array_merge($form, [url_var::TRIPLE . $removed => word_names::INHABITANTS]);
+        $bad_del_links = $ui->calculator_removed_links($bad_del_form, $del_msg);
+        $t->assert($test_name, $bad_del_links, []);
+        $test_name = '... which is reported';
+        $t->assert_false($test_name, $del_msg->is_ok());
+        // an added instance is a write even without a changed number, so the save does not say that nothing has changed
+        $test_name = 'a save with an added instance does not say that nothing has been saved';
+        $add_act_msg = new user_message();
+        $add_act_msg->usr = new user_ui();
+        $add_act_form = array_merge($added_form, [url_var::NUMERIC_VALUE . $changed => (string)values::CITY_ZH_INHABITANTS_2019]);
+        $ui->url_to_action($add_act_form, $add_act_msg, $ui->dto, false);
+        $add_info = $add_act_msg->get_last_info();
+        $t->assert_text_not_contains($test_name, (string)$add_info, $mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
 
         // the simulated save shows the calculator page again without the inputs, which the page
         // then shows with the saved numbers

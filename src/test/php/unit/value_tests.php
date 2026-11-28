@@ -1064,6 +1064,22 @@ class value_tests
         // is covered already by the horizontal tests
         //$t->assert_sql_delete($sc, $val, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $val, [sql_type::LOG, sql_type::USER]);
+        // a logged delete of a value without a number logs no old value, so its function has a parameter less and
+        // needs a name of its own, because a connection creates a function only once by its name (sql_db::has_query)
+        $test_name = 'the logged delete of a value without a number has a function name of its own';
+        $del_msg = new user_message($t->usr_system);
+        $del_par_lst = [sql_type::LOG, sql_type::USER];
+        $sc->reset(sql_db::POSTGRES);
+        $qp_num = $val->sql_delete($sc, $del_msg, new sql_type_list($del_par_lst));
+        $val_no_num = clone $val;
+        $val_no_num->set_number(null);
+        $sc->reset(sql_db::POSTGRES);
+        $qp_no_num = $val_no_num->sql_delete($sc, $del_msg, new sql_type_list($del_par_lst));
+        $t->assert_text_contains($test_name, $qp_no_num->name, sql::NAME_EXT_NO_VALUE);
+        // negative: the delete of a value with a number keeps the name of the existing sql test file
+        $test_name = '... but the delete of a value with a number keeps its name';
+        $t->assert_text_not_contains($test_name, $qp_num->name, sql::NAME_EXT_NO_VALUE);
+        $t->assert_msg($test_name, $del_msg);
         $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $val_16);
         $t->assert_sql_delete($sc, $val_16, [sql_type::USER]);

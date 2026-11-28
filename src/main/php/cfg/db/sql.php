@@ -154,6 +154,8 @@ class sql
     const string NAME_BY = 'by'; // to separate the query selection in the query name e.g. for (load) word_by_name
     const string NAME_EXT_USER = '_user';
     const string NAME_EXT_COUNT = '_count';
+    // the logged delete of a value without a number, which logs no old value and so has a parameter less
+    const string NAME_EXT_NO_VALUE = '_no_value';
     const string NAME_EXT_MEDIAN_USER = 'median_user'; // to get the user that is owner of the most often used db row
     const string NAME_EXT_EX_OWNER = 'ex_owner'; // excluding the owner of the loaded db row
     const string NAME_EXT_USER_CONFIG = 'usr_cfg';

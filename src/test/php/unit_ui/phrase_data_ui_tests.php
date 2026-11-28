@@ -59,6 +59,7 @@ include_once html_paths::SHARED . 'json_fields.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
@@ -72,8 +73,11 @@ use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\pdf_writer;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -88,6 +92,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_data_ui_tests
@@ -135,6 +140,13 @@ class phrase_data_ui_tests
     // the headings of two positions tables of the portfolio split report
     const string REPORT_FIRST_PORTFOLIO = 'First child portfolio';
     const string REPORT_SECOND_PORTFOLIO = 'Second child portfolio';
+    // the ids of the limit values that the test of the field limits adds to the seed, which no value of the seed has
+    const string LIMIT_PHRASE_ID = 'system_test_limit_of_the_phrase';
+    const string LIMIT_ITEM_ID = 'system_test_limit_of_the_item';
+    // the form of the fields of the test of the field limits
+    const string LIMIT_FORM = 'calculator';
+    // a kind of stock of bank_position_csv.json that no holding of the portfolio split page is, so a class without numbers
+    const string CLASS_WITHOUT_NUMBERS = 'alternative investment';
     // the format of a page of a pdf with the content that follows it and the number of pages
     const string PDF_PAGE_PATTERN = "~(/MediaBox \[[^\]]*\]).*?stream\n(.*?)\nendstream~s";
     const string PDF_PAGE_COUNT_PATTERN = '~/Count (\d+)~';
@@ -616,6 +628,77 @@ class phrase_data_ui_tests
         $test_name = '... and no editor field';
         $t->assert_text_not_contains($test_name, $no_calc_pdf, $this->pdf_string($field_name));
 
+        // a child that the save has added has no stored results, so the page copies those of the first child; the
+        // seed of the current snapshot without the results of the second child must give the numbers of the full one
+        $t->subheader($ts . 'results of an instance without stored results');
+        $seed = $t->page_seed($t->path_file(test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES
+            . test_files::PORTFOLIO_SPLIT_CALCULATOR_JS . test_files::HTML));
+        $full_msg = new user_message();
+        $full_lst = $this->portfolio_numbers($seed, $full_msg);
+        $part_seed = $seed;
+        $part_seed[json_fields::RESULTS] = array_values(array_filter($seed[json_fields::RESULTS] ?? [],
+            fn(array $res) => !in_array(triple_names::PORTFOLIO_SECOND_CHILD, $res[json_fields::WORDS] ?? [])));
+        $part_msg = new user_message();
+        $part_lst = $this->portfolio_numbers($part_seed, $part_msg);
+        $full_nums = $this->instance_numbers($full_lst, triple_names::PORTFOLIO_SECOND_CHILD);
+        $part_nums = $this->instance_numbers($part_lst, triple_names::PORTFOLIO_SECOND_CHILD);
+        $test_name = 'a child without stored results gets the results of the first child';
+        $t->assert($test_name, count($part_nums), count($full_nums));
+        $test_name = '... with the numbers of the stored results';
+        $t->assert($test_name, $this->differing_numbers($full_nums, $part_nums), []);
+        $test_name = '... and each of them calculated';
+        $part_missing = $part_msg->has_msg_id(msg_id::CALCULATOR_INSTANCE_RESULTS_MISSING);
+        $t->assert($test_name, $part_missing, false);
+        // negative: a page whose instances all have their stored results copies none
+        $test_name = 'a page whose children all have stored results copies none';
+        $full_copies = array_filter($full_lst->lst(), fn($val) => $val instanceof result_ui and $val->id() == 0);
+        $t->assert($test_name, count($full_copies), 0);
+
+        // the limits of a field by its input item first, because the field phrase is shared with other pages, e.g. the
+        // range of the USD/CHF rate of the ABB page is no range of the DKK rate of the portfolio split page; the test
+        // sets its own limits, so that it does not depend on the limits of the use cases in the seed
+        $t->subheader($ts . 'field limits of an input item');
+        $lim_msg = new user_message();
+        $lim_seed = $seed;
+        $lim_seed[json_fields::VALUES] = array_values(array_filter($seed[json_fields::VALUES] ?? [],
+            fn(array $val) => !in_array(triples::FIELD_LIMIT_DOWN, $val[json_fields::WORDS] ?? [])));
+        $lim_seed[json_fields::VALUES][] = [json_fields::ID => self::LIMIT_PHRASE_ID, json_fields::NUMBER => 0.6,
+            json_fields::WORDS => [triple_names::EXCHANGE_RATE, triples::FIELD_LIMIT_DOWN]];
+        $test_name = 'a field of an item without its own limit has the limit of its phrase';
+        $phr_html = $this->assumption_fields($lim_seed, $lim_msg);
+        $t->assert_text_contains($test_name, $phr_html, 'min="0.6"');
+        $lim_seed[json_fields::VALUES][] = [json_fields::ID => self::LIMIT_ITEM_ID, json_fields::NUMBER => 0,
+            json_fields::WORDS => [triple_names::PORTFOLIO_EXCHANGE_RATE_ITEM, triples::FIELD_LIMIT_DOWN]];
+        $test_name = 'the limit of the input item comes before the limit of its phrase';
+        $item_html = $this->assumption_fields($lim_seed, $lim_msg);
+        $t->assert_text_contains($test_name, $item_html, 'min="0"');
+        $test_name = '... so the field has not the limit of the phrase';
+        $t->assert_text_not_contains($test_name, $item_html, 'min="0.6"');
+
+        // a leaf of the is a tree without any number of the page is a class that nothing is yet, e.g. alternative
+        // investment, which bank_position_csv.json declares as a kind of stock, and so no row of a table
+        $t->subheader($ts . 'table rows with numbers');
+        $row_msg = new user_message();
+        $row_dto = $this->complete_page_cache($seed, $row_msg);
+        $row_trp = $row_dto->phr_lst->get_by_name(triple_names::EXAMPLE_PORTFOLIO_SPLIT, $row_msg)?->obj();
+        $row_calc = new calculator($row_trp->phrase(), $row_dto->phr_lst);
+        $leaf_names = [];
+        $row_names = [];
+        foreach ($row_calc->items(triples::CALCULATOR_DETAIL_TABLE) as $tbl) {
+            $tbl_phr = $row_calc->item_phrase($tbl);
+            if ($tbl_phr != null) {
+                $leaf_names = [...$leaf_names, ...array_map(fn($phr) => $phr->name(), $row_calc->row_phrases($tbl_phr))];
+                $rows = new ui_list()->ranked_rows($row_calc, $tbl, $tbl_phr, $full_lst, $row_msg);
+                $row_names = [...$row_names, ...array_map(fn($phr) => $phr->name(), $rows)];
+            }
+        }
+        $test_name = 'the class without numbers is a leaf below the phrase of a table';
+        $t->assert_contains($test_name, $leaf_names, self::CLASS_WITHOUT_NUMBERS);
+        $test_name = '... but no row of the table';
+        $t->assert_contains_not($test_name, $row_names, self::CLASS_WITHOUT_NUMBERS);
+        $test_name = '... which keeps the holdings with their numbers';
+        $t->assert_contains($test_name, $row_names, word_names::LISP);
+
         $t->subheader($ts . 'calculator report');
         $msg = new user_message();
         $json = json_decode(file_get_contents(test_files::PHRASE_DATA_PORTFOLIO_SPLIT), true);
@@ -643,6 +726,11 @@ class phrase_data_ui_tests
         $test_name = 'the report has each portfolio on a portrait page';
         [$first_box, $first_page] = $this->pdf_page_with($report, $this->pdf_string(self::REPORT_FIRST_PORTFOLIO));
         $t->assert($test_name, $first_box, self::PDF_PORTRAIT_BOX);
+        // the first portfolio follows the title on the first page, so that the first page is not only the title
+        $test_name = '... and the first portfolio on the page of the title';
+        $report_title = new calculator($trp->phrase(), $dto->phr_lst)->title();
+        [, $title_page] = $this->pdf_page_with($report, $this->pdf_string($report_title));
+        $t->assert_text_contains($test_name, $title_page, $this->pdf_string(self::REPORT_FIRST_PORTFOLIO));
         // negative: the next portfolio is not on the same page
         $test_name = '... of its own without the next portfolio';
         $t->assert_text_not_contains($test_name, $first_page, $this->pdf_string(self::REPORT_SECOND_PORTFOLIO));
@@ -861,6 +949,68 @@ class phrase_data_ui_tests
     private function pdf_string_end(string $text): string
     {
         return substr($this->pdf_string($text), 1);
+    }
+
+    /**
+     * @param array $seed the data of the portfolio split page e.g. of the javascript snapshot
+     * @param user_message $msg to collect the messages of the calculation
+     * @return value_list_ui the values and the results of the page as the page without javascript and the report use them
+     */
+    private function portfolio_numbers(array $seed, user_message $msg): value_list_ui
+    {
+        $dto = $this->complete_page_cache($seed, $msg);
+        $trp = $dto->phr_lst->get_by_name(triple_names::EXAMPLE_PORTFOLIO_SPLIT, $msg)?->obj();
+        return new ui_list()->calculator_numbers($trp, $dto, $msg);
+    }
+
+    /**
+     * @param array $seed the data of the portfolio split page e.g. with the limit values of a test
+     * @param user_message $msg to collect the messages of the page
+     * @return string the html of the assumption fields of the page e.g. of the exchange rate
+     */
+    private function assumption_fields(array $seed, user_message $msg): string
+    {
+        $dto = $this->complete_page_cache($seed, $msg);
+        $trp = $dto->phr_lst->get_by_name(triple_names::EXAMPLE_PORTFOLIO_SPLIT, $msg)?->obj();
+        $calc = new calculator($trp->phrase(), $dto->phr_lst);
+        $items = $calc->items(triples::CALCULATOR_ASSUMPTION);
+        return new ui_list()->calculator_fields($calc, $items, $trp, $msg, $dto, self::LIMIT_FORM, [], true);
+    }
+
+    /**
+     * @param value_list_ui $lst the values and the results of a page
+     * @param string $name the name of an instance e.g. second child portfolio
+     * @return array per result of the instance its sorted phrase names as the key and its number
+     */
+    private function instance_numbers(value_list_ui $lst, string $name): array
+    {
+        $result = [];
+        foreach ($lst->lst() as $val) {
+            $names = $val->phr_lst()->names();
+            if ($val instanceof result_ui and in_array($name, $names)) {
+                sort($names);
+                $result[implode(', ', $names)] = $val->number();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $expected the numbers by their phrase names e.g. of the stored results
+     * @param array $actual the numbers by their phrase names e.g. of the copied results
+     * @return array the phrase names whose number differs or is missing, with both numbers
+     */
+    private function differing_numbers(array $expected, array $actual): array
+    {
+        $result = [];
+        foreach ($expected as $names => $num) {
+            $act = $actual[$names] ?? null;
+            $is_same = ($num !== null and $act !== null and !formula_calc::differs($num, $act));
+            if (!$is_same and $num !== $act) {
+                $result[] = $names . ': ' . $num . ' / ' . $act;
+            }
+        }
+        return $result;
     }
 
     /**

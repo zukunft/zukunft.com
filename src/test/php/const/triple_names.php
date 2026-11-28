@@ -370,6 +370,9 @@ class triple_names
     // the keyword, the button and its label of the button test, which follow the check
     const int CALC_BUTTON_FIRST_ID = 906;
     const string CALC_BUTTON_COM = 'Download the inhabitants';
+    // the hint of the download button of the button test, its tooltip; between the case and the check hint ids, which are free
+    const int CALC_BUTTON_HINT_ID = 1975;
+    const string CALC_BUTTON_HINT_COM = 'Export the inhabitants as a spreadsheet';
     // the keyword and the flag of the field of the case name
     const int CALC_CASE_FIRST_ID = 1970;
     // the keywords and the triples of the test of a page for a decision, which follow the field of the case name
@@ -604,6 +607,10 @@ class triple_names
     const string EXAMPLE_TUBE_IMPORT = 'example tube import';
     // the worked example of the use case portfolio_split_calculator.json, selected by the name only
     const string EXAMPLE_PORTFOLIO_SPLIT = 'example portfolio split';
+    // an instance of child portfolio of the same use case, whose results a test leaves out like those of a saved child
+    const string PORTFOLIO_SECOND_CHILD = 'second child portfolio';
+    // the input item of the exchange rate of the same use case, whose own field limits come before those of the phrase
+    const string PORTFOLIO_EXCHANGE_RATE_ITEM = 'portfolio split assumption exchange rate';
     // the page phrase of the use case table_editor_sample.json, selected by the name only
     const string SECTOR_OF_REVENUE = 'sector of revenue';
     // a parent row of the table of the use case table_editor_sample.json, selected by the name only
@@ -726,9 +733,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 482;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 3804;
+    const int SHARE_RATIO_ID = 3805;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 3856;
+    const int SHARE_SYMBOL_ID = 3857;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 492;
     const string IN_EUR = "in EUR";

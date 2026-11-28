@@ -2512,13 +2512,8 @@
     \-- check - section for function check not yet defined that it should be db helper in /helper/type_object.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
             j,order of section set and get has difference at set_description should be before set_from_api
-\-- convert_portfolio_csv
-    \-- positions - section for function positions not yet defined that it should be read in /import/convert_portfolio_c
-            sv.php
-    \-- holding - section for function holding not yet defined that it should be read in /import/convert_portfolio_csv.p
-            hp
-    \-- convert - section for function convert not yet defined that it should be convert in /import/convert_portfolio_cs
-            v.php
+\-- convert_csv
+    \-- convert - section for function convert not yet defined that it should be convert in /import/convert_csv.php
 \-- convert_wikipedia_table
     \-- convert - section for function convert missing in /import/convert_wikipedia_table.php
     \-- convert_wiki_json - section for function convert_wiki_json missing in /import/convert_wikipedia_table.php
@@ -2748,6 +2743,8 @@
     \-- load_sql_obj_fld - section for function load_sql_obj_fld is expected to be load sql in /log/change_log_list.php
     \-- load_sql_obj_last - section for function load_sql_obj_last is expected to be load sql in /log/change_log_list.ph
             p
+    \-- change_class - section for function change_class not yet defined that it should be load internals in /log/change
+            _log_list.php
     \-- add - section for function add not yet defined that it should be modify in /log/change_log_list.php
     \-- first_msg - section for function first_msg not yet defined that it should be info in /log/change_log_list.php
 \-- change_table_field
@@ -5487,6 +5484,8 @@
         \-- view_sys_list - @return user the person who wants to see the phrases
     \-- get_user_id
         \-- db_object_multi_user - @return int the id of the user or 0 if the user is not set
+    \-- set_format
+        \-- convert_csv - read the format of a csv from its definition
     \-- json_file
         \-- import_file - import a single json file
     \-- yaml_file
@@ -6243,7 +6242,7 @@
     \-- nodes
         \-- config_tree - the nodes of the given part of config.yaml in the order of the file, without the keys
     \-- convert
-        \-- convert_portfolio_csv - @param string $csv the text of the csv of a bank statement of the positions
+        \-- convert_csv - convert the rows of a csv to the import json by the format of set_format
         \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
                  json
     \-- entity_id
@@ -6358,7 +6357,8 @@
     \-- report
         \-- system_time_list - @return string description of the execution times by category
     \-- section_report
-        \-- system_time_list - @return string description of the execution times by category of the last section
+        \-- system_time_list - @return string description of the execution times by category of the last section,
+                 the longest first, so
     \-- reset_section
         \-- system_time_list - start a new measurement section, so that the section report shows only the times of the
     \-- slow_request_rows
@@ -6390,12 +6390,6 @@
         \-- type_list - @param array $code_id_list with the code ids that should be converted
     \-- component_id_list
         \-- type_list - @param array $code_id_list with the code ids that should be converted
-\-- read
-    \-- positions
-        \-- convert_portfolio_csv - @param string $csv the text of the csv of a bank statement of the positions
-    \-- holding
-        \-- convert_portfolio_csv - @param array $pos one position of the csv that position_is_valid has accepted (see p
-                ositions)
 \-- use to apply the time of the parent process for continuous timestamp reporting
     \-- set_start_time
         \-- import - stop the note timer, so that a finished import never shows its skipped step note
@@ -6472,6 +6466,9 @@
         \-- change_log_list - prepare sql to get the changes of one field of one user sandbox object
     \-- load_sql_obj_last
         \-- change_log_list - prepare sql to get the last changes of a user sandbox object
+    \-- change_class
+        \-- change_log_list - the change log class whose table holds the changes of an object: a value and a result log 
+                to
     \-- load_sql_by_type
         \-- job_list - prepare sql to get all open jobs of one type
     \-- load_sql_by_status
@@ -6778,6 +6775,8 @@
             xecute/calculator.php
     \-- button_label - section for function button_label not yet defined that it should be texts and flags in /component
             /execute/calculator.php
+    \-- button_hint - section for function button_hint not yet defined that it should be texts and flags in /component/e
+            xecute/calculator.php
     \-- has_base - section for function has_base not yet defined that it should be texts and flags in /component/execute
             /calculator.php
     \-- case_name - section for function case_name not yet defined that it should be texts and flags in /component/execu
@@ -6814,6 +6813,8 @@
             alculator.php
     \-- row_phrases - section for function row_phrases not yet defined that it should be texts and flags in /component/e
             xecute/calculator.php
+    \-- repeated_phrases - section for function repeated_phrases not yet defined that it should be texts and flags in /c
+            omponent/execute/calculator.php
     \-- kinds - section for function kinds not yet defined that it should be texts and flags in /component/execute/calcu
             lator.php
     \-- used - section for function used not yet defined that it should be texts and flags in /component/execute/calcula
@@ -7531,6 +7532,18 @@
             /frontend.php
     \-- calculator_changes - section for function calculator_changes not yet defined that it should be execute in /front
             end.php
+    \-- calculator_new_values - section for function calculator_new_values not yet defined that it should be execute in 
+            /frontend.php
+    \-- calculator_new_links - section for function calculator_new_links not yet defined that it should be execute in /f
+            rontend.php
+    \-- calculator_removed_links - section for function calculator_removed_links not yet defined that it should be execu
+            te in /frontend.php
+    \-- calculator_saved_new_text - section for function calculator_saved_new_text not yet defined that it should be exe
+            cute in /frontend.php
+    \-- calculator_added_text - section for function calculator_added_text not yet defined that it should be execute in 
+            /frontend.php
+    \-- calculator_removed_text - section for function calculator_removed_text not yet defined that it should be execute
+             in /frontend.php
     \-- url_to_back_url - section for function url_to_back_url not yet defined that it should be execute in /frontend.ph
             p
     \-- url_with_selected_phrase - section for function url_with_selected_phrase not yet defined that it should be execu
@@ -7777,6 +7790,8 @@
     \-- frame - section for function frame not yet defined that it should be header & footer in /html/html_base.php
     \-- ref_to_frame - section for function ref_to_frame not yet defined that it should be header & footer in /html/html
             _base.php
+    \-- icon_and_text - section for function icon_and_text not yet defined that it should be header & footer in /html/ht
+            ml_base.php
     \-- refresh - section for function refresh not yet defined that it should be header & footer in /html/html_base.php
     \-- loading_step - section for function loading_step not yet defined that it should be header & footer in /html/html
             _base.php
@@ -8931,6 +8946,10 @@
     \-- add_info_html - section for function add_info_html not yet defined that it should be add in /user/user_message.p
             hp
     \-- get_last_info_html - section for function get_last_info_html is expected to be set and get in /user/user_message
+            .php
+    \-- add_done_html - section for function add_done_html not yet defined that it should be add in /user/user_message.p
+            hp
+    \-- get_last_done_html - section for function get_last_done_html is expected to be set and get in /user/user_message
             .php
     \-- has_msg_id - section for function has_msg_id not yet defined that it should be add in /user/user_message.php
     \-- has_info - section for function has_info not yet defined that it should be add in /user/user_message.php
@@ -10600,6 +10619,8 @@
         \-- calculator - @param phrase $item a row e.g. PV installation row saving PV-weighted mix
     \-- button_label
         \-- calculator - @param phrase|null $item a list or a detail table e.g. portfolio split inputs
+    \-- button_hint
+        \-- calculator - @param phrase|null $item a list or a detail table e.g. portfolio split inputs
     \-- has_base
         \-- calculator - @return bool true if the page is built from another phrase, of which a case can be another kind
     \-- case_name
@@ -10640,6 +10661,9 @@
         \-- calculator - the columns of a table, where the column of a repeated input is shown once per instance
     \-- row_phrases
         \-- calculator - the rows of a detail table: the phrases at the end of the is a and is part of levels below
+    \-- repeated_phrases
+        \-- calculator - @return phrase[] the phrases that an input item of the page repeats e.g. child portfolio,
+                 each once
     \-- kinds
         \-- calculator - @param phrase $phr e.g. month or replacement mix
     \-- used
@@ -11220,6 +11244,23 @@
                  because the new number links to the default view of the value
     \-- calculator_changes
         \-- frontend - the values of a calculator save whose number the user has changed: each number field sends its
+    \-- calculator_new_values
+        \-- frontend - the new values of a calculator save: a number without a database row,
+                 e.g. of an instance that the add button
+    \-- calculator_new_links
+        \-- frontend - the is a triples of the instances that the add button of a repeated input has added: each added i
+                nstance sends
+    \-- calculator_removed_links
+        \-- frontend - the is a triples of the instances of the database that the remove button has taken from the page:
+                 each sends the
+    \-- calculator_saved_new_text
+        \-- frontend - the confirmation of one added number as html,
+                 because the number links to the default view of the new value
+    \-- calculator_added_text
+        \-- frontend - the confirmation of an instance that the add button has added and whose number the save has not a
+                dded, e.g.
+    \-- calculator_removed_text
+        \-- frontend - the confirmation of an instance of the database whose is a triple the save has deleted
     \-- url_to_back_url
         \-- frontend - the previous page of a url built from its '9'-prefixed back targets, ready to be used directly as
     \-- url_with_selected_phrase
@@ -11379,6 +11420,8 @@
         \-- html_base - @param string $name the name of the frame, which a link selects as its target, and its style
     \-- ref_to_frame
         \-- html_base - @param string $url the url that the frame loads
+    \-- icon_and_text
+        \-- html_base - @param string $icon the icon css class from web/const/icons.php e.g. icons::CALC_ADD
     \-- refresh
         \-- html_base - @param string $url the url that the browser loads next,
                  which starts a download without a script if it is a file

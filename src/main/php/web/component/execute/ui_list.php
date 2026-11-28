@@ -44,6 +44,7 @@ include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_calc.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::GROUP . 'group.php';
 include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::HELPER . 'config.php';
@@ -77,6 +78,7 @@ include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::SHARED_CALC . 'phrase_kinds.php';
 include_once html_paths::SHARED_CALC . 'prior_operand.php';
+include_once html_paths::SHARED_CONST . 'chars.php';
 include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
@@ -99,6 +101,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\number_format;
@@ -129,6 +132,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\shared\calc\phrase_kinds;
 use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -158,6 +162,15 @@ class ui_list extends ui_base
     const string STEP_TABLE_DEFINITIONS = 'table definitions';
     const string STEP_TABLE_HTML = 'table html';
     const string STEP_TABLE_CHARTS = 'table charts';
+    // the steps of the numbers of a calculator page and of its report (calculator_numbers)
+    const string STEP_CALC_CHECK = 'calculator result check';
+    const string STEP_CALC_COPIES = 'calculator copies';
+    // the parts of the result check of a table or a calculator page (check_results), so that a slow check shows
+    // whether the search of the operands, the merge of the page list or the calculation takes the time
+    const string STEP_CHECK_MISSING = 'result check missing operands';
+    const string STEP_CHECK_PAGE_LIST = 'result check page list';
+    const string STEP_CHECK_CALC = 'result check calculation';
+    const string STEP_CHECK_EXPRESSION = 'result check expression';
 
     // put between the html id of a number and the count of a cell that shows the number again,
     // e.g. the year of a detail table, so that every cell id is unique on a page
@@ -2034,16 +2047,20 @@ class ui_list extends ui_base
         $page_lst = null;
         if ($dto != null) {
             $this->add_missing_operand_values($tbl_lst, $dto, $calc, $frm_lst, $msg, $typ_lst);
-            $page_lst = $this->values_and_results($dto, $msg);
+            $page_lst = $this->html_step(self::STEP_CHECK_PAGE_LIST, fn() => $this->values_and_results($dto, $msg));
             log_debug('page list of ' . $page_lst->count() . ' values and results merged', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
         }
+        $res_count = 0;
         foreach ($tbl_lst->lst() as $res) {
             if ($res instanceof result) {
+                $res_count++;
+                // the page list only if the table alone cannot calculate the result, and each list only once
                 $ops = $tbl_lst;
-                if ($page_lst != null and $calc->result($res, $tbl_lst, $frm_lst) === null) {
+                $num = $this->html_step(self::STEP_CHECK_CALC, fn() => $calc->result($res, $tbl_lst, $frm_lst));
+                if ($num === null and $page_lst != null) {
                     $ops = $page_lst;
+                    $num = $this->html_step(self::STEP_CHECK_CALC, fn() => $calc->result($res, $page_lst, $frm_lst));
                 }
-                $num = $calc->result($res, $ops, $frm_lst);
                 if ($num !== null and formula_calc::differs($res->number(), $num)) {
                     $msg->add_warning_with_vars(msg_id::RESULT_DIFFERS_FROM_PAGE, [
                         msg_id::VAR_NAME => $res->name(),
@@ -2052,10 +2069,11 @@ class ui_list extends ui_base
                     ]);
                     $res->number = $num;
                 }
-                $res->expression_numbers = $calc->expression_with_numbers($res, $ops, $frm_lst, $msg);
+                $res->expression_numbers = $this->html_step(self::STEP_CHECK_EXPRESSION,
+                    fn() => $calc->expression_with_numbers($res, $ops, $frm_lst, $msg));
             }
         }
-        log_debug('results of the table calculated', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        log_debug($res_count . ' results of the table of ' . $tbl_lst->count() . ' numbers calculated', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
     }
 
     /**
@@ -2082,9 +2100,37 @@ class ui_list extends ui_base
         api_type_list $typ_lst = new api_type_list()
     ): void
     {
-        $page_lst = $this->values_and_results($dto, $msg);
+        $page_lst = $this->html_step(self::STEP_CHECK_PAGE_LIST, fn() => $this->values_and_results($dto, $msg));
+        [$phr_lst, $ctx_by_phr] = $this->html_step(self::STEP_CHECK_MISSING,
+            fn() => $this->phrases_to_load($tbl_lst, $page_lst, $dto, $calc, $frm_lst, $msg));
+        log_debug($phr_lst->count() . ' phrases of missing operands found: ' . $phr_lst->short_names(), url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        $this->load_values_of_phrases($phr_lst, $dto, $msg, $typ_lst);
+        log_debug('values of the missing operands loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        // an operand can be a result too e.g. the avoided emission of the potential gain
+        $this->load_results_of_phrases($phr_lst, $ctx_by_phr, $dto, $msg);
+        log_debug('results of the missing operands loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+    }
+
+    /**
+     * @param value_list $tbl_lst the values and results of the table
+     * @param value_list $page_lst the values and results of the page
+     * @param data_object $dto the request cache with the triples of the page
+     * @param formula_calc $calc the calculation that finds the operands of a result
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @param user_message $msg to report a problem of the phrases of an operand
+     * @return array the phrases of the operands that the page lacks and per phrase id the phrases of every result that
+     *               needs it, which its results may have at most
+     */
+    private function phrases_to_load(
+        value_list   $tbl_lst,
+        value_list   $page_lst,
+        data_object  $dto,
+        formula_calc $calc,
+        formula_list $frm_lst,
+        user_message $msg
+    ): array
+    {
         $phr_lst = new phrase_list();
-        // per missing phrase the phrases of every result that needs it, which its results may have at most
         $ctx_by_phr = [];
         $prior_ids = $this->prior_phrase_ids($dto, $msg);
         foreach ($tbl_lst->lst() as $res) {
@@ -2099,12 +2145,7 @@ class ui_list extends ui_base
                 }
             }
         }
-        log_debug($phr_lst->count() . ' phrases of missing operands found: ' . $phr_lst->short_names(), url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
-        $this->load_values_of_phrases($phr_lst, $dto, $msg, $typ_lst);
-        log_debug('values of the missing operands loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
-        // an operand can be a result too e.g. the avoided emission of the potential gain
-        $this->load_results_of_phrases($phr_lst, $ctx_by_phr, $dto, $msg);
-        log_debug('results of the missing operands loaded', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        return [$phr_lst, $ctx_by_phr];
     }
 
     /**
@@ -2456,6 +2497,21 @@ class ui_list extends ui_base
     private function field_property(phrase $phr, string $prop_name, data_object $dto): ?float
     {
         return $dto->val_lst->get_by_names([$phr->name(), $prop_name])?->number();
+    }
+
+    /**
+     * a property of a field of a calculator page by its input item first, because the field phrase is shared with
+     * other pages, e.g. the range of the USD/CHF rate of the ABB page is no range of the DKK rate of the portfolio split
+     *
+     * @param phrase $item the input item of the page e.g. ABB share decision assumption exchange rate
+     * @param phrase $phr the field phrase e.g. exchange rate
+     * @param string $prop_name the property e.g. triples::FIELD_LIMIT_DOWN
+     * @param data_object $dto the request cache with the property values
+     * @return float|null the number of the item and the property, else of the phrase and the property, null if none
+     */
+    private function item_property(phrase $item, phrase $phr, string $prop_name, data_object $dto): ?float
+    {
+        return $this->field_property($item, $prop_name, $dto) ?? $this->field_property($phr, $prop_name, $dto);
     }
 
     /**
@@ -3008,9 +3064,9 @@ class ui_list extends ui_base
             }
         }
         $input = $html->input_number($name, $num,
-            $this->field_shown($this->field_property($phr, triples::FIELD_LIMIT_DOWN, $dto), $val, $msg),
-            $this->field_shown($this->field_property($phr, triples::FIELD_LIMIT_UP, $dto), $val, $msg),
-            $this->field_shown($this->field_property($phr, triples::FIELD_STEP, $dto), $val, $msg), $form_name);
+            $this->field_shown($this->item_property($item, $phr, triples::FIELD_LIMIT_DOWN, $dto), $val, $msg),
+            $this->field_shown($this->item_property($item, $phr, triples::FIELD_LIMIT_UP, $dto), $val, $msg),
+            $this->field_shown($this->item_property($item, $phr, triples::FIELD_STEP, $dto), $val, $msg), $form_name);
         $unit = $val == null ? '' : $this->field_unit($val, $msg);
         if ($val != null) {
             $input .= $this->calculator_save_vars((string)$field_phr->id(), $val, $label, $unit, $form_name);
@@ -3488,7 +3544,7 @@ class ui_list extends ui_base
         $html = new html_base();
         $buttons = '';
         foreach ($calc->items(triples::CALCULATOR_FILE_IMPORT) as $item) {
-            $buttons .= $html->button($html->esc($calc->label($item)), html_base::BUTTON, styles::CALC_BUTTON);
+            $buttons .= $this->calculator_icon_button($calc->label($item), icons::CALC_IMPORT, styles::CALC_BUTTON, '');
         }
         $summary = $calc->own_label($calc->group(triples::CALCULATOR_FILE_IMPORT));
         return $buttons == '' ? '' : $html->details($html->esc($summary), $html->div($buttons, styles::CALC_IMPORTS));
@@ -3658,15 +3714,12 @@ class ui_list extends ui_base
         user_message $msg
     ): string
     {
-        $html = new html_base();
         $result = '';
         foreach ($calc->kinds($phr) as $instance) {
             $result .= $this->calculator_number($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, false, $src_ids, $msg, $instance);
         }
         $add = $calc->repeat_label($item);
-        if ($add != '') {
-            $result .= $html->button($html->esc($add), html_base::BUTTON, styles::CALC_BUTTON_ADD);
-        }
+        $result .= $this->calculator_icon_button($add, icons::CALC_ADD, styles::CALC_BUTTON_ADD, '');
         return $result;
     }
 
@@ -4705,12 +4758,14 @@ class ui_list extends ui_base
         if ($item != null and $calc->has_flag($item, triples::CALCULATOR_COPY)) {
             $copy = [$mtr->txt(msg_id::CALCULATOR_COPY_JSON), $mtr->txt(msg_id::CALCULATOR_COPY_CSV)];
         }
-        $result = $this->calculator_plain_buttons([$calc->button_label($item, triples::CALCULATOR_FILE_IMPORT)])
+        $result = $this->calculator_keyword_button($calc, $item, triples::CALCULATOR_FILE_IMPORT, icons::CALC_IMPORT)
             . $save
-            . $this->calculator_plain_buttons([$calc->button_label($item, triples::CALCULATOR_DOWNLOAD)]);
+            . $this->calculator_keyword_button($calc, $item, triples::CALCULATOR_DOWNLOAD, icons::CALC_DOWNLOAD);
         $report = $calc->button_label($item, triples::CALCULATOR_REPORT);
         if ($report != '') {
-            $result .= $html->ref_to_frame($this->calculator_report_url($calc->phrase_id()), $report, styles::CALC_REPORT_FRAME, styles::CALC_BUTTON_LINK);
+            $url = $this->calculator_report_url($calc->phrase_id());
+            $title = $calc->button_hint($item, triples::CALCULATOR_REPORT);
+            $result .= $html->ref_to_frame($url, $report, styles::CALC_REPORT_FRAME, styles::CALC_BUTTON_LINK, icons::CALC_REPORT, $title);
         }
         $result .= $this->calculator_plain_buttons($copy);
         if ($report != '') {
@@ -4729,6 +4784,37 @@ class ui_list extends ui_base
         $result = '';
         foreach (array_filter($labels) as $label) {
             $result .= $html->button($html->esc($label), html_base::BUTTON, styles::CALC_BUTTON);
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase|null $item the list or the detail table e.g. portfolio split inputs
+     * @param string $keyword the name of the button keyword e.g. triples::CALCULATOR_DOWNLOAD
+     * @param string $icon the icon in front of the text by the kind of the button e.g. icons::CALC_DOWNLOAD
+     * @return string the html code of the button with its label and its hint as tooltip, '' if the item has no such button
+     */
+    private function calculator_keyword_button(calculator $calc, ?phrase $item, string $keyword, string $icon): string
+    {
+        $label = $calc->button_label($item, $keyword);
+        $title = $calc->button_hint($item, $keyword);
+        return $this->calculator_icon_button($label, $icon, styles::CALC_BUTTON, $title);
+    }
+
+    /**
+     * @param string $label the text of the button, of which an empty one has no button
+     * @param string $icon the icon in front of the text by the kind of the button e.g. icons::CALC_DOWNLOAD
+     * @param string $style the style of the button e.g. styles::CALC_BUTTON
+     * @param string $title the tooltip of the button, '' for none
+     * @return string the html code of the button without a function so far
+     */
+    private function calculator_icon_button(string $label, string $icon, string $style, string $title): string
+    {
+        $html = new html_base();
+        $result = '';
+        if ($label != '') {
+            $result = $html->button($html->icon_and_text($icon, $label), html_base::BUTTON, $style, '', $title);
         }
         return $result;
     }
@@ -4977,11 +5063,14 @@ class ui_list extends ui_base
      * @param phrase $tbl_phr the phrase of the table e.g. split walk
      * @param value_list $lst the values and the results of the page
      * @param user_message $msg to report a problem of the phrase types
-     * @return phrase[] the row phrases of the table, by the biggest number of the phrase that the table "is ranked by" if it has one, a tie in the order of the follower chain
+     * @return phrase[] the row phrases of the table, by the biggest number of the phrase that the table "is ranked by" if it has one, a tie in the order of the follower chain;
+     *                  only the rows with a number of the page, because a leaf of the "is a" tree can be a class that
+     *                  nothing is yet, e.g. alternative investment, which another file declares as a kind of stock
      */
     function ranked_rows(calculator $calc, phrase $tbl, phrase $tbl_phr, value_list $lst, user_message $msg): array
     {
-        $result = $calc->row_phrases($tbl_phr);
+        $leaves = $calc->row_phrases($tbl_phr);
+        $result = array_values(array_filter($leaves, fn(phrase $row) => $this->has_numbers($row, $lst, $msg)));
         $rank = $calc->sub_items($tbl, verbs::RANK_ID)[0] ?? null;
         $rank_phr = $calc->item_phrase($rank);
         if ($rank_phr != null) {
@@ -5082,8 +5171,296 @@ class ui_list extends ui_base
     {
         $this->add_phrase_results($dto, $dbo->phrase(), $msg);
         $lst = $this->values_and_results($dto, $msg);
-        $this->check_results($lst, $dto, $msg);
+        // each calculation is a step of its own in the url to html time of the page, so that a delay can be seen
+        $this->html_step(self::STEP_CALC_CHECK, fn() => $this->check_results($lst, $dto, $msg));
+        $copied = $this->html_step(self::STEP_CALC_COPIES, fn() => $this->add_instance_results($dbo, $lst, $dto, $msg));
+        // the results over all instances again, so that they include the results of an instance without stored ones
+        if ($copied) {
+            $this->html_step(self::STEP_CALC_CHECK, fn() => $this->check_results($lst, $dto, $msg));
+        }
         return $lst;
+    }
+
+    /**
+     * the results of each instance of a repeated input that has none, e.g. a child that the save has added, which
+     * nothing calculates in the backend: the results of the first instance with results for the instance, calculated
+     * with the numbers of the page, like the page script does (calculator_json.js addMissingInstanceResults)
+     *
+     * @param word|triple $dbo the phrase of the page
+     * @param value_list $lst (in/out) the values and the results of the page, to which the copies are added
+     * @param data_object $dto the request cache of the page with the formulas
+     * @param user_message $msg to report a copy that the page cannot calculate
+     * @return bool true if a result has been copied, so that the results over all instances are calculated again
+     */
+    private function add_instance_results(word|triple $dbo, value_list $lst, data_object $dto, user_message $msg): bool
+    {
+        $calc = new calculator($dbo->phrase(), $dto->phr_lst);
+        $frm_lst = $dto->formula_list();
+        $copies = [];
+        foreach ($calc->repeated_phrases() as $rep) {
+            $instances = $calc->kinds($rep);
+            $with_results = array_values(array_filter($instances, fn(phrase $ins) => $this->has_results($ins, $lst)));
+            $template = $with_results[0] ?? null;
+            foreach ($instances as $ins) {
+                if ($template != null and !$this->has_results($ins, $lst)) {
+                    $copies = [...$copies, ...$this->instance_results($template, $ins, $lst, $frm_lst)];
+                }
+            }
+        }
+        // only with copies, because their calculation calculates all stored results of the page again
+        if ($copies != []) {
+            $this->calculate_copies($copies, $lst, $dto, $frm_lst, $msg);
+        }
+        return $copies != [];
+    }
+
+    /**
+     * @param phrase $ins an instance of a repeated input e.g. third child portfolio
+     * @param value_list $lst the values and the results of the page
+     * @return bool true if a result of the page names the instance
+     */
+    private function has_results(phrase $ins, value_list $lst): bool
+    {
+        return array_any($lst->lst(), fn($val) => $val instanceof result and $val->phr_lst()->has_id((string)$ins->id()));
+    }
+
+    /**
+     * @param phrase $template the first instance with results e.g. first child portfolio
+     * @param phrase $ins the instance without results
+     * @param value_list $lst the values and the results of the page
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @return result[] the results of the template for the instance without a number and without a database id:
+     *                  the instance in the phrases and in the context instead of the template, without a result whose
+     *                  formula names the template (calculator_json.js copyResults)
+     */
+    private function instance_results(phrase $template, phrase $ins, value_list $lst, formula_list $frm_lst): array
+    {
+        $result = [];
+        foreach ($lst->lst() as $res) {
+            $of_template = ($res instanceof result and $res->phr_lst()->has_id((string)$template->id()));
+            if ($of_template and !$this->formula_names($res, $template, $frm_lst)) {
+                $copy = clone $res;
+                $copy->set_id(0);
+                $copy->number = null;
+                $copy->grp = $this->replaced_group($res->grp, $template, $ins);
+                $copy->src_grp = $res->src_grp == null ? null : $this->replaced_group($res->src_grp, $template, $ins);
+                $result[] = $copy;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param result $res a result of the page
+     * @param phrase $phr e.g. the first instance of a repeated input
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @return bool true if the formula of the result has the phrase as an operand name
+     */
+    private function formula_names(result $res, phrase $phr, formula_list $frm_lst): bool
+    {
+        $frm_id = $res->frm?->id() ?? 0;
+        $usr_txt = $frm_lst->has_id((string)$frm_id) ? $frm_lst->get($frm_id)->get_usr_text() : '';
+        return str_contains($usr_txt, chars::TERM_DELIMITER . $phr->name() . chars::TERM_DELIMITER);
+    }
+
+    /**
+     * @param group $grp the phrases of a result or of its context
+     * @param phrase $from the phrase that is replaced e.g. first child portfolio
+     * @param phrase $to the phrase in its place e.g. third child portfolio
+     * @return group a new group with the phrases of the group in their order
+     */
+    private function replaced_group(group $grp, phrase $from, phrase $to): group
+    {
+        $result = new group();
+        $result->set_lst(array_map(fn(phrase $phr) => $phr->id() == $from->id() ? $to : $phr, $grp->lst()));
+        return $result;
+    }
+
+    /**
+     * calculate the copied results with the fresh numbers of the stored results, like the page script and the backend
+     * calculate them, because a stored number can lack the float noise that decides a tie, e.g. the rounded count of
+     * SCHP (decision of 2026-11-27); the fresh numbers are in a list of their own, so that the page shows the stored ones
+     *
+     * @param result[] $copies the copied results without a number
+     * @param value_list $lst (in/out) the values and the results of the page, to which the copies are added
+     * @param data_object $dto the request cache of the page with the follower chains
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @param user_message $msg to report the copies whose operands the page does not have
+     * @return void
+     */
+    private function calculate_copies(array $copies, value_list $lst, data_object $dto, formula_list $frm_lst, user_message $msg): void
+    {
+        $calc = $this->page_calc($dto);
+        $prior = $this->prior_names($dto);
+        [$ops, $fresh, $stored] = $this->fresh_operands($lst);
+        foreach ($copies as $res) {
+            // in the lists before the first calculation, so that an operand selects the copy and never, while the
+            // copy is not calculated yet, another number of the page e.g. the sum over all children
+            $lst->add_obj($res, true);
+            $ops->add_obj($res, true);
+        }
+        $open = [...$fresh, ...$copies];
+        $count = -1;
+        $rounds = 0;
+        $start = microtime(true);
+        // a stored result that the page cannot calculate keeps its stored number, like in the page script, which can
+        // make the results that use it calculable, so the calculation is repeated until nothing changes
+        while ($open != [] and count($open) != $count) {
+            $count = count($open);
+            $rounds++;
+            $open = $this->calculated_in_rows($open, $ops, $calc, $frm_lst, $prior);
+            $open = $this->with_stored_numbers($open, $stored);
+        }
+        // the counts that explain the time of the step "calculator copies", e.g. many rounds or many open results
+        log_debug(count($copies) . ' copies with ' . count($fresh) . ' fresh results of ' . $ops->count()
+            . ' numbers calculated in ' . $rounds . ' rounds and ' . round(microtime(true) - $start, 3)
+            . ' seconds, ' . count($open) . ' copies open', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        if ($open != []) {
+            $msg->add_warning_with_vars(msg_id::CALCULATOR_INSTANCE_RESULTS_MISSING, [
+                msg_id::VAR_NAME_LIST => implode(', ', array_map(fn(result $res) => $res->name(), $open))
+            ]);
+        }
+    }
+
+    /**
+     * @param value_list $lst the values and the stored results of the page
+     * @return array the list of the operands of the copies: the values and a fresh copy of each stored result without
+     *               a number and without a database id, so that it is a missing operand until it is calculated
+     *               (formula_calc::is_open_copy); the fresh copies; and per fresh copy its database id and its stored
+     *               number by its object id
+     */
+    private function fresh_operands(value_list $lst): array
+    {
+        $ops = new value_list();
+        $fresh = [];
+        $stored = [];
+        foreach ($lst->lst() as $val) {
+            if ($val instanceof result) {
+                $copy = clone $val;
+                $copy->set_id(0);
+                $copy->number = null;
+                $stored[spl_object_id($copy)] = [$val->id(), $val->number()];
+                $fresh[] = $copy;
+                $ops->add_obj($copy, true);
+            } else {
+                $ops->add_obj($val, true);
+            }
+        }
+        return [$ops, $fresh, $stored];
+    }
+
+    /**
+     * calculate results row by row in the "is follower of" chain, because a result can use another one, which is a
+     * number only once it is calculated: a walk row the row before, and within a row e.g. the rounded count the target
+     * quantity; so the results of a row are calculated in passes until none more, together with the results of the
+     * rows before that are still open; the results without a row are calculated once before the first row, e.g. the
+     * count of the children that every split count uses, and the open ones again after the last row, e.g. a sum over
+     * all rows, because otherwise a row that uses such a result would wait for the last row
+     *
+     * @param result[] $open the results that have no number yet, already in the list of the operands
+     * @param value_list $ops the values and the results that the calculation uses
+     * @param formula_calc $calc the calculation of the page
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @param array $prior per phrase name the name of the phrase before it (prior_names)
+     * @return result[] the results that are still open, because one of their operands has no number yet
+     */
+    private function calculated_in_rows(array $open, value_list $ops, formula_calc $calc, formula_list $frm_lst, array $prior): array
+    {
+        $by_row = [];
+        foreach ($open as $res) {
+            $by_row[$this->chain_depth($res, $prior)][] = $res;
+        }
+        // the results without a row first, so that a row never waits for one that does not use the rows
+        $result = $this->calculated_open($by_row[PHP_INT_MAX] ?? [], $ops, $calc, $frm_lst);
+        unset($by_row[PHP_INT_MAX]);
+        ksort($by_row);
+        foreach ($by_row as $row_results) {
+            $result = $this->calculated_open([...$result, ...$row_results], $ops, $calc, $frm_lst);
+        }
+        return $result;
+    }
+
+    /**
+     * @param result[] $open the results that are still open after a calculation
+     * @param array $stored per fresh copy of a stored result its database id and its stored number by its object id
+     *                      (fresh_operands)
+     * @return result[] the open copies of an instance; a fresh copy of a stored result gets its stored number and its
+     *                  database id back instead, so that it is an operand like the stored result, also without a number
+     */
+    private function with_stored_numbers(array $open, array $stored): array
+    {
+        $result = [];
+        foreach ($open as $res) {
+            $key = spl_object_id($res);
+            if (array_key_exists($key, $stored)) {
+                [$db_id, $number] = $stored[$key];
+                $res->set_id($db_id);
+                $res->number = $number;
+            } else {
+                $result[] = $res;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param result[] $open the copied results that have no number yet, already in the list of the page
+     * @param value_list $lst the values and the results of the page with the copies
+     * @param formula_calc $calc the calculation of the page, for which a copy without a number is a missing operand
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @return result[] the copies that are still open, because one of their operands has no number yet
+     */
+    private function calculated_open(array $open, value_list $lst, formula_calc $calc, formula_list $frm_lst): array
+    {
+        $added = true;
+        while ($open != [] and $added) {
+            $added = false;
+            foreach ($open as $key => $res) {
+                $num = $calc->result($res, $lst, $frm_lst);
+                if ($num !== null) {
+                    $res->number = $num;
+                    unset($open[$key]);
+                    $added = true;
+                }
+            }
+        }
+        return array_values($open);
+    }
+
+    /**
+     * @param result $res a result of the page
+     * @param array $prior per phrase name the name of the phrase before it (prior_names)
+     * @return int the number of rows before the row of the result in its follower chain, PHP_INT_MAX for a result
+     *             without a row e.g. a sum over all rows, which uses the rows and is therefore calculated after them
+     */
+    private function chain_depth(result $res, array $prior): int
+    {
+        $result = PHP_INT_MAX;
+        $names = [...$res->phr_lst()->names(), ...($res->src_grp?->phr_lst()->names() ?? [])];
+        foreach ($names as $name) {
+            if (array_key_exists($name, $prior) or in_array($name, $prior)) {
+                $result = min($result, $this->rows_before($name, $prior));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $name the name of a row e.g. LISN
+     * @param array $prior per phrase name the name of the phrase before it (prior_names)
+     * @return int the number of rows before it in its follower chain, 0 for the first row
+     */
+    private function rows_before(string $name, array $prior): int
+    {
+        $result = 0;
+        $seen = [$name];
+        $row = $prior[$name] ?? null;
+        while ($row !== null and !in_array($row, $seen)) {
+            $seen[] = $row;
+            $result++;
+            $row = $prior[$row] ?? null;
+        }
+        return $result;
     }
 
     /**
@@ -5136,6 +5513,17 @@ class ui_list extends ui_base
             }
         }
         return $result;
+    }
+
+    /**
+     * @param phrase $row a row of a table e.g. LISP
+     * @param value_list $lst the values and the results of the page
+     * @param user_message $msg to report a problem of the phrase compare
+     * @return bool true if a value or a result of the page names the row
+     */
+    private function has_numbers(phrase $row, value_list $lst, user_message $msg): bool
+    {
+        return array_any($lst->lst(), fn(sandbox_value $val) => $this->value_has_phrase($val, $row, $msg));
     }
 
     /**

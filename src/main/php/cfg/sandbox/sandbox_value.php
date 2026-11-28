@@ -1952,9 +1952,14 @@ class sandbox_value extends sandbox_multi
         $id_ext = $this->grp()->table_extension();
         // get the prime db key list for this sandbox object
         $fvt_lst_id = $this->id_fvt_lst($sc_par_lst_used);
+        // a logged delete of a value without a number logs no old value (sql_creator::sql_func_log_value), so its
+        // function has a parameter less and needs a name of its own, because a connection creates a function only
+        // once by its name (sql_db::has_query)
+        $is_no_value = ($sc_par_lst_used->incl_log() and $this->get_value() === null);
+        $ext = $is_no_value ? sql::NAME_EXT_NO_VALUE : '';
 
         // create the main query parameter object and set the query name
-        $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);
+        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext, $id_ext);
         $sc->set_name($qp->name);
         if ($sc_par_lst_used->incl_log()) {
             // log functions must always use named parameters

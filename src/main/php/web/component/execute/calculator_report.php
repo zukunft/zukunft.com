@@ -270,6 +270,7 @@ class calculator_report
             $cols = [...$cols, ...$calc->columns($calc->sub_items($tbl, verbs::HAS_ID))];
         }
         $unit_cols = array_values(array_filter($cols, fn($col) => $col[5]));
+        $is_first = true;
         foreach ($tables as $tbl) {
             $tbl_phr = $calc->item_phrase($tbl);
             foreach ($calc->columns($calc->sub_items($tbl, verbs::HAS_ID)) as [, $col_phr, $flt]) {
@@ -279,8 +280,13 @@ class calculator_report
                         $rows[] = $this->position_row($calc, $row, [$col_phr, $flt], $unit_cols, $lst, $dto, $msg);
                     }
                     $head = array_map(fn(msg_id $id) => $mtr->txt($id), self::POSITION_COLUMNS);
-                    // portrait like a bank statement, with a table scaled down if a security has a long name
-                    $pdf->page_break(true);
+                    // portrait like a bank statement, with a table scaled down if a security has a long name; the
+                    // first portfolio follows the title on the first page, which is portrait (pdf), each other one
+                    // starts a page of its own
+                    if (!$is_first) {
+                        $pdf->page_break(true);
+                    }
+                    $is_first = false;
                     $pdf->heading(mb_ucfirst($col_phr->name()));
                     $pdf->table($head, array_values(array_filter($rows)), self::POSITION_RIGHT);
                 }

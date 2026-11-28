@@ -161,6 +161,7 @@ include_once html_paths::MODEL_SYSTEM . 'sys_log.php';
 include_once html_paths::MODEL_USER . 'user.php';
 include_once html_paths::MODEL_USER . 'user_message.php';
 include_once html_paths::SHARED_TYPES . 'job_types.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED_TYPES . 'view_types.php';
 
 // cfg group (alphabetic by FQN)
@@ -247,6 +248,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -2042,6 +2044,12 @@ class frontend
                     $result = $html->dsp_notification($msg_txt, $is_success);
                 }
             }
+            // the confirmation of the writes that have succeeded is shown also below the message of an issue, e.g. of
+            // another write of a calculator save, so that the user sees what has been saved; an html info is not
+            $done_html = $msg_ui->get_last_done_html();
+            if ($done_html !== '') {
+                $result .= $html->dsp_notification_html($done_html, true);
+            }
         }
         return $result;
     }
@@ -3068,9 +3076,38 @@ class frontend
     private function action_calculator_save(array $url_array, user_message_ui $msg_ui, bool $do_it): array
     {
         global $mtr;
+        $links = $this->calculator_new_links($url_array, $msg_ui);
+        $new_values = $this->calculator_new_values($url_array, $msg_ui);
         $changes = $this->calculator_changes($url_array, $msg_ui);
+        $removed = $this->calculator_removed_links($url_array, $msg_ui);
         $saved = [];
         if ($do_it) {
+            // the is a triples first, because they make the phrases of the new values instances of the page, so the
+            // number of an instance whose triple has failed is not added, which the message of the triple explains
+            $link_ok = [];
+            foreach ($links as $field => $trp) {
+                $link_msg = $trp->add_via_api($msg_ui);
+                $msg_ui->merge($link_msg);
+                $link_ok[$field] = $link_msg->is_ok();
+            }
+            $saved_new = [];
+            foreach ($new_values as $field => $val) {
+                if ($link_ok[$field] ?? true) {
+                    $result_msg = $val->add_via_api($msg_ui);
+                    if ($result_msg->is_ok()) {
+                        $saved[] = $this->calculator_saved_new_text($url_array, (string)$field, $val);
+                        $saved_new[] = (string)$field;
+                    } else {
+                        $msg_ui->merge($result_msg);
+                    }
+                }
+            }
+            // an added instance without a saved number would be saved silently, so its triple is confirmed
+            foreach ($link_ok as $field => $is_ok) {
+                if ($is_ok and !in_array((string)$field, $saved_new, true)) {
+                    $saved[] = $this->calculator_added_text($url_array, (string)$field);
+                }
+            }
             foreach ($changes as $field => $val) {
                 $result_msg = $val->update($msg_ui);
                 if ($result_msg->is_ok()) {
@@ -3079,21 +3116,32 @@ class frontend
                     $msg_ui->merge($result_msg);
                 }
             }
-            // the pages that show the saved numbers are outdated
-            if ($saved != []) {
-                $cfg_outdated = array_any($changes, fn(value_ui $val) => self::config_outdated_by($val));
+            foreach ($removed as $field => $trp) {
+                $result_msg = $trp->del($msg_ui);
+                if ($result_msg->is_ok()) {
+                    $saved[] = $this->calculator_removed_text($url_array, (string)$field);
+                } else {
+                    $msg_ui->merge($result_msg);
+                }
+            }
+            // the pages that show the saved numbers and instances are outdated
+            if ($saved != [] or $links != []) {
+                $cfg_outdated = array_any([...$new_values, ...$changes], fn(value_ui $val) => self::config_outdated_by($val));
                 $this->drop_cached_pages($msg_ui, false, value_ui::class, $cfg_outdated);
             }
         }
         $url = [url_var::MASK => $url_array[url_var::MASK], url_var::ID => $url_array[url_var::ID] ?? 0];
+        $has_writes = ($links != [] or $new_values != [] or $changes != [] or $removed != []);
         if (!$msg_ui->is_ok()) {
             $url = array_merge($this->calculator_numbers($url_array), $url);
-        } elseif ($changes == []) {
+        } elseif (!$has_writes) {
             $msg_ui->add_info($mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
-        } elseif ($saved != []) {
+        }
+        // also below the error of a failed write, so that the user sees which writes have succeeded
+        if ($saved != []) {
             $lib = new library();
             // the texts are translated and escaped already
-            $msg_ui->add_info_html($lib->msg_var_text($saved));
+            $msg_ui->add_done_html($lib->msg_var_text($saved));
         }
         return $url;
     }
@@ -3110,10 +3158,7 @@ class frontend
     {
         global $mtr;
         $html = new html_base();
-        $unit = (string)($url_array[url_var::PHRASE . $field] ?? '');
-        if ($unit != '') {
-            $unit = sandbox_value_ui::UNIT_SEPARATOR . $unit;
-        }
+        $unit = $this->calculator_unit_text($url_array, $field);
         $val_url = $html->url_back(views::VALUE, (string)$url_array[url_var::GROUP . $field], $url_array);
         // both numbers in the same format, because the entered one can be e.g. "1e1" or "9.50"
         $new_num = $html->number_value((float)$url_array[url_var::NUMERIC_VALUE . $field]);
@@ -3152,14 +3197,186 @@ class frontend
                 } elseif ((float)$number != (float)$shown) {
                     $val = new value_ui();
                     $val->set_id(is_numeric($grp_id) ? (int)$grp_id : $grp_id);
-                    $is_percent = ($url_array[url_var::PHRASE . $field] ?? '') == sandbox_value_ui::UNIT_PERCENT;
-                    // a share is entered in percent and stored as the ratio
-                    $val->number = $is_percent ? (float)$number / 100 : (float)$number;
+                    $val->number = $this->calculator_stored_number($url_array, $field, (float)$number);
                     $result[$field] = $val;
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * the new values of a calculator save: a number without a database row, e.g. of an instance that the add button
+     * has added, sends the phrase ids of its value instead of a group id and a shown number (see calculator_json.js
+     * newSaveVars)
+     *
+     * @param array $url_array the submitted calculator form
+     * @param user_message_ui $msg_ui to report a phrase id or an entered text that is not a number
+     * @return value_ui[] per field key the value to add, without a field that the user has emptied
+     */
+    function calculator_new_values(array $url_array, user_message_ui $msg_ui): array
+    {
+        $result = [];
+        foreach ($this->calculator_field_vars($url_array, url_var::PHRASE_LIST) as $field => $id_txt) {
+            $ids = explode(',', (string)$id_txt);
+            $number = $url_array[url_var::NUMERIC_VALUE . $field] ?? null;
+            $ids_ok = array_all($ids, fn(string $id) => filter_var($id, FILTER_VALIDATE_INT) !== false);
+            if (!$ids_ok) {
+                $msg_ui->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $id_txt]);
+            } elseif ($number === null) {
+                log_err_msg_ui('the new calculator field ' . $field . ' has been sent without its number', $msg_ui);
+            } elseif ($number !== '' and !is_numeric($number)) {
+                $msg_ui->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $number]);
+            } elseif ($number !== '') {
+                $val = new value_ui();
+                $val->set_phrases_by_is_list($ids, $msg_ui);
+                $val->number = $this->calculator_stored_number($url_array, (string)$field, (float)$number);
+                $result[$field] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the is a triples of the instances that the add button of a repeated input has added: each added instance sends
+     * the phrase id of the repeated phrase behind the phrase id of the instance (see calculator_json.js numberField)
+     *
+     * @param array $url_array the submitted calculator form
+     * @param user_message_ui $msg_ui to report a phrase id that is not a number
+     * @return triple_ui[] per field key, which is the phrase id of the instance, the triple "instance is a repeated phrase"
+     */
+    function calculator_new_links(array $url_array, user_message_ui $msg_ui): array
+    {
+        $result = [];
+        foreach ($this->calculator_field_vars($url_array, url_var::PHRASE_TO) as $field => $to_id) {
+            if (filter_var($to_id, FILTER_VALIDATE_INT) === false) {
+                $msg_ui->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $to_id]);
+            } else {
+                $trp = new triple_ui();
+                $trp->set_from_by_id((int)$field, $msg_ui);
+                $trp->set_verb_by_id(verbs::IS_ID);
+                $trp->set_to_by_id((int)$to_id, $msg_ui);
+                $result[$field] = $trp;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the is a triples of the instances of the database that the remove button has taken from the page: each sends the
+     * id of its triple behind the phrase id of the instance (see calculator_json.js removedHint)
+     *
+     * @param array $url_array the submitted calculator form
+     * @param user_message_ui $msg_ui to report a triple id that is not a number
+     * @return triple_ui[] per field key the triple to delete with the logged delete of the backend
+     */
+    function calculator_removed_links(array $url_array, user_message_ui $msg_ui): array
+    {
+        $result = [];
+        foreach ($this->calculator_field_vars($url_array, url_var::TRIPLE) as $field => $trp_id) {
+            if (filter_var($trp_id, FILTER_VALIDATE_INT) === false) {
+                $msg_ui->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $trp_id]);
+            } else {
+                $trp = new triple_ui();
+                $trp->set_id((int)$trp_id);
+                $result[$field] = $trp;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the submitted calculator form
+     * @param string $prefix the url var in front of the field key e.g. url_var::PHRASE_LIST
+     * @return array per field key, which is a phrase id e.g. "-4812" of "pl-4812", the value of the var
+     */
+    private function calculator_field_vars(array $url_array, string $prefix): array
+    {
+        $result = [];
+        $pattern = '/^' . preg_quote($prefix, '/') . '(-?\d+)$/';
+        foreach ($url_array as $key => $val) {
+            if (preg_match($pattern, (string)$key, $match)) {
+                $result[$match[1]] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the submitted calculator form with the unit of each field
+     * @param string $field the field key behind the number var
+     * @param float $number the entered number
+     * @return float the number to store: a share is entered in percent and stored as the ratio
+     */
+    private function calculator_stored_number(array $url_array, string $field, float $number): float
+    {
+        $is_percent = ($url_array[url_var::PHRASE . $field] ?? '') == sandbox_value_ui::UNIT_PERCENT;
+        return $is_percent ? $number / 100 : $number;
+    }
+
+    /**
+     * @param array $url_array the submitted calculator form with the unit of each field
+     * @param string $field the field key behind the number var
+     * @return string the unit of the field with its separator behind a number, '' for a field without unit
+     */
+    private function calculator_unit_text(array $url_array, string $field): string
+    {
+        $unit = (string)($url_array[url_var::PHRASE . $field] ?? '');
+        return $unit == '' ? '' : sandbox_value_ui::UNIT_SEPARATOR . $unit;
+    }
+
+    /**
+     * the confirmation of one added number as html, because the number links to the default view of the new value
+     *
+     * @param array $url_array the submitted calculator form with the label, the unit and the number of each field
+     * @param string $field the field key behind the number var
+     * @param value_ui $val the added value with the id that the save has given it
+     * @return array the escaped translated message and its html vars e.g. for "Target weight third child saved as 30 %"
+     */
+    function calculator_saved_new_text(array $url_array, string $field, value_ui $val): array
+    {
+        global $mtr;
+        $html = new html_base();
+        $val_url = $html->url_back(views::VALUE, (string)$val->id(), $url_array);
+        $new_num = $html->number_value((float)$url_array[url_var::NUMERIC_VALUE . $field]);
+        // the label is the only free text and therefore filled in last, so it never fills a placeholder itself
+        $vars = [
+            msg_id::VAR_VALUE => $html->ref($val_url, $new_num . $this->calculator_unit_text($url_array, $field)),
+            msg_id::VAR_NAME => $html->esc((string)($url_array[url_var::NAME . $field] ?? '')),
+        ];
+        return [$html->esc($mtr->txt(msg_id::CALCULATOR_SAVED_NEW)), $vars];
+    }
+
+    /**
+     * the confirmation of an instance that the add button has added and whose number the save has not added, e.g.
+     * because the user has emptied it, so that the save of its is a triple is not silent
+     *
+     * @param array $url_array the submitted calculator form with the label of each added instance
+     * @param string $field the phrase id of the added instance
+     * @return array the escaped translated message and its html vars e.g. for "Target weight third child added without
+     *               a number"
+     */
+    function calculator_added_text(array $url_array, string $field): array
+    {
+        global $mtr;
+        $html = new html_base();
+        $vars = [msg_id::VAR_NAME => $html->esc((string)($url_array[url_var::NAME . $field] ?? ''))];
+        return [$html->esc($mtr->txt(msg_id::CALCULATOR_ADDED_SAVED)), $vars];
+    }
+
+    /**
+     * the confirmation of an instance of the database whose is a triple the save has deleted
+     *
+     * @param array $url_array the submitted calculator form with the label of each removed instance
+     * @param string $field the phrase id of the removed instance
+     * @return array the escaped translated message and its html vars e.g. for "second child removed"
+     */
+    function calculator_removed_text(array $url_array, string $field): array
+    {
+        global $mtr;
+        $html = new html_base();
+        $vars = [msg_id::VAR_NAME => $html->esc((string)($url_array[url_var::NAME . $field] ?? ''))];
+        return [$html->esc($mtr->txt(msg_id::CALCULATOR_REMOVED_SAVED)), $vars];
     }
 
     /**

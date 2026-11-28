@@ -186,6 +186,9 @@ class files
     // the revenue by sector of a fictional company with the definition of its table, the example
     // of the table editor (src/test/resources/web/html/use_cases/table_editor_sample.html)
     const string TABLE_EDITOR_SAMPLE_FILE = self::USE_CASE_PATH . 'table_editor_sample' . self::JSON;
+    // the format of the csv of a bank statement of the positions as phrases, from which convert_csv writes the import
+    // json of the holdings of the portfolio split page (docs/json_structure.md "csv format")
+    const string BANK_POSITION_CSV_FILE = self::USE_CASE_PATH . 'bank_position_csv' . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -437,6 +440,12 @@ class files
         self::AHV_VAT_VOTE_FILE,
         self::SHARE_BUY_SELL_ABB_FILE,
         self::TABLE_EDITOR_SAMPLE_FILE,
+    ];
+
+    // the use case files imported after the XBRL fileset, the last import of the db setup (sql_db), so that their
+    // phrases get the next free ids and no id of the XBRL fileset moves; a new use case file is added at the end here
+    const array USE_CASE_FILES_AFTER_XBRL = [
+        self::BANK_POSITION_CSV_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

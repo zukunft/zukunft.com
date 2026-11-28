@@ -157,6 +157,20 @@ class change_log_list extends list_db_read
     // TODO Prio 2 add table view unit test
     // TODO Prio 2 add table view db read test
 
+    // the change log class of a value or result change by the size of its group (see change_class)
+    const array VALUE_CHANGE_CLASSES = [
+        sql_type::PRIME->value => change_values_prime::class,
+        sql_type::NORM->value => change_values_norm::class,
+        sql_type::BIG->value => change_values_big::class,
+    ];
+
+    // the change log class of a group change by the size of the group (see change_class)
+    const array GROUP_CHANGE_CLASSES = [
+        sql_type::PRIME->value => change::class,
+        sql_type::NORM->value => changes_norm::class,
+        sql_type::BIG->value => changes_big::class,
+    ];
+
 
     /*
      * api
@@ -961,7 +975,8 @@ class change_log_list extends list_db_read
         } else {
             $table_field_id = $table_id;
         }
-        $log_named = new change($usr);
+        $log_class = $this->change_class($class, $id);
+        $log_named = new $log_class($usr);
         $query_ext = $this->table_field_to_query_name($class, $field_name);
         if ($field_name == '' and $usr_table_id > 0) {
             // an own prepared query name, because the table filter parameter is a list here
@@ -970,32 +985,8 @@ class change_log_list extends list_db_read
         }
         // a result change is logged like a value change (see load_sql_obj_last)
         $by_group_id = ($class == value::class or $class == result::class);
-        if ($by_group_id) {
-            $grp_id = new group_id();
-            $typ = $grp_id->table_type($id);
-            if ($typ == sql_type::PRIME) {
-                $log_named = new change_values_prime($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::PRIME->value;
-            } elseif ($typ == sql_type::BIG) {
-                $log_named = new change_values_big($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::BIG->value;
-            } else {
-                $log_named = new change_values_norm($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::NORM->value;
-            }
-        } elseif ($class == group::class) {
-            $grp_id = new group_id();
-            $typ = $grp_id->table_type($id);
-            if ($typ == sql_type::PRIME) {
-                $log_named = new change($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::PRIME->value;
-            } elseif ($typ == sql_type::BIG) {
-                $log_named = new changes_big($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::BIG->value;
-            } else {
-                $log_named = new changes_norm($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::NORM->value;
-            }
+        if ($by_group_id or $class == group::class) {
+            $query_ext .= sql::NAME_SEP . $this->group_size($id);
         }
         $qp = $log_named->load_sql($sc, $query_ext);
         if ($field_name != '') {
@@ -1035,37 +1026,14 @@ class change_log_list extends list_db_read
         user        $usr): sql_par
     {
         // prepare sql to get the view changes of a user sandbox object e.g. word
-        $log_named = new change($usr);
+        $log_class = $this->change_class($class, $id);
+        $log_named = new $log_class($usr);
         $query_ext = $this->table_field_to_query_name($class, '');
         // a result change is written to the same change tables as a value change and with the
         // group id instead of the row id (see sandbox_multi::log_prime), so both are read the same
         $by_group_id = ($class == value::class or $class == result::class);
-        if ($by_group_id) {
-            $grp_id = new group_id();
-            $typ = $grp_id->table_type($id);
-            if ($typ == sql_type::PRIME) {
-                $log_named = new change_values_prime($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::PRIME->value;
-            } elseif ($typ == sql_type::BIG) {
-                $log_named = new change_values_big($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::BIG->value;
-            } else {
-                $log_named = new change_values_norm($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::NORM->value;
-            }
-        } elseif ($class == group::class) {
-            $grp_id = new group_id();
-            $typ = $grp_id->table_type($id);
-            if ($typ == sql_type::PRIME) {
-                $log_named = new change($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::PRIME->value;
-            } elseif ($typ == sql_type::BIG) {
-                $log_named = new changes_big($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::BIG->value;
-            } else {
-                $log_named = new changes_norm($usr);
-                $query_ext .= sql::NAME_SEP . sql_type::NORM->value;
-            }
+        if ($by_group_id or $class == group::class) {
+            $query_ext .= sql::NAME_SEP . $this->group_size($id);
         }
         // add 'last' to the query name because this query selects by the row id only (3 parameters),
         // whereas load_sql_obj_fld without a field name shares the base name but filters additionally
@@ -1092,6 +1060,45 @@ class change_log_list extends list_db_read
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
+    }
+
+    /**
+     * the change log class whose table holds the changes of an object: a value and a result log to
+     * the value change table of their group size, a group to the change table of its size and every
+     * other object to the changes table; the list loads every entry as a change (see load), so a
+     * cleanup that removes the loaded entries by their ids takes the table from here and never from
+     * the class of a loaded entry, which would delete the entries of other objects with the same ids
+     *
+     * @param string $class the class of the changed object e.g. value::class
+     * @param int|string $id the database id or, for a value, a result or a group, the group id
+     * @return string the change log class e.g. change_values_prime::class
+     */
+    function change_class(string $class, int|string $id): string
+    {
+        $result = change::class;
+        if ($class == value::class or $class == result::class) {
+            $result = self::VALUE_CHANGE_CLASSES[$this->group_size($id)];
+        } elseif ($class == group::class) {
+            $result = self::GROUP_CHANGE_CLASSES[$this->group_size($id)];
+        }
+        return $result;
+    }
+
+    /**
+     * @param int|string $id the group id of a value, a result or a group
+     * @return string the size of the change table of the group e.g. 'prime', also a part of the query name
+     */
+    private function group_size(int|string $id): string
+    {
+        $typ = new group_id()->table_type($id);
+        if ($typ == sql_type::PRIME) {
+            $result = sql_type::PRIME->value;
+        } elseif ($typ == sql_type::BIG) {
+            $result = sql_type::BIG->value;
+        } else {
+            $result = sql_type::NORM->value;
+        }
+        return $result;
     }
 
     /**

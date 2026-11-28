@@ -323,6 +323,7 @@ class system_page extends component
         msg_id::CALCULATOR_ADDED_NOT_SAVED,
         msg_id::CALCULATOR_ADDED_NO_NUMBER,
         msg_id::CALCULATOR_REMOVED_NOT_SAVED,
+        msg_id::CALCULATOR_MOVED_NOT_SAVED,
         msg_id::CALCULATOR_CHECK_VALUE,
         msg_id::CALCULATOR_CHECK_EXPECTED,
         msg_id::CALCULATOR_CHECK_CALCULATED,

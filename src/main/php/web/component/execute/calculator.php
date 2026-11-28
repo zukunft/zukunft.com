@@ -377,6 +377,16 @@ class calculator
     }
 
     /**
+     * @param phrase|null $item a list or a detail table e.g. portfolio split inputs
+     * @param string $keyword the name of the button keyword e.g. triples::CALCULATOR_DOWNLOAD
+     * @return string the hint of the triple from the item to the keyword, which is the tooltip of the button, '' if none
+     */
+    function button_hint(?phrase $item, string $keyword): string
+    {
+        return $this->own_text($this->property($item, $keyword), triples::CALCULATOR_HINT) ?? '';
+    }
+
+    /**
      * @return bool true if the page is built from another phrase, of which a case can be another kind
      */
     function has_base(): bool
@@ -652,14 +662,23 @@ class calculator
      */
     private function is_repeated(?phrase $phr): bool
     {
-        $result = false;
+        $ids = array_map(fn(phrase $rep) => $rep->id(), $this->repeated_phrases());
+        return $phr != null and in_array($phr->id(), $ids);
+    }
+
+    /**
+     * @return phrase[] the phrases that an input item of the page repeats e.g. child portfolio, each once
+     */
+    function repeated_phrases(): array
+    {
+        $result = [];
         foreach ($this->items(triples::CALCULATOR_INPUT) as $item) {
-            $same = ($phr != null and $this->item_phrase($item)?->id() == $phr->id());
-            if ($same and $this->has_flag($item, triples::CALCULATOR_REPEAT)) {
-                $result = true;
+            $phr = $this->item_phrase($item);
+            if ($phr != null and $this->has_flag($item, triples::CALCULATOR_REPEAT)) {
+                $result[$phr->id()] = $phr;
             }
         }
-        return $result;
+        return array_values($result);
     }
 
     /**

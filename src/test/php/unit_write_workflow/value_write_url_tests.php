@@ -251,7 +251,7 @@ class value_write_url_tests extends value_url_tests
 
         $test_name = 'the calculator save confirms the saved number with the label';
         $this->ui->url_to_action($form, $msg_ui, $this->req->dto, true);
-        $info = $msg_ui->get_last_info_html();
+        $info = $msg_ui->get_last_done_html();
         $t->assert_text_contains($test_name, $info, word_names::TEST_ADD);
         $test_name = '... and the new number as a link';
         $t->assert_text_contains($test_name, $info, '>' . values::SAMPLE_INT . '</' . html_base::A . '>');
@@ -270,7 +270,7 @@ class value_write_url_tests extends value_url_tests
         $this->ui->url_to_action($form, $msg_ui, $this->req->dto, true);
         $t->assert($test_name, $msg_ui->get_last_info(), $mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
         $test_name = '... and confirms no saved number';
-        $t->assert($test_name, $msg_ui->get_last_info_html(), '');
+        $t->assert($test_name, $msg_ui->get_last_done_html(), '');
         $msg_ui->reset();
     }
 

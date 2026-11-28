@@ -62,6 +62,8 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     // the icon of the button to remove an instance and the instances that a field keeps, the same as ui_list CALC_REMOVE_ICON and CALC_MIN_INSTANCES
     const REMOVE_ICON = 'fas fa-times';
     const MIN_INSTANCES = 1;
+    // the icon in front of the text of a button by its kind, the same as icons CALC_ADD, CALC_IMPORT, CALC_DOWNLOAD and CALC_REPORT
+    const ICON = {add: 'fas fa-plus', fileImport: 'fas fa-file-import', download: 'fas fa-download', report: 'fas fa-file-pdf'};
     // the operand name that reads the number of the previous row, the same as phrase_types PRIOR_NAME
     const PRIOR_NAME = 'prior';
     // the word of a value of the check table, the same as words EXPECTED
@@ -76,6 +78,12 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     const PRE_VAR = '8';
     const NAME_VAR = 'k';
     const UNIT_VAR = 'p';
+    // the save of a number without a database row by its phrase ids, of the is a triple of an added instance by its
+    // repeated phrase and the delete of the is a triple of a removed instance, the same as url_var PHRASE_LIST,
+    // PHRASE_TO and TRIPLE (frontend::action_calculator_save)
+    const PHRASE_LIST_VAR = 'pl';
+    const PHRASE_TO_VAR = 'pt';
+    const TRIPLE_VAR = 't';
     // the styles of the calculator page of the server (web/html/styles.php, view_styles::USE_CASE)
     const STYLE = {
         grid: 'grid', panel: 'panel', inputs: 'inputs', field: 'field',
@@ -121,7 +129,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         details: 'calculator_details', sources: 'calculator_sources', more: '... more',
         copy_json: 'calculator_copy_json', copy_csv: 'calculator_copy_csv', remove: 'calculator_remove',
         added_not_saved: 'calculator_added_not_saved', added_no_number: 'calculator_added_no_number',
-        removed_not_saved: 'calculator_removed_not_saved',
+        removed_not_saved: 'calculator_removed_not_saved', moved_not_saved: 'calculator_moved_not_saved',
         diagram_final: 'calculator_diagram_final',
         case_name: 'calculator_case_name', case_failed: 'calculator_case_failed',
         check_value: 'calculator_check_value', check_expected: 'calculator_check_expected',
@@ -173,9 +181,10 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             acronyms.set(t.to, t.from);
         }
     });
-    // the numbers of the page: the values first, then the results, as the server resolves an operand
+    // the numbers of the page: the values first, then the results, as the server resolves an operand; the stored number
+    // of a value is what the save compares with, because a redraw of a field must not take a changed number as stored
     const pool = (seed.values || []).map(function (v) {
-        return {id: String(v.id), words: v.words || [], number: v.number, source: v.source || '', description: v.description || ''};
+        return {id: String(v.id), words: v.words || [], number: v.number, stored: v.number, source: v.source || '', description: v.description || ''};
     }).concat((seed.results || []).map(function (r) {
         // the stored number is kept, so that a calculation that differs from it can be reported
         return {id: String(r.id), words: r.words || [], number: r.number, stored: r.number, formula: r.formula || '', context: r.context || [], result: true};
@@ -200,10 +209,13 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     let pageSources = [];
     // per name of a number field its phrase, which a preset sets
     const inputPhrases = new Map();
-    // the names of the instances that the add button of a repeated input has added, which the save does not keep yet
+    // the names of the instances that the add button of a repeated input has added, which the save adds with their is a triple
     const addedInstances = new Set();
-    // per instance of the database that the remove button has taken from the page the repeated phrase, which the save keeps yet
+    // per instance of the database that the remove button has taken from the page the repeated phrase and the phrase ids
+    // of its is a triples, which the save deletes
     const removedInstances = new Map();
+    // the instances of the database whose number of the database a remove has taken from the field, which the save does not exclude yet
+    const movedInstances = new Set();
     // the sensitivity table calculates the page once per cell, so only while the user has it open
     let sensitivityOpen = false;
     // the values and results that the results of the page use (see operandValues)
@@ -674,6 +686,14 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     function fieldProperty(name, prop) {
         const entry = cellEntry([name, prop]);
         const result = entry === null ? null : entry.number;
+        return result;
+    }
+
+    /* a property of a field by its input item first, because the field phrase is shared with other pages, e.g. the
+       range of the USD/CHF rate of the ABB page is no range of the DKK rate of the portfolio split (ui_list::item_property) */
+    function itemProperty(item, name, prop) {
+        const own = fieldProperty(item.name, prop);
+        const result = own === null ? fieldProperty(name, prop) : own;
         return result;
     }
 
@@ -1713,7 +1733,18 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
 
     /* the hidden vars that the save needs for a number field, with the stored number as the shown one (ui_list::calculator_save_vars) */
     function saveVars(key, entry, lbl, unit) {
-        let result = hidden(GROUP_VAR + key, entry.id) + hidden(PRE_VAR + NUMBER_VAR + key, unit === UNIT_PERCENT ? fieldShown(entry.number, entry) : entry.number) + hidden(NAME_VAR + key, lbl);
+        let result = hidden(GROUP_VAR + key, entry.id) + hidden(PRE_VAR + NUMBER_VAR + key, unit === UNIT_PERCENT ? fieldShown(entry.stored, entry) : entry.stored) + hidden(NAME_VAR + key, lbl);
+        if (unit !== '') {
+            result += hidden(UNIT_VAR + key, unit);
+        }
+        return result;
+    }
+
+    /* the hidden vars that the save needs for a number without a database row: its phrase ids instead of a group id and
+       a shown number, so that the save adds the value (frontend::calculator_new_values) */
+    function newSaveVars(key, entry, lbl, unit) {
+        const ids = entry.words.map(idOf);
+        let result = hidden(PHRASE_LIST_VAR + key, ids.join(',')) + hidden(NAME_VAR + key, lbl);
         if (unit !== '') {
             result += hidden(UNIT_VAR + key, unit);
         }
@@ -1734,7 +1765,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             hintText = hintText || entry.description;
         }
         const limits = [['min', KW.limit_down], ['max', KW.limit_up], ['step', KW.step]].map(function (l) {
-            const num = fieldProperty(name, l[1]);
+            const num = itemProperty(item, name, l[1]);
             const limit = num === null || entry === null ? num : fieldShown(num, entry);
             return num === null ? '' : ' ' + l[0] + '="' + esc(limit) + '"';
         }).join('');
@@ -1751,9 +1782,18 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             inputPhrases.set(field, name);
         }
         const unit = entry === null ? '' : fieldUnit(entry);
-        // a new instance has no database row yet, so without its save vars the save leaves it out (step 3, change 6)
-        if (entry !== null && !entry.added) {
+        // a number without a database row is saved by its phrases, and an added instance with its is a triple
+        if (entry !== null && entry.added) {
+            input += newSaveVars(key, entry, lbl, unit);
+        } else if (entry !== null) {
             input += saveVars(key, entry, lbl, unit);
+        }
+        // the label also without a number, because the save confirms the added instance with it
+        if (addedInstances.has(instance)) {
+            input += hidden(PHRASE_TO_VAR + key, idOf(name));
+            if (entry === null) {
+                input += hidden(NAME_VAR + key, lbl);
+            }
         }
         if (entry !== null) {
             inputEntries.set(field, entry);
@@ -1767,15 +1807,18 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* the hint of an instance that the add button has added, because the save leaves it out until it has its own triple
-       (step 3, change 6), with the reason first if it has no number */
+    /* the hint of an instance that the add button has added until the save, with the reason first if it has no number;
+       or of an instance whose number of the database a remove has taken from the field, which the save does not
+       exclude yet */
     function addedHint(instance, entry) {
-        let result = '';
+        let text = '';
         if (addedInstances.has(instance)) {
             const noNumber = entry === null ? TEXTS[TXT.added_no_number] + ' ' : '';
-            result = block('span', esc(noNumber + TEXTS[TXT.added_not_saved]), STYLE.hint);
+            text = noNumber + TEXTS[TXT.added_not_saved];
+        } else if (movedInstances.has(instance)) {
+            text = TEXTS[TXT.moved_not_saved];
         }
-        return result;
+        return text === '' ? '' : block('span', esc(text), STYLE.hint);
     }
 
     /* the operand values of the results that no listed assumption shows, sorted by their label (ui_list::assumption_fields) */
@@ -1954,21 +1997,25 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             return numberField(item, name, false, instance, optionEntry(valuePhrase, instance));
         }).join('');
         const disabled = nextInstances(item).length === 0 ? ' disabled' : '';
-        const button = '<button type="button" class="' + STYLE.addButton + '" ' + ADD_ATTR + '="' + esc(item.name) + '"' + disabled + '>' + esc(add) + '</button>';
+        const button = '<button type="button" class="' + STYLE.addButton + '" ' + ADD_ATTR + '="' + esc(item.name) + '"' + disabled + '>' + iconText(ICON.add, add) + '</button>';
         return result + removedHint(item) + (add ? button : '');
     }
 
-    /* the hint below the fields of a repeated input with the instances that the remove button has taken from the page,
-       but that the database keeps, because the save does not remove them yet (step 3, change 6) */
+    /* the hint below the fields of a repeated input with the instances of the database that the remove button has taken
+       from the page until the save, with the save vars that delete their is a triples (frontend::calculator_removed_links) */
     function removedHint(item) {
         const names = [];
-        removedInstances.forEach(function (name, instance) {
-            if (name === item.to) {
+        let vars = '';
+        removedInstances.forEach(function (removed, instance) {
+            if (removed.name === item.to) {
                 names.push(phraseLabel(instance));
+                vars += removed.links.map(function (link) {
+                    return hidden(TRIPLE_VAR + idOf(instance), link.replace(/^-/, '')) + hidden(NAME_VAR + idOf(instance), phraseLabel(instance));
+                }).join('');
             }
         });
         const text = TEXTS[TXT.removed_not_saved] + ' ' + names.join(', ');
-        const result = names.length === 0 ? '' : block('p', esc(text), STYLE.hint, item.name);
+        const result = names.length === 0 ? '' : block('p', esc(text) + vars, STYLE.hint, item.name);
         return result;
     }
 
@@ -2002,35 +2049,99 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             if (entry === null) {
                 console.warn('the first instance ' + template + ' has no number of ' + repeatValuePhrase(item.to) + ', so ' + instance + ' has none');
             }
-            // the triple has no database id until the instance is saved (step 3, change 6)
+            // the triple has no database id until the save adds it (numberField), except the one of an instance of the
+            // database that a remove has taken from the page, which gets it back, so that the save neither adds nor deletes it
+            const removed = removedInstances.get(instance);
+            const linkId = removed === undefined ? '' : (removed.links[0] || '');
             const link = {from: instance, verb: VERB.is, to: item.to};
-            addTriple(Object.assign({name: generatedName(link), id: '', type: '', description: '', impact: 0}, link));
-            addedInstances.add(instance);
+            addTriple(Object.assign({name: generatedName(link), id: linkId, type: '', description: '', impact: 0}, link));
+            if (removed === undefined) {
+                addedInstances.add(instance);
+            } else {
+                removedInstances.delete(instance);
+            }
             copyResults(template, instance);
             redrawRepeatFields(item);
             redrawResults();
         }
     }
 
-    /* the remove button of a repeated input takes its instance from the page: the is a triple, so that it is no instance
-       and no column any more, and its numbers and results, so that no sum takes them; an instance of the database stays
-       there until the save can remove it (step 3, change 6), an added one can be added again */
+    /* the remove button of a repeated input keeps the instances at their place, because e.g. the children are named by
+       their position like in the sample: each field from the removed one on takes the number of the field behind it,
+       and the last instance is taken from the page with its is a triple, so that it is no instance and no column any
+       more, and with its numbers and results, so that no sum takes them; the save deletes the is a triple of an
+       instance of the database (removedHint), an added one can be added again */
     function removeInstance(event) {
         const button = event.target.closest('[' + REMOVE_ATTR + ']');
         const field = button === null ? null : button.closest('[' + PART_ATTR + ']');
         const item = field === null ? undefined : phrases.get(field.getAttribute(PART_ATTR));
-        if (item !== undefined && kinds(item.to).length > MIN_INSTANCES) {
-            const instance = button.getAttribute(REMOVE_ATTR);
-            removeKindLink(instance, item.to);
-            removeEntries(instance);
-            if (addedInstances.has(instance)) {
-                addedInstances.delete(instance);
+        const list = item === undefined ? [] : kinds(item.to);
+        const instance = button === null ? null : button.getAttribute(REMOVE_ATTR);
+        const pos = list.indexOf(instance);
+        if (pos >= 0 && list.length > MIN_INSTANCES) {
+            const valuePhrase = repeatValuePhrase(item.to);
+            for (let i = pos; i < list.length - 1; i++) {
+                moveNumber(list[i + 1], list[i], valuePhrase);
+            }
+            const last = list[list.length - 1];
+            const links = removeKindLink(last, item.to);
+            removeEntries(last);
+            movedInstances.delete(last);
+            if (addedInstances.has(last)) {
+                addedInstances.delete(last);
             } else {
-                removedInstances.set(instance, item.to);
+                removedInstances.set(last, {name: item.to, links: links});
             }
             redrawRepeatFields(item);
             redrawResults();
         }
+    }
+
+    /* the number of the instance behind for the instance in front, like an input of the user: an entry of the database
+       keeps its id, so the save writes the new number, and a field in front without a number gets an added one like a
+       new instance (newInstanceEntry), which the save adds; without a number behind the field in front has none either,
+       and as the save does not exclude a number of the database yet, the field says so (addedHint) */
+    function moveNumber(from, to, valuePhrase) {
+        const source = optionEntry(valuePhrase, from);
+        const target = optionEntry(valuePhrase, to);
+        if (!addedInstances.has(to) && takesStored(source, target)) {
+            movedInstances.add(to);
+        } else if (source !== null) {
+            movedInstances.delete(to);
+        }
+        if (source === null) {
+            removeEntry(target);
+        } else if (target === null) {
+            const words = replacedPhrase(source.words, from, to);
+            pool.push({
+                id: newId(words),
+                words: words,
+                number: source.number,
+                source: source.source,
+                description: source.description,
+                added: true
+            });
+        } else {
+            target.number = source.number;
+        }
+    }
+
+    /* true if the move takes the number of the database from the field, which the save keeps until it can exclude it */
+    function takesStored(source, target) {
+        return source === null && target !== null && !target.added;
+    }
+
+    /* the entry taken from the numbers and the inputs of the page, nothing for null */
+    function removeEntry(entry) {
+        const i = pool.indexOf(entry);
+        if (i >= 0) {
+            pool.splice(i, 1);
+        }
+        inputEntries.forEach(function (e, field) {
+            if (e === entry) {
+                inputEntries.delete(field);
+            }
+        });
     }
 
     /* the instance is no kind of the phrase any more on the page, the opposite of addTriple for its is a triple */
@@ -2039,12 +2150,17 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             return t.verb === VERB.is && t.to === name;
         };
         const list = triplesFrom(instance);
-        list.filter(isLink).forEach(function (t) {
+        const links = list.filter(isLink);
+        links.forEach(function (t) {
             phrases.delete(t.name);
         });
         children.set(instance, list.filter(function (t) {
             return !isLink(t);
         }));
+        // the phrase ids of the triples of the database, which the save deletes; an added triple has none
+        return links.map(function (t) {
+            return t.id;
+        }).filter(Boolean);
     }
 
     /* the numbers and results that name the phrase in their phrases or their context, taken from the page */
@@ -2122,6 +2238,33 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             if (pageResults.indexOf(e) >= 0) {
                 pageResults.push(copy);
             }
+        });
+    }
+
+    /* the results of each instance of the database without any, e.g. a child that the save has added, which nothing
+       calculates in the backend: those of the first instance with results, like for an added instance (copyResults);
+       true if it has copied any, because then the page calculates all results again (ui_list::add_instance_results) */
+    function addMissingInstanceResults() {
+        let copied = false;
+        items(KW.input).filter(function (item) {
+            return hasFlag(item, KW.repeat);
+        }).forEach(function (item) {
+            const list = kinds(item.to);
+            const template = list.find(hasResults);
+            list.filter(function (instance) {
+                return template !== undefined && !hasResults(instance);
+            }).forEach(function (instance) {
+                copyResults(template, instance);
+                copied = true;
+            });
+        });
+        return copied;
+    }
+
+    /* true if a number of the page is a result of the instance */
+    function hasResults(instance) {
+        return pool.some(function (e) {
+            return e.result && e.words.indexOf(instance) >= 0;
         });
     }
 
@@ -2517,9 +2660,15 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* the row phrases by the biggest number of the phrase that the table is ranked by, then by name (ui_list::ranked_rows) */
+    /* the row phrases by the biggest number of the phrase that the table is ranked by, then by name, only the rows with a
+       number of the page, because a leaf of the is a tree can be a class that nothing is yet e.g. alternative
+       investment (ui_list::ranked_rows) */
     function rankedRows(tbl) {
-        const result = rowPhrases(tbl.to, []);
+        const result = rowPhrases(tbl.to, []).filter(function (row) {
+            return pool.some(function (e) {
+                return e.words.indexOf(row) >= 0;
+            });
+        });
         const rank = subItems(tbl.name, VERB.rank)[0];
         // the ranking orders the main follower chain, so the alternative order keeps the order of its own chain
         if (rank !== undefined && !walksAlternative()) {
@@ -2573,22 +2722,36 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
 
     /* the buttons of a list or a detail table at their place: the report is a link to the pdf and the others have no function so far; save: the html of the save button of the input list between the import and the download, which then shows two buttons per line (ui_list::calculator_buttons) */
     function buttons(item, save) {
-        let fileImport = null;
-        let download = null;
         let report = null;
         let copy = [];
         if (item !== null && item !== undefined) {
-            fileImport = buttonLabel(item, KW.file_import);
-            download = buttonLabel(item, KW.download);
             report = buttonLabel(item, KW.report);
             if (hasFlag(item, KW.copy)) {
                 copy = [TEXTS[TXT.copy_json], TEXTS[TXT.copy_csv]];
             }
         }
-        const link = report ? '<a href="' + esc(settings.report) + '" target="' + STYLE.reportFrame + '" class="' + STYLE.button + '">' + esc(report) + '</a>' : '';
+        const title = report ? titleAttr(buttonHint(item, KW.report)) : '';
+        const link = report ? '<a href="' + esc(settings.report) + '" target="' + STYLE.reportFrame + '" class="' + STYLE.button + '"' + title + '>' + iconText(ICON.report, report) + '</a>' : '';
         const frame = report ? '<iframe name="' + STYLE.reportFrame + '" class="' + STYLE.reportFrame + '" title="' + esc(report) + '"></iframe>' : '';
-        const result = plainButtons([fileImport]) + (save || '') + plainButtons([download]) + link + plainButtons(copy) + frame;
+        const result = keywordButton(item, KW.file_import, ICON.fileImport) + (save || '') + keywordButton(item, KW.download, ICON.download) + link + plainButtons(copy) + frame;
         return save ? block('div', result, STYLE.actions) : result;
+    }
+
+    /* the button of the keyword with its label, its icon and its hint as tooltip, '' if the item has no such button (ui_list::calculator_keyword_button) */
+    function keywordButton(item, keyword, icon) {
+        const hasItem = item !== null && item !== undefined;
+        return hasItem ? iconButton(buttonLabel(item, keyword), icon, buttonHint(item, keyword)) : '';
+    }
+
+    /* the hint of the triple from the item to the button keyword, which is the tooltip of the button, '' if none (calculator::button_hint) */
+    function buttonHint(item, keyword) {
+        const prop = property(item.name, keyword);
+        return prop === null ? '' : ownText(prop.name, KW.hint) || '';
+    }
+
+    /* the title attribute with its leading space, '' for no tooltip (html_base::title_attr) */
+    function titleAttr(title) {
+        return title ? ' title="' + esc(title) + '"' : '';
     }
 
     /* the label of the triple from the item to the button keyword, null if the item has no such button (calculator::button_label) */
@@ -2603,6 +2766,16 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         }).map(function (text) {
             return '<button type="button" class="' + STYLE.button + '">' + esc(text) + '</button>';
         }).join('');
+    }
+
+    /* the button without a function so far with the icon of its kind, '' without a text (ui_list::calculator_icon_button) */
+    function iconButton(text, icon, title) {
+        return text ? '<button type="button" class="' + STYLE.button + '"' + titleAttr(title) + '>' + iconText(icon, text) + '</button>' : '';
+    }
+
+    /* the icon and the escaped text of a button or a link, like the sample pages (html_base::icon_and_text) */
+    function iconText(icon, text) {
+        return '<i class="' + icon + '"></i> ' + esc(text);
     }
 
     /* true if the numbers differ only by the float noise of a calculation (ui_list::calculator_check_same) */
@@ -2752,7 +2925,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
     /* the section with the import buttons of the page, without a function so far (ui_list::calculator_imports) */
     function importSection() {
         const html = items(KW.file_import).map(function (item) {
-            return '<button type="button" class="' + STYLE.button + '">' + esc(label(item)) + '</button>';
+            return iconButton(label(item), ICON.fileImport, '');
         }).join('');
         return html === '' ? '' : block('details', block('summary', esc(ownText(group(KW.file_import).name, KW.label) || '')) + block('div', html, STYLE.imports));
     }
@@ -2937,7 +3110,10 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
 
     // the stored results are checked once, after an input change the page shows the numbers that it calculates
     checkResults();
-    if (recalculateAll) {
+    // an instance without stored results gets those of the first instance, and then the sums over all instances
+    // include it, like after "Add child"
+    const copied = addMissingInstanceResults();
+    if (recalculateAll || copied) {
         recalculate();
     }
     pageOperands = new Set(operandValues());

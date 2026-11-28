@@ -73,7 +73,7 @@ is the `description` of that triple.
 | keyword                | effect                                          |
 |------------------------|-------------------------------------------------|
 | `calculator label`     | the shown name, e.g. the page title or a row label |
-| `calculator hint`      | the help text, e.g. the lead text or the text below a field |
+| `calculator hint`      | the help text, e.g. the lead text or the text below a field; of a button triple e.g. to `calculator download` its tooltip |
 | `calculator highlight` | shows a row in bold as a key figure             |
 | `calculator signed`    | colours the positive and negative numbers of a row group; a flagged row or column also shows the plus sign and no colour for a number that rounds to zero |
 | `calculator number note` | a short note behind the unit of the number in a row label, e.g. PV-weighted |
@@ -102,7 +102,9 @@ editor shows the name of the phrase.
 - **assumed**: a value with the word `assumed`; a second value with the extra word
   `confidence` gives its confidence
 - **measured**: a value with a `source`; the page shows the number of the source
-- **field limits**: a value with the phrase of the field and a field keyword
+- **field limits**: a value with the phrase of the field and a field keyword; on a calculator page a value with the
+  input item and a field keyword comes first, e.g. `ABB share decision assumption exchange rate` · `field limit down`,
+  because the phrase of a field is shared with other pages, e.g. the exchange rate of other currencies
 - **the previous row**: an operand with `prior` next to another phrase, e.g. `"cumulative deviation","prior"`,
   reads the number of the phrase before the phrase of the result context in its `is follower of` chain; the
   first phrase of the chain has the number 0, and a context with phrases of two chains selects no number
@@ -133,7 +135,7 @@ repeated input.
 |---|---|---|
 | checkbox | `solar thermal` · `can be` · `calculator checkbox` | a checkbox; checked is the value 1, unchecked 0, so a formula can use it as a factor |
 | read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the number of the item phrase instead of a field |
-| repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field; what the repeat triple `has a` are the instances that the add button adds in the browser, the next one that is no instance yet, with the number of the first instance (a share at most what the others leave of 100 %) and the results of the first instance calculated again; the button is disabled if none is left; the remove button takes an instance with its numbers and results from the page, while there are more than one, and an instance keeps the name of its phrase |
+| repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field; what the repeat triple `has a` are the instances that the add button adds in the browser, the next one that is no instance yet, with the number of the first instance (a share at most what the others leave of 100 %) and the results of the first instance calculated again; the button is disabled if none is left; the remove button, while there are more than one, keeps the instances at their place, because e.g. the children are named by their position: each field from the removed one on takes the number of the field behind it, and the last instance is taken from the page with its numbers and results; the save adds the `is a` triple and the numbers of an added instance and deletes the `is a` triple of a removed instance of the database, while a number of the database that a remove has taken from a field stays until the save can exclude it; an instance of the database without any stored result, e.g. a saved added one, gets the results of the first instance calculated again on every page and in the report |
 | warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero; the page calculates the result again when an input changes |
 | slider | `house heating input heated area` · `has a` · `calculator slider` | a range slider coupled to the number field, with the field limits and the field step of the phrase; a `field step` value of the triple itself is the step of the slider; without javascript only the number field is shown |
 | preset | `house heating` · `has a` · `calculator preset` | a list with one button per item, with the label and the hint of the item; the button sets each input to the value that has the item phrase and the phrases of the input, e.g. `budget case`, `heat pump efficiency`; without javascript the buttons are not shown |
@@ -249,7 +251,8 @@ the problem is obvious on every page instead of hidden behind an outdated number
 
 The format of a csv file, e.g. the bank statement of the positions that fills the holdings of the portfolio split
 page, is a phrase with triples to the keywords of `csv_keywords.json` and with value templates, so that a new format
-is a definition json and no code. Example: `src/test/resources/import/portfolio_csv/bank_position_csv.json`. A cell
+is a definition json and no code. Example: the use case file `src/main/resources/messages/use_cases/bank_position_csv.json`,
+which `convert_csv` reads as the decoded file or as the export of its format phrase from the database. A cell
 text of the csv, e.g. a header or an asset class of the bank, is the description of a triple and is compared with
 the complete cell, so the phrase names stay lower case.
 
@@ -263,6 +266,7 @@ the complete cell, so the phrase names stay lower case.
 | kind | `bank position csv asset class kind` · `has a` · `stock` | a list from the kind column: each item maps the cell of its description to its kind; the word of a row is a its kind, and a row whose cell has no item is left out and reported |
 | context | `bank position csv instrument` · `is part of` · `csv context` | stands for the first phrase of the context of the conversion, e.g. the portfolio |
 | optional | a word of a value template | no value for an empty or zero number cell |
+| name | `bank position csv instrument hint` · `has a` · `csv name` | the description is the name of the triple that the template writes, with `{<header text>}` for a cell (`{Instrument} hint`) |
 
 The templates:
 
@@ -273,9 +277,17 @@ The templates:
   exchange rate of a currency pair; a written value gets the source of the csv, a template with `assumed` none
 - a **triple** of the definition from or to a column item that is no triple to a csv keyword is a template too, e.g.
   the hint of a holding or the currency pair: each column item is the phrase of its cell, and `{<header text>}` in
-  its description is the cell of that column (`{Instrument Name}`); a template whose name starts with the name of its
-  from column gets the row cell instead (`bank position csv instrument hint` gives `2120.001.01 hint`), the others
-  no name; a template whose from and to are the same cell writes nothing, neither does a value template that uses
+  its description is the cell of that column (`{Instrument Name}`); a template with a triple to `csv name` writes the
+  name of that description (`{Instrument} hint` gives `2120.001.01 hint`), the others no name, so that the import
+  generates it; a template whose from and to are the same cell writes nothing, neither does a value template that uses
   it; a written triple whose from, verb and to the definition declares is written as that declaration, e.g. a
   currency pair of `portfolio_split_calculator.json`
-- the words and triples that the templates use are declared like in any import json and copied into the result
+- the words and triples that the templates use are declared like in any import json and copied into the result:
+  each declaration that the result uses, the declarations that it uses in turn, and every declared triple between
+  two phrases of the result, e.g. `stock is a holding`; a cell that the definition does not declare is a word with
+  its name only, the cell of the row name column with the cell of the row description column as its description
+
+`convert_csv` (`src/main/php/cfg/import/convert_csv.php`) converts a csv by the decoded definition json and the name
+of the format phrase. What a format cannot say, because it is a calculation and not a fact of the csv, is not
+written: the `is follower of` walk of the holdings by their lot value, and a kind other than the one of the bank,
+e.g. a bond fund that the bank lists with the bonds but prices per unit.
