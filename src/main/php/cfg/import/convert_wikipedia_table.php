@@ -79,6 +79,9 @@ class convert_wikipedia_table
     const string LINK_LONG_MAKER_END = "]]";
     const string ITEM_IGNORE_MAKER = "rowspan";
     const string SORT_MAKER = "sort";
+    // a column name that ends with a year or a range of years in round brackets e.g. "Growth rate (2019–2022)", whose
+    // years are phrases of their own (split_name)
+    const string YEARS_IN_BRACKETS = '/^(.*\S)\s*\((\d{4})(?:\s*[–-]\s*(\d{4}))?\)$/u';
 
     /**
      * convert a wikipedia table to a zukunft.com json string
@@ -171,7 +174,9 @@ class convert_wikipedia_table
      * based on wikitable2json
      * TODO Prio 2 use it to compare wikipedia table with wikidata and report the differences
      * TODO Prio 2 base all assumptions on the given context
-     * TODO Prio 2 add a word splitter to separate e.g. "Growth rate (2019–2022)" to "Growth rate", "2019" and "2022"
+     *
+     * a column name with years in brackets is split into its name and the years (split_name), e.g. "Growth rate
+     * (2019–2022)" to "Growth rate", "2019" and "2022", so that the values of the column have the years as phrases
      *
      * @param string $wiki_json wth the wikipedia table
      * @param user_message $msg with the user how has initiated the conversion
@@ -246,14 +251,20 @@ class convert_wikipedia_table
         // get the header row
         $header_row = array_shift($wiki_table);
 
-        // select the columns to convert
+        // select the columns to convert, each by its name without the years in brackets and with the years as words
         $col_names = [];
+        $col_years = [];
         $col_positions = [];
         $i = 0;
         foreach ($header_row as $col_name) {
             if (!in_array($col_name, $exclude_col_names)) {
-                $word_lst[] = $col_name;
-                $col_names[$i] = $col_name;
+                [$name, $years] = $this->split_name($col_name);
+                $word_lst[] = $name;
+                foreach ($years as $year) {
+                    $word_lst[] = [$year, [json_fields::TYPE_NAME => phrase_types::TIME]];
+                }
+                $col_names[$i] = $name;
+                $col_years[$i] = $years;
                 $col_positions[] = $i;
                 if ($id_column == null) {
                     $id_column = $i;
@@ -280,6 +291,7 @@ class convert_wikipedia_table
                         $val_words = [];
                         $val_words[] = $row_key;
                         $val_words[] = $col_names[$i];
+                        $val_words = [...$val_words, ...$col_years[$i]];
                         if ($this->get_value_words($wiki_row[$i]) != null) {
                             $val_words[] = $this->get_value_words($wiki_row[$i]);
                         }
@@ -392,6 +404,25 @@ class convert_wikipedia_table
             $json[json_fields::VALUES] = $values;
         }
         return json_encode($json);
+    }
+
+    /**
+     * @param string|array $col_name the name of a column of the table e.g. "Growth rate (2019–2022)"
+     * @return array the name without the years in brackets e.g. "Growth rate" and the years e.g. ["2019", "2022"]; a
+     *               name with another text in brackets e.g. "English short name (using title case)" stays as it is,
+     *               because only a year is a phrase of its own
+     */
+    private function split_name(string|array $col_name): array
+    {
+        $result = [$col_name, []];
+        if (is_string($col_name) and preg_match(self::YEARS_IN_BRACKETS, $col_name, $found)) {
+            $years = [$found[2]];
+            if (($found[3] ?? '') != '') {
+                $years[] = $found[3];
+            }
+            $result = [$found[1], $years];
+        }
+        return $result;
     }
 
     /**

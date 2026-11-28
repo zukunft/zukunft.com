@@ -308,6 +308,8 @@ messages:
   calc_editor_saved_change: "z$VarValueCount$z Änderung gespeichert."
   calc_editor_saved_changes: "z$VarValueCount$z Änderungen gespeichert."
   calc_editor_save_refused: "Nicht alle Änderungen sind gespeichert. Der Pod hat das Speichern abgelehnt: z$VarValue$z. Die Änderungen vor dem Problem sind eventuell gespeichert; Laden zeigt die Datenbank."
+  calc_editor_relogin: "Der Pod hat die Sitzung dieser Seite nicht akzeptiert, z.B. weil sie abgelaufen ist oder Sie nicht angemeldet sind. Ihre Änderungen bleiben als Entwurf in diesem Browser, so dass Sie sich wieder anmelden und sie speichern können."
+  calc_editor_relogin_link: "Wieder anmelden"
   calc_editor_no_answer: "keine Antwort"
   calc_editor_own_version: "(eigene Version)"
   calc_editor_shared_version: "(geteilte Version)"

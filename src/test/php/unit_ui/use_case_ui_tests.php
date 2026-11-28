@@ -114,6 +114,9 @@ class use_case_ui_tests
     const string PDF_POST_TOKEN_SENT = 'token_sent';
     const string PDF_POST_BODY = 'body';
     const string PDF_BUTTON_DISABLED = 'disabled';
+    // the fields of the message of the refused save scenarios (saveAnswered of calculator_editor_scenarios.js)
+    const string RELOGIN_LINK = 'login_link';
+    const string RELOGIN_URL = 'login_url';
     // the fields of a section of the page structure in the message of the arguments_collapsed scenario and the key of the arguments
     const string TREE_LIST = 'list';
     const string TREE_LIST_OPEN = 'open';
@@ -841,6 +844,16 @@ class use_case_ui_tests
         $t->assert_text_contains($test_name, $editor_html, $html->script_data(system_page::CALC_EDITOR_SEED_ID, []));
         $test_name = '... and the session token, which the save sends to the api in the csrf header';
         $t->assert_text_contains($test_name, $editor_html, $html->form_session_token());
+        // a save refused for the session links to the login, which names the pinned id of the login view
+        $test_name = '... and the login url with the editor page as its way back, for a save refused for the session';
+        $editor_url = [url_var::MASK => views::CALCULATOR_EDITOR_ID, url_var::ID => $wrd->id()];
+        $editor_login = new system_page()->calculator_editor($wrd, $msg, $dto, $editor_url);
+        $t->assert_text_contains($test_name, $editor_login, $html->script_data(system_page::CALC_EDITOR_LINKS_ID,
+            [system_page::CALC_EDITOR_LOGIN => $html->url_with_back(api::LOGIN_SCRIPT, $editor_url)]));
+        // negative: without the url of the page the login returns to the start page
+        $test_name = '... but the plain login url without the url of the page';
+        $t->assert_text_contains($test_name, $editor_html, $html->script_data(system_page::CALC_EDITOR_LINKS_ID,
+            [system_page::CALC_EDITOR_LOGIN => api::LOGIN_SCRIPT]));
         // a selected formula is changed in the formula editor, which the calculator editor starts with its own hosts
         $test_name = '... with the formula editor script before the calculator editor script, which starts it';
         $t->assert_text_contains($test_name, $editor_html,
@@ -2487,6 +2500,17 @@ class use_case_ui_tests
             $disabled = $offline[self::PDF_BUTTON_DISABLED] ?? false;
             $t->assert_true($test_name, $disabled);
             $t->assert_true($test_name, $offline[self::PDF_BUTTON_DISABLED] ?? false);
+            // a save that the pod refuses for the session e.g. an expired one links to the login, because the draft
+            // in the browser keeps the changes
+            $test_name = 'a save refused for the session shows a link to the login';
+            $relogin = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_SAVE_SESSION_REFUSED), true) ?? [];
+            $login_url = $relogin[self::RELOGIN_URL] ?? '';
+            $t->assert_true($test_name, $login_url != '');
+            $t->assert($test_name, $relogin[self::RELOGIN_LINK] ?? '', $login_url);
+            // negative: a save refused for another reason e.g. a wrong value is not solved by a login
+            $test_name = '... but not a save refused for another reason';
+            $refused = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_SAVE_REFUSED), true) ?? [];
+            $t->assert($test_name, $refused[self::RELOGIN_LINK] ?? self::SCENARIO_NOT_ENDED, '');
             // a click on a detail table in the preview selects its column, and a row its table, which defines the rows
             $clicks = json_decode($this->scenario_message($brw, $page, test_files::SCENARIO_PREVIEW_DETAIL_PARTS), true) ?? [];
             $test_name = 'a click on a column heading of a detail table in the preview selects the detail column';

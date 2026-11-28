@@ -408,7 +408,7 @@ class a_selected_test extends all_unit_tests
         //new component_list_tests()->run($this);
         //new component_link_tests()->run($this);
         //new component_link_list_tests()->run($this);
-        //new import_tests()->run($this);
+        new import_tests()->run($this);
         //new wikidata_tests()->run($this);
         //new db_setup_tests()->run($this);
         //new api_tests()->run_openapi_test($this);

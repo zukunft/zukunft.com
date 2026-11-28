@@ -198,6 +198,36 @@ function pressSave() {
     click("#btnSave");
 }
 
+/* the status of a save that the pod refuses for another reason than the session e.g. a wrong value */
+const HTTP_BAD_REQUEST = 400;
+/* the login url of a page without the links of a pod, e.g. an older snapshot */
+const TEST_LOGIN_URL = "/http/view.php?m=login";
+const REFUSAL_TEXT = "refused by the scenario";
+
+/* press Save as on a pod, which refuses the save with the status; the scenario ends with the login link of the
+   notice and the login url of the page, so that a test sees if the refusal suggests to log in again */
+function saveAnswered(status) {
+    SOURCE.mode = "api";
+    if (!document.getElementById(EDITOR_LINKS_ID)) {
+        const links = document.createElement("script");
+        links.type = "application/json";
+        links.id = EDITOR_LINKS_ID;
+        links.textContent = JSON.stringify({[LINK_LOGIN]: TEST_LOGIN_URL});
+        document.body.appendChild(links);
+    }
+    window.fetch = function () {
+        return Promise.resolve(new Response(JSON.stringify({message: REFUSAL_TEXT}), {status: status}));
+    };
+    refreshStatus();
+    return save().then(function () {
+        const link = document.querySelector("#noticeHost a");
+        messageElement.textContent = JSON.stringify({
+            login_link: link === null ? "" : link.getAttribute("href"),
+            login_url: pageLink(LINK_LOGIN)
+        });
+    });
+}
+
 /* open the Definition tab and write its json into the page as the message of the scenario */
 function showJsonTab() {
     click("#tab-json");
@@ -261,6 +291,18 @@ const SCENARIOS = {
         selectItem(PV_CAPACITY);
         typeField(FIELD_GENERAL_LABEL, PV_CAPACITY_LABEL);
         pressCreatePdf();
+    },
+    /* the user saves a change, which the pod refuses for the session e.g. because it has expired */
+    save_session_refused: function () {
+        selectItem(PV_CAPACITY);
+        typeField(FIELD_GENERAL_LABEL, PV_CAPACITY_LABEL);
+        return saveAnswered(HTTP_UNAUTHORIZED);
+    },
+    /* the user saves a change, which the pod refuses for another reason */
+    save_refused: function () {
+        selectItem(PV_CAPACITY);
+        typeField(FIELD_GENERAL_LABEL, PV_CAPACITY_LABEL);
+        return saveAnswered(HTTP_BAD_REQUEST);
     },
     /* the user opens the PDF tab of a page that is not on a pod, where only a pod can create the pdf */
     pdf_tab_offline: function () {
@@ -609,6 +651,9 @@ const SCENARIOS = {
 
 window.addEventListener("load", function () {
     document.body.appendChild(messageElement);
-    SCENARIOS[location.hash.slice(1)]();
-    messageElement.id = PUT_MESSAGE_ID;
+    // a scenario that waits for the answer of the pod returns a promise, so its message is complete only after it
+    const run = SCENARIOS[location.hash.slice(1)]();
+    Promise.resolve(run).then(function () {
+        messageElement.id = PUT_MESSAGE_ID;
+    });
 });

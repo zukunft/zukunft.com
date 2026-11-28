@@ -1233,6 +1233,26 @@ class import_tests
         $result = json_decode($conv_str, true);
         $target = json_decode($json_str, true);
         $t->assert_json($test_name, $result, $target);
+        // the years of a column name are phrases of their own (convert_wikipedia_table::split_name); the negative case,
+        // a column name with another text in brackets e.g. "English short name  (using title case)", is the unchanged
+        // fixture of the country table above
+        $test_name = '... with the years of the column "Growth rate (2019–2022)" as phrases of its values';
+        $growth_val = array_values(array_filter($result[json_fields::VALUES] ?? [],
+            fn(array $val) => ($val[json_fields::WORDS][0] ?? '') == 'U.S. dollar'
+                and in_array('Growth rate', $val[json_fields::WORDS])));
+        $t->assert($test_name, $growth_val[0][json_fields::WORDS] ?? [], ['U.S. dollar', 'Growth rate', '2019', '2022']);
+        $test_name = '... and the years as words of the type time';
+        $year_types = [];
+        foreach ($result[json_fields::WORDS] ?? [] as $wrd) {
+            if (in_array($wrd[json_fields::NAME], ['2019', '2022'])) {
+                $year_types[$wrd[json_fields::NAME]] = $wrd[json_fields::TYPE_NAME] ?? '';
+            }
+        }
+        $t->assert($test_name, $year_types, ['2019' => phrase_type_shared::TIME, '2022' => phrase_type_shared::TIME]);
+        // negative: the whole column name is no word any more
+        $test_name = '... but not the column name with the years';
+        $wrd_names = array_column($result[json_fields::WORDS] ?? [], json_fields::NAME);
+        $t->assert_false($test_name, in_array('Growth rate (2019–2022)', $wrd_names));
 
         // the csv of a bank statement of the positions to the import json of the holdings by the phrases of its format
         // (convert_csv, docs/json_structure.md "csv format"), whose definition is the use case file bank_position_csv.json

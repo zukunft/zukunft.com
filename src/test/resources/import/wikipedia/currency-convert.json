@@ -20,7 +20,15 @@
       "name": "Proportion of daily volume April 2022"
     },
     {
-      "name": "Growth rate (2019\u20132022)"
+      "name": "Growth rate"
+    },
+    {
+      "name": "2019",
+      "type": "time"
+    },
+    {
+      "name": "2022",
+      "type": "time"
     },
     {
       "name": "U.S. dollar"
@@ -1393,7 +1401,9 @@
     {
       "words": [
         "U.S. dollar",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0.2
     },
@@ -1414,7 +1424,9 @@
     {
       "words": [
         "Euro",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 5.5
     },
@@ -1435,7 +1447,9 @@
     {
       "words": [
         "Japanese yen",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0.6
     },
@@ -1456,7 +1470,9 @@
     {
       "words": [
         "Sterling",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0.7
     },
@@ -1477,7 +1493,9 @@
     {
       "words": [
         "Renminbi",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 62.7
     },
@@ -1498,7 +1516,9 @@
     {
       "words": [
         "Australian dollar",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 5.8
     },
@@ -1519,7 +1539,9 @@
     {
       "words": [
         "Canadian dollar",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 24
     },
@@ -1540,7 +1562,9 @@
     {
       "words": [
         "Swiss franc",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 6.1
     },
@@ -1561,7 +1585,9 @@
     {
       "words": [
         "Hong Kong dollar",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 25.7
     },
@@ -1582,7 +1608,9 @@
     {
       "words": [
         "Singapore dollar",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 33.3
     },
@@ -1603,7 +1631,9 @@
     {
       "words": [
         "Swedish krona",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 10
     },
@@ -1624,7 +1654,9 @@
     {
       "words": [
         "South Korean won",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 5
     },
@@ -1645,7 +1677,9 @@
     {
       "words": [
         "Norwegian krone",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 5.5
     },
@@ -1666,7 +1700,9 @@
     {
       "words": [
         "New Zealand dollar",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 19
     },
@@ -1687,7 +1723,9 @@
     {
       "words": [
         "Indian rupee",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 5.8
     },
@@ -1708,7 +1746,9 @@
     {
       "words": [
         "Mexican peso",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 11.7
     },
@@ -1729,7 +1769,9 @@
     {
       "words": [
         "New Taiwan dollar",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 22.2
     },
@@ -1750,7 +1792,9 @@
     {
       "words": [
         "South African rand",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 9
     },
@@ -1771,7 +1815,9 @@
     {
       "words": [
         "Brazilian real",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 18.1
     },
@@ -1792,7 +1838,9 @@
     {
       "words": [
         "Danish krone",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 16.6
     },
@@ -1813,7 +1861,9 @@
     {
       "words": [
         "Polish z\u0142oty",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 16.6
     },
@@ -1834,7 +1884,9 @@
     {
       "words": [
         "Thai baht",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 20
     },
@@ -1855,7 +1907,9 @@
     {
       "words": [
         "Israeli new shekel",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 33.3
     },
@@ -1876,7 +1930,9 @@
     {
       "words": [
         "Indonesian rupiah",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0
     },
@@ -1897,7 +1953,9 @@
     {
       "words": [
         "Czech koruna",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0
     },
@@ -1918,7 +1976,9 @@
     {
       "words": [
         "UAE dirham",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 100
     },
@@ -1939,7 +1999,9 @@
     {
       "words": [
         "Turkish lira",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 63.6
     },
@@ -1960,7 +2022,9 @@
     {
       "words": [
         "Hungarian forint",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 25
     },
@@ -1981,7 +2045,9 @@
     {
       "words": [
         "Chilean peso",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0
     },
@@ -2002,7 +2068,9 @@
     {
       "words": [
         "Saudi riyal",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0
     },
@@ -2023,7 +2091,9 @@
     {
       "words": [
         "Philippine peso",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 33.3
     },
@@ -2044,7 +2114,9 @@
     {
       "words": [
         "Malaysian ringgit",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0
     },
@@ -2065,7 +2137,9 @@
     {
       "words": [
         "Colombian peso",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0
     },
@@ -2086,7 +2160,9 @@
     {
       "words": [
         "Russian ruble",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 81.8
     },
@@ -2107,7 +2183,9 @@
     {
       "words": [
         "Romanian leu",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0
     },
@@ -2128,7 +2206,9 @@
     {
       "words": [
         "Peruvian sol",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0
     },
@@ -2149,7 +2229,9 @@
     {
       "words": [
         "Bahraini dinar",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0
     },
@@ -2170,7 +2252,9 @@
     {
       "words": [
         "Bulgarian lev",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 0
     },
@@ -2191,7 +2275,9 @@
     {
       "words": [
         "Argentine peso",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 100
     },
@@ -2212,7 +2298,9 @@
     {
       "words": [
         "Other",
-        "Growth rate (2019\u20132022)"
+        "Growth rate",
+        "2019",
+        "2022"
       ],
       "number": 27.7
     },

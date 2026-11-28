@@ -229,6 +229,9 @@ class files
     // the scenarios that end with the posted request of the PDF tab or the state of its button as their message
     CONST string SCENARIO_PDF_TAB_LABEL = 'pdf_tab_label';
     CONST string SCENARIO_PDF_TAB_OFFLINE = 'pdf_tab_offline';
+    // the scenarios that end with the login link of a refused save, for the session and for another reason
+    CONST string SCENARIO_SAVE_SESSION_REFUSED = 'save_session_refused';
+    CONST string SCENARIO_SAVE_REFUSED = 'save_refused';
     // the scenario that ends with the settings that the clicks on the detail table of the preview show
     CONST string SCENARIO_PREVIEW_DETAIL_PARTS = 'preview_detail_parts';
     // the messages of the scenarios that the write test saves and undoes

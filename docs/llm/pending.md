@@ -560,8 +560,7 @@ its message to the existing `api/updatePut` (`update_put_write_tests`), and `uni
 - agent verbs: "verb names", the verb names of `script/calculator_editor.js` written by a php script
 - agent save cases: the open points of "test case": the new triples in `triple_names::TEST_TRIPLES` and the sub-item
   scenarios
-- agent security: "api security" and "relogin": the test that an api request without a session is rejected and the
-  login link in the message of the calculator editor
+- agent security: "api security": the predefined api session login with a key pair
 
 ## calculation editor
 
@@ -610,15 +609,10 @@ adding or changing a verb is at the moment a code change which requires a full t
 
 ## api security
 
-if it does not yet exist create a test that checks if an api request is rejected if it is not part of a previous created session
-
-session can only be created either via a proper session start via gui
-or using a predefined api session login that uses e.g. a public / private key pair and other extra security 
-
-### relogin
-
-if the calculation editor gets a message from the backend that might indicate that e.g. the session id is missing or invalide
-suggest to the user to login again with a link in the message shown to the user
+the test that an api change outside of a session is refused and the login link of the calculator editor are done
+(`docs/llm/log/2026-11-28_api_session_relogin.md`); open: a session can only be created either via a proper session
+start via gui or using a predefined api session login that uses e.g. a public / private key pair and other extra
+security
 
 if done remove this prompt from pending.md
 
@@ -2118,19 +2112,6 @@ fields impact and inactive as display-only info in the edit view next to the exi
 **next prompt**
 
 **full test run with re-pin: first /test/reset_db.php, then at least twice /test/test.php**
-
-**Prompt:** the word splitter (size S). One agent: "later", the word splitter in `convert_wikipedia_table.php` with a
-positive and a negative test.
-
-## later
-
-add the word splitter to convert_wikipedia_table.php
-
-if done remove this prompt from pending.md
-
-**next prompt**
-
-**full test run: /test/test.php**
 
 **Prompt:** the error limit for independent import entries (size M; re-pin, because the new `config.yaml` key
 becomes a seed word and shifts the ids after it). One agent: "error limit", see `docs/llm/dependent-errors.md` and

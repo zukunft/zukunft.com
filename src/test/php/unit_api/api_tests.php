@@ -137,6 +137,10 @@ class api_tests
     const string HTTP_OK = '200';
     const string HTTP_BAD_REQUEST = '400';
     const string HTTP_FORBIDDEN = '403';
+    // the status of a change that is not part of the session (controller::not_permitted)
+    const string HTTP_UNAUTHORIZED = '401';
+    // the id of a delete that passes the session check and then ends without a change, because no word has the id 0
+    const int NO_ID = 0;
     const string PDF_START = '%PDF-';
     const string WRONG_TOKEN = 'system_test_wrong_token';
     const string NO_JSON = 'system test no json';
@@ -263,6 +267,7 @@ class api_tests
         $t->assert_text_contains($test_name, $err_txt, self::UNKNOWN_PHRASE_DATA_WALK);
         $msg->reset();
         $this->run_calculator_pdf($t, $ts);
+        $this->run_session_check($t, $ts);
         // $t->assert_rest(new word($usr, words::TN_READ));
         // TODO Prio 2 add value_list tests for prime, normal and big value tables
         // TODO Prio 2 add a test case for empty list, no key found, and more  values than the page size
@@ -509,6 +514,47 @@ class api_tests
             [$status, $answer] = $t->post_with_session($url, self::NO_JSON, $token);
             $t->assert($test_name, $status, self::HTTP_BAD_REQUEST);
             $t->assert($test_name, $answer, msg_id::CALCULATOR_DEFINITION_NO_JSON->text());
+        }
+    }
+
+    /**
+     * a change of the api is done only within a session that the pod has created before, e.g. by the login of a gui:
+     * every api request starts a session, so a request without the cookie of a session gets a new one, whose token
+     * the request cannot know (server_guard::csrf_token_valid); a read stays possible without a session, because the
+     * data of a pod is public
+     *
+     * @param test_cleanup $t the test environment with the admin session of api_login
+     * @param string $ts the name of the test section
+     */
+    private function run_session_check(test_cleanup $t, string $ts): void
+    {
+        $t->subheader($ts . 'session check');
+        $token = $t->api_session_token();
+        if ($token == '') {
+            // the admin login may time out during a full run (see test_base::login_admin_cookie)
+            $t->dsp_warning('the session check tests are skipped, because the admin login has not been possible');
+        } else {
+            // the delete of the id 0 changes nothing also if it passes the session check
+            $url = THIS_URL . url_var::API_PATH . rest_ctrl::WORD . '/' . self::NO_ID;
+            $refused_txt = msg_id::CHANGE_BLOCKED_SESSION_TOKEN->text();
+            $test_name = 'an api change without a session is refused';
+            [$status] = $t->delete_with_session($url, '', false);
+            $t->assert($test_name, $status, self::HTTP_UNAUTHORIZED);
+            $test_name = '... also with a token of another session';
+            [$status] = $t->delete_with_session($url, $token, false);
+            $t->assert($test_name, $status, self::HTTP_UNAUTHORIZED);
+            $test_name = '... and within the session but without its token';
+            [$status, $answer] = $t->delete_with_session($url, '');
+            $t->assert($test_name, $status, self::HTTP_UNAUTHORIZED);
+            $t->assert_text_contains($test_name, $answer, $refused_txt);
+            $test_name = '... and within the session with another token';
+            [$status, $answer] = $t->delete_with_session($url, self::WRONG_TOKEN);
+            $t->assert_text_contains($test_name, $answer, $refused_txt);
+            // positive: within the session and with its token the change passes the session check
+            $test_name = 'an api change within the session and with its token passes the session check';
+            [$status, $answer] = $t->delete_with_session($url, $token);
+            $t->assert_text_not_contains($test_name, $answer, $refused_txt);
+            $t->assert_text_contains($test_name, $answer, rest_ctrl::WORD . ' id is missing');
         }
     }
 

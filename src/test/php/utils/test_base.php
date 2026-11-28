@@ -6962,6 +6962,43 @@ class test_base
     }
 
     /**
+     * delete by an api entry point of this pod with or without the session cookie of api_login, like a request of
+     * another page or program that has no session of this pod, to test the session check of a change
+     *
+     * @param string $url the complete url of the entry point with the id e.g. api/word/0
+     * @param string $token the anti csrf token sent in its header, empty to send none
+     * @param bool $with_session false to send the request without the session cookie
+     * @return array the http status code as text e.g. "401", which an assert compares, and the answer
+     */
+    function delete_with_session(string $url, string $token, bool $with_session = true): array
+    {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
+        $headers = [];
+        if ($token != '') {
+            $headers[] = api::CSRF_TOKEN_HEADER . ': ' . $token;
+        }
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        if ($with_session) {
+            curl_setopt($curl, CURLOPT_COOKIEFILE, $this->api_login_cookie_file);
+        }
+        curl_setopt($curl, CURLOPT_TIMEOUT, self::TIMEOUT_LIMIT_LONG);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, rest_ctrl::DELETE);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $answer = curl_exec($curl);
+        if ($answer === false) {
+            $this->dsp_warning('deleting by ' . $url . ' failed due to ' . curl_error($curl));
+            $answer = '';
+        }
+        $status = (string)curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+        curl_close($curl);
+        $sys->times->switch();
+        return [$status, $answer];
+    }
+
+    /**
      * @param string $msg the message to display to the person who executes the system
      */
     function dsp_warning(string $msg): void

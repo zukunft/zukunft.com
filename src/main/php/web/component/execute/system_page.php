@@ -186,6 +186,10 @@ class system_page extends component
     const string CALC_EDITOR_SEED_ID = 'seed';
     const string CALC_EDITOR_TYPES_ID = 'calcEditorTypes';
     const string CALC_EDITOR_TEXTS_ID = 'calcEditorTexts';
+    // the urls that the calculator editor script links to by their key, because e.g. the login url names the pinned
+    // id of the login view, which the script does not know
+    const string CALC_EDITOR_LINKS_ID = 'calcEditorLinks';
+    const string CALC_EDITOR_LOGIN = 'login';
     // the calculator editor script gets all messages with this prefix (see calculator_editor_texts)
     const string CALC_EDITOR_TEXT_PREFIX = 'calc_editor_';
     // the texts of the editor without the prefix, which the calculator page uses too
@@ -1758,12 +1762,14 @@ class system_page extends component
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
      * @param user_message $msg with the requesting user and to report an api answer without the phrase data
      * @param data_object|null $cfg the request cache, which says if the phrase data may be read from the api
+     * @param array $url_arr the url parameters of the editor page, which the login link returns to after a refused save
      * @return string the html code of the editor or an empty string if the page has no phrase or no javascript is allowed
      */
     function calculator_editor(
         db_object|type_object|combine_named|sandbox_list|null $dbo,
         user_message                                          $msg,
-        ?data_object                                          $cfg
+        ?data_object                                          $cfg,
+        array                                                 $url_arr = []
     ): string
     {
         $result = '';
@@ -1779,6 +1785,9 @@ class system_page extends component
                 . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
                 . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg))
                 . $html->script_data(self::CALC_EDITOR_TEXTS_ID, $this->calculator_editor_texts())
+                // a save refused for the session links to the login, which returns to the editor (calculator_editor.js reloginHtml)
+                . $html->script_data(self::CALC_EDITOR_LINKS_ID,
+                    [self::CALC_EDITOR_LOGIN => $html->url_with_back(api::LOGIN_SCRIPT, $url_arr)])
                 . $html->script_data(self::FORMULA_EDITOR_TEXTS_ID, $this->formula_editor_texts())
                 // the page preview is the calculator page, built by its script without a save, because a save of the preview would store a case
                 . $html->script_data(self::CALC_PAGE_SETTINGS_ID, $this->calculator_page_settings($dbo, '', '', $msg))

@@ -2370,6 +2370,9 @@ enum messages: string
     case CALC_EDITOR_SAVED_CHANGE = 'calc_editor_saved_change';
     case CALC_EDITOR_SAVED_CHANGES = 'calc_editor_saved_changes';
     case CALC_EDITOR_SAVE_REFUSED = 'calc_editor_save_refused';
+    // shown below a refusal with the status 401 e.g. without the token of the session, with a link to the login
+    case CALC_EDITOR_RELOGIN = 'calc_editor_relogin';
+    case CALC_EDITOR_RELOGIN_LINK = 'calc_editor_relogin_link';
     case CALC_EDITOR_NO_ANSWER = 'calc_editor_no_answer';
     case CALC_EDITOR_OWN_VERSION = 'calc_editor_own_version';
     case CALC_EDITOR_SHARED_VERSION = 'calc_editor_shared_version';

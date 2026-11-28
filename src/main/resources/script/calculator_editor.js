@@ -294,6 +294,8 @@ const TXT = {
     savedChange: "calc_editor_saved_change",
     savedChanges: "calc_editor_saved_changes",
     saveRefused: "calc_editor_save_refused",
+    relogin: "calc_editor_relogin",
+    reloginLink: "calc_editor_relogin_link",
     noAnswer: "calc_editor_no_answer",
     ownVersion: "calc_editor_own_version",
     sharedVersion: "calc_editor_shared_version",
@@ -594,6 +596,11 @@ const UPDATE_PUT_ROUTE = "updatePut";
 /* the header of a change with the session token of the page (api::CSRF_TOKEN_HEADER, url_var::SESSION_TOKEN) */
 const CSRF_HEADER = "X-CSRF-Token";
 const SESSION_TOKEN_NAME = "token";
+/* the status of a change that the pod has not accepted for the session e.g. without its token (controller::not_permitted) */
+const HTTP_UNAUTHORIZED = 401;
+/* the urls of the page by their key, e.g. the login with the editor as the way back (system_page::CALC_EDITOR_LINKS_ID) */
+const EDITOR_LINKS_ID = "calcEditorLinks";
+const LINK_LOGIN = "login";
 let saving = false;
 let IDX = null;          /* lookup indexes of the loaded file */
 let MANAGED = null;      /* the triple and value indexes that the editor owns */
@@ -3622,6 +3629,25 @@ function asList(json, key) {
     return result;
 }
 
+/* the url of the page for the key e.g. LINK_LOGIN, empty if the page has none e.g. the demo file */
+function pageLink(key) {
+    const el = document.getElementById(EDITOR_LINKS_ID);
+    const links = el ? JSON.parse(el.textContent) : {};
+    const result = links[key] || "";
+    return result;
+}
+
+/* below a refusal for the session, e.g. an expired session or a page of a user who has logged out since, the hint to
+   log in again with a link, because the draft keeps the changes; empty for any other answer */
+function reloginHtml(r) {
+    let result = "";
+    const url = pageLink(LINK_LOGIN);
+    if (r.status === HTTP_UNAUTHORIZED && url) {
+        result = "<br>" + txtHtml(TXT.relogin) + ' <a href="' + esc(url) + '">' + txtHtml(TXT.reloginLink) + "</a>";
+    }
+    return result;
+}
+
 /* one api call; never throws, the answer says if it worked */
 async function apiCall(method, route, params, body) {
     const opts = {method: method, credentials: "same-origin", headers: {Accept: "application/json"}};
@@ -3801,7 +3827,7 @@ async function save() {
             }
         } else {
             refreshStatus();
-            notice(txtHtml(TXT.saveRefused, {[VAR.value]: r.message || txt(TXT.noAnswer)}), "err");
+            notice(txtHtml(TXT.saveRefused, {[VAR.value]: r.message || txt(TXT.noAnswer)}) + reloginHtml(r), "err");
         }
     }
 }
@@ -4347,7 +4373,8 @@ async function importFile(file) {
             btn.disabled = false;
             const name = importPageName(doc);
             if (!r.ok) {
-                notice(txtHtml(TXT.importFailed, {[VAR.name]: file.name, [VAR.value]: r.message || txt(TXT.noAnswer)}), "err");
+                notice(txtHtml(TXT.importFailed, {[VAR.name]: file.name, [VAR.value]: r.message || txt(TXT.noAnswer)})
+                    + reloginHtml(r), "err");
             } else if (name) {
                 document.getElementById("phraseIn").value = name;
                 await loadPhrase(true);
