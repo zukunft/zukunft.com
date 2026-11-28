@@ -396,6 +396,17 @@ class sys_log_tests
             system_time_type::API_WAIT . ': ' . round(self::TV_SLOW_SEC, 4) . ' sec ['
             . system_time_type::DB_READ . ': ' . round(self::TV_STEP_DB_READ_SEC, 4) . ' sec, '
             . system_time_list::GROUP_REST . ': ' . round(self::TV_SLOW_SEC - self::TV_STEP_DB_READ_SEC, 4) . ' sec]');
+        // a timeout line starts with the part that has taken the most time, also if it has been booked last
+        $sys_tim_lst = new system_time_list();
+        $sys_tim_lst->add(self::TV_STEP_LOAD_TYPES_SEC, system_time_type::URL_TO_HTML);
+        $sys_tim_lst->add(self::TV_SLOW_SEC, system_time_type::API_WAIT);
+        $test_name = 'the report of the section starts with the longest category';
+        $t->assert_text_contains($test_name, $sys_tim_lst->section_report(),
+            'section ' . system_time_type::API_WAIT . ': ');
+        // negative: a shorter category follows the longest one
+        $test_name = '... and not with a shorter one';
+        $t->assert_text_not_contains($test_name, $sys_tim_lst->section_report(),
+            'section ' . system_time_type::URL_TO_HTML . ': ');
         // negative: an answer without backend steps leaves the api wait as it is
         $sys_tim_lst = new system_time_list();
         $sys_tim_lst->add(self::TV_SLOW_SEC, system_time_type::API_WAIT);

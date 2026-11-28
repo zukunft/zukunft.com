@@ -609,6 +609,8 @@ class triple_names
     const string EXAMPLE_PORTFOLIO_SPLIT = 'example portfolio split';
     // an instance of child portfolio of the same use case, whose results a test leaves out like those of a saved child
     const string PORTFOLIO_SECOND_CHILD = 'second child portfolio';
+    // the input item of the exchange rate of the same use case, whose own field limits come before those of the phrase
+    const string PORTFOLIO_EXCHANGE_RATE_ITEM = 'portfolio split assumption exchange rate';
     // the page phrase of the use case table_editor_sample.json, selected by the name only
     const string SECTOR_OF_REVENUE = 'sector of revenue';
     // a parent row of the table of the use case table_editor_sample.json, selected by the name only

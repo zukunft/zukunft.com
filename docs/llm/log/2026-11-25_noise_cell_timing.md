@@ -137,9 +137,33 @@ and `calc_sheet` keeps only the time that no step covers. The api wait is alread
 | the html snapshots | — | — | no change: the html is the same |
 | `docs/code_test_coverage.md` | — | — | the new function and its test calls |
 
+### Follow-up request of 2026-11-28
+
+"try to find out what is consuming the most time here" for the start page of the global problems
+(`view.php?z=0`, the step `wf4_edit_back` of the workflow test add_triple_wf4) with "url to html: 10.7072 sec [table
+result check: 10.2908 sec, ...]" and "api_wait: 28.2466 sec [api list response: 8.5003 sec, db_map: 7.3696 sec,
+db_read: 6.4867 sec, ...]", "and try to improve the speed or at least measure the time consuming part in more
+details so that the cause can be found".
+
+Found before the first edit: a step has no api wait (`data_object::end_html_step`), so the 10.3 seconds of
+`check_results` are the calculation in the frontend: finding the missing operands of each result, merging the page
+list, calculating each result and its expression with numbers. A result that the table alone can calculate was
+calculated twice with the same operands, once to decide whether the page list is needed and once for its number.
+
+### Follow-up request of 2026-11-28 (order)
+
+"in a message like this '3251.6930 timeout: web/html/workflow_write/add_value_details_wf34/... section
+not_specified: 0.0021 sec, url to action: 0 sec, url to html: 0.0981 sec [...], load page: 0.0002 sec, api_wait:
+3.1894 sec [...], test diff: 0 sec, took 3.2898 seconds' it should start with the part that consumes the most time
+with the details if available": `system_time_list::section_report` lists the categories in the order of their first
+booking, while `report` of the whole run and the steps in the brackets are already sorted with the longest first.
+
 ### Unexpected changes
 
 | file | old | new | reason |
 |---|---|---|---|
+| `src/main/php/web/formula/formula_calc.php` (`value_of`, new `candidates` and `name_index`), `src/main/php/shared/helper/ListOf.php` (new `changes`), `src/test/php/unit_ui/use_case_ui_tests.php` (the frontend calculation) | `value_of` compares every value and result of the list with each operand | only the values and results of the list that name one phrase of the operand, by an index per list by phrase name, which is built again after a change of the list | the run of 2026-11-28 after the split of the result check: "result check missing operands: 6.3759 sec, result check expression: 3.5476 sec, result check calculation: 3.4038 sec" of the start page; all three find each operand by `value_of`, which compared all numbers of the page list with two `array_diff` each; a number is an operand only if it names every phrase of the operand, so the smallest bucket of these phrases holds every candidate in the order of the list and the result is the same; the counter of `ListOf` is the only place where the entries of a list change (`set_lst`, `add_direct`, `unset`); `list_values` keeps its loop, because a kind of a phrase also matches; the test: a number added to the list after a calculation is an operand of the next one (positive) and a copy of the list made before the change keeps its operand (negative) |
+| `src/main/php/cfg/system/system_time_list.php` (`section_report`), `src/test/php/unit/sys_log_tests.php` | the categories of a section in the order of their first booking | the longest first, each with its steps in brackets as before | the follow-up request of 2026-11-28 (order): a timeout line starts with the slow part e.g. "api_wait: 3.1894 sec [api list response: 3.1403 sec, ...]"; the test: the longest category is the first of the section (positive) and a short one is not (negative); the next run confirmed it, e.g. "section url to html: 13.9744 sec [...], api_wait: 5.5188 sec [...], not_specified: 0.0006 sec, ..." |
+| `src/main/php/web/component/execute/ui_list.php` (`check_results`, `add_missing_operand_values`, new step consts) | a result that the table alone can calculate is calculated twice; the result check as one step | calculated once; the result check split into the nested steps "result check missing operands", "result check page list", "result check calculation" and "result check expression", and a debug entry with the number of results and of missing phrases | the follow-up request of 2026-11-28: the next timeout line names the part of the 10.3 seconds; the api wait of 28 seconds is booked by the backend parts already and is the loads of the missing operand values and results, which the line of the next run shows next to the new steps. The review of 2026-11-28 moved the search of the step "result check missing operands" from a closure with a reference into the new `phrases_to_load`, which returns the phrases and their contexts. The run of `test/test_part.php` with only the timing tests then gave for `wf4_edit_back_edit_save_cancel` and `wf6_show_edit_back` "url to html: 13.9 sec [result check missing operands: 6.4 sec, result check expression: 3.5 sec, result check calculation: 3.4 sec, ...]", so the three parts are about the same and together more than the 10.3 seconds of the result check before: the calculation once instead of twice gave no measurable gain, and the time is the search of the operands, which all three parts repeat, so the index of the next row is the fix to measure |
 
 ### Lessons learned by llm (2026-11-25)

@@ -43,7 +43,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
     CONST bool AUTO_RE_PIN_OBJECT_ID = false;
     CONST string API_ACTUAL_SUFFIX = '_actual';
 
@@ -455,18 +455,14 @@ class files
     CONST string IMPORT_TRUE_COST_BURGER = test_paths::IMPORT . 'true_costs_burger' . self::JSON;
 
     CONST string IMPORT_PORTFOLIO_SPLIT_CALC = test_paths::IMPORT . 'portfolio_split_calc' . self::JSON;
-    // the csv of a bank statement of the positions and the import json that convert_portfolio_csv creates from it:
-    // the generated sample of the request and the 42 holdings of portfolio_split_calculator.json with their tickers
+    // the csv of a bank statement of the positions and the import json that convert_csv creates from it by the format of
+    // the use case file bank_position_csv.json (cfg_files::BANK_POSITION_CSV_FILE): the generated sample of the request
+    // and the 42 holdings of portfolio_split_calculator.json with their tickers
     CONST string IMPORT_PORTFOLIO_CSV_PATH = test_paths::IMPORT . 'portfolio_csv' . DIRECTORY_SEPARATOR;
     CONST string IMPORT_PORTFOLIO_CSV_SAMPLE = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_sample' . self::CSV;
     CONST string IMPORT_PORTFOLIO_CSV_SAMPLE_JSON = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_sample' . self::JSON;
     CONST string IMPORT_PORTFOLIO_CSV_SPLIT = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_portfolio_split' . self::CSV;
     CONST string IMPORT_PORTFOLIO_CSV_SPLIT_JSON = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_portfolio_split' . self::JSON;
-    // the format of this csv as phrases and value templates, which convert_csv reads (docs/json_structure.md "csv format")
-    CONST string IMPORT_PORTFOLIO_CSV_FORMAT = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_position_csv' . self::JSON;
-    // the difference of the import json of convert_csv to the one of convert_portfolio_csv, a report until change 3
-    CONST string IMPORT_PORTFOLIO_CSV_SAMPLE_DIFF = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_sample_diff' . self::MD;
-    CONST string IMPORT_PORTFOLIO_CSV_SPLIT_DIFF = self::IMPORT_PORTFOLIO_CSV_PATH . 'bank_positions_portfolio_split_diff' . self::MD;
     CONST string IMPORT_PORTFOLIO_INSTRUMENTS = test_paths::IMPORT . 'portfolio_instruments' . self::JSON;
     CONST string IMPORT_PORTFOLIO_REPORT = test_paths::IMPORT . 'portfolio_report' . self::JSON;
     CONST string IMPORT_PORTFOLIO_SPLIT_PARAMETERS_SAMPLE = test_paths::IMPORT . 'portfolio_split_parameters_sample' . self::JSON;

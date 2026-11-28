@@ -59,6 +59,7 @@ include_once html_paths::SHARED . 'json_fields.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
@@ -91,6 +92,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_data_ui_tests
@@ -138,6 +140,13 @@ class phrase_data_ui_tests
     // the headings of two positions tables of the portfolio split report
     const string REPORT_FIRST_PORTFOLIO = 'First child portfolio';
     const string REPORT_SECOND_PORTFOLIO = 'Second child portfolio';
+    // the ids of the limit values that the test of the field limits adds to the seed, which no value of the seed has
+    const string LIMIT_PHRASE_ID = 'system_test_limit_of_the_phrase';
+    const string LIMIT_ITEM_ID = 'system_test_limit_of_the_item';
+    // the form of the fields of the test of the field limits
+    const string LIMIT_FORM = 'calculator';
+    // a kind of stock of bank_position_csv.json that no holding of the portfolio split page is, so a class without numbers
+    const string CLASS_WITHOUT_NUMBERS = 'alternative investment';
     // the format of a page of a pdf with the content that follows it and the number of pages
     const string PDF_PAGE_PATTERN = "~(/MediaBox \[[^\]]*\]).*?stream\n(.*?)\nendstream~s";
     const string PDF_PAGE_COUNT_PATTERN = '~/Count (\d+)~';
@@ -645,6 +654,51 @@ class phrase_data_ui_tests
         $full_copies = array_filter($full_lst->lst(), fn($val) => $val instanceof result_ui and $val->id() == 0);
         $t->assert($test_name, count($full_copies), 0);
 
+        // the limits of a field by its input item first, because the field phrase is shared with other pages, e.g. the
+        // range of the USD/CHF rate of the ABB page is no range of the DKK rate of the portfolio split page; the test
+        // sets its own limits, so that it does not depend on the limits of the use cases in the seed
+        $t->subheader($ts . 'field limits of an input item');
+        $lim_msg = new user_message();
+        $lim_seed = $seed;
+        $lim_seed[json_fields::VALUES] = array_values(array_filter($seed[json_fields::VALUES] ?? [],
+            fn(array $val) => !in_array(triples::FIELD_LIMIT_DOWN, $val[json_fields::WORDS] ?? [])));
+        $lim_seed[json_fields::VALUES][] = [json_fields::ID => self::LIMIT_PHRASE_ID, json_fields::NUMBER => 0.6,
+            json_fields::WORDS => [triple_names::EXCHANGE_RATE, triples::FIELD_LIMIT_DOWN]];
+        $test_name = 'a field of an item without its own limit has the limit of its phrase';
+        $phr_html = $this->assumption_fields($lim_seed, $lim_msg);
+        $t->assert_text_contains($test_name, $phr_html, 'min="0.6"');
+        $lim_seed[json_fields::VALUES][] = [json_fields::ID => self::LIMIT_ITEM_ID, json_fields::NUMBER => 0,
+            json_fields::WORDS => [triple_names::PORTFOLIO_EXCHANGE_RATE_ITEM, triples::FIELD_LIMIT_DOWN]];
+        $test_name = 'the limit of the input item comes before the limit of its phrase';
+        $item_html = $this->assumption_fields($lim_seed, $lim_msg);
+        $t->assert_text_contains($test_name, $item_html, 'min="0"');
+        $test_name = '... so the field has not the limit of the phrase';
+        $t->assert_text_not_contains($test_name, $item_html, 'min="0.6"');
+
+        // a leaf of the is a tree without any number of the page is a class that nothing is yet, e.g. alternative
+        // investment, which bank_position_csv.json declares as a kind of stock, and so no row of a table
+        $t->subheader($ts . 'table rows with numbers');
+        $row_msg = new user_message();
+        $row_dto = $this->complete_page_cache($seed, $row_msg);
+        $row_trp = $row_dto->phr_lst->get_by_name(triple_names::EXAMPLE_PORTFOLIO_SPLIT, $row_msg)?->obj();
+        $row_calc = new calculator($row_trp->phrase(), $row_dto->phr_lst);
+        $leaf_names = [];
+        $row_names = [];
+        foreach ($row_calc->items(triples::CALCULATOR_DETAIL_TABLE) as $tbl) {
+            $tbl_phr = $row_calc->item_phrase($tbl);
+            if ($tbl_phr != null) {
+                $leaf_names = [...$leaf_names, ...array_map(fn($phr) => $phr->name(), $row_calc->row_phrases($tbl_phr))];
+                $rows = new ui_list()->ranked_rows($row_calc, $tbl, $tbl_phr, $full_lst, $row_msg);
+                $row_names = [...$row_names, ...array_map(fn($phr) => $phr->name(), $rows)];
+            }
+        }
+        $test_name = 'the class without numbers is a leaf below the phrase of a table';
+        $t->assert_contains($test_name, $leaf_names, self::CLASS_WITHOUT_NUMBERS);
+        $test_name = '... but no row of the table';
+        $t->assert_contains_not($test_name, $row_names, self::CLASS_WITHOUT_NUMBERS);
+        $test_name = '... which keeps the holdings with their numbers';
+        $t->assert_contains($test_name, $row_names, word_names::LISP);
+
         $t->subheader($ts . 'calculator report');
         $msg = new user_message();
         $json = json_decode(file_get_contents(test_files::PHRASE_DATA_PORTFOLIO_SPLIT), true);
@@ -672,6 +726,11 @@ class phrase_data_ui_tests
         $test_name = 'the report has each portfolio on a portrait page';
         [$first_box, $first_page] = $this->pdf_page_with($report, $this->pdf_string(self::REPORT_FIRST_PORTFOLIO));
         $t->assert($test_name, $first_box, self::PDF_PORTRAIT_BOX);
+        // the first portfolio follows the title on the first page, so that the first page is not only the title
+        $test_name = '... and the first portfolio on the page of the title';
+        $report_title = new calculator($trp->phrase(), $dto->phr_lst)->title();
+        [, $title_page] = $this->pdf_page_with($report, $this->pdf_string($report_title));
+        $t->assert_text_contains($test_name, $title_page, $this->pdf_string(self::REPORT_FIRST_PORTFOLIO));
         // negative: the next portfolio is not on the same page
         $test_name = '... of its own without the next portfolio';
         $t->assert_text_not_contains($test_name, $first_page, $this->pdf_string(self::REPORT_SECOND_PORTFOLIO));
@@ -902,6 +961,20 @@ class phrase_data_ui_tests
         $dto = $this->complete_page_cache($seed, $msg);
         $trp = $dto->phr_lst->get_by_name(triple_names::EXAMPLE_PORTFOLIO_SPLIT, $msg)?->obj();
         return new ui_list()->calculator_numbers($trp, $dto, $msg);
+    }
+
+    /**
+     * @param array $seed the data of the portfolio split page e.g. with the limit values of a test
+     * @param user_message $msg to collect the messages of the page
+     * @return string the html of the assumption fields of the page e.g. of the exchange rate
+     */
+    private function assumption_fields(array $seed, user_message $msg): string
+    {
+        $dto = $this->complete_page_cache($seed, $msg);
+        $trp = $dto->phr_lst->get_by_name(triple_names::EXAMPLE_PORTFOLIO_SPLIT, $msg)?->obj();
+        $calc = new calculator($trp->phrase(), $dto->phr_lst);
+        $items = $calc->items(triples::CALCULATOR_ASSUMPTION);
+        return new ui_list()->calculator_fields($calc, $items, $trp, $msg, $dto, self::LIMIT_FORM, [], true);
     }
 
     /**

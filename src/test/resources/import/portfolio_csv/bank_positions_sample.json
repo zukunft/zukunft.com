@@ -11,67 +11,15 @@
             "name": "portfolio 040270501213"
         },
         {
-            "name": "original"
-        },
-        {
-            "name": "value"
-        },
-        {
-            "name": "price"
-        },
-        {
-            "name": "size"
-        },
-        {
-            "name": "lot"
-        },
-        {
-            "name": "face"
-        },
-        {
-            "name": "holding"
-        },
-        {
-            "name": "stock"
-        },
-        {
-            "name": "shares"
-        },
-        {
-            "name": "bond"
-        },
-        {
-            "name": "finance"
+            "name": "2120.001.01",
+            "description": "CH00 0000 0000 0000 0000 1"
         },
         {
             "name": "cash"
         },
         {
-            "name": "rate"
-        },
-        {
-            "name": "exchange"
-        },
-        {
-            "name": "expected"
-        },
-        {
-            "name": "assumed"
-        },
-        {
-            "name": "percent"
-        },
-        {
-            "name": "zukunft.com"
-        },
-        {
-            "name": "system"
-        },
-        {
-            "name": "calculator"
-        },
-        {
-            "name": "hint"
+            "name": "2120.814.01",
+            "description": "CH00 0000 0000 0000 0000 2"
         },
         {
             "name": "CHF"
@@ -80,26 +28,15 @@
             "name": "EUR"
         },
         {
-            "name": "USD"
-        },
-        {
-            "name": "GBP"
-        },
-        {
-            "name": "2120.001.01",
-            "description": "CH00 0000 0000 0000 0000 1"
-        },
-        {
-            "name": "2120.814.01",
-            "description": "CH00 0000 0000 0000 0000 2"
-        },
-        {
             "name": "N987272-",
             "description": "TREUHAND CALLGELD - Deutsch Bank BONDS S.A."
         },
         {
             "name": "2120.333.01",
             "description": "CH00 0000 0000 0000 0000 3"
+        },
+        {
+            "name": "USD"
         },
         {
             "name": "LU0854923223",
@@ -124,6 +61,9 @@
         {
             "name": "CH0012221716",
             "description": "ABB Rg"
+        },
+        {
+            "name": "stock"
         },
         {
             "name": "CH1169360919",
@@ -278,6 +218,9 @@
             "description": "HSBC Hldg Rg"
         },
         {
+            "name": "GBP"
+        },
+        {
             "name": "GB00BH4HKS39",
             "description": "Vodafone Group Rg"
         },
@@ -360,6 +303,69 @@
         {
             "name": "CH0047533549",
             "description": "SwCHGETF -EA (USD)-"
+        },
+        {
+            "name": "original"
+        },
+        {
+            "name": "assumed"
+        },
+        {
+            "name": "expected"
+        },
+        {
+            "name": "percent"
+        },
+        {
+            "name": "shares"
+        },
+        {
+            "name": "hint"
+        },
+        {
+            "name": "rate"
+        },
+        {
+            "name": "exchange"
+        },
+        {
+            "name": "bond"
+        },
+        {
+            "name": "finance"
+        },
+        {
+            "name": "price"
+        },
+        {
+            "name": "value"
+        },
+        {
+            "name": "face"
+        },
+        {
+            "name": "size"
+        },
+        {
+            "name": "lot"
+        },
+        {
+            "name": "holding"
+        },
+        {
+            "name": "investment"
+        },
+        {
+            "name": "alternative"
+        },
+        {
+            "name": "calculator"
+        },
+        {
+            "name": "zukunft.com"
+        },
+        {
+            "name": "system"
         }
     ],
     "triples": [
@@ -483,6 +489,20 @@
             "description": "the unit of the exchange rate: CHF per unit of GBP"
         },
         {
+            "name": "alternative investment",
+            "from": "investment",
+            "verb": "kind of",
+            "to": "alternative",
+            "description": "an investment that is no stock, bond or cash e.g. a hedge fund, which a bank lists with its units and a price per unit"
+        },
+        {
+            "name": "alternative investment stock",
+            "description": "an alternative investment is held like a stock: its units are its shares and its price per unit is its stock price",
+            "from": "alternative investment",
+            "verb": "is a",
+            "to": "stock"
+        },
+        {
             "from": "2120.001.01",
             "verb": "is a",
             "to": "cash"
@@ -553,7 +573,7 @@
         {
             "from": "LU0854923223",
             "verb": "is a",
-            "to": "stock"
+            "to": "bond (finance)"
         },
         {
             "name": "LU0854923223 hint",
@@ -1641,7 +1661,7 @@
         {
             "from": "CH0047533549",
             "verb": "is a",
-            "to": "stock"
+            "to": "alternative investment"
         },
         {
             "name": "CH0047533549 hint",
@@ -1654,346 +1674,6 @@
             "from": "CH0047533549",
             "verb": "is part of",
             "to": "portfolio 040270501213"
-        },
-        {
-            "from": "CH0010645932",
-            "verb": "is follower of",
-            "to": "CH0010570759"
-        },
-        {
-            "from": "CH0047533549",
-            "verb": "is follower of",
-            "to": "CH0010645932"
-        },
-        {
-            "from": "LU0854923140",
-            "verb": "is follower of",
-            "to": "CH0047533549"
-        },
-        {
-            "from": "IE00B53SZB19",
-            "verb": "is follower of",
-            "to": "LU0854923140"
-        },
-        {
-            "from": "US29874QEX88",
-            "verb": "is follower of",
-            "to": "IE00B53SZB19"
-        },
-        {
-            "from": "US4581X0EH74",
-            "verb": "is follower of",
-            "to": "US29874QEX88"
-        },
-        {
-            "from": "US742718FY05",
-            "verb": "is follower of",
-            "to": "US4581X0EH74"
-        },
-        {
-            "from": "CH0008742519",
-            "verb": "is follower of",
-            "to": "US742718FY05"
-        },
-        {
-            "from": "CH0030170408",
-            "verb": "is follower of",
-            "to": "CH0008742519"
-        },
-        {
-            "from": "CH0011075394",
-            "verb": "is follower of",
-            "to": "CH0030170408"
-        },
-        {
-            "from": "US36828A1016",
-            "verb": "is follower of",
-            "to": "CH0011075394"
-        },
-        {
-            "from": "DE0008404005",
-            "verb": "is follower of",
-            "to": "US36828A1016"
-        },
-        {
-            "from": "CH0012032048",
-            "verb": "is follower of",
-            "to": "DE0008404005"
-        },
-        {
-            "from": "CH0012549785",
-            "verb": "is follower of",
-            "to": "CH0012032048"
-        },
-        {
-            "from": "US0311621009",
-            "verb": "is follower of",
-            "to": "CH0012549785"
-        },
-        {
-            "from": "US3696043013",
-            "verb": "is follower of",
-            "to": "US0311621009"
-        },
-        {
-            "from": "DE0007236101",
-            "verb": "is follower of",
-            "to": "US3696043013"
-        },
-        {
-            "from": "CH0466642201",
-            "verb": "is follower of",
-            "to": "DE0007236101"
-        },
-        {
-            "from": "US0970231058",
-            "verb": "is follower of",
-            "to": "CH0466642201"
-        },
-        {
-            "from": "CH0210483332",
-            "verb": "is follower of",
-            "to": "US0970231058"
-        },
-        {
-            "from": "DE000A1EWWW0",
-            "verb": "is follower of",
-            "to": "CH0210483332"
-        },
-        {
-            "from": "LU0854923223",
-            "verb": "is follower of",
-            "to": "DE000A1EWWW0"
-        },
-        {
-            "from": "US4781601046",
-            "verb": "is follower of",
-            "to": "LU0854923223"
-        },
-        {
-            "from": "US7181721090",
-            "verb": "is follower of",
-            "to": "US4781601046"
-        },
-        {
-            "from": "US75513E1010",
-            "verb": "is follower of",
-            "to": "US7181721090"
-        },
-        {
-            "from": "US7427181091",
-            "verb": "is follower of",
-            "to": "US75513E1010"
-        },
-        {
-            "from": "US7134481081",
-            "verb": "is follower of",
-            "to": "US7427181091"
-        },
-        {
-            "from": "CH1175448666",
-            "verb": "is follower of",
-            "to": "US7134481081"
-        },
-        {
-            "from": "CH1256740924",
-            "verb": "is follower of",
-            "to": "CH1175448666"
-        },
-        {
-            "from": "CH0012005267",
-            "verb": "is follower of",
-            "to": "CH1256740924"
-        },
-        {
-            "from": "LU0274209740",
-            "verb": "is follower of",
-            "to": "CH0012005267"
-        },
-        {
-            "from": "DE000ENER6Y0",
-            "verb": "is follower of",
-            "to": "LU0274209740"
-        },
-        {
-            "from": "US68902V1070",
-            "verb": "is follower of",
-            "to": "DE000ENER6Y0"
-        },
-        {
-            "from": "CH0038863350",
-            "verb": "is follower of",
-            "to": "US68902V1070"
-        },
-        {
-            "from": "CH0432492467",
-            "verb": "is follower of",
-            "to": "CH0038863350"
-        },
-        {
-            "from": "US1729674242",
-            "verb": "is follower of",
-            "to": "CH0432492467"
-        },
-        {
-            "from": "CH0012221716",
-            "verb": "is follower of",
-            "to": "US1729674242"
-        },
-        {
-            "from": "CH0012214059",
-            "verb": "is follower of",
-            "to": "CH0012221716"
-        },
-        {
-            "from": "CH1169360919",
-            "verb": "is follower of",
-            "to": "CH0012214059"
-        },
-        {
-            "from": "US14448C1045",
-            "verb": "is follower of",
-            "to": "CH1169360919"
-        },
-        {
-            "from": "FR0000120644",
-            "verb": "is follower of",
-            "to": "US14448C1045"
-        },
-        {
-            "from": "BE0974293251",
-            "verb": "is follower of",
-            "to": "FR0000120644"
-        },
-        {
-            "from": "DE0007100000",
-            "verb": "is follower of",
-            "to": "BE0974293251"
-        },
-        {
-            "from": "CH1430134226",
-            "verb": "is follower of",
-            "to": "DE0007100000"
-        },
-        {
-            "from": "US02209S1033",
-            "verb": "is follower of",
-            "to": "CH1430134226"
-        },
-        {
-            "from": "DE000BASF111",
-            "verb": "is follower of",
-            "to": "US02209S1033"
-        },
-        {
-            "from": "CH1243598427",
-            "verb": "is follower of",
-            "to": "DE000BASF111"
-        },
-        {
-            "from": "CH0038389992",
-            "verb": "is follower of",
-            "to": "CH1243598427"
-        },
-        {
-            "from": "DE000DTR0CK8",
-            "verb": "is follower of",
-            "to": "CH0038389992"
-        },
-        {
-            "from": "US92343V1044",
-            "verb": "is follower of",
-            "to": "DE000DTR0CK8"
-        },
-        {
-            "from": "FR0000120628",
-            "verb": "is follower of",
-            "to": "US92343V1044"
-        },
-        {
-            "from": "IE00B5377D42",
-            "verb": "is follower of",
-            "to": "FR0000120628"
-        },
-        {
-            "from": "DE0007037129",
-            "verb": "is follower of",
-            "to": "IE00B5377D42"
-        },
-        {
-            "from": "CH0244767585",
-            "verb": "is follower of",
-            "to": "DE0007037129"
-        },
-        {
-            "from": "GB00BP6MXD84",
-            "verb": "is follower of",
-            "to": "CH0244767585"
-        },
-        {
-            "from": "LU0048580004",
-            "verb": "is follower of",
-            "to": "GB00BP6MXD84"
-        },
-        {
-            "from": "DE000BAY0017",
-            "verb": "is follower of",
-            "to": "LU0048580004"
-        },
-        {
-            "from": "US6687711084",
-            "verb": "is follower of",
-            "to": "DE000BAY0017"
-        },
-        {
-            "from": "US7170811035",
-            "verb": "is follower of",
-            "to": "US6687711084"
-        },
-        {
-            "from": "LU0294851513",
-            "verb": "is follower of",
-            "to": "US7170811035"
-        },
-        {
-            "from": "DE000ENAG999",
-            "verb": "is follower of",
-            "to": "LU0294851513"
-        },
-        {
-            "from": "GB0005405286",
-            "verb": "is follower of",
-            "to": "DE000ENAG999"
-        },
-        {
-            "from": "CH0363463438",
-            "verb": "is follower of",
-            "to": "GB0005405286"
-        },
-        {
-            "from": "GB00BH4HKS39",
-            "verb": "is follower of",
-            "to": "CH0363463438"
-        },
-        {
-            "from": "2120.001.01",
-            "verb": "is follower of",
-            "to": "GB00BH4HKS39"
-        },
-        {
-            "from": "2120.814.01",
-            "verb": "is follower of",
-            "to": "2120.001.01"
-        },
-        {
-            "from": "N987272-",
-            "verb": "is follower of",
-            "to": "2120.814.01"
-        },
-        {
-            "from": "2120.333.01",
-            "verb": "is follower of",
-            "to": "N987272-"
         }
     ],
     "sources": [
@@ -2002,30 +1682,6 @@
         }
     ],
     "values": [
-        {
-            "words": [
-                "exchange rate",
-                "CHF per EUR"
-            ],
-            "number": "0.9323",
-            "source": "bank statement 040270501213 of 06.02.26"
-        },
-        {
-            "words": [
-                "exchange rate",
-                "CHF per USD"
-            ],
-            "number": "0.8036",
-            "source": "bank statement 040270501213 of 06.02.26"
-        },
-        {
-            "words": [
-                "exchange rate",
-                "CHF per GBP"
-            ],
-            "number": "1.0895",
-            "source": "bank statement 040270501213 of 06.02.26"
-        },
         {
             "words": [
                 "2120.001.01",
@@ -2080,6 +1736,14 @@
                 "expected"
             ],
             "number": "195641.41",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "exchange rate",
+                "CHF per EUR"
+            ],
+            "number": "0.9323",
             "source": "bank statement 040270501213 of 06.02.26"
         },
         {
@@ -2140,8 +1804,17 @@
         },
         {
             "words": [
+                "exchange rate",
+                "CHF per USD"
+            ],
+            "number": "0.8036",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
                 "LU0854923223",
-                "shares",
+                "face value",
+                "CHF",
                 "original"
             ],
             "number": "934.784",
@@ -2150,20 +1823,20 @@
         {
             "words": [
                 "LU0854923223",
-                "stock price",
-                "CHF"
+                "bond price",
+                "percent"
             ],
-            "number": "150.269",
+            "number": "1.50269",
             "source": "bank statement 040270501213 of 06.02.26"
         },
         {
             "words": [
                 "LU0854923223",
                 "lot size",
-                "shares",
+                "CHF",
                 "assumed"
             ],
-            "number": "1"
+            "number": "1000"
         },
         {
             "words": [
@@ -3768,6 +3441,14 @@
                 "expected"
             ],
             "number": "169635.15",
+            "source": "bank statement 040270501213 of 06.02.26"
+        },
+        {
+            "words": [
+                "exchange rate",
+                "CHF per GBP"
+            ],
+            "number": "1.0895",
             "source": "bank statement 040270501213 of 06.02.26"
         },
         {

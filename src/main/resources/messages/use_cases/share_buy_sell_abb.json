@@ -5666,21 +5666,22 @@
     },
     {
       "words": [
-        "exchange rate",
+        "ABB share decision assumption exchange rate",
         "field limit down"
       ],
-      "number": "0.6"
+      "number": "0.6",
+      "description": "the range of the USD/CHF rate of this page, by its input item, because the phrase exchange rate is shared with other pages and currencies"
     },
     {
       "words": [
-        "exchange rate",
+        "ABB share decision assumption exchange rate",
         "field limit up"
       ],
       "number": "1.1"
     },
     {
       "words": [
-        "exchange rate",
+        "ABB share decision assumption exchange rate",
         "field step"
       ],
       "number": "0.01"

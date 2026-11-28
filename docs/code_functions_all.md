@@ -2514,13 +2514,6 @@
             j,order of section set and get has difference at set_description should be before set_from_api
 \-- convert_csv
     \-- convert - section for function convert not yet defined that it should be convert in /import/convert_csv.php
-\-- convert_portfolio_csv
-    \-- positions - section for function positions not yet defined that it should be read in /import/convert_portfolio_c
-            sv.php
-    \-- holding - section for function holding not yet defined that it should be read in /import/convert_portfolio_csv.p
-            hp
-    \-- convert - section for function convert not yet defined that it should be convert in /import/convert_portfolio_cs
-            v.php
 \-- convert_wikipedia_table
     \-- convert - section for function convert missing in /import/convert_wikipedia_table.php
     \-- convert_wiki_json - section for function convert_wiki_json missing in /import/convert_wikipedia_table.php
@@ -6250,7 +6243,6 @@
         \-- config_tree - the nodes of the given part of config.yaml in the order of the file, without the keys
     \-- convert
         \-- convert_csv - convert the rows of a csv to the import json by the format of set_format
-        \-- convert_portfolio_csv - @param string $csv the text of the csv of a bank statement of the positions
         \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
                  json
     \-- entity_id
@@ -6365,7 +6357,8 @@
     \-- report
         \-- system_time_list - @return string description of the execution times by category
     \-- section_report
-        \-- system_time_list - @return string description of the execution times by category of the last section
+        \-- system_time_list - @return string description of the execution times by category of the last section,
+                 the longest first, so
     \-- reset_section
         \-- system_time_list - start a new measurement section, so that the section report shows only the times of the
     \-- slow_request_rows
@@ -6397,12 +6390,6 @@
         \-- type_list - @param array $code_id_list with the code ids that should be converted
     \-- component_id_list
         \-- type_list - @param array $code_id_list with the code ids that should be converted
-\-- read
-    \-- positions
-        \-- convert_portfolio_csv - @param string $csv the text of the csv of a bank statement of the positions
-    \-- holding
-        \-- convert_portfolio_csv - @param array $pos one position of the csv that position_is_valid has accepted (see p
-                ositions)
 \-- use to apply the time of the parent process for continuous timestamp reporting
     \-- set_start_time
         \-- import - stop the note timer, so that a finished import never shows its skipped step note

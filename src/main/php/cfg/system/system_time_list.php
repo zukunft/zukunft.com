@@ -251,13 +251,16 @@ class system_time_list
     }
 
     /**
-     * @return string description of the execution times by category of the last section
+     * @return string description of the execution times by category of the last section, the longest first, so
+     *                that e.g. a timeout line starts with the part that has taken the time
      */
     function section_report(float $expected = 0): string
     {
         $total = 0.0;
         $time_report = '';
-        foreach ($this->times_with_steps_in_group($this->section_lst) as $cat => $time) {
+        $times = $this->times_with_steps_in_group($this->section_lst);
+        arsort($times);
+        foreach ($times as $cat => $time) {
             if ($time_report != '') {
                 $time_report .= ', ';
             } else {

@@ -11,92 +11,11 @@
             "name": "example portfolio split"
         },
         {
-            "name": "original"
-        },
-        {
-            "name": "value"
-        },
-        {
-            "name": "price"
-        },
-        {
-            "name": "size"
-        },
-        {
-            "name": "lot"
-        },
-        {
-            "name": "face"
-        },
-        {
-            "name": "holding"
+            "name": "LISP",
+            "description": "Lindt & Sprüngli AG (PS)"
         },
         {
             "name": "stock"
-        },
-        {
-            "name": "shares"
-        },
-        {
-            "name": "bond"
-        },
-        {
-            "name": "finance"
-        },
-        {
-            "name": "cash"
-        },
-        {
-            "name": "rate"
-        },
-        {
-            "name": "exchange"
-        },
-        {
-            "name": "expected"
-        },
-        {
-            "name": "assumed"
-        },
-        {
-            "name": "percent"
-        },
-        {
-            "name": "zukunft.com"
-        },
-        {
-            "name": "system"
-        },
-        {
-            "name": "calculator"
-        },
-        {
-            "name": "hint"
-        },
-        {
-            "name": "CHF"
-        },
-        {
-            "name": "EUR"
-        },
-        {
-            "name": "USD"
-        },
-        {
-            "name": "GBP"
-        },
-        {
-            "name": "DKK"
-        },
-        {
-            "name": "SEK"
-        },
-        {
-            "name": "JPY"
-        },
-        {
-            "name": "LISP",
-            "description": "Lindt & Sprüngli AG (PS)"
         },
         {
             "name": "LISN",
@@ -231,12 +150,27 @@
             "description": "Bund 0% 2030"
         },
         {
+            "name": "CHF"
+        },
+        {
+            "name": "EUR"
+        },
+        {
             "name": "TreasuryUS27",
             "description": "US Treasury 2.5% 2027"
         },
         {
+            "name": "USD"
+        },
+        {
             "name": "GBP cash",
             "description": "Cash GBP"
+        },
+        {
+            "name": "cash"
+        },
+        {
+            "name": "GBP"
         },
         {
             "name": "CHF cash",
@@ -255,12 +189,78 @@
             "description": "Cash DKK"
         },
         {
+            "name": "DKK"
+        },
+        {
             "name": "SEK cash",
             "description": "Cash SEK"
         },
         {
+            "name": "SEK"
+        },
+        {
             "name": "JPY cash",
             "description": "Cash JPY"
+        },
+        {
+            "name": "JPY"
+        },
+        {
+            "name": "shares"
+        },
+        {
+            "name": "original"
+        },
+        {
+            "name": "assumed"
+        },
+        {
+            "name": "expected"
+        },
+        {
+            "name": "percent"
+        },
+        {
+            "name": "hint"
+        },
+        {
+            "name": "rate"
+        },
+        {
+            "name": "exchange"
+        },
+        {
+            "name": "bond"
+        },
+        {
+            "name": "finance"
+        },
+        {
+            "name": "price"
+        },
+        {
+            "name": "value"
+        },
+        {
+            "name": "face"
+        },
+        {
+            "name": "size"
+        },
+        {
+            "name": "lot"
+        },
+        {
+            "name": "holding"
+        },
+        {
+            "name": "calculator"
+        },
+        {
+            "name": "zukunft.com"
+        },
+        {
+            "name": "system"
         }
     ],
     "triples": [
@@ -386,6 +386,13 @@
         {
             "from": "CHF",
             "verb": "per",
+            "to": "JPY",
+            "type": "measure_unit",
+            "description": "the unit of the exchange rate: CHF per unit of JPY"
+        },
+        {
+            "from": "CHF",
+            "verb": "per",
             "to": "DKK",
             "type": "measure_unit",
             "description": "the unit of the exchange rate: CHF per unit of DKK"
@@ -396,13 +403,6 @@
             "to": "SEK",
             "type": "measure_unit",
             "description": "the unit of the exchange rate: CHF per unit of SEK"
-        },
-        {
-            "from": "CHF",
-            "verb": "per",
-            "to": "JPY",
-            "type": "measure_unit",
-            "description": "the unit of the exchange rate: CHF per unit of JPY"
         },
         {
             "from": "LISP",
@@ -1117,211 +1117,6 @@
             "from": "JPY cash",
             "verb": "is part of",
             "to": "example portfolio split"
-        },
-        {
-            "from": "LISN",
-            "verb": "is follower of",
-            "to": "LISP"
-        },
-        {
-            "from": "GIVN",
-            "verb": "is follower of",
-            "to": "LISN"
-        },
-        {
-            "from": "PGHN",
-            "verb": "is follower of",
-            "to": "GIVN"
-        },
-        {
-            "from": "ConfedBond30",
-            "verb": "is follower of",
-            "to": "PGHN"
-        },
-        {
-            "from": "NestleBond27",
-            "verb": "is follower of",
-            "to": "ConfedBond30"
-        },
-        {
-            "from": "RocheBond28",
-            "verb": "is follower of",
-            "to": "NestleBond27"
-        },
-        {
-            "from": "BundDE30",
-            "verb": "is follower of",
-            "to": "RocheBond28"
-        },
-        {
-            "from": "TreasuryUS27",
-            "verb": "is follower of",
-            "to": "BundDE30"
-        },
-        {
-            "from": "GEBN",
-            "verb": "is follower of",
-            "to": "TreasuryUS27"
-        },
-        {
-            "from": "LONN",
-            "verb": "is follower of",
-            "to": "GEBN"
-        },
-        {
-            "from": "ZURN",
-            "verb": "is follower of",
-            "to": "LONN"
-        },
-        {
-            "from": "SCMN",
-            "verb": "is follower of",
-            "to": "ZURN"
-        },
-        {
-            "from": "VACN",
-            "verb": "is follower of",
-            "to": "SCMN"
-        },
-        {
-            "from": "ROG",
-            "verb": "is follower of",
-            "to": "VACN"
-        },
-        {
-            "from": "SOON",
-            "verb": "is follower of",
-            "to": "ROG"
-        },
-        {
-            "from": "SCHP",
-            "verb": "is follower of",
-            "to": "SOON"
-        },
-        {
-            "from": "SIKA",
-            "verb": "is follower of",
-            "to": "SCHP"
-        },
-        {
-            "from": "KNIN",
-            "verb": "is follower of",
-            "to": "SIKA"
-        },
-        {
-            "from": "UHR",
-            "verb": "is follower of",
-            "to": "KNIN"
-        },
-        {
-            "from": "CFR",
-            "verb": "is follower of",
-            "to": "UHR"
-        },
-        {
-            "from": "SREN",
-            "verb": "is follower of",
-            "to": "CFR"
-        },
-        {
-            "from": "STMN",
-            "verb": "is follower of",
-            "to": "SREN"
-        },
-        {
-            "from": "LOGN",
-            "verb": "is follower of",
-            "to": "STMN"
-        },
-        {
-            "from": "NOVN",
-            "verb": "is follower of",
-            "to": "LOGN"
-        },
-        {
-            "from": "SGSN",
-            "verb": "is follower of",
-            "to": "NOVN"
-        },
-        {
-            "from": "HOLN",
-            "verb": "is follower of",
-            "to": "SGSN"
-        },
-        {
-            "from": "NESN",
-            "verb": "is follower of",
-            "to": "HOLN"
-        },
-        {
-            "from": "ALC",
-            "verb": "is follower of",
-            "to": "NESN"
-        },
-        {
-            "from": "BAER",
-            "verb": "is follower of",
-            "to": "ALC"
-        },
-        {
-            "from": "BANB",
-            "verb": "is follower of",
-            "to": "BAER"
-        },
-        {
-            "from": "ABBN",
-            "verb": "is follower of",
-            "to": "BANB"
-        },
-        {
-            "from": "SDZ",
-            "verb": "is follower of",
-            "to": "ABBN"
-        },
-        {
-            "from": "ADEN",
-            "verb": "is follower of",
-            "to": "SDZ"
-        },
-        {
-            "from": "UBSG",
-            "verb": "is follower of",
-            "to": "ADEN"
-        },
-        {
-            "from": "GBP cash",
-            "verb": "is follower of",
-            "to": "UBSG"
-        },
-        {
-            "from": "CHF cash",
-            "verb": "is follower of",
-            "to": "GBP cash"
-        },
-        {
-            "from": "EUR cash",
-            "verb": "is follower of",
-            "to": "CHF cash"
-        },
-        {
-            "from": "USD cash",
-            "verb": "is follower of",
-            "to": "EUR cash"
-        },
-        {
-            "from": "DKK cash",
-            "verb": "is follower of",
-            "to": "USD cash"
-        },
-        {
-            "from": "SEK cash",
-            "verb": "is follower of",
-            "to": "DKK cash"
-        },
-        {
-            "from": "JPY cash",
-            "verb": "is follower of",
-            "to": "SEK cash"
         }
     ],
     "sources": [
@@ -1330,54 +1125,6 @@
         }
     ],
     "values": [
-        {
-            "words": [
-                "exchange rate",
-                "CHF per EUR"
-            ],
-            "number": "0.98",
-            "source": "bank reporting bank leu client xy"
-        },
-        {
-            "words": [
-                "exchange rate",
-                "CHF per USD"
-            ],
-            "number": "0.9",
-            "source": "bank reporting bank leu client xy"
-        },
-        {
-            "words": [
-                "exchange rate",
-                "CHF per GBP"
-            ],
-            "number": "1.13",
-            "source": "bank reporting bank leu client xy"
-        },
-        {
-            "words": [
-                "exchange rate",
-                "CHF per DKK"
-            ],
-            "number": "0.1304",
-            "source": "bank reporting bank leu client xy"
-        },
-        {
-            "words": [
-                "exchange rate",
-                "CHF per SEK"
-            ],
-            "number": "0.0875",
-            "source": "bank reporting bank leu client xy"
-        },
-        {
-            "words": [
-                "exchange rate",
-                "CHF per JPY"
-            ],
-            "number": "0.006",
-            "source": "bank reporting bank leu client xy"
-        },
         {
             "words": [
                 "LISP",
@@ -2642,6 +2389,14 @@
         },
         {
             "words": [
+                "exchange rate",
+                "CHF per EUR"
+            ],
+            "number": "0.98",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
                 "TreasuryUS27",
                 "face value",
                 "USD",
@@ -2680,6 +2435,14 @@
         },
         {
             "words": [
+                "exchange rate",
+                "CHF per USD"
+            ],
+            "number": "0.9",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
                 "GBP cash",
                 "GBP",
                 "original"
@@ -2704,6 +2467,14 @@
                 "expected"
             ],
             "number": "226000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "exchange rate",
+                "CHF per GBP"
+            ],
+            "number": "1.13",
             "source": "bank reporting bank leu client xy"
         },
         {
@@ -2820,6 +2591,14 @@
         },
         {
             "words": [
+                "exchange rate",
+                "CHF per DKK"
+            ],
+            "number": "0.1304",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
                 "SEK cash",
                 "SEK",
                 "original"
@@ -2848,6 +2627,14 @@
         },
         {
             "words": [
+                "exchange rate",
+                "CHF per SEK"
+            ],
+            "number": "0.0875",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
                 "JPY cash",
                 "JPY",
                 "original"
@@ -2872,6 +2659,14 @@
                 "expected"
             ],
             "number": "180000",
+            "source": "bank reporting bank leu client xy"
+        },
+        {
+            "words": [
+                "exchange rate",
+                "CHF per JPY"
+            ],
+            "number": "0.006",
             "source": "bank reporting bank leu client xy"
         }
     ]

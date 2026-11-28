@@ -1273,9 +1273,12 @@ class sql_db
             $import->import_system_data_appended($usr, $sys_msg);
             // and the use cases that build on the appended system data e.g. the calculator keywords
             $import->import_use_case_data($usr, $sys_msg, false, files::USE_CASE_FILES_APPENDED);
-            // the XBRL fileset of a company as the last import, because it adds about 700 words and
+            // the XBRL fileset of a company as the last big import, because it adds about 700 words and
             // 2900 triples, which would shift every later id
             $import->import_xbrl_data($usr, $sys_msg);
+            // followed only by the use cases added after it, whose phrases get the next free ids, so that no id of
+            // the XBRL fileset moves e.g. the format of the bank csv
+            $import->import_use_case_data($usr, $sys_msg, false, files::USE_CASE_FILES_AFTER_XBRL);
             // a types api call during the imports may have cached the system phrases without the
             // symbol triples imported after it e.g. "g/kWh is symbol for gram per kWh"
             new db_cache(user::system())->del_types($sys_msg);

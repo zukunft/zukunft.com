@@ -51,7 +51,6 @@ the object structure is:
 ├── system_object - $sys - a header object for the system data cache and execution time tracking
 ├── type_lists - helper class to combine all preloaded types in one class for the API
 ├── convert_csv - $fmt_conv - convert a csv to a zukunft.com import by the phrases of its format
-├── convert_portfolio_csv - convert the csv of a bank statement of the positions to a zukunft.com import
 ├── convert_wikipedia_table - convert a wikipedia table to a
 ├── import - $imp - import data - take a object from a json, yaml or XML message and trigger the object saves
 ├── import_convert_xbrl - convert an XBRL fileset to a zukunft.com import

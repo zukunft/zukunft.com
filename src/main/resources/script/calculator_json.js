@@ -689,6 +689,14 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
+    /* a property of a field by its input item first, because the field phrase is shared with other pages, e.g. the
+       range of the USD/CHF rate of the ABB page is no range of the DKK rate of the portfolio split (ui_list::item_property) */
+    function itemProperty(item, name, prop) {
+        const own = fieldProperty(item.name, prop);
+        const result = own === null ? fieldProperty(name, prop) : own;
+        return result;
+    }
+
     /* the unit text of a number: the symbol of its measure or ratio unit, else the name of its percent word (ui_list::unit_name) */
     function unitOf(entry) {
         let result = '';
@@ -1757,7 +1765,7 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
             hintText = hintText || entry.description;
         }
         const limits = [['min', KW.limit_down], ['max', KW.limit_up], ['step', KW.step]].map(function (l) {
-            const num = fieldProperty(name, l[1]);
+            const num = itemProperty(item, name, l[1]);
             const limit = num === null || entry === null ? num : fieldShown(num, entry);
             return num === null ? '' : ' ' + l[0] + '="' + esc(limit) + '"';
         }).join('');
@@ -2652,9 +2660,15 @@ function renderCalculatorPage(host, seed, settings, recalculateAll) {
         return result;
     }
 
-    /* the row phrases by the biggest number of the phrase that the table is ranked by, then by name (ui_list::ranked_rows) */
+    /* the row phrases by the biggest number of the phrase that the table is ranked by, then by name, only the rows with a
+       number of the page, because a leaf of the is a tree can be a class that nothing is yet e.g. alternative
+       investment (ui_list::ranked_rows) */
     function rankedRows(tbl) {
-        const result = rowPhrases(tbl.to, []);
+        const result = rowPhrases(tbl.to, []).filter(function (row) {
+            return pool.some(function (e) {
+                return e.words.indexOf(row) >= 0;
+            });
+        });
         const rank = subItems(tbl.name, VERB.rank)[0];
         // the ranking orders the main follower chain, so the alternative order keeps the order of its own chain
         if (rank !== undefined && !walksAlternative()) {

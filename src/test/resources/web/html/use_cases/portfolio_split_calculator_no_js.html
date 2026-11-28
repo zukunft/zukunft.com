@@ -359,7 +359,7 @@
                                     </span>
                                 </label>
                                 <div class="row">
-                                    <input type="number" name="n-392" id="n-392" value="0.1304" min="0.6" max="1.1" step="0.01" form="calculator">
+                                    <input type="number" name="n-392" id="n-392" value="0.1304" form="calculator">
                                     <input type="hidden" name="g-392" value="2173211008" form="calculator">
                                     <input type="hidden" name="8n-392" value="0.1304" form="calculator">
                                     <input type="hidden" name="k-392" value="Exchange rate" form="calculator">
@@ -5360,6 +5360,12 @@
                                         "type_code_id": "default"
                                     },
                                     {
+                                        "id": 1145,
+                                        "name": "investment",
+                                        "description": "the commitment of money or resources now in order to gain a future return or benefit.",
+                                        "type_code_id": "default"
+                                    },
+                                    {
                                         "id": 1153,
                                         "name": "excess",
                                         "description": "the amount by which a quantity exceeds a reference or baseline level",
@@ -5392,6 +5398,11 @@
                                         "type_code_id": "default"
                                     },
                                     {
+                                        "id": 1389,
+                                        "name": "position",
+                                        "type_code_id": "default"
+                                    },
+                                    {
                                         "id": 1405,
                                         "name": "yield",
                                         "type_code_id": "default"
@@ -5420,6 +5431,11 @@
                                         "id": 1624,
                                         "name": "result",
                                         "description": "the outcome of a study as measured",
+                                        "type_code_id": "default"
+                                    },
+                                    {
+                                        "id": 1645,
+                                        "name": "reference",
                                         "type_code_id": "default"
                                     },
                                     {
@@ -5543,6 +5559,12 @@
                                     {
                                         "id": 2438,
                                         "name": "copy",
+                                        "type_code_id": "default"
+                                    },
+                                    {
+                                        "id": 2445,
+                                        "name": "csv",
+                                        "description": "comma-separated values, a text format with one line per table row",
                                         "type_code_id": "default"
                                     },
                                     {
@@ -5894,6 +5916,11 @@
                                         "name": "P/E",
                                         "description": "the price-earnings ratio: the share price divided by the earnings per share",
                                         "type_code_id": "default"
+                                    },
+                                    {
+                                        "id": 3131,
+                                        "name": "instrument",
+                                        "type_code_id": "default"
                                     }
                                 ],
                                 "triples": [
@@ -5964,6 +5991,20 @@
                                         "from": "%",
                                         "verb": "is symbol for",
                                         "to": "percent"
+                                    },
+                                    {
+                                        "id": 139,
+                                        "name": "April (month)",
+                                        "from": "April",
+                                        "verb": "is a",
+                                        "to": "month"
+                                    },
+                                    {
+                                        "id": 145,
+                                        "name": "October (month)",
+                                        "from": "October",
+                                        "verb": "is a",
+                                        "to": "month"
                                     },
                                     {
                                         "id": 159,
@@ -6041,6 +6082,16 @@
                                         "from": "Dec",
                                         "verb": "is an acronym for",
                                         "to": "December"
+                                    },
+                                    {
+                                        "id": 172,
+                                        "protection": "admin_protection",
+                                        "name": "Zurich (city)",
+                                        "description": "Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.",
+                                        "from": "Zurich",
+                                        "verb": "is a",
+                                        "to": "city",
+                                        "impact": 71152
                                     },
                                     {
                                         "id": 173,
@@ -8172,6 +8223,22 @@
                                         "from": "calculator (system)",
                                         "verb": "has a",
                                         "to": "alternative order"
+                                    },
+                                    {
+                                        "id": 3744,
+                                        "name": "csv (system)",
+                                        "description": "keyword of the csv formats; a phrase is the format of a csv by its triples to the keywords below. A value of the definition of a format is a template: per row each column item of it is the phrase of the cell of its column, the cell of a number column times the number of the template is the number e.g. a scale of 0.01 for a price in percent, a template without a number column writes its own number e.g. a default lot size, a kind phrase limits the template to the rows of that kind and is not written, and a template without the row name column is written once per phrases with the number of the first row; a written value gets the source of the csv, a template with the word assumed none. A triple of the definition from or to a column item that is no triple to a csv keyword is a template too: per row each column item is the phrase of its cell and {\u003Cheader text\u003E} in its description is the cell of that column; the name of a written triple is the description of the triple from the template to csv name, the others get no name; a template whose from and to are the same cell writes nothing and neither does a value template that uses it; a written triple whose from, verb and to the definition declares is written as that declaration",
+                                        "from": "csv",
+                                        "verb": "can be",
+                                        "to": "zukunft.com system"
+                                    },
+                                    {
+                                        "id": 3749,
+                                        "name": "csv column",
+                                        "description": "list: the items of the group triple from a csv format to this keyword are the columns that the format reads; the description of an item is the complete header text of its column, which is the first cell of the header row with this text, and a template names the cell of the column by the item",
+                                        "from": "csv (system)",
+                                        "verb": "has a",
+                                        "to": "column"
                                     },
                                     {
                                         "id": 3799,
@@ -11230,6 +11297,134 @@
                                         "from": "yield",
                                         "verb": "of",
                                         "to": "free cash flow"
+                                    },
+                                    {
+                                        "id": 8700,
+                                        "name": "price currency",
+                                        "description": "the currency in which the price of an instrument is quoted",
+                                        "from": "currency",
+                                        "verb": "of",
+                                        "to": "price"
+                                    },
+                                    {
+                                        "id": 8702,
+                                        "name": "reference currency",
+                                        "description": "the currency in which a bank statement shows the value of every position",
+                                        "from": "currency",
+                                        "verb": "kind of",
+                                        "to": "reference"
+                                    },
+                                    {
+                                        "id": 8703,
+                                        "name": "alternative investment",
+                                        "description": "an investment that is no stock, bond or cash e.g. a hedge fund, which a bank lists with its units and a price per unit",
+                                        "from": "investment",
+                                        "verb": "kind of",
+                                        "to": "alternative"
+                                    },
+                                    {
+                                        "id": 8704,
+                                        "name": "bank position",
+                                        "description": "a holding of a client as a bank lists it in a statement",
+                                        "from": "position",
+                                        "verb": "of",
+                                        "to": "bank"
+                                    },
+                                    {
+                                        "id": 8705,
+                                        "name": "alternative investment stock",
+                                        "description": "an alternative investment is held like a stock: its units are its shares and its price per unit is its stock price",
+                                        "from": "alternative investment",
+                                        "verb": "is a",
+                                        "to": "stock"
+                                    },
+                                    {
+                                        "id": 8706,
+                                        "name": "bank position csv",
+                                        "description": "the csv of a bank statement of the positions, with some lines about the portfolio, the header row and one row per position",
+                                        "from": "csv",
+                                        "verb": "of",
+                                        "to": "bank position"
+                                    },
+                                    {
+                                        "id": 8708,
+                                        "name": "bank position csv columns",
+                                        "from": "bank position csv",
+                                        "verb": "has a",
+                                        "to": "csv column"
+                                    },
+                                    {
+                                        "id": 8711,
+                                        "name": "bank position csv instrument",
+                                        "description": "Instrument",
+                                        "from": "bank position csv columns",
+                                        "verb": "has a",
+                                        "to": "instrument"
+                                    },
+                                    {
+                                        "id": 8712,
+                                        "name": "bank position csv quantity",
+                                        "description": "Quantity",
+                                        "from": "bank position csv columns",
+                                        "verb": "has a",
+                                        "to": "quantity"
+                                    },
+                                    {
+                                        "id": 8713,
+                                        "name": "bank position csv currency",
+                                        "description": "Currency",
+                                        "from": "bank position csv columns",
+                                        "verb": "has a",
+                                        "to": "currency"
+                                    },
+                                    {
+                                        "id": 8714,
+                                        "name": "bank position csv price",
+                                        "description": "Price",
+                                        "from": "bank position csv columns",
+                                        "verb": "has a",
+                                        "to": "price"
+                                    },
+                                    {
+                                        "id": 8715,
+                                        "name": "bank position csv price currency",
+                                        "description": "Price Curr",
+                                        "from": "bank position csv columns",
+                                        "verb": "has a",
+                                        "to": "price currency"
+                                    },
+                                    {
+                                        "id": 8716,
+                                        "name": "bank position csv exchange rate",
+                                        "description": "Exchange Rate",
+                                        "from": "bank position csv columns",
+                                        "verb": "has a",
+                                        "to": "exchange rate"
+                                    },
+                                    {
+                                        "id": 8718,
+                                        "name": "bank position csv reference currency",
+                                        "description": "Ref. Curr",
+                                        "from": "bank position csv columns",
+                                        "verb": "has a",
+                                        "to": "reference currency"
+                                    },
+                                    {
+                                        "id": 8735,
+                                        "name": "bank position csv instrument hint",
+                                        "description": "{Instrument Name}",
+                                        "from": "bank position csv instrument",
+                                        "verb": "has a",
+                                        "to": "calculator hint"
+                                    },
+                                    {
+                                        "id": 8737,
+                                        "name": "bank position csv currency pair",
+                                        "description": "the unit of the exchange rate: {Ref. Curr} per unit of {Price Curr}",
+                                        "type": "measure unit",
+                                        "from": "bank position csv reference currency",
+                                        "verb": "per",
+                                        "to": "bank position csv price currency"
                                     }
                                 ],
                                 "formulas": [
@@ -11909,30 +12104,6 @@
                                         ],
                                         "source": "bank reporting bank leu client xy",
                                         "number": 0.98
-                                    },
-                                    {
-                                        "id": 2173210189,
-                                        "words": [
-                                            "exchange rate",
-                                            "field limit up"
-                                        ],
-                                        "number": 1.1
-                                    },
-                                    {
-                                        "id": 2173210190,
-                                        "words": [
-                                            "exchange rate",
-                                            "field limit down"
-                                        ],
-                                        "number": 0.6
-                                    },
-                                    {
-                                        "id": 2173210191,
-                                        "words": [
-                                            "exchange rate",
-                                            "field step"
-                                        ],
-                                        "number": 0.01
                                     },
                                     {
                                         "id": 2173211006,
@@ -14183,6 +14354,15 @@
                                         "number": 1000
                                     },
                                     {
+                                        "id": 142423834272289,
+                                        "words": [
+                                            "bank position csv currency pair",
+                                            "bank position csv exchange rate",
+                                            "exchange rate"
+                                        ],
+                                        "number": 1
+                                    },
+                                    {
                                         "id": "/3i-3p+cO+dV+",
                                         "words": [
                                             "BundDE30",
@@ -14436,6 +14616,73 @@
                                         ],
                                         "source": "split agreement",
                                         "number": 0.35
+                                    },
+                                    {
+                                        "id": "065-/3j-4N+9Z+Q8+",
+                                        "words": [
+                                            "assumed",
+                                            "shares",
+                                            "stock",
+                                            "bank position csv instrument",
+                                            "lot size"
+                                        ],
+                                        "number": 1
+                                    },
+                                    {
+                                        "id": "067-065-/3j-/3c-4N+",
+                                        "words": [
+                                            "assumed",
+                                            "bank position csv currency",
+                                            "bank position csv instrument",
+                                            "bond (finance)",
+                                            "lot size"
+                                        ],
+                                        "number": 1000
+                                    },
+                                    {
+                                        "id": "067-065-/3j-4N+8v+",
+                                        "words": [
+                                            "assumed",
+                                            "cash",
+                                            "bank position csv currency",
+                                            "bank position csv instrument",
+                                            "lot size"
+                                        ],
+                                        "number": 0.01
+                                    },
+                                    {
+                                        "id": "067-066-065-/3i-/3c-cO+",
+                                        "words": [
+                                            "original",
+                                            "bank position csv currency",
+                                            "bank position csv instrument",
+                                            "bank position csv quantity",
+                                            "bond (finance)",
+                                            "face value"
+                                        ],
+                                        "number": 1
+                                    },
+                                    {
+                                        "id": "068-065-/6S-/3c-1b+",
+                                        "words": [
+                                            "percent",
+                                            "bank position csv instrument",
+                                            "bank position csv price",
+                                            "bond (finance)",
+                                            "bond price"
+                                        ],
+                                        "number": 0.01
+                                    },
+                                    {
+                                        "id": "069-068-065-/3h-Q8+",
+                                        "words": [
+                                            "stock",
+                                            "bank position csv instrument",
+                                            "bank position csv price",
+                                            "bank position csv price currency",
+                                            "stock price"
+                                        ],
+                                        "number": 1
                                     },
                                     {
                                         "id": "4r-1a+2E+2f+9t+EP+",

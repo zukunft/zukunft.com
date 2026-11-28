@@ -203,7 +203,10 @@ class convert_csv
                 $this->names[$trp[json_fields::EX_FROM] ?? ''] = $trp[json_fields::DESCRIPTION] ?? '';
             }
         }
-        foreach ($fmt[json_fields::VALUES] ?? [] as $val) {
+        // a value of the definition without a column item and a triple template is no template, but e.g. a value of
+        // another use case that the export of the format phrase from the database has with a phrase of the format
+        $tpl_vals = array_filter($fmt[json_fields::VALUES] ?? [], fn(array $val) => $this->is_template($val));
+        foreach ($tpl_vals as $val) {
             $phr_names = $val[json_fields::WORDS] ?? [];
             if (count($this->number_items($phr_names)) > 1) {
                 $msg->add(msg_id::IMPORT_CSV_TEMPLATE_NUMBERS, [
@@ -722,7 +725,7 @@ class convert_csv
 
     /**
      * @param string $timestamp the time of the json, now if empty
-     * @return array the head of the import json like convert_portfolio_csv::header, which change 3 removes
+     * @return array the head of the import json with the pod, the versions and the time
      */
     private function header(string $timestamp): array
     {
@@ -790,6 +793,25 @@ class convert_csv
         $to = $trp[json_fields::EX_TO] ?? '';
         $uses_column = ($this->is_column($from) or $this->is_column($to));
         return $uses_column and !$this->is_flag($trp);
+    }
+
+    /**
+     * @param array $val a value of the definition
+     * @return bool true if the value names a column item or a triple template, so that it is written per row
+     */
+    private function is_template(array $val): bool
+    {
+        $phr_names = $val[json_fields::WORDS] ?? [];
+        return array_any($phr_names, fn(string $name) => $this->is_column($name) or $this->is_template_name($name));
+    }
+
+    /**
+     * @param string $phr_name the name of a phrase of a value template
+     * @return bool true if it is the name of a triple template e.g. "bank position csv currency pair"
+     */
+    private function is_template_name(string $phr_name): bool
+    {
+        return array_key_exists($phr_name, $this->triple_templates);
     }
 
     /**

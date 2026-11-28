@@ -48,6 +48,8 @@ class ListOf
     // to avoid adding or removing of objects
     // without updating the related index object
     private array $lst;
+    // counted up by each change of the entries (see changes)
+    private int $changes = 0;
 
 
     /*
@@ -106,7 +108,17 @@ class ListOf
     function set_lst(array $lst): bool
     {
         $this->lst = $lst;
+        $this->changes++;
         return true;
+    }
+
+    /**
+     * @return int the number of changes of the entries, so that e.g. an index of the list (formula_calc::name_index)
+     *             sees that it is outdated; the entries change only by set_lst, add_direct and unset
+     */
+    function changes(): int
+    {
+        return $this->changes;
     }
 
     /**
@@ -198,6 +210,7 @@ class ListOf
     protected function add_direct(IdObject|TextIdObject|CombineObject|value_types $obj_to_add): void
     {
         $this->lst[] = $obj_to_add;
+        $this->changes++;
     }
 
     /**
@@ -215,6 +228,7 @@ class ListOf
         $key_lst = array_keys($this->lst);
         if (in_array($key, $key_lst)) {
             unset ($this->lst[$key]);
+            $this->changes++;
             $result = true;
         }
         return $result;

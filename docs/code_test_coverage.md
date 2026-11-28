@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1775 of 6573 public functions have at least 2 unit test calls; the 4588 functions below do not; the 210 functions of the last section are called nowhere
+1772 of 6571 public functions have at least 2 unit test calls; the 4589 functions below do not; the 210 functions of the last section are called nowhere
 
 ## 1826 functions of main backend have no test at all
 
@@ -2004,12 +2004,14 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- generate_valid_xml_from_obj - 0 unit test calls
 ```
 
-## 70 functions of shared have no test at all
+## 71 functions of shared have no test at all
 
 ```
 \-- IdObject
     \-- set_modified - 0 unit test calls shared by 2 classes
     \-- unset_modified - 0 unit test calls
+\-- ListOf
+    \-- changes - 0 unit test calls
 \-- ListOfIdObjects
     \-- add_by_link - 0 unit test calls shared by 2 classes
     \-- get_second_object - 0 unit test calls
@@ -4547,7 +4549,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- phrase_id - 4 unit test calls shared by 3 classes
     \-- phrases - 1 unit test calls shared by 3 classes
     \-- row_kinds - 1 unit test calls
-    \-- title - 4 unit test calls shared by 4 classes
+    \-- title - 5 unit test calls shared by 4 classes
 \-- change_log_link_list
     \-- tbl - 3 unit test calls shared by 7 classes
 \-- change_log_list
@@ -4767,11 +4769,11 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- user_name - 1 unit test calls shared by 2 classes
 \-- markdown
     \-- doc_url - 1 unit test calls
-    \-- title - 4 unit test calls shared by 4 classes
+    \-- title - 5 unit test calls shared by 4 classes
 \-- pdf_writer
     \-- table - 4 unit test calls shared by 5 classes
     \-- text_code - 1 unit test calls
-    \-- title - 4 unit test calls shared by 4 classes
+    \-- title - 5 unit test calls shared by 4 classes
 \-- phrase
     \-- api_array - 21 unit test calls shared by 37 classes
     \-- btn_add - 3 unit test calls shared by 5 classes
@@ -5138,7 +5140,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- get_style_id - 2 unit test calls shared by 8 classes
     \-- name_link - 15 unit test calls shared by 22 classes
     \-- style_selector - 2 unit test calls shared by 4 classes
-    \-- title - 4 unit test calls shared by 4 classes
+    \-- title - 5 unit test calls shared by 4 classes
     \-- type_code_id - 3 unit test calls shared by 14 classes
     \-- url_mapper - 44 unit test calls shared by 27 classes
 \-- view_exe

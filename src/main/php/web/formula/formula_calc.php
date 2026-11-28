@@ -63,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use WeakMap;
 
 class formula_calc
 {
@@ -85,6 +86,9 @@ class formula_calc
     // result is searched in all values of the page, but the phrases of a value do not change;
     // the value is kept with its names, so a new object with a reused object id is not mixed up
     private array $names_by_val = [];
+    // per list of the page its values and results by phrase name with the number of changes of the list when the
+    // index was built, because each operand of each result is searched in the same lists (see candidates)
+    private WeakMap $index_by_lst;
     // reads the number of the previous row for an operand with the name prior
     private prior_operand $pri;
     // the kinds of the phrases of a number e.g. stock for LISP, so that a list takes the rows of a kind
@@ -98,6 +102,7 @@ class formula_calc
     {
         $this->pri = new prior_operand($prior);
         $this->knd = new phrase_kinds($kinds);
+        $this->index_by_lst = new WeakMap();
     }
 
     /**
@@ -513,7 +518,7 @@ class formula_calc
         $result = null;
         $fewest_foreign = PHP_INT_MAX;
         $res_names = $this->phrase_names($res);
-        foreach ($val_lst->lst() as $val) {
+        foreach ($this->candidates($names, $val_lst) as $val) {
             $phr_names = $this->phrase_names($val);
             $matches = (array_diff($names, $phr_names) == [] and array_diff($phr_names, $ctx) == []);
             $foreign = count(array_diff($phr_names, $names, $res_names));
@@ -526,6 +531,48 @@ class formula_calc
     }
 
     /**
+     * a number is an operand only if it names every phrase of the operand, so the numbers of the phrase with the fewest
+     * numbers hold every operand, in the order of the list, because value_of takes the first on a tie
+     *
+     * @param array $names the phrase names of one operand
+     * @param value_list $val_lst the values and results of the page
+     * @return array the values and results of the list that name the phrase of the operand with the fewest numbers
+     */
+    private function candidates(array $names, value_list $val_lst): array
+    {
+        $index = $this->name_index($val_lst);
+        $result = null;
+        foreach ($names as $name) {
+            $bucket = $index[$name] ?? [];
+            if ($result === null or count($bucket) < count($result)) {
+                $result = $bucket;
+            }
+        }
+        return $result ?? [];
+    }
+
+    /**
+     * @param value_list $val_lst the values and results of the page
+     * @return array per phrase name the values and results of the list that name it, in the order of the list; built
+     *               again if the list has changed since (ListOf::changes)
+     */
+    private function name_index(value_list $val_lst): array
+    {
+        $cached = $this->index_by_lst[$val_lst] ?? null;
+        if ($cached === null or $cached[0] != $val_lst->changes()) {
+            $index = [];
+            foreach ($val_lst->lst() as $val) {
+                foreach (array_unique($this->phrase_names($val)) as $name) {
+                    $index[$name][] = $val;
+                }
+            }
+            $cached = [$val_lst->changes(), $index];
+            $this->index_by_lst[$val_lst] = $cached;
+        }
+        return $cached[1];
+    }
+
+    /**
      * @param value|result $val a number of the page
      * @param result $res the result that is calculated
      * @return bool true if the number is the result itself: the same object, or the same database id e.g. the stored
@@ -535,8 +582,16 @@ class formula_calc
      */
     private function is_same_result(value|result $val, result $res): bool
     {
-        $has_db_id = ($res->id() != 0 and $res->id() !== '');
-        return $val === $res or ($has_db_id and $val->id() == $res->id());
+        return $val === $res or ($this->has_db_id($res) and $val->id() == $res->id());
+    }
+
+    /**
+     * @param value|result $val a number of the page
+     * @return bool true if the number has a database id, so not a copy of a result (ui_list::add_instance_results)
+     */
+    private function has_db_id(value|result $val): bool
+    {
+        return $val->id() != 0 and $val->id() !== '';
     }
 
     /**
@@ -547,8 +602,7 @@ class formula_calc
      */
     private function is_open_copy(value|result $val): bool
     {
-        $has_db_id = ($val->id() != 0 and $val->id() !== '');
-        return $val instanceof result and $val->number() === null and !$has_db_id;
+        return $val instanceof result and $val->number() === null and !$this->has_db_id($val);
     }
 
     /**

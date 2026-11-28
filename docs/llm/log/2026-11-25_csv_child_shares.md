@@ -6,7 +6,10 @@ plan: the import json from the csv of a bank statement ("import"), the input cas
 instances (step 3, change 3 of 5), the list rule that the count of the parent of change 3 needs, the button "Add
 child" in the browser (step 3, change 4 of 5) and the button "Remove the ..." in the browser (step 3, change 5 of
 6); change 2 of step 3 has its own log
-(`docs/llm/log/2026-11-26_target_share_spread.md`). Each plan was started before the first edit of
+(`docs/llm/log/2026-11-26_target_share_spread.md`). The changes of 2026-11-27 follow in the same file: the save of an
+added and a removed child (section 8, change 6a), the results of a saved child (section 9, change 6b), the first page
+of the pdf report (section 10) and the exchange rates of the page (sections 11 to 13, the task "range of FX rates",
+of which sections 10 to 13 had a log file of their own before). Each plan was started before the first edit of
 its change, so its tables are the plan; its "Unexpected changes" stay empty until the developer has run the tests.
 
 ## 1. portfolio csv
@@ -764,6 +767,8 @@ Planned before the first edit:
 | 34 snapshots of `src/test/resources/web/html/workflow_write/` (wf1, wf2, wf3, wf4, wf5, wf6, wf17, wf18, wf42, wf44, wf45, wf47) and `object_pages/triple.html` | — | five more suggestions "Hanseatic city", "big city", "college town", "urban district of Bremen" and "urban municipality in Germany" | not by this change: `object_pages/triple.html` has them since the run of 14:22, before the changes of the calculation, and no code of this section creates a suggestion, so most likely a newer answer of wikidata (the cache of `Q72.json` changed too); to check by the developer whether the snapshots should keep them |
 | `src/main/php/web/component/execute/ui_list.php` (`calculator_numbers`, new `STEP_CALC_CHECK` and `STEP_CALC_COPIES`, `check_results`, `calculate_copies`) | the calculation of the results of a page is part of the section of the caller, e.g. "not_specified" with 513 seconds | the two steps "calculator result check" and "calculator copies" in the url to html time of a page (`ui_list::html_step`, like `STEP_TABLE_CHECK`), a debug entry of `calculate_copies` with the number of the copies, the fresh results, the rounds and the open copies, and one of `check_results` with the size of the table | request of 2026-11-27: more entries, so that a delay can be checked in detail. First planned as two sections of `system_time_type` with `$sys->times`, but the coding rule test "web/ must declare only $ui_sys and $mtr as globals" failed for `ui_list.php`, so the steps use the frontend cache like the other steps of the page; the two sections and their rows in `system_time_types.csv` are removed again |
 
+| `src/main/php/web/component/execute/ui_list.php` (`fresh_operands`, `with_stored_numbers`, `calculate_copies`), `src/main/php/web/formula/formula_calc.php` (`is_same_result`, `is_open_copy`, new `has_db_id`) | a fresh result that falls back to its stored number keeps the id 0; a stale comment names the removed section calc_copies; the check of a database id twice | the fallback gets the database id back with the stored number; the comment names the step "calculator copies"; the check in `has_db_id` | the findings of the review of 2026-11-27: with the id 0, a stored result without a number stayed a missing operand (`is_open_copy`) on a page with copies, while it is the number 0 on a page without copies |
+
 The runs of 2026-11-27 since the fixes of the copies:
 - the run that started at about 16:53 (with the code before 17:12): the formula pages, the PV page without javascript
   and the three workflow pages of the rows above, and the 18 internal errors of the delete without a number
@@ -798,3 +803,132 @@ The runs of 2026-11-27 covered this change in three steps, and each failure abov
   delete of that object; a cleanup that needs the object afterwards passes a copy.
 - A pasted failure can come from a run that has started before the fix; the write time of the `docs/code_*` reports
   tells when the run started.
+
+## 10. the first portfolio on the first page of the pdf report
+
+Part of #247, the task "first page of PDF report" of `docs/llm/pending.md`.
+
+### Request
+
+"do the next open task in pending.md 'portfolio split' and remove the task done already": the tasks 6a and 6b of
+"report with three and more children" are done and wait for a run, so the next open task is "first page of PDF
+report": "The first page of the PDF report contains only the headline e.g. 'Portfolio Split Calculator'. It should
+also show the first child on same page, so remove the 'next page' between 'Portfolio Split Calculator' and First
+child portfolio."
+
+Checked before the first edit:
+- `calculator_report::pdf` writes the logo and the title on the first page and then `add_positions`, which starts
+  each table of the positions of a portfolio with `pdf_writer::page_break(true)`; the page break starts a new page if
+  the page has content, so also for the first table, because the title is on the page
+- the report is created as portrait (`new pdf_writer($msg, true)`), so the first table is on a portrait page also
+  without the break
+- a table that is longer than the rest of the page goes on to the next page by itself (`pdf_writer::table`)
+
+Planned:
+- `calculator_report::add_positions` starts a new page only for the second and every further table of the positions,
+  so the first portfolio follows the title on the first page, and every other portfolio stays on a portrait page of
+  its own
+- in `phrase_data_ui_tests.php` (calculator report): the first portfolio is on the page of the title (positive), and
+  the existing tests keep the second portfolio off that page (negative) and each portfolio on a portrait page
+
+### Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/php/web/component/execute/calculator_report.php` (`add_positions`) | a page break before each table of the positions | a page break before the second and the later tables only | the task of the developer |
+| `src/test/php/unit_ui/phrase_data_ui_tests.php` (calculator report) | — | the first portfolio on the page of the title | the test of the change |
+| `docs/llm/pending.md` | the task "first page of PDF report" | removed as done, waiting for the run | the task list |
+
+### Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| the pdf reports of the tests | — | one page less | the title and the first portfolio share a page; a pdf is not a snapshot of the tests, so no file changes |
+| the snapshots and the case reports | — | unchanged | the html of the pages is not changed |
+| the ids | — | unchanged | no import file changes, so `test/test_part.php` without `test/reset_db.php` |
+
+### Unexpected changes
+
+| file | old | new | reason |
+|---|---|---|---|
+
+### Lessons learned by llm (2026-11-27)
+
+## 11. the limits of the input item
+
+Part of #247, the task "range of FX rates" of `docs/llm/pending.md` (portfolio split page compared with its sample):
+"remove the limits on FX rates so that all FX rates could be save and add a separate button to save FX rates."
+Three changes (sections 11 to 13), each with a run before the next one.
+
+### Request
+
+The next open task of `docs/llm/pending.md` "portfolio split".
+
+Checked before the first edit:
+- the page shows one field "Exchange rate" with the DKK rate 0.1304 and `min="0.6" max="1.1" step="0.01"`, in the
+  page without javascript and in the script; a number below its minimum makes the whole calculator form invalid, so
+  the browser refuses every save of the page, also of the target shares
+- the limits are the values `[exchange rate, field limit down] = 0.6`, `[exchange rate, field limit up] = 1.1` and
+  `[exchange rate, field step] = 0.01` of `share_buy_sell_abb.json`, meant for the USD/CHF rate of the ABB page, but
+  set on the shared phrase "exchange rate", so every page with that phrase gets them; both renderers read a limit only
+  by the phrase (`ui_list::field_property`, `calculator_json.js fieldProperty`)
+- the hand made sample has the one field and a box with an input for each currency (EUR, USD, GBP, JPY, DKK, SEK),
+  `step="any"`, and an "Import FX rates" button
+
+Decisions of the developer (2026-11-27):
+1. limits per input item: a limit of the input item comes before the limit of the phrase, and the ABB use case moves
+   its three limits to its item "ABB share decision assumption exchange rate", so the ABB page keeps its range and
+   the portfolio split page has none (this section)
+2. one field per rate: the exchange rate assumption shows a number field for each value of the phrase, named by its
+   unit e.g. "CHF per EUR", like the box of the sample (section 12)
+3. a button "Save FX rates" below the rates saves only the rates, and the main "Save" saves the inputs without them
+   (section 13)
+
+Planned before the first edit:
+- `ui_list::calculator_number_field` reads each limit and the step by the new `item_property`: the value of the input
+  item and the property first, else the value of the field phrase and the property (`field_property`)
+- `calculator_json.js numberField` the same by the new `itemProperty`
+- `share_buy_sell_abb.json`: the three values of the limits named by the item "ABB share decision assumption exchange
+  rate" instead of the phrase "exchange rate"
+- tests: in `phrase_data_ui_tests.php` with the seed of the javascript snapshot and limit values of the test, the limit
+  of an input item before the limit of its phrase (positive) and the limit of the phrase for an item without its own
+  (negative); the read-only scratch simulation `sim_fx2.js` draws the rate without limits and the target shares of
+  the children with their limits 0 to 100
+- not in this change: the fields of the other rates (section 12) and the button (section 13)
+
+### Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/php/web/component/execute/ui_list.php` (`calculator_number_field`, new `item_property`), `src/main/resources/script/calculator_json.js` (`numberField`, new `itemProperty`) | the limits of a field by its phrase | by the input item first, then by its phrase | decision 1 |
+| `src/main/resources/messages/use_cases/share_buy_sell_abb.json` | the limits of the shared phrase "exchange rate" | the limits of the ABB item | decision 1 |
+| `src/test/php/unit_ui/phrase_data_ui_tests.php` (new `assumption_fields`), `src/test/php/const/triple_names.php` (`PORTFOLIO_EXCHANGE_RATE_ITEM`), `docs/json_structure.md` (field limits), `docs/llm/pending.md` | — | the tests; the rule; change 1 done, waiting for the run | the tests and the task list |
+
+### Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| `portfolio_split_calculator_no_js.html`, `portfolio_split_calculator_js.html` (the seed) | `min="0.6" max="1.1" step="0.01"` of the rate, the three limit values of "exchange rate" in the seed | the rate without limits; the seed without the ABB limits | the limits are of the ABB item now |
+| the ABB snapshots | the rate with its limits | unchanged | the limits come from its item |
+| the ids, `src/test/resources/unit/value/list.csv` and the snapshots with a value id | — | three values with a new group | the values name the item instead of the phrase: `test/reset_db.php` and `test/test_re_pin.php` before `test/test_part.php` |
+| the case reports of the portfolio split page | 0 differences | 0 differences | the sample has no limits for the rate |
+
+### Unexpected changes
+
+| file | old | new | reason |
+|---|---|---|---|
+| `src/test/resources/unit/value/list.csv` | — | no row of the three limits of the ABB item | the run of 2026-11-28 after `test/reset_db.php` drew the rate of the portfolio split page without limits in both snapshots (`n-392` without `min`, `max` and `step`) and removed the three limit values of "exchange rate" from the seed, as expected; but the fixed value list got only the 9 values of the csv definition of section 3 of `2026-11-26_csv_format_phrases.md`, and neither lost the rows of the old group nor got the new one, so the limit values are not part of that list; the cause is not checked yet |
+| `src/main/php/web/component/execute/ui_list.php`, `src/main/php/cfg/import/convert_csv.php`, `src/main/php/cfg/export/phrase_data.php` | — | — | the review of 2026-11-28 after the run found no bug in this change; its small fixes are in the rows of section 3 of `2026-11-26_csv_format_phrases.md` |
+
+### Lessons learned by llm (2026-11-27)
+
+- A row in "Changes that the expected changes might cause" for a generated list needs a look at which objects the
+  list holds, before expecting a row of a moved value there (2026-11-28).
+
+## 12. one field per exchange rate
+
+Planned for after the run of section 11, decision 2.
+
+## 13. the button "Save FX rates"
+
+Planned for after the run of section 12, decision 3.

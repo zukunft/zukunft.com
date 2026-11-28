@@ -3174,15 +3174,14 @@ enum messages: string
     // always added with ok = true, because it explains a suppression instead of causing one
     case IMPORT_STEP_SKIPPED = 'import_step_skipped';
 
-    // the problems of the csv of a bank statement of the positions (convert_portfolio_csv), each naming the csv,
-    // the line and the position, because the position is left out of the import json
+    // the problems of the csv of a bank statement of the positions (convert_csv), each naming the csv, the line and
+    // the position, because the position is left out of the import json
     case IMPORT_CSV_NO_HEADER = 'import_csv_no_header';
     case IMPORT_CSV_LINE_CELLS = 'import_csv_line_cells';
     case IMPORT_CSV_UNKNOWN_KIND = 'import_csv_unknown_kind';
     case IMPORT_CSV_CELL_EMPTY = 'import_csv_cell_empty';
     case IMPORT_CSV_CELL_NOT_NUMBER = 'import_csv_cell_not_number';
-    case IMPORT_CSV_RATE_NOT_POSITIVE = 'import_csv_rate_not_positive';
-    // a cell with the flag csv positive of any csv format (convert_csv), so the text names no column
+    // a cell with the flag csv positive of any csv format, so the text names no column
     case IMPORT_CSV_CELL_NOT_POSITIVE = 'import_csv_cell_not_positive';
     // the problems of the definition of a csv format (convert_csv), which the author of the definition can fix
     case IMPORT_CSV_FORMAT_KEYWORD_MISSING = 'import_csv_format_keyword_missing';

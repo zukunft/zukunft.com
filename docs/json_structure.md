@@ -102,7 +102,9 @@ editor shows the name of the phrase.
 - **assumed**: a value with the word `assumed`; a second value with the extra word
   `confidence` gives its confidence
 - **measured**: a value with a `source`; the page shows the number of the source
-- **field limits**: a value with the phrase of the field and a field keyword
+- **field limits**: a value with the phrase of the field and a field keyword; on a calculator page a value with the
+  input item and a field keyword comes first, e.g. `ABB share decision assumption exchange rate` · `field limit down`,
+  because the phrase of a field is shared with other pages, e.g. the exchange rate of other currencies
 - **the previous row**: an operand with `prior` next to another phrase, e.g. `"cumulative deviation","prior"`,
   reads the number of the phrase before the phrase of the result context in its `is follower of` chain; the
   first phrase of the chain has the number 0, and a context with phrases of two chains selects no number
@@ -249,7 +251,8 @@ the problem is obvious on every page instead of hidden behind an outdated number
 
 The format of a csv file, e.g. the bank statement of the positions that fills the holdings of the portfolio split
 page, is a phrase with triples to the keywords of `csv_keywords.json` and with value templates, so that a new format
-is a definition json and no code. Example: `src/test/resources/import/portfolio_csv/bank_position_csv.json`. A cell
+is a definition json and no code. Example: the use case file `src/main/resources/messages/use_cases/bank_position_csv.json`,
+which `convert_csv` reads as the decoded file or as the export of its format phrase from the database. A cell
 text of the csv, e.g. a header or an asset class of the bank, is the description of a triple and is compared with
 the complete cell, so the phrase names stay lower case.
 

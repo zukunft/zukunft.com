@@ -290,6 +290,19 @@ class use_case_ui_tests
         $test_name = '... but a value with more phrases of the result outside the context is no operand';
         $num_ctx = new formula_calc()->result($t_res->result_zh_sum_ui($sum), $t_val->value_list_operand_choice_ui(false), $frm_city_lst);
         $t->assert($test_name, $num_ctx, 10.0);
+        // the calculation finds the operands by an index of each list by phrase name, which is built again after a
+        // change of the list, e.g. after the missing operands of a table have been added to the page list
+        $test_name = 'a value added to the list after a calculation is an operand of the next one';
+        $calc_idx = new formula_calc();
+        $idx_lst = $t_val->value_list_operand_choice_ui(false);
+        $idx_before = clone $idx_lst;
+        $calc_idx->result($t_res->result_zh_sum_ui($sum), $idx_lst, $frm_city_lst);
+        $val_zh = $t_val->value_list_operand_choice_ui(true)->get_by_names([word_names::ZH, triple_names::CITY_ZH_NAME]);
+        $idx_lst->add($val_zh, $msg);
+        $t->assert($test_name, $calc_idx->result($t_res->result_zh_sum_ui($sum), $idx_lst, $frm_city_lst), 20.0);
+        // negative: the index belongs to one list, so a copy of the list made before the change keeps its operand
+        $test_name = '... but not of a copy of the list made before';
+        $t->assert($test_name, $calc_idx->result($t_res->result_zh_sum_ui($sum), $idx_before, $frm_city_lst), 10.0);
         // a calculator page repeats the calculation in the browser, so the expression is given as
         // tokens with the html id of each operand instead of the formula text, which the browser
         // never runs as code

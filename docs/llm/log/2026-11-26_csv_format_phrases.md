@@ -247,3 +247,84 @@ has passed is in the rest of its output. No further unexpected change.
 
 - A public function gets a description line before its first `@param`, because the function report takes the first
   line of the docblock as the description (2026-11-27).
+
+## 3. the definition as a use case file and without convert_portfolio_csv
+
+### Request
+
+"do the next open task in pending.md 'portfolio split'": the next change of the exchange rates waits for the run of
+its first change, so the next open task of phase 1 is "import", change 3 of "csv import defined by phrases".
+
+Checked before the first edit:
+- neither `convert_portfolio_csv` nor `convert_csv` is called outside `src/test/php/unit/import_tests.php`, and the
+  fixtures of the csv (`bank_positions_sample.json`, `bank_positions_portfolio_split.json`, the two diff reports) are
+  read only there
+- a new use case file is added at the end of `files::USE_CASE_FILES_APPENDED`, so its phrases get the next free ids
+  and no pinned id moves; the definition has no code id, as a use case file must not
+- `phrase_data::export_json` gives the data of a phrase in the import format by the walk on its from side; the export
+  has the database id of each object, which `convert_csv` copies with a declaration, so only the values of the
+  conversions can be compared
+
+Decisions of the developer (2026-11-27):
+1. start this change now, in parallel with the run of the first change of the exchange rates (section 11 of
+   `docs/llm/log/2026-11-25_csv_child_shares.md`), because both need `test/reset_db.php`
+2. `bank_position_csv.json` becomes a use case file, imported at the setup after the other use case files, so that the
+   format phrase is in the database; the unit test reads the file, and a db read test converts the sample csv with the
+   definition exported from the database
+3. the two fixtures become the json of `convert_csv`, written by the next run with the auto update; the two diff
+   reports, their helpers and the tests of `convert_portfolio_csv` are removed
+
+Planned before the first edit:
+- the definition moves to `src/main/resources/messages/use_cases/bank_position_csv.json` with the new
+  `files::BANK_POSITION_CSV_FILE` at the end of `files::USE_CASE_FILES_APPENDED`; `test_files::IMPORT_PORTFOLIO_CSV_FORMAT`
+  goes
+- `convert_portfolio_csv.php` goes with its tests in `import_tests.php`; the tests of `convert_csv` keep the inputs of
+  the old block (the csv, the source, the bad rows, the NOK pair) with the column texts as consts of the test
+  instead of the consts of the old class, and compare the json of both test csv with the fixtures instead of the diff
+  reports; the import of the json keeps its tests, also "stock price" with and without its declaration; the message
+  `import_csv_rate_not_positive`, which only the old class uses, goes with its texts
+- `phrase_data_read_tests`: the export of the format phrase "bank position csv", with which `convert_csv` converts
+  the sample csv to the values of the conversion with the file (positive); a definition export of another phrase e.g.
+  the portfolio split page cannot be used as a format (negative)
+- not in this change: a page or an api that converts an uploaded csv (the "Import" button of step 7)
+
+### Expected changes
+
+| file | old lines | new lines | target / reason |
+|---|---|---|---|
+| `src/main/resources/messages/use_cases/bank_position_csv.json` (moved from `src/test/resources/import/portfolio_csv/`), `src/main/php/cfg/const/files.php`, `src/test/php/const/files.php` | the definition as a test resource | the definition as the last use case file of the setup | decision 2 |
+| `src/main/php/cfg/import/convert_portfolio_csv.php` (removed), `src/test/php/unit/import_tests.php`, `src/test/php/const/files.php`, the two diff reports (removed), `src/main/php/shared/enum/messages.php`, `en.yaml`, `de.yaml`, `src/main/php/cfg/import/convert_csv.php` (the comments) | two converters and the diff of their json | `convert_csv` only, its json compared with the fixtures | decision 3 |
+| `src/test/php/unit_read/phrase_data_read_tests.php`, `docs/json_structure.md` (csv format), `docs/llm/pending.md` | — | the conversion with the exported definition; the home of the definition; change 3 done, waiting for the run | decision 2, the docs and the task list |
+
+### Changes that the expected changes might cause
+
+| file | old lines | new lines | why a change is expected |
+|---|---|---|---|
+| `src/test/resources/import/portfolio_csv/bank_positions_sample.json`, `bank_positions_portfolio_split.json` | the json of `convert_portfolio_csv` | the json of `convert_csv` | written by the run with the auto update; the differences are the ones of the two removed reports |
+| `src/test/resources/unit/word/list.csv`, `unit/triple/list.csv`, `unit/value/list.csv` | — | the new phrases and the value templates of the definition at the end | the next free ids, so `test/reset_db.php`; no pinned id moves, so no re-pin for this change |
+| `docs/json_findings.md`, `docs/code_*` | — | a finding of the new use case file, if any; the removed class | generated reports |
+
+### Unexpected changes
+
+| file | old | new | reason |
+|---|---|---|---|
+| `src/main/php/web/component/execute/ui_list.php` (`ranked_rows`, new `has_numbers`), `src/main/resources/script/calculator_json.js` (`rankedRows`), `src/test/php/unit_ui/phrase_data_ui_tests.php` | every leaf of the `is a` and `is part of` tree below the phrase of a table is a row | only a leaf with a number of the page is a row | the run of 2026-11-27 after `test/reset_db.php` gave every case report of the portfolio split page "Only in the generated page (2)": the rows "# / 43" and "Position / Alternative investment" of the holdings and the walk. The new use case file declares `alternative investment` · `is a` · `stock`, so that `convert_csv` gives an alternative investment the stock templates; in the shared database the class is a leaf below holding, because nothing is an alternative investment there, and so a row without any number. Decision of the developer (2026-11-27): a class without any number of the page is no row, and the sample stays; a class shows as soon as a holding is one, e.g. by an import of the csv. The review of 2026-11-28 split the filter of `ranked_rows` into two lines |
+| `src/main/php/cfg/const/files.php` (new `USE_CASE_FILES_AFTER_XBRL`), `src/main/php/cfg/db/sql_db.php` (the db setup), `src/test/php/utils/json_validation.php` | `bank_position_csv.json` at the end of `files::USE_CASE_FILES_APPENDED` | the last import of the db setup, after the XBRL fileset | the same run failed "... and are the saved fixed list" of `phrase_list_read_tests.php` (`list_is_a.csv`): the phrase ids of the triples of the XBRL fileset of ABB moved by the 45 new triples of the definition, e.g. "low voltage products (sector)" from -6883 to -6928, because the XBRL fileset is imported after the use case files as the last step of the setup; the plan "no pinned id moves" missed that the end of `USE_CASE_FILES_APPENDED` is not the end of the setup. With the definition after the XBRL fileset its phrases get the next free ids, so the next `test/reset_db.php` gives the old ids again |
+| `src/main/php/cfg/import/convert_csv.php` (`set_templates`, new `is_template`) | every value of the definition is a template | only a value that names a column item or a triple template | the next run failed "convert_csv converts the sample csv with the exported definition to the values of the import file": the export of the format phrase has also values of other use cases that name its phrases, e.g. "2025, USD per EUR, assumed, exchange rate = 1.09" and "field step, price = 0.5", which `convert_csv` wrote as constant templates; each of the 10 templates of the file names a column item. The review of 2026-11-28 moved the check of a triple template name to `is_template_name` and gave the closure a typed parameter |
+| `src/main/php/cfg/export/phrase_data.php` (`phrase_vars`, new `parent_triple_ids`) | the phrases of the values and the sides of their triples | also the `is a` triples from a phrase of the values to a parent that the completed data has already, e.g. `stock` · `is a` · `holding` with holding as a side of holding value; only links between phrases of the data, so that the export of a page does not grow by new phrases, e.g. beyond the tolerance of "not much more objects than the import file" of the table editor | the same run failed "the phrase data of a csv format contains every triple of its import file": 6 triples missing, e.g. "stock is a holding", "value kind of face", "value kind of market" and "start of header". Decision of the developer (2026-11-28): extend the export walk. A link without a name is no phrase of a value, so the walk reached the kinds but not their parents. Expected after the run: the phrase data fixtures and the seeds of the javascript pages get the `is a` parents of their value phrases, and "face value", "market value" and "header start" are checked again: if they are still missing, the database has them as something else than the triple of the file, e.g. a word of the same name. The review of 2026-11-28 keeps the link ids out of the ids that select the formulas, because a link without a name has no formula |
+| `portfolio_split_calculator_no_js.html`, `portfolio_split_calculator_js.html` (the seed) | the phrases and values of the portfolio split use case | also the triples and the value templates of the csv format, e.g. "bank position csv columns has a bank position csv instrument" and "bank position csv currency, assumed, lot size = 0.01", about 270 lines more | the run of 2026-11-28 after `test/reset_db.php`, before the export change above: the definition names phrases of the page, e.g. stock, bond, lot size and currency, so the walk of the page reaches its values and their triples; the html of the page is the same apart from the rate of section 11 of `2026-11-25_csv_child_shares.md`; written by the auto update; the case reports show 0 differences, but are from 01:00, before this run, so the next run confirms them |
+| `src/main/php/cfg/export/phrase_data.php` (`parent_triple_ids`), `src/test/php/unit_read/phrase_data_read_tests.php` (from walk of a csv format) | the `is a` links from a phrase of the values to a phrase of the data; the test compares the found triples with the triples of the file | the `is a` links between any two phrases of the data; the test lists the triples of the file that the export misses | the run of 2026-11-28 after the export change still failed both tests: 3 triples missing, and `convert_csv` with the exported definition missed 3 values. The sample csv has one alternative investment (CH0047533549) and the file has three stock templates (shares, stock price, lot size), so the db definition lacks `alternative investment` · `is a` · `stock`: alternative investment is no phrase of a value, only the to side of the format triple "bank position csv alternative investments", so the filter on the value phrases left the link out. The diff of the triple test showed only the last triples of the sorted file list, e.g. "zukunft.com is a system", which the export has, so the test names the missing triples now; the other two are named by the next run |
+| `src/main/php/cfg/export/phrase_data.php` (`keyword_ids`, `next_phrases`, new `is_context_link`), `src/test/php/unit_read/phrase_data_read_tests.php` | the walk adds a triple of a walked phrase only for a calculator verb e.g. has a; the conversion with the exported definition within the time limit of a normal function | also a triple to the keyword csv context e.g. "bank position csv portfolio part"; the time limit of a file function | the run of 2026-11-28 after the `is a` links between the phrases of the data named the 2 missing triples: "bank position csv instrument is part of csv context" and "csv (system) has a context" (csv context); the walk reaches the column "bank position csv instrument" and its has a triples, but "is part of" is no calculator verb, so the triple template that makes each position part of the portfolio of the conversion (`convert_csv::row_phrase`) and its keyword were missing; the conversion test compares only the values, so it passed without the "is part of" triples of the positions; no other page has a triple to csv context, so their seeds stay the same; the conversion test reads the csv file and converts it twice, so it took 0.069 of the 0.03 seconds of a normal function |
+| the seeds in the snapshots of the other use case pages: `pv_lifetime_balance_no_js.html`, `pv_lifetime_balance_js.html`, `calculator_editor.html`, `formula_editor.html` (462 lines each), `npp_ch_vote.html`, `npp_ch_vote_js.html`, `npp_ch_vote_editor.html` (63 lines each), `table_editor_global_warming_solution.html` (126), `table_editor.html` (14), the portfolio split pages (about 17 more) | the phrases and the triples of the walk | also the `is a` triples between the phrases of the page, e.g. 60 times "SK-811 01 (postal code)" on the PV pages, "2025 (year)", "Switzerland (country)" and "Olkiluoto 3 (EPR)" | the run of 2026-11-28 10:37 with the first version of `parent_triple_ids` (from a phrase of the values to a parent in the data): a postal code, a year or a country of a value has its own named `is a` triple, which is no phrase of a value and so was not in the data before; written by the auto update; the version of 11:11 (from every phrase of the data) can add more of them on the next run; the html of the pages is the same and the table editor stayed within its tolerance of "not much more objects than the import file", because no failure of it was reported |
+| `docs/code_object_name_exceptions.md` | `convert_portfolio_csv: $conv_csv` | `convert_csv: $conv, $other_conv` | the same run failed "check that the object name exceptions doc is updated" and wrote the report again: the negative test of the template filter in `import_tests.php` creates a second converter as `$other_conv`; `convert_csv` has no suggested var name, so it is an entry of "Classes without a suggested var name" |
+| 22 snapshots of `src/test/resources/web/html/workflow/` and `workflow_write/` e.g. `add_triple_wf4/wf4_edit_back_edit.html`, `src/test/resources/unit/phrase/list_is_a.csv` | — | the option "bank position" (-8704) in the from and the to phrase list of the triple forms; the row `-8705, alternative investment stock` at the end | the same run: the new triples are in the shared database, so every phrase selector lists them; the id of the new triple is the next free one, as planned for the list files; written by the auto update |
+
+### Lessons learned by llm (2026-11-27)
+
+- A new use case file in the shared database reaches the pages of the other use cases through every phrase it shares
+  with them, by the export walk, the phrase selectors and the rows of a table; the plan of a new file lists these
+  shared phrases first, so that "Changes that the expected changes might cause" names the seeds and the selectors
+  (2026-11-28).
+- A change of the export walk changes the seed of every page, not only of the page it is made for; the page with the
+  most phrases of one kind e.g. the postal codes of the PV page shows the size of the change, so it is checked before
+  the first edit (2026-11-28).
