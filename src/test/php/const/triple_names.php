@@ -611,6 +611,8 @@ class triple_names
     const string PORTFOLIO_SECOND_CHILD = 'second child portfolio';
     // the input item of the exchange rate of the same use case, whose own field limits come before those of the phrase
     const string PORTFOLIO_EXCHANGE_RATE_ITEM = 'portfolio split assumption exchange rate';
+    // the worked example of the use case share_buy_sell_abb.json, selected by the name only
+    const string ABB_SHARE_DECISION = 'ABB share decision';
     // the page phrase of the use case table_editor_sample.json, selected by the name only
     const string SECTOR_OF_REVENUE = 'sector of revenue';
     // a parent row of the table of the use case table_editor_sample.json, selected by the name only

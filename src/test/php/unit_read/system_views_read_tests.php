@@ -171,6 +171,9 @@ class system_views_read_tests
         $this->run_portfolio_split_calculator($t);
         $this->run_portfolio_split_calculator_diff($t);
         $this->run_portfolio_split_calculator_cases($t);
+        $this->run_share_buy_sell_abb($t);
+        $this->run_share_buy_sell_abb_diff($t);
+        $this->run_share_buy_sell_abb_cases($t);
         $this->run_npp_ch_vote($t);
         $this->run_npp_ch_vote_editor($t);
         $this->run_npp_sensitivity($t);
@@ -1525,6 +1528,96 @@ class system_views_read_tests
             unlink($page);
         }
         $brw->stop();
+    }
+
+    /**
+     * the ABB share decision like the PV lifetime balance: the system view Calculator shows the triple ABB share
+     * decision by its calculator triples; the pages are written to the use case folder next to the hand made sample
+     * page (share_buy_sell_abb_sample.html), so that the generated page can be compared with the target layout
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_share_buy_sell_abb(test_cleanup $t): void
+    {
+        // sc=0 asks for the page of the server, which shows the page also without javascript
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::ABB_SHARE_DECISION, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::SHARE_BUY_SELL_ABB_NO_JS,
+            [url_var::JAVASCRIPT => url_var::FALSE]);
+        // by default the browser builds the same page from the json data of the page
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::ABB_SHARE_DECISION, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::SHARE_BUY_SELL_ABB_JS);
+    }
+
+    /**
+     * the differences of the ABB share page without javascript to the hand made sample, whose sensitivity table its
+     * script fills, so the sample is compared as a browser shows it
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_share_buy_sell_abb_diff(test_cleanup $t): void
+    {
+        $this->assert_sample_diff($t, test_files::SHARE_BUY_SELL_ABB_SAMPLE,
+            test_files::SHARE_BUY_SELL_ABB_NO_JS, test_files::SHARE_BUY_SELL_ABB_DIFF,
+            test_files::SHARE_BUY_SELL_ABB_CASES);
+    }
+
+    /**
+     * the ABB share page that the browser builds (run_share_buy_sell_abb) and the hand made sample get the same
+     * numbers of an input case typed in like a user: standard with the numbers of the sample, high and low with every
+     * input and assumption changed; the actions run in a headless browser, so without one they are skipped
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_share_buy_sell_abb_cases(test_cleanup $t): void
+    {
+        $brw = new headless_browser();
+        $browser_name = $brw->start();
+        if ($browser_name == '') {
+            $t->dsp_warning('no headless browser found, so the ABB share input cases are skipped');
+        } else {
+            $hpd = new html_page_diff();
+            $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
+            $sample_html = $t->path_file($dir . test_files::SHARE_BUY_SELL_ABB_SAMPLE . test_files::HTML);
+            $page_html = $t->path_file($dir . test_files::SHARE_BUY_SELL_ABB_JS . test_files::HTML);
+            $sample = $brw->page_copy($sample_html, test_files::SHARE_BUY_SELL_ABB_CASES, test_files::USE_CASE_CASES);
+            $page = $brw->page_copy($page_html, test_files::SHARE_BUY_SELL_ABB_CASES, test_files::USE_CASE_CASES);
+            $page_rows = [];
+            foreach (test_files::SHARE_CASES as $case) {
+                $page_items = $this->assert_sample_case($t, $brw, $sample, $page, test_files::SHARE_BUY_SELL_ABB_SAMPLE,
+                    test_files::SHARE_BUY_SELL_ABB_JS, test_files::SHARE_CASE_DIFF_PREFIX, $case, true);
+                $page_rows[$case] = $this->row_items($page_items);
+            }
+            foreach ([test_files::SHARE_CASE_HIGH, test_files::SHARE_CASE_LOW] as $case) {
+                $test_name = '... and the ' . $case . ' case changes a row of the generated ABB share page';
+                $changed = $this->differing_items($page_rows[test_files::SHARE_CASE_STANDARD], $page_rows[$case]);
+                $t->assert_true($test_name, $changed != []);
+            }
+            // negative: the standard case types the numbers that the sample shows, so none of its rows changes
+            $unchanged = $this->row_items($hpd->page_items($this->pv_case($brw, $sample, self::CASE_UNCHANGED)[self::CASE_PAGE]));
+            $standard = $this->row_items($hpd->page_items($this->pv_case($brw, $sample, test_files::SHARE_CASE_STANDARD)[self::CASE_PAGE]));
+            $test_name = 'the ABB share sample shows its rows after its script has run';
+            $t->assert_true($test_name, $unchanged != []);
+            $test_name = '... and the standard case changes none of them';
+            $t->assert($test_name, $this->differing_items($unchanged, $standard), []);
+            unlink($sample);
+            unlink($page);
+        }
+        $brw->stop();
+    }
+
+    /**
+     * @param array $items the items of a page by their key (html_page_diff::page_items)
+     * @return array only the table rows, whose cells show the calculated numbers, without e.g. the fields
+     */
+    private function row_items(array $items): array
+    {
+        return array_filter($items, fn($key) => str_starts_with((string)$key, html_page_diff::KIND_ROW . ': '),
+            ARRAY_FILTER_USE_KEY);
     }
 
     /**

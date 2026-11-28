@@ -608,6 +608,11 @@ class a_selected_test extends all_unit_tests
             //$msk_tests->run_portfolio_split_calculator($this);
             //$msk_tests->run_portfolio_split_calculator_diff($this);
             //$msk_tests->run_portfolio_split_calculator_cases($this);
+            // the ABB share decision pages without and with javascript next to the hand made
+            // share_buy_sell_abb_sample.html, their differences and the input cases standard, high and low
+            $msk_tests->run_share_buy_sell_abb($this);
+            $msk_tests->run_share_buy_sell_abb_diff($this);
+            $msk_tests->run_share_buy_sell_abb_cases($this);
             // the Swiss NPP vote pages, their differences to the sample, the editor preview compared with the page
             // and the sensitivity table of the pdf; the calculator editor of the PV lifetime balance as its regression
             //$msk_tests->run_npp_ch_vote($this);

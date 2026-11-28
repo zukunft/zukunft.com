@@ -43,7 +43,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
     CONST bool AUTO_RE_PIN_OBJECT_ID = false;
     CONST string API_ACTUAL_SUFFIX = '_actual';
 
@@ -153,6 +153,21 @@ class files
     CONST array PORTFOLIO_CASES = [self::PORTFOLIO_CASE_STANDARD, self::PORTFOLIO_CASE_HIGH, self::PORTFOLIO_CASE_LOW,
         self::PORTFOLIO_CASE_OVER, self::PORTFOLIO_CASE_DIFFER, self::PORTFOLIO_CASE_ADD_CHILD,
         self::PORTFOLIO_CASE_REMOVE_CHILD];
+    // the calculator page of the ABB share decision without javascript and as the browser builds it, next to the hand
+    // made sample; share_buy_sell_abb.html is an older hand made copy of the sample, which no test writes
+    CONST string SHARE_BUY_SELL_ABB_NO_JS = 'share_buy_sell_abb_no_js';
+    CONST string SHARE_BUY_SELL_ABB_JS = 'share_buy_sell_abb_js';
+    CONST string SHARE_BUY_SELL_ABB_SAMPLE = 'share_buy_sell_abb_sample';
+    // the differences of the page without javascript to the sample as a markdown prompt for an llm
+    CONST string SHARE_BUY_SELL_ABB_DIFF = 'share_buy_sell_abb_diff';
+    // the input cases of the sample and the page that the browser builds, reported in SHARE_CASE_DIFF_PREFIX + case name;
+    // the sample fills its sensitivity table by its script, so its diff reads it after a browser has run it
+    CONST string SHARE_BUY_SELL_ABB_CASES = test_paths::JS . 'share_buy_sell_abb_cases' . self::JS;
+    CONST string SHARE_CASE_DIFF_PREFIX = self::SHARE_BUY_SELL_ABB_DIFF . '_';
+    CONST string SHARE_CASE_STANDARD = 'standard';
+    CONST string SHARE_CASE_HIGH = 'high';
+    CONST string SHARE_CASE_LOW = 'low';
+    CONST array SHARE_CASES = [self::SHARE_CASE_STANDARD, self::SHARE_CASE_HIGH, self::SHARE_CASE_LOW];
     // the formula editor of the example PV installation in the use case folder next to the hand made
     // formula_editor_sample.html, because the view test removes every file below views_by_object that it has not written
     CONST string FORMULA_EDITOR = 'formula_editor';
